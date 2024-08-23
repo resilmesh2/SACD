@@ -16,6 +16,7 @@ import { NetworkVisualizationComponent } from './panels/network-visualization/ne
 import { VulnerabilityComponent } from './panels/vulnerability/vulnerability.component';
 import { ConfigurationComponent } from 'src/app/panels/decide-act/configuration/configuration.component';
 import { MyAccountComponent } from './panels/my-account/my-account.component';
+import { IssueComponent } from './panels/issue/issue.component';
 
 /**
  * Modules and services
@@ -52,6 +53,12 @@ export const panels = [
     data: { name: 'Vulnerability', panelGroup: panelGroups[0] },
     path: 'vulnerability',
     component: VulnerabilityComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    data: { name: 'Issue', panelGroup: panelGroups[0] },
+    path: 'issue',
+    component: IssueComponent,
     canActivate: [AuthGuard],
   },
 ];

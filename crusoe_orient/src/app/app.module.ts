@@ -47,6 +47,8 @@ import { VulnerabilityComponent } from './panels/vulnerability/vulnerability.com
 // My Account
 import { MyAccountComponent } from './panels/my-account/my-account.component';
 
+// Issue
+import { IssueComponent } from './panels/issue/issue.component';
 /**
  * Other components
  */
@@ -104,6 +106,7 @@ import { MatSelectModule } from '@angular/material/select';
     ConfigurationComponent,
     NetworkVisualizationComponent,
     VulnerabilityComponent,
+    IssueComponent,
   ],
   imports: [
     BrowserModule,
