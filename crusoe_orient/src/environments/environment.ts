@@ -9,9 +9,9 @@ export const environment = {
   applicationName: 'CRUSOE Dashboard',
   production: false,
   version: packageData.version,
-  baseUrl: 'https://localhost/',
-  flowerUrl: 'https://localhost:5555/',
+  apiUrl: 'https://localhost/redirect-api/redirect/',
   tmpActApi: 'https://localhost/act/',
-  graphqlApi: 'https://localhost:4001/graphql',
+  # graphqlApi: 'https://localhost:4001/graphql',
+  graphqlApi: 'http://localhost:4001/graphql',
   firewallApi: 'https://localhost/firewall',
 };

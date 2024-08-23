@@ -23,11 +23,11 @@
     "graphql-type-json": "^0.3.2",
     "neo4j-driver": "^4.0.2",
     "neo4j-graphql-js": "^2.14.2",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.7.0",
     "react": "^16.13.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
+    "@babel/cli": "^7.24.1",
     "@babel/core": "^7.9.0",
     "@babel/node": "^7.8.7",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -39,8 +39,8 @@
     "babel-plugin-auto-import": "^1.0.5",
     "babel-plugin-module-resolver": "^4.0.0",
     "cross-env": "^7.0.2",
+    "forever": "^3.0.2",
     "nodemon": "^1.19.1",
-    "shx": "^0.3.2",
-    "forever": "^3.0.2"
+    "shx": "^0.3.2"
   }
 }

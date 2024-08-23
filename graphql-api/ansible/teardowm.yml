@@ -1,0 +1,24 @@
+---
+- name: Teardown graphql environment
+  hosts: localhost
+  tasks:
+    # Remove created folders
+    - name: Remove build folder
+      file:
+        path: /home/mgmt/CRUSOE-dev-ansible/graphql-api/build
+        state: absent
+
+    # Remove dependencies
+    #- name: Remove Graphql-api dependencies
+    #  npm:
+    #    name: "*"
+    #    path: /home/mgmt/CRUSOE-dev-ansible/graphql-api
+    #    state: absent
+    #  ignore_errors: yes
+
+    # Remove environment file
+    - name: Remove environment file
+      file:
+        path: /home/mgmt/CRUSOE-dev-ansible/graphql-api/src/db_config.js
+        state: absent
+

@@ -104,7 +104,7 @@ app.use((req, res, next) => {
  * Optionally, apply Express middleware for authentication, etc
  * This also also allows us to specify a path for the GraphQL endpoint
  */
-server.applyMiddleware({ app, path, cors: false });
+server.applyMiddleware({ app, path, cors: true });
 
 app.listen({ host, port, path }, () => {
   console.log(`GraphQL server ready at http://${host}:${port}${path}`);

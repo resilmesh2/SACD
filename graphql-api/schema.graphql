@@ -32,7 +32,7 @@ type Host {
   softwareversions: [SoftwareVersion] @relation(name: "ON", direction: IN)
   components: [Component] @relation(name: "PROVIDED_BY", direction: IN)
   configurations: [Configuration] @relation(name: "CONTAINS", direction: IN)
-  networkservices: [NetworkService] @relation(name: "ACTIVE_ON", direction: IN)
+  networkservices: [NetworkService] @relation(name: "ON", direction: IN)
 }
 
 type Contact {
@@ -122,8 +122,8 @@ type NetworkService {
   protocol: String!
   service: String!
   tag: String!
-  active_on: [Host] @relation(name: "ACTIVE_ON", direction: OUT)
-  ACTIVE_ON_rel: [ACTIVE_ON]
+  on: [Host] @relation(name: "ON", direction: OUT)
+  ON_rel: [ON]
   provides: [SoftwareVersion] @relation(name: "PROVIDES", direction: IN)
 }
 
@@ -222,7 +222,7 @@ type PROVIDES @relation(name: "PROVIDES") {
   to: NetworkService!
 }
 
-type ACTIVE_ON @relation(name: "ACTIVE_ON") {
+type ON @relation(name: "ON") {
   from: NetworkService!
   to: Host!
 }

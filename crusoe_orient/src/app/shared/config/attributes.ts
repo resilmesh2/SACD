@@ -33,9 +33,23 @@ export const Attributes = {
             description
             }
         }
+        networkservices(first:5) {
+            _id
+            protocol
+            port
+            service
+            tag
+        }
+        }
+        networkservices(first:5) {
+            _id
+            protocol
+            port
+            service
+            tag
+        }
     }
   }
-}
   part_of  {
     _id
     range

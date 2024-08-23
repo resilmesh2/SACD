@@ -1,0 +1,40 @@
+---
+- name: Teardown environment
+  hosts: localhost
+  become: yes
+  gather_facts: false
+  tasks:
+    
+    # Stop nginx
+    - name: Stop nginx
+      service:
+        name: nginx
+        state: stopped
+      become: yes
+
+    # Remove dashboard folder
+    - name: Remove dashboard folder in /var/www/
+      file:
+        path: /var/www/dashboard
+        state: absent
+      become: yes
+
+    # Remove dist
+    - name: Remove distribution folder
+      file:
+        path: /home/mgmt/CRUSOE-dev-ansible/crusoe_orient/dist
+        state: absent
+
+    # Uninstall dashboard dependencies
+    - name: Uninstall Dashboard dependencies
+      npm:
+        name: '*'
+        path: /home/mgmt/CRUSOE-dev-ansible/crusoe_orient
+        state: absent
+      ignore_errors: yes
+
+    # Remove environment file
+    - name: Remove environment file
+      file:
+        path: /home/mgmt/CRUSOE-dev-ansible/crusoe_orient/src/environments/environment.prod.ts
+        state: absent

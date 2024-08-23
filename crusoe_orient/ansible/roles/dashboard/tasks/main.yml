@@ -1,12 +1,3 @@
-- name: Delete Debian deb-src backports repository URL in sources list - bug with apt update
-  lineinfile:
-    path: /etc/apt/sources.list
-    state: absent
-    backrefs: yes
-    regexp: "^(.*https://deb.debian.org/debian buster-backports main.*)$"
-  become: yes
-  register: deb_archive_changed
-  
 - name: Install nvm
   shell: >
     curl https://raw.githubusercontent.com/creationix/nvm/v0.7.0/install.sh | sh
@@ -27,26 +18,6 @@
     - {src: "{{ nvm_bin }}/npm", dest: "/usr/bin/npm"}
   become: yes
 
-- name: Create dashboard folder
-  file:
-    path: "{{ dashboard_folder }}"
-    state: 'directory'
-    mode: '0755'
-
-# Copy source files to the VM
-- name: Copy dashboard source files to VM
-  copy:
-    src: "../../../"
-    dest: "{{ dashboard_folder }}"
-
-- name: Stop apache2 before nginx installation to avoid conflict on binded ports
-  service:
-    name: apache2
-    state: stopped
-  become: yes
-  ignore_errors: yes
-  register: apache2_stopped
-
 # Install nginx web server
 - name: Install nginx
   apt:
@@ -55,45 +26,18 @@
     update_cache: yes
   become: yes
 
-- name: Delete port config
-  lineinfile:
-    path: /etc/nginx/sites-enabled/default
-    regexp: "^#(.*)listen 80(.*)$"
-    state: absent
-  become: yes
-
-- name: Delete port config
-  lineinfile:
-    path: /etc/nginx/sites-enabled/default
-    regexp: "^#(.*)listen [::]:80(.*)$"
-    state: absent
-  become: yes
-
-- name: Change config to start nginx on port 81
-  lineinfile:
-    path: /etc/nginx/sites-enabled/default
-    regexp: "^(.*)listen 80(.*)$"
-    line: "\tlisten 81 default_server;"
-  become: yes
-
-- name: Change config to start nginx on port 81 for ipv6
-  lineinfile:
-    path: /etc/nginx/sites-enabled/default
-    regexp: "^(.*)listen [::]:80(.*)$"
-    line: "\tlisten [::]:81 default_server"
-  become: yes
-
-- name: Create environment folder
-  file:
-    path: "{{ dashboard_folder }}/src/environments"
-    state: 'directory'
-    mode: '0755'
+# Start nginx web server
+- name: start nginx
+  service:
+    name: nginx
+    state: started
 
 # Copy environment file where REST API urls are defined
 - name: Copy environment file
   template:
     src: environment.prod.ts.j2
     dest: '{{ dashboard_folder }}/src/environments/environment.prod.ts'
+
 
 # Install Dashboard dependencies
 - name: Install Dashboard dependencies
@@ -123,13 +67,6 @@
 - name: Copy dashboard files
   command: 'cp -a {{ dashboard_folder }}/dist/. /var/www/dashboard/'
   become: yes
-
-
-# Start nginx web server
-- name: start nginx
-  service:
-    name: nginx
-    state: started
 
 # Reload nginx
 - name: Reload nginx

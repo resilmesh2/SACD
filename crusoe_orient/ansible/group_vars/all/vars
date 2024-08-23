@@ -1,16 +1,15 @@
 # Source files of dashboard
-dashboard_folder: /home/vagrant/dashboard
+dashboard_folder: /home/mgmt/CRUSOE-dev-ansible/crusoe_orient
 # Version of nodejs to install by nvm
 node_version: lts/erbium
 # nvm installation directory
-nvm_bin: /home/vagrant/.nvm/versions/node/v12.22.12/bin
-# API URL
-baseUrlApi: 'http://localhost/rest'
-# Flower api
-flowerUrlApi: 'http://localhost:5555/'
+nvm_bin: /home/mgmt/.nvm/versions/node/v12.22.12/bin
+# Redirect API URL
+redirectApi: 'https://crusoe.csirt.muni.cz/redirect-api/redirect/'
 # Act API URL
-actApi: 'http://localhost/act/'
+actApi: 'https://crusoe.csirt.muni.cz/act/'
 # GraphQL API URL
-graphqlApi: 'http://localhost/graphql'
+# graphqlApi: 'https://crusoe.csirt.muni.cz/graphql-api/graphql'
+graphqlApi: 'http://localhost:4001/graphql'
 # Firewall API URL
-firewallApi: 'http://localhost/firewall'
+firewallApi: 'https://crusoe-worker.csirt.muni.cz/firewall'

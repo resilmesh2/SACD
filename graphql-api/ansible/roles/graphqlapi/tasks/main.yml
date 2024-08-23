@@ -20,10 +20,10 @@
     dest: "{{ graphqlapi_folder }}/src/db_config.js"
 
 # Copy source files to the VM
-- name: Copy graphqlapi source files to Vagrant VM
-  copy:
-    src: "../../../"
-    dest: "{{ graphqlapi_folder }}"
+#- name: Copy graphqlapi source files to Vagrant VM
+#  copy:
+#    src: "../../../"
+#    dest: "{{ graphqlapi_folder }}"
 
 - name: Check if node12 is installed
   stat:
@@ -62,29 +62,37 @@
   stat:
     path: /usr/sbin/apache2
   become: yes
-  register: apache_installed
+  register: apache2_installed
+
+#- name: Check if Apache2 is installed
+#  stat: apache2
+#    path: /usr/sbin/apache2
+#  become: yes
+#  register: apache2_installed
 
 - name: Install Apache2 if not present
   apt:
-    name: apache2
+    name:
+      - apache2
     state: present
-  become: yes
-  when: apache_installed.stat.exists == false
+    update_cache: yes # Ensures the cache is updated before installation
+  when: apache2_installed.stat.exists == false
 
 - name: run proxy_http to support ProxyPass directive within Apache2 if not already done
   command:
     cmd: a2enmod proxy_http
   become: yes
+  when: apache2_installed.stat.exists == false
 
 - name: Add proxypass to default apache site
   lineinfile:
     dest: /etc/apache2/sites-available/000-default.conf
     line: "{{ item.line }}"
     insertbefore: "</VirtualHost>"
-  become: yes
   with_items:
     - { line: "\tProxyPass /graphql http://127.0.0.1:{{ port }}/graphql" }
     - { line: "\tProxyPassReverse /graphql http://127.0.0.1:{{ port }}/graphql" }
+  when: apache2_installed.stat.exists == false
 
 - name: Restart apache2
   service: name=apache2 state=restarted

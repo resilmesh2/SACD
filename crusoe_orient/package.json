@@ -38,6 +38,7 @@
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.8.0",
+    "cluster": "^0.7.7",
     "core-js": "^2.6.5",
     "d3": "^5.15.0",
     "datatables": "^1.10.13",

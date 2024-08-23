@@ -31,4 +31,8 @@ export const entities = {
     bgColor: '#8BC34A',
     showProperty: ['version'],
   },
+  NetworkService: {
+    bgColor: '#DFFF00',
+    showProperty: ['service'],
+  },
 };

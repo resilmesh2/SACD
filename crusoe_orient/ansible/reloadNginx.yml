@@ -1,0 +1,13 @@
+---
+- name: Teardown environment
+  hosts: localhost
+  become: yes
+  gather_facts: false
+  tasks:
+    
+    # Reload nginx
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
+      become: yes
