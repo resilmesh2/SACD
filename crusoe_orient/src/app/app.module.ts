@@ -48,7 +48,7 @@ import { VulnerabilityComponent } from './panels/vulnerability/vulnerability.com
 import { MyAccountComponent } from './panels/my-account/my-account.component';
 
 // Issue
-import { IssueComponent } from './panels/issue/issue.component';
+import { IssueComponent } from './panels/issues/issue.component';
 /**
  * Other components
  */

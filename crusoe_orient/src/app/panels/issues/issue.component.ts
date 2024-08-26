@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-# import { MatSort } from '@angular/material/sort';
 import { zip } from 'rxjs';
-import { Issue, issues } from 'src/app/app.data.ts';
+import { Issue, issues } from 'src/app/app.data';
 
 @Component({
   selector: 'app-issue',
@@ -21,7 +20,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit() {
-    # This will ensure that paginator is assigned after view initialization
     this.dataSource.paginator = this.paginator;
   }  
 }

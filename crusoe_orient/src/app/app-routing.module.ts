@@ -16,7 +16,7 @@ import { NetworkVisualizationComponent } from './panels/network-visualization/ne
 import { VulnerabilityComponent } from './panels/vulnerability/vulnerability.component';
 import { ConfigurationComponent } from 'src/app/panels/decide-act/configuration/configuration.component';
 import { MyAccountComponent } from './panels/my-account/my-account.component';
-import { IssueComponent } from './panels/issue/issue.component';
+import { IssueComponent } from './panels/issues/issue.component';
 
 /**
  * Modules and services
