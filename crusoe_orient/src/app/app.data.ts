@@ -19,14 +19,14 @@ export const issues: Array<Issue> = [
   {
     name: 'Exposed FTP Service',
     severity: 'medium',
-    status: 'open',
+    status: 'closed',
     affected_entity: '193.1.204.182:21/tcp',
     description: 'An exposed FTP service was found on the host',
     last_seen: '07/08/2024',
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.187.229',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -35,14 +35,14 @@ export const issues: Array<Issue> = [
   {
     name: 'Exposed FTP Service',
     severity: 'medium',
-    status: 'open',
+    status: 'closed',
     affected_entity: '193.1.30.22:21/tcp',
     description: 'An exposed FTP service was found on the host',
     last_seen: '08/08/2024',
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.30.144',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -50,7 +50,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.30.221',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.', 
@@ -59,14 +59,14 @@ export const issues: Array<Issue> = [
   {
     name: 'Exposed FTP Service',
     severity: 'medium',
-    status: 'open',
+    status: 'closed',
     affected_entity: '193.1.30.19:21/tcp',
     description: 'An exposed FTP service was found on the host',
     last_seen: '09/08/2024',
  },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.30.220',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.', 
@@ -146,7 +146,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.30.2',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -154,7 +154,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'critical',
     status: 'open',
     affected_entity: '193.1.30.146',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -162,7 +162,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.204.215',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -170,7 +170,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'high',
     status: 'open',
     affected_entity: '193.1.30.146',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -178,7 +178,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'critical',
     status: 'open',
     affected_entity: '193.1.30.80',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
@@ -186,7 +186,7 @@ export const issues: Array<Issue> = [
   },
   {
     name: 'CVE-2020-12063',
-    severity: 'medium',
+    severity: 'critical',
     status: 'open',
     affected_entity: '193.1.94.10',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',

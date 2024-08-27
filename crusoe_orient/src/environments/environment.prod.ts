@@ -1,7 +1,7 @@
 import * as packageData from '../../package.json';
 
 export const environment = {
-  applicationName: 'My CRUSOE Dashboard',
+  applicationName: 'CRUSOE Dashboard',
   production: true,
   version: packageData.version,
   apiUrl: 'https://crusoe.csirt.muni.cz/redirect-api/redirect/',

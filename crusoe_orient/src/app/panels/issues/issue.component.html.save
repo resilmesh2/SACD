@@ -1,20 +1,13 @@
 <div class="mat-elevation-z8 issue-table-container">
 
   <mat-form-field>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Entity">
   </mat-form-field>
 
-  <mat-form-field class="filter-dropdown">
-    <mat-label>Filter by Issue Status</mat-label>
-    <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
-      <mat-option value="All">All</mat-option>
-      <mat-option *ngFor="let status of issueStatus" [value]="status">{{ status }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
+  <!-- Dropdown for filtering by severity -->
   <mat-form-field class="filter-dropdown">
     <mat-label>Filter by Severity</mat-label>
-    <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
+    <mat-select [(value)]="selectedSeverity" (selectionChange)="applyFilter($event)">
       <mat-option value="All">All</mat-option>
       <mat-option *ngFor="let severity of issueSeverity" [value]="severity">{{ severity }}</mat-option>
     </mat-select>

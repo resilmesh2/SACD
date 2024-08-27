@@ -19,19 +19,35 @@ export class IssueComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   
-  ngOnInit(): void {}
+  selectedSeverity = 'All';
+  selectedStatus = 'All';
+  issueSeverity: string[] = [];
+  issueStatus: string[] = [];
+
+  ngOnInit(): void {
+
+    this.issueSeverity = Array.from(new Set(issues.map(issue => issue.severity)));
+    this.issueStatus = Array.from(new Set(issues.map(issue => issue.status)));
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    this.dataSource.filterPredicate = (data: Issue, filter: string) => {
-      const filterValue = filter.trim().toLowerCase();
+    this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
+      const searchTerm = filter.trim().toLowerCase();
 
-      return (
-	data.name.trim().toLowerCase().includes(filterValue) ||
-	data.affected_entity.trim().toLowerCase().includes(filterValue)
-      );
+      const matchesSearchTerm =
+        data.name.toLowerCase().includes(searchTerm) ||
+        data.affected_entity.toLowerCase().includes(searchTerm);
+
+      const matchesSeverity =
+        this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
+
+      const matchesStatus =
+        this.selectedStatus === 'All' || data.status === this.selectedStatus;
+
+      return matchesSearchTerm && matchesSeverity && matchesStatus;
     };
   }
 
@@ -39,6 +55,22 @@ export class IssueComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  onSeverityChange(): void {
+    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  onStatusChange(): void {
+    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
