@@ -1,4 +1,9 @@
 <div class="mat-elevation-z8">
+
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Entity">
+  </mat-form-field>
+
   <table mat-table [dataSource]="dataSource" class="mat-table">
 
     <!-- Name Column -->
