@@ -14,7 +14,7 @@ import { Issue, issues } from 'src/app/app.data';
 export class IssueComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Issue>(issues);
 
-  displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description'];
+  displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

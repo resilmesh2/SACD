@@ -1,0 +1,46 @@
+/* Ensures the table takes the full width of its parent */
+.full-width-table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures no gaps between table borders */
+}
+
+/* Styling for table header */
+.mat-header-cell {
+  background-color: #e0e0e0; /* Light grey for header background */
+  font-weight: bold;
+  border-bottom: 1px solid #ccc; /* Bottom border for header cells */
+}
+
+/* Styling for table rows */
+.mat-cell {
+  border-bottom: 1px solid #ddd; /* Bottom border for each cell */
+}
+
+/* Add horizontal and vertical lines to the entire table */
+.mat-row, .mat-header-row {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+/* Add elevation for table container to give it edges */
+.issue-table-container {
+  margin: 20px;
+  padding: 20px;
+}
+
+/* Optional styling for search input */
+.search-input {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Optional - Highlight the selected row */
+.mat-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* Make paginator aligned properly at the bottom */
+mat-paginator {
+  margin-top: 20px;
+  width: 100%;
+}

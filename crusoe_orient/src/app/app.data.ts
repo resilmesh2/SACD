@@ -3,7 +3,8 @@ export interface Issue {
   severity: string;
   status: string;
   affected_entity: string;
-  description: string
+  description: string;
+  last_seen: string
 }
 
 export const issues: Array<Issue> = [
@@ -13,6 +14,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.187.229:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '06/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -20,6 +22,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.204.182:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '07/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -27,6 +30,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.187.229',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '07/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -34,6 +38,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.22:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '08/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -41,6 +46,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.144',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '09/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -48,6 +54,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.221',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.', 
+    last_seen: '09/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -55,13 +62,15 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.19:21/tcp',
     description: 'An exposed FTP service was found on the host',
-  },
+    last_seen: '09/08/2024',
+ },
   {
     name: 'CVE-2020-12063',
     severity: 'medium',
     status: 'open',
     affected_entity: '193.1.30.220',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.', 
+    last_seen: '10/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -69,6 +78,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.22:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '09/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -76,6 +86,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.187.229:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '12/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -83,6 +94,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.88.102:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '13/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -90,6 +102,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.94.10:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '12/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -97,6 +110,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.88.63:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '13/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -104,6 +118,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.88.100:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '13/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -111,6 +126,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.80:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '15/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -118,6 +134,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.144:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '13/08/2024',
   },
   {
     name: 'Exposed FTP Service',
@@ -125,6 +142,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.88.61:21/tcp',
     description: 'An exposed FTP service was found on the host',
+    last_seen: '14/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -132,6 +150,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.2',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '16/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -139,6 +158,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.146',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '16/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -146,6 +166,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.204.215',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '17/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -153,6 +174,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.146',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '17/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -160,6 +182,7 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.30.80',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '18/08/2024',
   },
   {
     name: 'CVE-2020-12063',
@@ -167,5 +190,6 @@ export const issues: Array<Issue> = [
     status: 'open',
     affected_entity: '193.1.94.10',
     description: 'A certain Postfix 2.10.1-7 package could allow an attacker to send an email from an arbitrary-looking sender via a homoglyph attack, as demonstrated by the similarity of \xce\xbf to the o character.',
+    last_seen: '18/08/2024',
   },
 ]
