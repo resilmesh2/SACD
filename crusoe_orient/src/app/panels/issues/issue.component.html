@@ -1,67 +1,90 @@
 <div class="mat-elevation-z8 issue-table-container">
-  <mat-form-field>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
-  </mat-form-field>
 
-  <mat-form-field class="filter-dropdown">
-    <mat-label>Filter by Issue Status</mat-label>
-    <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
-      <mat-option value="All">All</mat-option>
-      <mat-option *ngFor="let status of issueStatus" [value]="status">{{ status }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <!-- Show spinner while loading data -->
+  <ng-container *ngIf="dataLoading">
+    <mat-spinner></mat-spinner>
+  </ng-container>
 
-  <mat-form-field class="filter-dropdown">
-    <mat-label>Filter by Severity</mat-label>
-    <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
-      <mat-option value="All">All</mat-option>
-      <mat-option *ngFor="let severity of issueSeverity" [value]="severity">{{ severity }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <!-- Show error message if there's an error -->
+  <ng-container *ngIf="errorResponse && !dataLoading">
+    <p class="error">
+      <strong>Error fetching data from GraphQL API.</strong><br />
+      <span>Error message: {{ errorResponse }}</span>
+    </p>
+  </ng-container>
 
-  <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.name }} </td>
-    </ng-container>
+  <!-- Show no data message if the response is empty -->
+  <ng-container *ngIf="emptyResponse && !dataLoading && !errorResponse">
+    <p class="no-data">
+      <strong>No available data.</strong>
+    </p>
+  </ng-container>
 
-    <!-- Severity Column -->
-    <ng-container matColumnDef="severity">
-      <th mat-header-cell *matHeaderCellDef> Severity </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
-    </ng-container>
+  <!-- Show the table only when data is loaded, there's no error, and it's not loading -->
+  <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
+    </mat-form-field>
 
-    <!-- Status Column -->
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef> Status </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
-    </ng-container>
+    <mat-form-field class="filter-dropdown">
+      <mat-label>Filter by Issue Status</mat-label>
+      <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
+        <mat-option value="All">All</mat-option>
+        <mat-option *ngFor="let status of issueStatus" [value]="status">{{ status }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <!-- Affected Entity Column -->
-    <ng-container matColumnDef="affected_entity">
-      <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.affected_entity }} </td>
-    </ng-container>
+    <mat-form-field class="filter-dropdown">
+      <mat-label>Filter by Severity</mat-label>
+      <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
+        <mat-option value="All">All</mat-option>
+        <mat-option *ngFor="let severity of issueSeverity" [value]="severity">{{ severity }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <!-- Description Column -->
-    <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef> Description </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
-    </ng-container>
+    <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.name }} </td>
+      </ng-container>
 
-    <!-- Last Seen Date Column -->
-    <ng-container matColumnDef="last_seen">
-      <th mat-header-cell *matHeaderCellDef> Last Seen </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.last_seen }} </td>
-    </ng-container>
+      <!-- Severity Column -->
+      <ng-container matColumnDef="severity">
+        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
+      </ng-container>
 
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
+      </ng-container>
 
-    <!-- Table Header and Rows -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+      <!-- Affected Entity Column -->
+      <ng-container matColumnDef="affected_entity">
+        <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.affected_entity }} </td>
+      </ng-container>
 
-  <!-- Paginator -->
-  <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
+      </ng-container>
+
+      <!-- Last Seen Date Column -->
+      <ng-container matColumnDef="last_seen">
+        <th mat-header-cell *matHeaderCellDef> Last Seen </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.last_seen }} </td>
+      </ng-container>
+
+      <!-- Table Header and Rows -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+  </ng-container>
 </div>
