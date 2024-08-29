@@ -10,6 +10,7 @@ import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
 import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
+import { Issue } from 'src/app/app.data';
 
 @Injectable({
   providedIn: 'root',
@@ -307,4 +308,132 @@ export class DataService {
         })
       );
   }
+
+  /**
+   * Returns all CVE objects in bulk
+   */
+public getAllCVEDetails(): Observable<CVE[]> {
+  return this.apollo
+    .query<{ CVE: CVE[] }>({
+      query: gql`
+      {
+        CVE(first: 10) {
+          CVE_id
+          description
+          access_complexity
+          access_vector
+          attack_complexity
+          attack_vector
+          authentication
+          availability_impact_v2
+          availability_impact_v3
+          base_score_v2
+          base_score_v3
+          confidentiality_impact_v2
+          confidentiality_impact_v3
+          integrity_impact_v2
+          integrity_impact_v3
+          obtain_all_privilege
+          obtain_other_privilege
+          obtain_user_privilege
+          privileges_required
+          published_date
+          scope
+          user_interaction
+          impact
+        }
+      }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        return response.data.CVE;
+      })
+    );
+  }
+
+public getAffectedIPAddresses(): Observable<string[]> {
+  return this.apollo
+    .query<CVEResponse>({
+      query: gql`
+      {
+        CVE(first: 10) {
+          vulnerabilitys {
+            in {
+              version
+              on {
+                nodes {
+                  has_assigned {
+                    address
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const ipAddresses: string[] = [];
+        console.log('getAffectedIPAddresses', response.data)
+        response.data.CVE.forEach((cve) => {
+          let foundIP = false;
+
+          cve.vulnerabilitys.forEach((vuln) => {
+
+            if (foundIP) return;
+            vuln.in.forEach((software) => {
+
+              if (foundIP) return;
+              software.on.forEach((host) => {
+
+                if (foundIP) return;
+                if (host.nodes[0]?.has_assigned[0]?.address) {
+
+                  ipAddresses.push(host.nodes[0].has_assigned[0].address);
+                  foundIP = true;
+                }
+              });
+            });
+          });
+        });
+        return ipAddresses;
+      })
+    );
+  }
+
+public getIPAddresses(): Observable<string[]> {
+  return this.apollo
+    .query<any>({
+      query: gql`
+      {
+        IP(first: 10) {
+          _id
+          address
+        }
+      }
+    `,
+    })
+    .pipe(
+      map((response) => {
+        const ipAddresses: string[] = [];  // Properly initialize the array as a string array
+
+        // Check if the response contains the IP data
+        if (response.data && response.data.IP) {
+          // Iterate over the IP nodes and push their address into the array
+          response.data.IP.forEach((ipNode) => {
+            if (ipNode.address) {
+              ipAddresses.push(ipNode.address);
+            }
+          });
+        }
+
+        console.log('dataService.getIPAddresses - ', ipAddresses);  // Log the result for debugging
+        return ipAddresses;
+      })
+    );
+}
+
 }

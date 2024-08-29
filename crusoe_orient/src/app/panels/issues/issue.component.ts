@@ -2,8 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetector
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { zip } from 'rxjs';
-import { Issue, issues } from 'src/app/app.data';
+import { Observable, zip } from 'rxjs';
+import { DataService } from 'src/app/shared/services/data.service';
+import { Issue } from 'src/app/app.data';
+import { CVE } from 'src/app/shared/models/vulnerability.model';
 
 @Component({
   selector: 'app-issue',
@@ -12,7 +14,7 @@ import { Issue, issues } from 'src/app/app.data';
 })
 
 export class IssueComponent implements OnInit, AfterViewInit {
-  dataSource = new MatTableDataSource<Issue>(issues);
+  dataSource = new MatTableDataSource<Issue>();
 
   displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
   
@@ -24,10 +26,52 @@ export class IssueComponent implements OnInit, AfterViewInit {
   issueSeverity: string[] = [];
   issueStatus: string[] = [];
 
-  ngOnInit(): void {
+  // New constants for the fetched data
+  cveDetails: CVE[] = [];
+  dataLoaded = false;
+  dataLoading = false;
+  emptyResponse = false;
+  errorResponse = '';
+  ipAddresses: string[] = [];
+  issues: Issue[] = [];
 
-    this.issueSeverity = Array.from(new Set(issues.map(issue => issue.severity)));
-    this.issueStatus = Array.from(new Set(issues.map(issue => issue.status)));
+  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
+    this.dataSource = new MatTableDataSource([]);
+  }
+
+  ngOnInit(): void {
+    this.dataLoading = true;
+
+    console.log('Data Loading');
+    this.getCombinedData().subscribe(
+      ([cveDetails, ipAddresses]) => {
+        this.cveDetails = cveDetails;
+        this.ipAddresses = ipAddresses;
+
+        this.processIssues();
+
+
+        if (this.cveDetails.length > 0 && this.ipAddresses.length > 0) {
+          this.dataLoaded = true;
+        } else {
+          this.emptyResponse = true;
+        }
+        this.dataLoading = false;
+
+        // Trigger change detection
+        this.changeDetector.detectChanges();
+
+      },
+      (error) => {
+        console.error('Error:', error);
+        this.errorResponse = error;
+        this.dataLoading = false;
+        this.changeDetector.detectChanges()
+      }
+    );
+
+    // this.issueSeverity = Array.from(new Set(issues.map(issue => issue.severity)));
+    // this.issueStatus = Array.from(new Set(issues.map(issue => issue.status)));
   }
 
   ngAfterViewInit() {
@@ -74,5 +118,77 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  scoreClass(value: string, type: number) {
+    if (type === 2) {
+      if (Number(value) <= 3.9) {
+        return 'low';
+      }
+
+      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+        return 'medium';
+      }
+
+      if (Number(value) > 6.9) {
+        return 'high';
+      }
+    } else if (type === 3) {
+      if (Number(value) > 8.9) {
+        return 'critical';
+      }
+      if (Number(value) <= 3.9) {
+        return 'low';
+      }
+
+      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+        return 'medium';
+      }
+
+      if (Number(value) > 6.9) {
+        return 'high';
+      }
+    }
+  }
+
+private getCombinedData(): Observable<[CVE[], string[]]> {
+  const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
+  const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
+  
+  return zip(cveDetails$, ipAddresses$);
+}
+
+//  cveDetails$.subscribe(data => console.log('CombinedData - Fetched CVE Details:', data));
+//  ipAddresses$.subscribe(data => console.log('CombinedData - Fetched IP Addresses:', data));
+
+
+ // private getCombinedData(): Observable<[CVE[], string[]]> {
+   // const cveDetails$ = this.data.getAllCVEDetails();
+   // const ipAddresses$ = this.data.getAffectedIPAddresses();
+    // console.log('All CVE Details', this.data.getAllCVEDetails());
+    // console.log('IP Addresses', this.data.getAffectedIPAddresses());
+    
+    //console.log('Combined Data - CVE Details', cveDetails$);
+   // console.log('Combined Data - IP Addresses', ipAddresses$); 
+   // return zip(cveDetails$, ipAddresses$);
+ // }
+
+  private processIssues(): void {
+
+    this.issues = this.cveDetails.map((cve, index) => ({
+      name: cve.CVE_id,
+      severity: this.scoreClass(cve.base_score_v3, 3),
+      status: "Open",
+      affected_entity: this.ipAddresses[index],
+      description: cve.description,
+      last_seen: cve.published_date,
+    }));
+    
+    this.dataSource.data = this.issues;
+    console.log('Processed Issues Data', this.dataSource.data);
+
+    this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
+    this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
+    this.changeDetector.detectChanges();
   }
 }
