@@ -1,10 +1,8 @@
-/* Ensures the table takes the full width of its parent */
 .full-width-table {
   width: 100%;
-  border-collapse: collapse; /* Ensures no gaps between table borders */
+  border-collapse: collapse; 
 }
 
-/* Styling for table header */
 .mat-header-cell {
   background-color: #e0e0e0; /* Light grey for header background */
   font-weight: bold;
@@ -30,7 +28,7 @@
 
 /* Optional styling for search input */
 .search-input {
-  width: 100%;
+  width: 50%;
   margin-bottom: 16px;
 }
 
@@ -41,7 +39,7 @@
 
 /* Make paginator aligned properly at the bottom */
 mat-paginator {
-  margin-top: 20px;
+  margin-top: 15px;
   width: 100%;
 }
 
@@ -55,4 +53,7 @@ mat-paginator {
   margin-bottom: 16px;
 }
 
-
+.total-issues {
+  font-weight: bold;
+  align: right;
+}

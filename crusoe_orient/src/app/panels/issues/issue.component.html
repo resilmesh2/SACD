@@ -1,6 +1,5 @@
 <div class="mat-elevation-z8 issue-table-container">
-
-  <!-- Show spinner while loading data -->
+    <!-- Show spinner while loading data -->
   <ng-container *ngIf="dataLoading">
     <mat-spinner></mat-spinner>
   </ng-container>
@@ -20,71 +19,73 @@
     </p>
   </ng-container>
 
-  <!-- Show the table only when data is loaded, there's no error, and it's not loading -->
-  <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
-    </mat-form-field>
+  <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse" class="full-width-table">
+  <div class="total-issues">
+    Total Number of Issues: {{ totalSortedIssues }}
+  </div>  
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
+  </mat-form-field>
 
-    <mat-form-field class="filter-dropdown">
-      <mat-label>Filter by Issue Status</mat-label>
-      <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
-        <mat-option value="All">All</mat-option>
-        <mat-option *ngFor="let status of issueStatus" [value]="status">{{ status }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field class="filter-dropdown">
+    <mat-label>Filter by Issue Status</mat-label>
+    <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
+      <mat-option value="All">All</mat-option>
+      <mat-option *ngFor="let status of issueStatus" [value]="status">{{ status }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field class="filter-dropdown">
-      <mat-label>Filter by Severity</mat-label>
-      <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
-        <mat-option value="All">All</mat-option>
-        <mat-option *ngFor="let severity of issueSeverity" [value]="severity">{{ severity }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field class="filter-dropdown">
+    <mat-label>Filter by Severity</mat-label>
+    <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
+      <mat-option value="All">All</mat-option>
+      <mat-option *ngFor="let severity of issueSeverity" [value]="severity">{{ severity }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.name }} </td>
-      </ng-container>
+  <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.name }} </td>
+    </ng-container>
 
-      <!-- Severity Column -->
-      <ng-container matColumnDef="severity">
-        <th mat-header-cell *matHeaderCellDef> Severity </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
-      </ng-container>
+    <!-- Severity Column -->
+    <ng-container matColumnDef="severity">
+      <th mat-header-cell *matHeaderCellDef> Severity </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
+    </ng-container>
 
-      <!-- Status Column -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
-      </ng-container>
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
+    </ng-container>
 
-      <!-- Affected Entity Column -->
-      <ng-container matColumnDef="affected_entity">
-        <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.affected_entity }} </td>
-      </ng-container>
+    <!-- Affected Entity Column -->
+    <ng-container matColumnDef="affected_entity">
+      <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.affected_entity }} </td>
+    </ng-container>
 
-      <!-- Description Column -->
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef> Description </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
-      </ng-container>
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
+    </ng-container>
 
-      <!-- Last Seen Date Column -->
-      <ng-container matColumnDef="last_seen">
-        <th mat-header-cell *matHeaderCellDef> Last Seen </th>
-        <td mat-cell *matCellDef="let issue"> {{ issue.last_seen }} </td>
-      </ng-container>
+    <!-- Last Seen Date Column -->
+    <ng-container matColumnDef="last_seen">
+      <th mat-header-cell *matHeaderCellDef> Last Seen </th>
+      <td mat-cell *matCellDef="let issue"> {{ issue.last_seen }} </td>
+    </ng-container>
 
-      <!-- Table Header and Rows -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+    <!-- Table Header and Rows -->
+    <tr mat-header *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 
-    <!-- Paginator -->
-    <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+  <!-- Paginator -->
+  <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
   </ng-container>
 </div>

@@ -34,6 +34,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
   errorResponse = '';
   ipAddresses: string[] = [];
   issues: Issue[] = [];
+  totalSortedIssues: number = 0;
 
   constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
     this.dataSource = new MatTableDataSource([]);
@@ -58,7 +59,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
         }
         this.dataLoading = false;
 
-        // Trigger change detection
+        this.updateTotalSortedIssues();
+
         this.changeDetector.detectChanges();
 
       },
@@ -75,8 +77,11 @@ export class IssueComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    
+    if (this.dataLoaded && this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
 
     this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
       const searchTerm = filter.trim().toLowerCase();
@@ -102,6 +107,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
   }
 
   onSeverityChange(): void {
@@ -110,6 +117,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
   }
 
   onStatusChange(): void {
@@ -118,6 +127,12 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
+  }
+
+  updateTotalSortedIssues(): void {
+    this.totalSortedIssues = this.dataSource.filteredData.length;
   }
 
   scoreClass(value: string, type: number) {
@@ -183,12 +198,21 @@ private getCombinedData(): Observable<[CVE[], string[]]> {
       description: cve.description,
       last_seen: cve.published_date,
     }));
-    
+
     this.dataSource.data = this.issues;
-    console.log('Processed Issues Data', this.dataSource.data);
+
+    // Update sorted issues
+    this.updateTotalSortedIssues();
+
+    
+    if (this.paginator && this.sort) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+    
+    this.changeDetector.detectChanges();
 
     this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
     this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
-    this.changeDetector.detectChanges();
   }
 }
