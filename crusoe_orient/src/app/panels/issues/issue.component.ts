@@ -26,7 +26,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
   issueSeverity: string[] = [];
   issueStatus: string[] = [];
 
-  // New constants for the fetched data
   cveDetails: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
@@ -71,9 +70,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
         this.changeDetector.detectChanges()
       }
     );
-
-    // this.issueSeverity = Array.from(new Set(issues.map(issue => issue.severity)));
-    // this.issueStatus = Array.from(new Set(issues.map(issue => issue.status)));
   }
 
   ngAfterViewInit() {
@@ -166,27 +162,24 @@ export class IssueComponent implements OnInit, AfterViewInit {
     }
   }
 
-private getCombinedData(): Observable<[CVE[], string[]]> {
-  const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
-  const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
-  
-  return zip(cveDetails$, ipAddresses$);
-}
-
-//  cveDetails$.subscribe(data => console.log('CombinedData - Fetched CVE Details:', data));
-//  ipAddresses$.subscribe(data => console.log('CombinedData - Fetched IP Addresses:', data));
-
-
- // private getCombinedData(): Observable<[CVE[], string[]]> {
-   // const cveDetails$ = this.data.getAllCVEDetails();
-   // const ipAddresses$ = this.data.getAffectedIPAddresses();
-    // console.log('All CVE Details', this.data.getAllCVEDetails());
-    // console.log('IP Addresses', this.data.getAffectedIPAddresses());
+  private getCombinedData(): Observable<[CVE[], string[]]> {
+    const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
+    const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
     
-    //console.log('Combined Data - CVE Details', cveDetails$);
-   // console.log('Combined Data - IP Addresses', ipAddresses$); 
-   // return zip(cveDetails$, ipAddresses$);
- // }
+    // validation Data
+    const vulnSoftwares$: Observable<string[]> = this.data.getVulnerableSoftwareVersion();
+    const ipAssets$: Observable<string[]> = this.data.getAffectedIPAddresses();
+    const testingCVE$: Observable<CVE[]> = this.data.getTestingCVES();
+    const validIPs$: Observable<string[]> = this.data.getValidIPAddresses();
+  
+    // ipAssets$.subscribe(data => console.log('CombinedData - Affected IP:', data));
+    vulnSoftwares$.subscribe(data => console.log('Issue - CombinedData() - Vulnerable Software:', data));
+    testingCVE$.subscribe(data => console.log('Issue - CombinedData() - Testing CVEs', data));
+    // validIPs$.subscribe(data => console.log('CombinedData - Valid IPs', data));
+    
+    // return document
+    return zip(cveDetails$, ipAddresses$);
+  }
 
   private processIssues(): void {
 

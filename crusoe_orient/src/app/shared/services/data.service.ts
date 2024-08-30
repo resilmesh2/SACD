@@ -8,7 +8,7 @@ import { entities } from 'src/app/shared/config/network-visualization.config';
 import _ from 'lodash';
 import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
-import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
+import { CVEResponse, CVE, Software } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
 import { Issue } from 'src/app/app.data';
 
@@ -354,17 +354,20 @@ public getAllCVEDetails(): Observable<CVE[]> {
 
 public getAffectedIPAddresses(): Observable<string[]> {
   return this.apollo
-    .query<CVEResponse>({
+    .query<any>({
       query: gql`
       {
-        CVE(first: 10) {
+        CVE {
           vulnerabilitys {
             in {
               version
               on {
-                nodes {
+                _id
+                nodes(first: 1) {
+                  _id
                   has_assigned {
-                    address
+                    _id
+                    address                 
                   }
                 }
               }
@@ -377,8 +380,8 @@ public getAffectedIPAddresses(): Observable<string[]> {
     .pipe(
       map((response) => {
         const ipAddresses: string[] = [];
-        console.log('getAffectedIPAddresses', response.data)
-        response.data.CVE.forEach((cve) => {
+        console.log('getAffectedIPAddresses', response.data.CVE)
+        response.data.CVE[0].forEach((cve) => {
           let foundIP = false;
 
           cve.vulnerabilitys.forEach((vuln) => {
@@ -418,11 +421,9 @@ public getIPAddresses(): Observable<string[]> {
     })
     .pipe(
       map((response) => {
-        const ipAddresses: string[] = [];  // Properly initialize the array as a string array
+        const ipAddresses: string[] = [];  
 
-        // Check if the response contains the IP data
         if (response.data && response.data.IP) {
-          // Iterate over the IP nodes and push their address into the array
           response.data.IP.forEach((ipNode) => {
             if (ipNode.address) {
               ipAddresses.push(ipNode.address);
@@ -430,10 +431,153 @@ public getIPAddresses(): Observable<string[]> {
           });
         }
 
-        console.log('dataService.getIPAddresses - ', ipAddresses);  // Log the result for debugging
+        console.log('dataService.getIPAddresses - ', ipAddresses);  
         return ipAddresses;
       })
     );
 }
 
+public getVulnerableSoftwareVersion(): Observable<string[]> {
+  return this.apollo
+    .query<CVEResponse>({
+      query: gql`
+      {
+        CVE {
+          vulnerabilitys {
+            in {
+              _id
+              version
+            }
+          }
+        }
+      }
+    `,
+    })
+    .pipe(
+      map((response) => {
+        const vulnerables: string[] = [];
+        
+        if (response.data.CVE) {
+          
+          console.log('Data.getVulnerableSoftware() - Full CVE Response', response.data.CVE)  
+          console.log('Data.getVulnerableSoftware() - First CVE Response', response.data.CVE[0])  
+          response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
+            vuln.in.forEach((software) => {
+              
+              console.log('Data.getVulnerableSoftware() - Software Response', software)  
+              if (software.version) {
+                vulnerables.push(software.version);
+              }
+            });
+          });
+        }
+
+        console.log('Final - DataService.getVulnerableSoftware() - ', vulnerables);
+        return vulnerables;
+      })
+    );
+  }
+
+  public getTestingCVES(): Observable<CVE[]> {
+    return this.apollo
+      .query<{ CVE: CVE[] }>({
+        query: gql`
+      {
+        CVE (first: 100) {
+          CVE_id
+          description
+          base_score_v3
+          published_date     
+        }
+      }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          
+          const cveList: CVE[] = [];
+          if (response.data.CVE) {
+            console.log('DataService.getTestingCVEs()', response.data.CVE);
+            
+            response.data.CVE.forEach((cve) => {
+              cveList.push(cve);
+            });
+          }
+          return cveList;     
+        })
+      )
+  }
+
+public getValidIPAddresses(): Observable<string[]> {
+  return this.apollo
+    .query<CVEResponse>({
+      query: gql`
+      {
+        CVE (first: 100) {
+          CVE_id
+          description
+          base_score_v3
+          published_date
+          vulnerabilitys {
+            in {
+              version
+              on {
+                _id
+                nodes {
+                  _id
+                  has_assigned {
+                    _id
+                    address
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const ipAddresses: string[] = [];
+
+        if (response.data && response.data.CVE) {
+
+          console.log('Valid IPs', response.data.CVE);
+          for (const cve of response.data.CVE) {
+            if (cve.vulnerabilitys) {
+              for (const vuln of cve.vulnerabilitys) {
+                if (vuln.in) {
+                  for (const software of vuln.in) {
+                    if (software.on) {
+                      for (const host of software.on) {
+                        if (host.nodes) {
+                          for (const node of host.nodes) {
+                            if (node.has_assigned) {
+                              for (const ip of node.has_assigned) {
+                                if (ip.address) {
+                                  ipAddresses.push(ip.address);
+                                  if (ipAddresses.length >= 10) {
+                                    return ipAddresses;
+                                    console.log('Testing Valid IP Addresses', ipAddresses); 
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        return ipAddresses;
+      })
+    );
+  }
+    
 }
