@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { DatePipe } from '@angular/common';
 import { Observable, zip } from 'rxjs';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Issue } from 'src/app/app.data';
@@ -34,6 +36,12 @@ export class IssueComponent implements OnInit, AfterViewInit {
   ipAddresses: string[] = [];
   issues: Issue[] = [];
   totalSortedIssues: number = 0;
+
+  startDateControl = new FormControl();
+  endDateControl = new FormControl();
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+  isDateRangeValid = false;
 
   constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
     this.dataSource = new MatTableDataSource([]);
@@ -92,7 +100,11 @@ export class IssueComponent implements OnInit, AfterViewInit {
       const matchesStatus =
         this.selectedStatus === 'All' || data.status === this.selectedStatus;
 
-      return matchesSearchTerm && matchesSeverity && matchesStatus;
+      const matchesDateRange =
+        (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
+        (!this.endDate || new Date(data.last_seen) <= this.endDate);
+
+      return matchesSearchTerm && matchesSeverity && matchesStatus && matchesDateRange;
     };
   }
 
@@ -105,6 +117,73 @@ export class IssueComponent implements OnInit, AfterViewInit {
     }
 
     this.updateTotalSortedIssues();
+  }
+
+  dateChange(): void {
+    this.validateDateInputs();
+
+    // If either start or end date is cleared, reset the filter
+    if (!this.startDateControl.value || !this.endDateControl.value) {
+      this.clearDateFilter();
+    }
+  }
+
+  clearDateFilter(): void {
+    // Clear the filter predicate and reset the data
+    this.dataSource.filterPredicate = () => true;
+    this.dataSource.filter = ''; // Trigger the reset
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+    this.updateTotalSortedIssues();
+    this.isDateRangeValid = false;
+  }
+
+  validateDateInputs(): void {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/; 
+    
+    const startDateValid = datePattern.test(this.startDateControl.value);
+    const endDateValid = datePattern.test(this.endDateControl.value);
+
+    if (startDateValid) {
+      this.startDate = new Date(this.startDateControl.value.replace(/\//g, '-'));
+    } else {
+      this.startDate = null;
+    }
+
+    if (endDateValid) {
+      this.endDate = new Date(this.endDateControl.value.replace(/\//g, '-'));
+    } else {
+      this.endDate = null;
+    }
+
+    // Check if both dates are valid
+    console.log('Issue Component.validateDateInput() - start', this.startDate);
+    console.log('Issue Conponent.validateDateInput() - end', this.endDate);
+    this.isDateRangeValid = startDateValid && endDateValid && !!this.startDate && !!this.endDate;
+  }
+
+  isValidDateFormat(date: Date | null): boolean {
+    console.log('IssueComponent.isValidDateFormat()', date);
+    if (!date) return false;
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '/');
+    console.log('IssueComponent.isValidDateFormat()', dateStr);
+    return /^\d{4}\/\d{2}\/\d{2}$/.test(dateStr);
+  }
+
+  applyDateFilter(): void {
+    if (this.isDateRangeValid) {
+      this.dataSource.filterPredicate = (data: Issue, filter: string) => {
+        const lastSeenDate = new Date(data.last_seen);
+        return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
+      };
+
+      this.dataSource.filter = 'filterDate'; // Trigger the filter to run
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+      this.updateTotalSortedIssues();
+    }
   }
 
   onSeverityChange(): void {
@@ -167,11 +246,11 @@ export class IssueComponent implements OnInit, AfterViewInit {
     const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
     
     // validation Data
-    const testingVuln$: Observable<any[]> = this.data.getTestingSoftware();
-    const testingHostArray$: Observable<any[]> = this.data.getTestingHostArray();
+    //const testingVuln$: Observable<any[]> = this.data.getTestingSoftware();
+    //const testingHostArray$: Observable<any[]> = this.data.getTestingHostArray();
     
-    testingVuln$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Vulnerabilities', data));
-    testingHostArray$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Host Array', data));
+    //testingVuln$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Vulnerabilities', data));
+    //testingHostArray$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Host Array', data));
 
    
     return zip(cveDetails$, ipAddresses$);
@@ -185,7 +264,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
       status: "Open",
       affected_entity: this.ipAddresses[index],
       description: cve.description,
-      last_seen: cve.published_date,
+      last_seen: cve.published_date ? new Date(cve.published_date) : null,
     }));
 
     this.dataSource.data = this.issues;
