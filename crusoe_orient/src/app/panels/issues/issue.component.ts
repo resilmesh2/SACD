@@ -167,17 +167,13 @@ export class IssueComponent implements OnInit, AfterViewInit {
     const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
     
     // validation Data
-    const vulnSoftwares$: Observable<string[]> = this.data.getVulnerableSoftwareVersion();
-    const ipAssets$: Observable<string[]> = this.data.getAffectedIPAddresses();
-    const testingCVE$: Observable<CVE[]> = this.data.getTestingCVES();
-    const validIPs$: Observable<string[]> = this.data.getValidIPAddresses();
-  
-    // ipAssets$.subscribe(data => console.log('CombinedData - Affected IP:', data));
-    vulnSoftwares$.subscribe(data => console.log('Issue - CombinedData() - Vulnerable Software:', data));
-    testingCVE$.subscribe(data => console.log('Issue - CombinedData() - Testing CVEs', data));
-    // validIPs$.subscribe(data => console.log('CombinedData - Valid IPs', data));
+    const testingVuln$: Observable<any[]> = this.data.getTestingSoftware();
+    const testingHostArray$: Observable<any[]> = this.data.getTestingHostArray();
     
-    // return document
+    testingVuln$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Vulnerabilities', data));
+    testingHostArray$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Host Array', data));
+
+   
     return zip(cveDetails$, ipAddresses$);
   }
 

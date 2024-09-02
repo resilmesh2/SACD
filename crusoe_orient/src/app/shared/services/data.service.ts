@@ -8,7 +8,7 @@ import { entities } from 'src/app/shared/config/network-visualization.config';
 import _ from 'lodash';
 import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
-import { CVEResponse, CVE, Software } from 'src/app/shared/models/vulnerability.model';
+import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
 import { Issue } from 'src/app/app.data';
 
@@ -430,8 +430,6 @@ public getIPAddresses(): Observable<string[]> {
             }
           });
         }
-
-        console.log('dataService.getIPAddresses - ', ipAddresses);  
         return ipAddresses;
       })
     );
@@ -464,7 +462,7 @@ public getVulnerableSoftwareVersion(): Observable<string[]> {
           response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
             vuln.in.forEach((software) => {
               
-              console.log('Data.getVulnerableSoftware() - Software Response', software)  
+              console.log('Data.getVulnerableSoftware() - Software Response', software);  
               if (software.version) {
                 vulnerables.push(software.version);
               }
@@ -497,7 +495,6 @@ public getVulnerableSoftwareVersion(): Observable<string[]> {
           
           const cveList: CVE[] = [];
           if (response.data.CVE) {
-            console.log('DataService.getTestingCVEs()', response.data.CVE);
             
             response.data.CVE.forEach((cve) => {
               cveList.push(cve);
@@ -508,10 +505,58 @@ public getVulnerableSoftwareVersion(): Observable<string[]> {
       )
   }
 
-public getValidIPAddresses(): Observable<string[]> {
-  return this.apollo
-    .query<CVEResponse>({
-      query: gql`
+  public getTestingSoftware(): Observable<any[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+      {
+        CVE (first: 100) {
+          CVE_id
+          description
+          base_score_v3
+          published_date
+          vulnerabilitys {
+            in {
+              version
+            }
+          }
+        }
+      }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          
+          const vulnList: any[] = [];
+          if (response.data.CVE) {
+            
+            response.data.CVE.forEach((cve) => {              
+              if (cve.vulnerabilitys) { 
+                
+                cve.vulnerabilitys.forEach((vuln) => {
+                  
+                  if (vuln.in) {
+                    vuln.in.forEach((software) => {
+
+                      if (software.version && !vulnList.includes(software.version)) {
+
+                        vulnList.push(software.version);
+                      }
+                    });
+                  }  
+                });
+              }
+            });
+          }
+          return vulnList;     
+        })
+      )
+  }
+
+  public getTestingHostArray(): Observable<any[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
       {
         CVE (first: 100) {
           CVE_id
@@ -522,62 +567,82 @@ public getValidIPAddresses(): Observable<string[]> {
             in {
               version
               on {
-                _id
-                nodes {
-                  _id
-                  has_assigned {
-                    _id
-                    address
-                  }
-                }
+                nodes  
               }
             }
           }
         }
       }
       `,
-    })
-    .pipe(
-      map((response) => {
-        const ipAddresses: string[] = [];
+      })
+      .pipe(
+        map((response) => {
+          
+          const vulnList: any[] = [];
+          if (response.data.CVE) {
+            
+            response.data.CVE.forEach((cve) => {              
+              if (cve.vulnerabilitys) { 
+ 
+                console.log('DataService.getTestingHostArray()', cve);               
+                cve.vulnerabilitys.forEach((vuln) => {
+                  
+                  if (vuln.in) {
+                    vuln.in.forEach((software) => {
 
-        if (response.data && response.data.CVE) {
+                      if (software.version && !vulnList.includes(software.version)) {
 
-          console.log('Valid IPs', response.data.CVE);
-          for (const cve of response.data.CVE) {
-            if (cve.vulnerabilitys) {
-              for (const vuln of cve.vulnerabilitys) {
-                if (vuln.in) {
-                  for (const software of vuln.in) {
-                    if (software.on) {
-                      for (const host of software.on) {
-                        if (host.nodes) {
-                          for (const node of host.nodes) {
-                            if (node.has_assigned) {
-                              for (const ip of node.has_assigned) {
-                                if (ip.address) {
-                                  ipAddresses.push(ip.address);
-                                  if (ipAddresses.length >= 10) {
-                                    return ipAddresses;
-                                    console.log('Testing Valid IP Addresses', ipAddresses); 
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
+                        vulnList.push(software.version);
                       }
-                    }
-                  }
-                }
+                    });
+                  }  
+                });
+              }
+            });
+          }
+          return vulnList;     
+        })
+      )
+  }
+
+  public getTestingIPNodes(): Observable<string[]> {
+    return this.apollo
+      .query<CVEResponse>({
+        query: gql`
+      {
+        CVE (first: 100) {
+          vulnerabilitys {
+            in {
+              version
+              on {
+                _id 
+                nodes {
+                  _id
+                } 
               }
             }
           }
         }
-
-        return ipAddresses;
+      }
+      `,
       })
-    );
+      .pipe(
+        map((response) => {
+          
+          const nodeList: any[] = [];
+          nodeList.push('Testing NodeList');
+          if (response.data.CVE) {
+            
+            console.log('DataService.getTestingIPNodes() - Data', response.data);
+            response.data.CVE.forEach((cve) => {              
+              if (cve.vulnerabilitys) { 
+                
+                console.log('DataService.getTestingIPNodes - CVE Vulnerability', cve.vulnerabilitys);
+              }
+            });
+          }
+          return nodeList;     
+        })
+      )
   }
-    
 }
