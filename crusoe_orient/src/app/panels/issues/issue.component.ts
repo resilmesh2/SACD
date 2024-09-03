@@ -157,9 +157,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
       this.endDate = null;
     }
 
-    // Check if both dates are valid
-    console.log('Issue Component.validateDateInput() - start', this.startDate);
-    console.log('Issue Conponent.validateDateInput() - end', this.endDate);
     this.isDateRangeValid = startDateValid && endDateValid && !!this.startDate && !!this.endDate;
   }
 
@@ -244,14 +241,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
   private getCombinedData(): Observable<[CVE[], string[]]> {
     const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
     const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
-    
-    // validation Data
-    //const testingVuln$: Observable<any[]> = this.data.getTestingSoftware();
-    //const testingHostArray$: Observable<any[]> = this.data.getTestingHostArray();
-    
-    //testingVuln$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Vulnerabilities', data));
-    //testingHostArray$.subscribe(data => console.log('IssueComponent - CombinedData() - Testing Host Array', data));
-
    
     return zip(cveDetails$, ipAddresses$);
   }
