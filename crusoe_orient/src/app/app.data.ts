@@ -6,3 +6,13 @@ export interface Issue {
   description: string;
   last_seen: Date;
 }
+
+export interface IssueDetail {
+  name: string;
+  severity: string;
+  status: string;
+  affectedAssets: string[];
+  description: string;
+  software: string;
+  vulnerabilityCount: int;
+}
