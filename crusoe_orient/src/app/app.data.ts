@@ -14,5 +14,5 @@ export interface IssueDetail {
   affectedAssets: string[];
   description: string;
   software: string;
-  vulnerabilityCount: int;
+  vulnerabilityCount: number;
 }
