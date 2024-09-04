@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Issue } from 'src/app/app.data';
@@ -43,7 +44,11 @@ export class IssueComponent implements OnInit, AfterViewInit {
   endDate: Date | null = null;
   isDateRangeValid = false;
 
-  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
+  constructor(
+    private data: DataService, 
+    private changeDetector: ChangeDetectorRef,
+    private router: Router
+  ) {
     this.dataSource = new MatTableDataSource([]);
   }
 
@@ -238,6 +243,16 @@ export class IssueComponent implements OnInit, AfterViewInit {
     }
   }
 
+  navigateToIssueDetail(issue: Issue): void {
+    this.router.navigate(['/auth/panel/issue', issue.name], {
+      queryParams: {
+        severity: issue.severity,
+        status: issue.status,
+        impact: issue.impact,
+      },
+    });
+  }
+
   private getCombinedData(): Observable<[CVE[], string[]]> {
     const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
     const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
@@ -254,6 +269,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
       affected_entity: this.ipAddresses[index],
       description: cve.description,
       last_seen: cve.published_date ? new Date(cve.published_date) : null,
+      impact: cve.impact
     }));
 
     this.dataSource.data = this.issues;

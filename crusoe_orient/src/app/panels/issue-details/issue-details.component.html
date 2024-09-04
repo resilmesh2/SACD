@@ -1,0 +1,18 @@
+<div class="issue-details-container">
+  <button (click)="goBack()"><-- Issues</button>
+  <span>{{ issueName }}</span>
+</div>
+
+<div class="issue-header">
+  <h1>{{ issueName }}</h1>
+</div>
+
+<div class="issue-details">
+  <div class="issue-info">
+    <span><strong>Severity:</strong> {{ issueSeverity }}</span>
+    <span><strong>Status:</strong> {{ issueStatus }}</span>
+  </div>
+  <div class="issue-impact">
+    <span><strong>Impact:</strong> {{ issueImpact }}</span>
+  </div>
+</div>

@@ -5,6 +5,7 @@ export interface Issue {
   affected_entity: string;
   description: string;
   last_seen: Date;
+  impact: string;
 }
 
 export interface IssueDetail {

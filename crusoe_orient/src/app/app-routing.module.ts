@@ -17,6 +17,7 @@ import { VulnerabilityComponent } from './panels/vulnerability/vulnerability.com
 import { ConfigurationComponent } from 'src/app/panels/decide-act/configuration/configuration.component';
 import { MyAccountComponent } from './panels/my-account/my-account.component';
 import { IssueComponent } from './panels/issues/issue.component';
+import { IssueDetailComponent } from './panels/issue-details/issue-details.component';
 
 /**
  * Modules and services
@@ -120,6 +121,12 @@ const routes: Routes = [
             data: { name: 'Network Visualization', panelGroup: panelGroups[0] },
             path: 'network-visualization/:ip',
             component: NetworkVisualizationComponent,
+            canActivate: [AuthGuard],
+          },
+          {
+            data: { type: 'Issue Details' },
+            path: 'issue/:name',
+            component: IssueDetailComponent,
             canActivate: [AuthGuard],
           },
         ],
