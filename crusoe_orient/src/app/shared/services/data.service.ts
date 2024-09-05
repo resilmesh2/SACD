@@ -10,7 +10,10 @@ import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
 import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { Issue } from 'src/app/app.data';
+import { Issue } from '../../panels/issues/issue.component';
+import { IssueDetail } from '../../panels/issue-details/issue-details.component';
+import { VulnerableAsset } from '../../panels/issue-details/issue-details.component';
+
 
 @Injectable({
   providedIn: 'root',
@@ -266,9 +269,127 @@ export class DataService {
       );
   }
 
+public getVulnerableAssets(cveCode: string): Observable<VulnerableAsset[]> {
+  return this.apollo
+    .query<CVEResponse>({
+      query: gql`
+        {
+          CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+            vulnerabilitys {
+              in {
+                version
+                on {
+                  _id
+                  nodes(first: 500) {
+                    _id
+                    has_assigned {
+                      _id
+                      address
+                      resolves_to {
+                        domain_name
+                      }
+                      part_of {
+                        note
+                        range
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const responseArray: VulnerableAsset[] = [];
+
+        if (!response.data.CVE || !response.data.CVE[0]) {
+          return []; // Return an empty array if there is no valid data
+        }
+
+        // A map to track subnets and the IPs/software they contain
+        const subnetMap = new Map<string, { ips: string[], software: Set<string> }>();
+        
+        console.log('DataService.getVulnerableAssets() response: ', response.data.CVE[0]);
+        console.log('DataService.getVulnerableAssets() vulnerabilitys: ', response.data.CVE[0].vulnerabilitys);
+
+        response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
+
+          vuln.in.forEach((software) => {
+
+            // Deduplicate by host ID
+            _.uniqBy(software.on, (n) => n._id).forEach((host) => {
+
+              host.nodes.forEach((node) => {
+
+                node.has_assigned.forEach((ip) => {
+
+                  const softwareArray: string[] = [];
+                  softwareArray.push(software.version);
+
+                  console.log('DataService - Software Array', softwareArray);
+
+                  // Handle IP Address
+                  responseArray.push({
+                    affectedAsset: ip.address,
+                    affectedAssetType: 'IP Address',
+                    software: softwareArray,
+                    vulnerabilityCount: 1,
+                  });
+
+                  // Handle Domain
+                  if (ip.resolves_to && ip.resolves_to.length > 0 && ip.resolves_to[0].domain_name) {
+                    const domain = ip.resolves_to[0].domain_name;
+                    responseArray.push({
+                      affectedAsset: domain,
+                      affectedAssetType: 'Domain Name',
+                      software: softwareArray,
+                      vulnerabilityCount: 1,
+                    });
+                  }
+
+                  // Handle Subnet (group IPs by subnet)
+                  if (ip.part_of && ip.part_of.length > 0) {
+                    const subnet = `${ip.part_of[0].range}`.trim();
+
+                    // Check if the subnet is already in the map
+                    if (!subnetMap.has(subnet)) {
+                      subnetMap.set(subnet, { ips: [], software: new Set<string>() });
+                    }
+
+                    // Add IP and software to the subnet
+                    subnetMap.get(subnet)!.ips.push(ip.address);
+                    subnetMap.get(subnet)!.software.add(software.version);
+                  }
+                });
+              });
+            });
+          });
+        });
+
+        // Process Subnets (after iterating over IPs)
+        subnetMap.forEach((value, subnet) => {
+          const softwareArray = Array.from(value.software); 
+
+          responseArray.push({
+            affectedAsset: subnet,
+            affectedAssetType: 'Subnet',
+            software: softwareArray,
+            vulnerabilityCount: value.ips.length,
+          });
+        });
+
+        return responseArray; ;
+        })
+      );
+  }
+
   /**
    * Returns the description of vulnerability
    */
+  
   public getCVEDetails(cveCode: string): Observable<CVE> {
     return this.apollo
       .query<{ CVE: CVE[] }>({

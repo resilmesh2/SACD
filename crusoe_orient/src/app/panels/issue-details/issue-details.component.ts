@@ -1,15 +1,30 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Issue } from 'src/app/app.data';
+import { Issue } from '../../panels/issues/issue.component';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Location } from '@angular/common';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { IssueDetail } from 'src/app/app.data';
 import { Observable } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+export interface VulnerableAsset {
+  affectedAsset: string;
+  affectedAssetType: string;
+  software: string[];
+  vulnerabilityCount: number;
+}
+
+export interface IssueDetail {
+  affectedAsset: string;
+  affectedAssetType: string;
+  description: string;
+  software: string[];
+  vulnerabilityCount: number;
+}
+
 
 @Component({
   selector: 'app-issue',
@@ -21,7 +36,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<IssueDetail>();
 
-  displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
+  displayedColumns: string[] = ['affectedAsset', 'affectedAssetType', 'description', 'software', 'vulnerabilityCount'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   
@@ -50,7 +65,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
     this.dataLoading = true;    
     this.getRouteParameters();
-    this.getVulnerableAssets();  
+    this.getVulnerableAffectedAssets();  
   }
 
   ngAfterViewInit(): void {
@@ -78,15 +93,6 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
     console.log('Get Vulnerable Assets');
 
     this.data.getVulnerableMachines(this.issueName)
-      .pipe(
-        catchError((error) => {
-          this.errorResponse = `Error fetching data: ${error}`;
-          this.dataLoading = false;
-          this.emptyResponse = true;
-          console.error(this.errorResponse);
-          return of([]);
-        })
-      )
       .subscribe(
         (vulnerables: VulnerabilityData[]) => {
           if (vulnerables && vulnerables.length > 0) {
@@ -95,6 +101,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
               .filter(row => row.ip && row.domainName && row.subnet && row.software)
               .map(row => ({
                 affectedAsset: row.ip,
+                affectedAssetType: 'IP Address',
                 description: this.issueDescription,
                 software: row.software,
                 vulnerabilityCount: 1
@@ -111,6 +118,58 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
           this.dataLoading = false;
           this.dataLoaded = true;
         }
+      )
+      .pipe(
+        catchError((error) => {
+          this.errorResponse = `Error fetching data: ${error}`;
+          this.dataLoading = false;
+          this.emptyResponse = true;
+          console.error(this.errorResponse);
+          return of([]);
+        })
+      );
+  }
+
+  getVulnerableAffectedAssets(): void {
+    console.log('IssuDetails.getVulnerableAffectedAssets()');
+
+    this.data.getVulnerableAssets(this.issueName)
+      .subscribe(
+        (assets: VulnerableAsset[]) => {
+          if (assets && assets.length > 0) {
+            // Filter and map valid rows
+            this.issueDetails = assets
+              .filter(row => row.affectedAsset && row.affectedAssetType && row.software && row.vulnerabilityCount)
+              .map(row => ({
+                affectedAsset: row.affectedAsset,
+                affectedAssetType: row.affectedAssetType,
+                description: this.issueDescription,
+                software: Array.isArray(row.software) ? row.software : [row.software],
+                vulnerabilityCount: row.vulnerabilityCount
+              }));
+
+            this.totalOccurrences = this.issueDetails.length;
+
+            console.log('IssueDetails.getVulnerableAffectedAssets() - Issues', this.issueDetails);
+
+            // Set the dataSource with the fetched issueDetails
+            this.setDataSource();
+          } else {
+            this.emptyResponse = true;
+          }
+
+          this.dataLoading = false;
+          this.dataLoaded = true;
+        }
+      )
+      .pipe(
+        catchError((error) => {
+          this.errorResponse = `Error fetching data: ${error}`;
+          this.dataLoading = false;
+          this.emptyResponse = true;
+          console.error(this.errorResponse);
+          return of([]);
+        })
       );
   }
 

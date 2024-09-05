@@ -7,8 +7,17 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { DataService } from 'src/app/shared/services/data.service';
-import { Issue } from 'src/app/app.data';
 import { CVE } from 'src/app/shared/models/vulnerability.model';
+
+export interface Issue {
+  name: string;
+  severity: string;
+  status: string;
+  affected_entity: string;
+  description: string;
+  last_seen: Date;
+  impact: string;
+}
 
 @Component({
   selector: 'app-issue',
