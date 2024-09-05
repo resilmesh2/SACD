@@ -3,6 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { Issue } from 'src/app/app.data';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Location } from '@angular/common';
+import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
+import { IssueDetail } from 'src/app/app.data';
+import { Observable } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-issue',
@@ -11,24 +18,50 @@ import { Location } from '@angular/common';
 })
 
 export class IssueDetailComponent implements OnInit, AfterViewInit {
-  
-  // later use
-  // dataSource = new MatTableDataSource<Issue-Detail>();
-  // displayedColumns: string[] = ['Affected Assets', 'description', 'software', 'vulnerability occurrences'];
+
+  dataSource = new MatTableDataSource<IssueDetail>();
+
+  displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   
   issueName = '';
   issueSeverity = '';
   issueStatus = '';
   issueImpact = '';
-  // total occurrences = 0;
+  issueDescription = '';
+  totalOccurrences = 0;
+
+  issueDetails: IssueDetail[] = [];
+  dataLoaded = false;
+  dataLoading = false;
+  emptyResponse = false;
+  errorResponse = '';
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private dataService: DataService
-  ) {}
+    private data: DataService,
+  ) {
+      this.dataSource = new MatTableDataSource([]);
+    }
 
   ngOnInit(): void {
+
+    this.dataLoading = true;    
+    this.getRouteParameters();
+    this.getVulnerableAssets();  
+  }
+
+  ngAfterViewInit(): void {
+
+    if (this.dataSource && this.paginator && this.dataLoaded) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
+  getRouteParameters(): void {
+    
     this.route.paramMap.subscribe(params => {
       this.issueName = params.get('name') || '';
     });
@@ -36,12 +69,57 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
     this.route.queryParams.subscribe(params => {
       this.issueSeverity = params['severity'] || '';
       this.issueStatus = params['status'] || '';
+      this.issueDescription = params['description'] || '';
       this.issueImpact = params['impact'] || '';
     });
   }
 
-  ngAfterViewInit() {
+  getVulnerableAssets(): void {
+    console.log('Get Vulnerable Assets');
 
+    this.data.getVulnerableMachines(this.issueName)
+      .pipe(
+        catchError((error) => {
+          this.errorResponse = `Error fetching data: ${error}`;
+          this.dataLoading = false;
+          this.emptyResponse = true;
+          console.error(this.errorResponse);
+          return of([]);
+        })
+      )
+      .subscribe(
+        (vulnerables: VulnerabilityData[]) => {
+          if (vulnerables && vulnerables.length > 0) {
+            // Filter and map valid rows
+            this.issueDetails = vulnerables
+              .filter(row => row.ip && row.domainName && row.subnet && row.software)
+              .map(row => ({
+                affectedAsset: row.ip,
+                description: this.issueDescription,
+                software: row.software,
+                vulnerabilityCount: 1
+              }));
+
+            this.totalOccurrences = this.issueDetails.length;
+
+            // Set the dataSource with the fetched issueDetails
+            this.setDataSource();
+          } else {
+            this.emptyResponse = true;
+          }
+
+          this.dataLoading = false;
+          this.dataLoaded = true;
+        }
+      );
+  }
+
+  setDataSource(): void {
+    this.dataSource.data = this.issueDetails;
+
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
 
   goBack(): void {

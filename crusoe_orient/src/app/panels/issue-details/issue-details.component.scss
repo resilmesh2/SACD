@@ -1,6 +1,32 @@
+.issue-table-container {
+  margin: 20px;
+  padding: 20px;
+}
+
+.full-width-table {
+  width: 100%;
+  border-collapse: collapse; 
+}
+
+.mat-header-cell {
+  background-color: #e0e0e0; 
+  font-weight: bold;
+  border-bottom: 1px solid #ccc; 
+}
+
+/* Styling for table rows */
+.mat-cell {
+  border-bottom: 1px solid #ddd; 
+}
+
+.mat-row, .mat-header-row {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
 .issue-details-container {
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
   margin-bottom: 20px;
 }
@@ -22,6 +48,7 @@
 .issue-details {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .issue-info {
@@ -32,4 +59,21 @@
 
 .issue-impact {
   align-self: flex-end;
+}
+
+.loading-message {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  height: 100%; 
+
+  mat-spinner {
+    margin-bottom: 10px; 
+  }
+
+  span {
+    font-size: 1.2rem; /* Optional: adjust text size */
+    color: #555; /* Optional: adjust text color */
+  }
 }

@@ -248,6 +248,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
       queryParams: {
         severity: issue.severity,
         status: issue.status,
+        description: issue.description,
         impact: issue.impact,
       },
     });

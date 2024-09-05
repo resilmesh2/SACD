@@ -9,10 +9,7 @@ export interface Issue {
 }
 
 export interface IssueDetail {
-  name: string;
-  severity: string;
-  status: string;
-  affectedAssets: string[];
+  affectedAsset: string;
   description: string;
   software: string;
   vulnerabilityCount: number;
