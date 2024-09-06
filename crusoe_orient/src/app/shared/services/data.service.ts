@@ -10,7 +10,7 @@ import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
 import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { Issue } from 'src/app/app.data';
+import { Issue } from '../../panels/issues/issue.component';
 
 @Injectable({
   providedIn: 'root',
@@ -266,6 +266,76 @@ export class DataService {
       );
   }
 
+  public getCVEData(): Observable<VulnerabilityData[]> {
+    return this.apollo
+      .query<CVEResponse>({
+        query: gql`
+      {
+        CVE {
+          vulnerabilitys {
+            in {
+              version
+              on {
+                _id
+                nodes(first: 500) {
+                  _id
+                  has_assigned {
+                    _id
+                    address
+                    resolves_to {
+                      domain_name
+                    }
+                    part_of {
+                      note
+                      range
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          const responseArray: VulnerabilityData[] = [];
+          if (!response.data.CVE[0]) {
+            return null;
+          }
+          response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
+            vuln.in.forEach((software) => {
+              _.uniqBy(software.on, (n) => n._id).forEach((host) => {
+                host.nodes.forEach((node) => {
+                  node.has_assigned.forEach((ip) => {
+                    let subnet = '';
+                    let domain = '';
+                    if (ip.part_of[0]) {
+                      subnet = `${ip.part_of[0].range}`;
+                      if (ip.part_of[0].note) {
+                        subnet += ` (${ip.part_of[0].note})`;
+                      }
+                    }
+                    if (ip.resolves_to[0]) {
+                      domain = ip.resolves_to[0].domain_name.toString();
+                    }
+                    responseArray.push({
+                      domainName: domain,
+                      subnet: subnet,
+                      ip: ip.address,
+                      software: software.version,
+                    });
+                  });
+                });
+              });
+            });
+          });
+          return responseArray;
+        })
+      );
+  }
+
   /**
    * Returns the description of vulnerability
    */
@@ -433,35 +503,6 @@ public getIPAddresses(): Observable<string[]> {
         return ipAddresses;
       })
     );
-  }
-
-  public getTestingCVES(): Observable<CVE[]> {
-    return this.apollo
-      .query<{ CVE: CVE[] }>({
-        query: gql`
-      {
-        CVE (first: 100) {
-          CVE_id
-          description
-          base_score_v3
-          published_date     
-        }
-      }
-      `,
-      })
-      .pipe(
-        map((response) => {
-          
-          const cveList: CVE[] = [];
-          if (response.data.CVE) {
-            
-            response.data.CVE.forEach((cve) => {
-              cveList.push(cve);
-            });
-          }
-          return cveList;     
-        })
-      )
   }
 
   public getTestingSoftware(): Observable<any[]> {

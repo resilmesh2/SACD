@@ -1,15 +1,21 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Issue } from 'src/app/app.data';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Location } from '@angular/common';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { IssueDetail } from 'src/app/app.data';
 import { Observable } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Issue } from '../../panels/issues/issue.component';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+export interface IssueDetail {
+  affectedAsset: string;
+  description: string;
+  software: string;
+  vulnerabilityCount: number;
+}
 
 @Component({
   selector: 'app-issue',
