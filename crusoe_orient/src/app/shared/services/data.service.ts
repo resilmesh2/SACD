@@ -11,6 +11,7 @@ import { Attributes } from 'src/app/shared/config/attributes';
 import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
 import { Issue } from 'src/app/app.data';
+import { IssueDetail } from '../../panels/issue-details/issue-details.component';
 
 @Injectable({
   providedIn: 'root',
@@ -265,6 +266,104 @@ export class DataService {
         })
       );
   }
+
+  public getVulnerableAffectedAssets(cveCode: string): Observable<VulnerableAffectedAsset[]> {
+    return this.apollo
+      .query<CVEResponse>({
+        query: gql`
+        {
+          CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+            vulnerabilitys {
+              in {
+                version
+                on {
+                  _id
+                  nodes(first: 500) {
+                    _id
+                    has_assigned {
+                      _id
+                      address
+                      resolves_to {
+                        domain_name
+                      }
+                      part_of {
+                        note
+                        range
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const assets: VulnerableAffectedAsset[] = [];
+        
+        if (!response.data.CVE[0]) {
+          return [];
+        }
+
+        response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
+          vuln.in.forEach((software) => {
+            const softwareVersion = [software.version];  // Software array will contain only one version
+
+            _.uniqBy(software.on, (host) => host._id).forEach((host) => {
+              host.nodes.forEach((node) => {
+                node.has_assigned.forEach((ip) => {
+                  // 1. For each IP Address
+                  assets.push({
+                    affectedAsset: ip.address,
+                    affectedAssetType: 'IP Address',
+                    software: softwareVersion,
+                    vulnerabilityCount: 1
+                  });
+
+                  // 2. For each Domain the IP resolves to
+                  ip.resolves_to.forEach((domain) => {
+                    assets.push({
+                      affectedAsset: domain.domain_name,
+                      affectedAssetType: 'Domain',
+                      software: softwareVersion,
+                      vulnerabilityCount: 1
+                    });
+                  });
+
+                  // 3. For Subnets, collect all vulnerable IPs and their software
+                  ip.part_of.forEach((subnet) => {
+                    const subnetSoftware: string[] = [];
+                    const vulnerableIps = [];
+
+                    host.nodes.forEach((node) => {
+                      node.has_assigned.forEach((assignedIp) => {
+                        if (assignedIp.part_of.some(s => s.range === subnet.range)) {
+                          vulnerableIps.push(assignedIp.address);
+                          subnetSoftware.push(software.version);
+                        }
+                      });
+                    });
+
+                    assets.push({
+                      affectedAsset: subnet.range,
+                      affectedAssetType: 'Subnet',
+                      software: Array.from(new Set(subnetSoftware)),  // Unique software versions
+                      vulnerabilityCount: vulnerableIps.length
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+
+        return assets;
+      })
+    );
+  }
+
 
   /**
    * Returns the description of vulnerability

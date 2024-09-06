@@ -4,12 +4,26 @@ import { Issue } from 'src/app/app.data';
 import { DataService } from 'src/app/shared/services/data.service';
 import { Location } from '@angular/common';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { IssueDetail } from 'src/app/app.data';
 import { Observable } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+export interface VulnerableAffectedAsset {
+  affectedAsset: string;
+  affectedAssetType: string;
+  software: string[];
+  vulnerabilityCount: number;
+}
+
+export interface IssueDetail {
+  affectedAsset: string;
+  affectedAssetType: string;
+  description: string;
+  software: string[];
+  vulnerabilityCount: number;
+}
 
 @Component({
   selector: 'app-issue',
