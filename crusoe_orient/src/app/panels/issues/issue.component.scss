@@ -57,3 +57,24 @@ mat-paginator {
   font-weight: bold;
   text-align: right;
 }
+
+/* Style to align and space the search and filter dropdown */
+.search-input,
+.filter-dropdown {
+  width: 48%;
+  margin-right: 2%;
+}
+
+.filter-dropdown {
+  margin-bottom: 16px;
+}
+
+/* Ensure the table takes full width */
+.full-width-table {
+  width: 100%;
+}
+
+.mat-elevation-z8 {
+  margin: 20px;
+  padding: 20px;
+}

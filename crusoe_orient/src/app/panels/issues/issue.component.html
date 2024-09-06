@@ -1,11 +1,20 @@
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8 issue-table-container">
 
-  <!-- Search input field to filter by name -->
-  <mat-form-field>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search by name">
+  <!-- Search input field -->
+  <mat-form-field class="search-input">
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by issue name or affected asset">
   </mat-form-field>
 
-  <table mat-table [dataSource]="dataSource" class="mat-table">
+  <!-- Dropdown for filtering by severity -->
+  <mat-form-field class="filter-dropdown">
+    <mat-label>Filter by Severity</mat-label>
+    <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
+      <mat-option value="All">All</mat-option>
+      <mat-option *ngFor="let severity of uniqueSeverities" [value]="severity">{{ severity }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">

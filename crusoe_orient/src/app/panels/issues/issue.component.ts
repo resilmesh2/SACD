@@ -16,30 +16,51 @@ export class IssueComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  ngOnInit(): void {}
+  selectedSeverity = 'All'; // Default to "All" to show all data
+  uniqueSeverities: string[] = []; // Array to hold unique severity values
+
+  ngOnInit(): void {
+    // Get unique severity values for the dropdown
+    this.uniqueSeverities = Array.from(new Set(issues.map(issue => issue.severity)));
+  }
 
   ngAfterViewInit(): void {
-    // Assign the paginator and sort after the view has been initialized
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    // Customize filterPredicate to filter by 'name' or 'affected_entity'
-    this.dataSource.filterPredicate = (data: Issue, filter: string) => {
-      const filterValue = filter.trim().toLowerCase();
+    // Filter logic for both search term and severity
+    this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
+      const searchTerm = filter.trim().toLowerCase();
+      const matchesSearchTerm =
+        data.name.toLowerCase().includes(searchTerm) ||
+        data.affected_entity.toLowerCase().includes(searchTerm);
 
-      // Check if the filter matches either the name or affected_entity
-      return (
-        data.name.trim().toLowerCase().includes(filterValue) ||
-        data.affected_entity.trim().toLowerCase().includes(filterValue)
-      );
+      // Filter based on the selected severity
+      const matchesSeverity =
+        this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
+
+      // Return true if both conditions match
+      return matchesSearchTerm && matchesSeverity;
     };
   }
 
-  // Method to apply the filter when user types in the search box
+  // Apply filter when search or dropdown value changes
   applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
+    const filterValue = (event.target as HTMLInputElement)?.value || '';
+
+    // Set the filter on the dataSource
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  // Apply filter when severity dropdown changes
+  onSeverityChange(): void {
+    // Reapply the filter after changing severity
+    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
