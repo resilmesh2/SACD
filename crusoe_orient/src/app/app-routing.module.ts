@@ -51,12 +51,6 @@ export const panels = [
     canActivate: [AuthGuard],
   },
   {
-    data: { name: 'Vulnerability', panelGroup: panelGroups[0] },
-    path: 'vulnerability',
-    component: VulnerabilityComponent,
-    canActivate: [AuthGuard],
-  },
-  {
     data: { name: 'Issue', panelGroup: panelGroups[0] },
     path: 'issue',
     component: IssueComponent,
