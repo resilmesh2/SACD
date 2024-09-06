@@ -1,4 +1,10 @@
 <div class="mat-elevation-z8">
+
+  <!-- Search input field to filter by name -->
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by name">
+  </mat-form-field>
+
   <table mat-table [dataSource]="dataSource" class="mat-table">
 
     <!-- Name Column -->
@@ -38,4 +44,5 @@
 
   <!-- Paginator -->
   <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+
 </div>
