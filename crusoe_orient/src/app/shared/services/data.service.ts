@@ -306,15 +306,12 @@ public getVulnerableAssets(cveCode: string): Observable<VulnerableAsset[]> {
         const responseArray: VulnerableAsset[] = [];
 
         if (!response.data.CVE || !response.data.CVE[0]) {
-          return []; // Return an empty array if there is no valid data
+          return [];
         }
 
         // A map to track subnets and the IPs/software they contain
         const subnetMap = new Map<string, { ips: string[], software: Set<string> }>();
         
-        console.log('DataService.getVulnerableAssets() response: ', response.data.CVE[0]);
-        console.log('DataService.getVulnerableAssets() vulnerabilitys: ', response.data.CVE[0].vulnerabilitys);
-
         response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
 
           vuln.in.forEach((software) => {
@@ -329,8 +326,6 @@ public getVulnerableAssets(cveCode: string): Observable<VulnerableAsset[]> {
                   const softwareArray: string[] = [];
                   softwareArray.push(software.version);
 
-                  console.log('DataService - Software Array', softwareArray);
-
                   // Handle IP Address
                   responseArray.push({
                     affectedAsset: ip.address,
@@ -344,7 +339,7 @@ public getVulnerableAssets(cveCode: string): Observable<VulnerableAsset[]> {
                     const domain = ip.resolves_to[0].domain_name;
                     responseArray.push({
                       affectedAsset: domain,
-                      affectedAssetType: 'Domain Name',
+                      affectedAssetType: 'Domain',
                       software: softwareArray,
                       vulnerabilityCount: 1,
                     });

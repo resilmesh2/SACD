@@ -131,46 +131,49 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   }
 
   getVulnerableAffectedAssets(): void {
-    console.log('IssuDetails.getVulnerableAffectedAssets()');
-
     this.data.getVulnerableAssets(this.issueName)
-      .subscribe(
-        (assets: VulnerableAsset[]) => {
-          if (assets && assets.length > 0) {
-            // Filter and map valid rows
-            this.issueDetails = assets
-              .filter(row => row.affectedAsset && row.affectedAssetType && row.software && row.vulnerabilityCount)
-              .map(row => ({
-                affectedAsset: row.affectedAsset,
-                affectedAssetType: row.affectedAssetType,
-                description: this.issueDescription,
-                software: Array.isArray(row.software) ? row.software : [row.software],
-                vulnerabilityCount: row.vulnerabilityCount
-              }));
-
-            this.totalOccurrences = this.issueDetails.length;
-
-            console.log('IssueDetails.getVulnerableAffectedAssets() - Issues', this.issueDetails);
-
-            // Set the dataSource with the fetched issueDetails
-            this.setDataSource();
-          } else {
-            this.emptyResponse = true;
-          }
-
-          this.dataLoading = false;
-          this.dataLoaded = true;
-        }
-      )
       .pipe(
+        // Handle errors using catchError before subscribe
         catchError((error) => {
           this.errorResponse = `Error fetching data: ${error}`;
           this.dataLoading = false;
           this.emptyResponse = true;
           console.error(this.errorResponse);
-          return of([]);
+          return of([]); // Return an empty array in case of error
         })
-      );
+    )
+    .subscribe(
+      (assets: VulnerableAsset[]) => {
+        if (assets && assets.length > 0) {
+          // Filter and map valid rows
+          this.issueDetails = assets
+            .filter(row => 
+              row.affectedAsset && 
+              row.affectedAssetType && 
+              row.software && 
+              Array.isArray(row.software) && 
+              row.software.every(item => typeof item === 'string') && 
+              row.vulnerabilityCount)
+            .map(row => ({
+              affectedAsset: row.affectedAsset,
+              affectedAssetType: row.affectedAssetType,
+              description: this.issueDescription,
+              software: row.software,
+              vulnerabilityCount: row.vulnerabilityCount
+            }));
+
+          this.totalOccurrences = this.issueDetails.length;
+
+          // Set the dataSource with the fetched issueDetails
+          this.setDataSource();
+        } else {
+          this.emptyResponse = true;
+        }
+
+        this.dataLoading = false;
+        this.dataLoaded = true;
+      }
+    );
   }
 
   setDataSource(): void {
