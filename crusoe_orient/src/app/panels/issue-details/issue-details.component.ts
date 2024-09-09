@@ -29,7 +29,16 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  private paginator: MatPaginator;
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setDataSourceAttributes();
+  }
+
+  setDataSourceAttributes() {
+    this.dataSource.paginator = this.paginator;
+  }
   
   issueName = '';
   issueSeverity = '';
