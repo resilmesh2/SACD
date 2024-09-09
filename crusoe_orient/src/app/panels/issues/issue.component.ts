@@ -3,6 +3,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Observable, zip } from 'rxjs';
+import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { DataService } from 'src/app/shared/services/data.service';
 import { CVE } from 'src/app/shared/models/vulnerability.model';
 
@@ -58,7 +61,19 @@ export class IssueComponent implements OnInit, AfterViewInit {
   issues: Issue[] = [];
   totalSortedIssues: number = 0;
 
-  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {}
+  startDateControl = new FormControl();
+  endDateControl = new FormControl();
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+  isDateRangeValid = false;
+
+  constructor(
+    private data: DataService, 
+    private changeDetector: ChangeDetectorRef,
+    private router: Router
+  ) {
+    this.dataSource = new MatTableDataSource([]);
+  }
 
   ngOnInit(): void {
     this.dataLoading = true;
@@ -106,13 +121,64 @@ export class IssueComponent implements OnInit, AfterViewInit {
       const matchesStatus =
         this.selectedStatus === 'All' || data.status === this.selectedStatus;
 
-      return matchesSearchTerm && matchesSeverity && matchesStatus;
+      const matchesDateRange =
+        (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
+        (!this.endDate || new Date(data.last_seen) <= this.endDate);
+
+      return matchesSearchTerm && matchesSeverity && matchesStatus && matchesDateRange;
     };
 
   }
 
   updateTotalSortedIssues(): void {
     this.totalSortedIssues = this.dataSource.filteredData.length;
+  }
+
+  dateChange(): void {
+    this.validateDateInputs();
+
+    // If either start or end date is cleared, reset the filter
+    if (!this.startDateControl.value || !this.endDateControl.value) {
+      this.clearDateFilter();
+    }
+  }
+
+  clearDateFilter(): void {
+    // Clear the filter predicate and reset the data
+    this.dataSource.filterPredicate = () => true;
+    this.dataSource.filter = ''; // Trigger the reset
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+    this.updateTotalSortedIssues();
+    this.isDateRangeValid = false;
+  }
+
+  validateDateInputs(): void {
+    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/; 
+    
+    const startDateValid = datePattern.test(this.startDateControl.value);
+    const endDateValid = datePattern.test(this.endDateControl.value);
+
+    if (startDateValid) {
+      this.startDate = new Date(this.startDateControl.value.replace(/\//g, '-'));
+    } else {
+      this.startDate = null;
+    }
+
+    if (endDateValid) {
+      this.endDate = new Date(this.endDateControl.value.replace(/\//g, '-'));
+    } else {
+      this.endDate = null;
+    }
+
+    this.isDateRangeValid = startDateValid && endDateValid && !!this.startDate && !!this.endDate;
+  }
+
+  isValidDateFormat(date: Date | null): boolean {
+    if (!date) return false;
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '/');
+    return /^\d{4}\/\d{2}\/\d{2}$/.test(dateStr);
   }
 
   applyFilter(event: Event): void {
@@ -124,6 +190,21 @@ export class IssueComponent implements OnInit, AfterViewInit {
     }
 
     this.updateTotalSortedIssues();
+  }
+
+  applyDateFilter(): void {
+    if (this.isDateRangeValid) {
+      this.dataSource.filterPredicate = (data: Issue, filter: string) => {
+        const lastSeenDate = new Date(data.last_seen);
+        return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
+      };
+
+      this.dataSource.filter = 'filterDate'; // Trigger the filter to run
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+      this.updateTotalSortedIssues();
+    }
   }
 
   onSeverityChange(): void {
