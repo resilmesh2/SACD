@@ -1,4 +1,29 @@
 <div class="mat-elevation-z8 issue-table-container">
+
+    <!-- Show spinner while loading data -->
+  <ng-container *ngIf="dataLoading">
+    <mat-spinner></mat-spinner>
+  </ng-container>
+
+  <!-- Show error message if there's an error -->
+  <ng-container *ngIf="errorResponse && !dataLoading">
+    <p class="error">
+      <strong>Error fetching data from GraphQL API.</strong><br />
+      <span>Error message: {{ errorResponse }}</span>
+    </p>
+  </ng-container>
+
+  <!-- Show no data message if the response is empty -->
+  <ng-container *ngIf="emptyResponse && !dataLoading && !errorResponse">
+    <p class="no-data">
+      <strong>No available data.</strong>
+    </p>
+  </ng-container>
+
+  <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse && !errorResponse">
+  <div class="total-issues">
+    Total Number of Issues: {{ totalSortedIssues }}
+  </div>
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
   </mat-form-field>
@@ -63,5 +88,6 @@
 
   <!-- Paginator -->
   <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
-
+  </ng-container>
 </div>
+

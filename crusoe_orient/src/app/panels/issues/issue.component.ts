@@ -4,8 +4,17 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Observable, zip } from 'rxjs';
 import { DataService } from 'src/app/shared/services/data.service';
-import { Issue } from 'src/app/app.data';
 import { CVE } from 'src/app/shared/models/vulnerability.model';
+
+export interface Issue {
+  name: string;
+  severity: string;
+  status: string;
+  affected_entity: string;
+  description: string;
+  last_seen: Date;
+  impact: string;
+}
 
 @Component({
   selector: 'app-issue',
@@ -31,6 +40,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
   errorResponse = '';
   ipAddresses: string[] = [];
   issues: Issue[] = [];
+  totalSortedIssues: number = 0;
 
   constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {}
 
@@ -50,6 +60,10 @@ export class IssueComponent implements OnInit, AfterViewInit {
           this.emptyResponse = true;
         }
         this.dataLoading = false;
+
+        
+        this.updateTotalSortedIssues();
+
         this.changeDetector.detectChanges();
       },
       (error) => {
@@ -62,6 +76,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
@@ -80,6 +95,11 @@ export class IssueComponent implements OnInit, AfterViewInit {
 
       return matchesSearchTerm && matchesSeverity && matchesStatus;
     };
+
+  }
+
+  updateTotalSortedIssues(): void {
+    this.totalSortedIssues = this.dataSource.filteredData.length;
   }
 
   applyFilter(event: Event): void {
@@ -89,6 +109,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
   }
 
   onSeverityChange(): void {
@@ -97,6 +119,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
   }
 
   onStatusChange(): void {
@@ -105,6 +129,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+
+    this.updateTotalSortedIssues();
   }
 
   scoreClass(value: string, type: number) {
@@ -153,9 +179,17 @@ export class IssueComponent implements OnInit, AfterViewInit {
       affected_entity: this.ipAddresses[index],
       description: cve.description,
       last_seen: cve.published_date ? new Date(cve.published_date) : null,
+      impact: cve.impact,
     }));
     
     this.dataSource.data = this.issues;
+
+    if (this.paginator && this.sort) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+
+    this.updateTotalSortedIssues();
 
     this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
     this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
