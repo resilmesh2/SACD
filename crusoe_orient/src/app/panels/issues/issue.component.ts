@@ -1,8 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { Issue, issues } from 'src/app/app.data.ts';
+import { Observable, zip } from 'rxjs';
+import { DataService } from 'src/app/shared/services/data.service';
+import { Issue } from 'src/app/app.data';
+import { CVE } from 'src/app/shared/models/vulnerability.model';
 
 @Component({
   selector: 'app-issue',
@@ -10,59 +13,152 @@ import { Issue, issues } from 'src/app/app.data.ts';
   styleUrls: ['./issue.component.scss'],
 })
 export class IssueComponent implements OnInit, AfterViewInit {
-  dataSource = new MatTableDataSource<Issue>(issues);
-  displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description'];
-
+  dataSource = new MatTableDataSource<Issue>();
+  displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  
+  selectedSeverity = 'All';
+  selectedStatus = 'All';
+  issueSeverity: string[] = [];
+  issueStatus: string[] = [];
 
-  selectedSeverity = 'All'; // Default to "All" to show all data
-  uniqueSeverities: string[] = []; // Array to hold unique severity values
+  cveDetails: CVE[] = [];
+  dataLoaded = false;
+  dataLoading = false;
+  emptyResponse = false;
+  errorResponse = '';
+  ipAddresses: string[] = [];
+  issues: Issue[] = [];
+
+  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    // Get unique severity values for the dropdown
-    this.uniqueSeverities = Array.from(new Set(issues.map(issue => issue.severity)));
+    this.dataLoading = true;
+
+    this.getCombinedData().subscribe(
+      ([cveDetails, ipAddresses]) => {
+        this.cveDetails = cveDetails;
+        this.ipAddresses = ipAddresses;
+
+        this.processIssues();
+
+        if (this.cveDetails.length > 0 && this.ipAddresses.length > 0) {
+          this.dataLoaded = true;
+        } else {
+          this.emptyResponse = true;
+        }
+        this.dataLoading = false;
+        this.changeDetector.detectChanges();
+      },
+      (error) => {
+        console.error('Error:', error);
+        this.errorResponse = error;
+        this.dataLoading = false;
+        this.changeDetector.detectChanges();
+      }
+    );
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    // Filter logic for both search term and severity
     this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
       const searchTerm = filter.trim().toLowerCase();
+
       const matchesSearchTerm =
         data.name.toLowerCase().includes(searchTerm) ||
         data.affected_entity.toLowerCase().includes(searchTerm);
 
-      // Filter based on the selected severity
       const matchesSeverity =
         this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
 
-      // Return true if both conditions match
-      return matchesSearchTerm && matchesSeverity;
+      const matchesStatus =
+        this.selectedStatus === 'All' || data.status === this.selectedStatus;
+
+      return matchesSearchTerm && matchesSeverity && matchesStatus;
     };
   }
 
-  // Apply filter when search or dropdown value changes
   applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement)?.value || '';
-
-    // Set the filter on the dataSource
+    const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-
+    
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
 
-  // Apply filter when severity dropdown changes
   onSeverityChange(): void {
-    // Reapply the filter after changing severity
     this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  onStatusChange(): void {
+    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  scoreClass(value: string, type: number) {
+    if (type === 2) {
+      if (Number(value) <= 3.9) {
+        return 'low';
+      }
+
+      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+        return 'medium';
+      }
+
+      if (Number(value) > 6.9) {
+        return 'high';
+      }
+    } else if (type === 3) {
+      if (Number(value) > 8.9) {
+        return 'critical';
+      }
+      if (Number(value) <= 3.9) {
+        return 'low';
+      }
+
+      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+        return 'medium';
+      }
+
+      if (Number(value) > 6.9) {
+        return 'high';
+      }
+    }
+  }
+
+  private getCombinedData(): Observable<[CVE[], string[]]> {
+    const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
+    const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
+    
+    return zip(cveDetails$, ipAddresses$);
+  }
+
+  private processIssues(): void {
+    this.issues = this.cveDetails.map((cve, index) => ({
+      name: cve.CVE_id,
+      severity: this.scoreClass(cve.base_score_v3, 3),
+      status: 'Open',
+      affected_entity: this.ipAddresses[index],
+      description: cve.description,
+      last_seen: cve.published_date ? new Date(cve.published_date) : null,
+    }));
+    
+    this.dataSource.data = this.issues;
+
+    this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
+    this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
+    this.changeDetector.detectChanges();
   }
 }
