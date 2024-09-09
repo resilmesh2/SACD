@@ -98,10 +98,9 @@
       <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
     </ng-container>
 
-    <!-- Last Seen Date Column -->
     <ng-container matColumnDef="last_seen">
       <th mat-header-cell *matHeaderCellDef> Last Seen </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.last_seen }} </td>
+      <td mat-cell *matCellDef="let issue"> {{ issue.last_seen | date:'yyyy/MM/dd\'T\'HH:mm:ss' }} </td>
     </ng-container>
 
     <!-- Table Header and Rows -->
