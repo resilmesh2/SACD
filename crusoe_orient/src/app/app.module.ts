@@ -49,6 +49,8 @@ import { MyAccountComponent } from './panels/my-account/my-account.component';
 
 // Issue
 import { IssueComponent } from './panels/issues/issue.component';
+import { IssueDetailComponent } from './panels/issue-details/issue-details.component';
+
 /**
  * Other components
  */
@@ -107,6 +109,7 @@ import { MatSelectModule } from '@angular/material/select';
     NetworkVisualizationComponent,
     VulnerabilityComponent,
     IssueComponent,
+    IssueDetailComponent,
   ],
   imports: [
     BrowserModule,

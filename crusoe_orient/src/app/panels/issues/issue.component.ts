@@ -258,6 +258,17 @@ export class IssueComponent implements OnInit, AfterViewInit {
     }
   }
 
+  navigateToIssueDetail(issue: Issue): void {
+    this.router.navigate(['/auth/panel/issue', issue.name], {
+      queryParams: {
+        severity: issue.severity,
+        status: issue.status,
+        description: issue.description,
+        impact: issue.impact,
+      },
+    });
+  }
+
   private getCombinedData(): Observable<[CVE[], string[]]> {
     const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
     const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();

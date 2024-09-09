@@ -10,7 +10,6 @@ import { tap, map } from 'rxjs/operators';
 import { Attributes } from 'src/app/shared/config/attributes';
 import { CVEResponse, CVE } from 'src/app/shared/models/vulnerability.model';
 import { VulnerabilityData } from '../../panels/vulnerability/vulnerability.component';
-import { Issue } from 'src/app/app.data';
 
 @Injectable({
   providedIn: 'root',
