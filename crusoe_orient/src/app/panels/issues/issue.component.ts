@@ -22,11 +22,27 @@ export interface Issue {
   styleUrls: ['./issue.component.scss'],
 })
 export class IssueComponent implements OnInit, AfterViewInit {
+
   dataSource = new MatTableDataSource<Issue>();
   displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
   
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  private paginator: MatPaginator;
+  private sort: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSourceAttributes();
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setDataSourceAttributes();
+  }
+
+  setDataSourceAttributes() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }  
   
   selectedSeverity = 'All';
   selectedStatus = 'All';
@@ -76,9 +92,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
 
     this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
       const searchTerm = filter.trim().toLowerCase();
