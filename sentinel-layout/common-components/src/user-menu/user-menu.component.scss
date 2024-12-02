@@ -1,0 +1,37 @@
+.menu-trigger {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-icon {
+  display: flex;
+  flex-direction: row;
+  color: white;
+}
+
+.user-picture-container {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  color: black;
+  width: 15px;
+  height: 15px;
+}

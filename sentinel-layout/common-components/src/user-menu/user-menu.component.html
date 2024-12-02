@@ -1,0 +1,37 @@
+<button mat-button class="menu-trigger" data-cy="sentinel-user-menu" [matMenuTriggerFor]="userMenu">
+  <div class="user-icon">
+    @if (iconSrc) {
+      <div class="user-picture-container">
+        <img loading="lazy" class="avatar" [alt]="user?.name" [src]="iconSrc" />
+      </div>
+    } @else {
+      <mat-icon>face</mat-icon>
+    }
+    <mat-icon>expand_more</mat-icon>
+  </div>
+</button>
+<mat-menu #userMenu="matMenu">
+  <div class="content" data-cy="sentinel-user-menu-detail">
+    <sentinel-user-card [user]="user" [iconSrc]="iconSrc"></sentinel-user-card>
+    <mat-divider></mat-divider>
+    @if (user && userProfileRoute) {
+      <button mat-menu-item [routerLink]="userProfileRoute">
+        <mat-icon>account_circle</mat-icon>
+        {{ i18n().myAccount }}
+      </button>
+    }
+    @if (!user) {
+      <button mat-menu-item (click)="onLogin()">
+        <mat-icon>login</mat-icon>
+        {{ i18n().login }}
+      </button>
+    } @else {
+      @if (user) {
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>exit_to_app</mat-icon>
+          {{ i18n().logout }}
+        </button>
+      }
+    }
+  </div>
+</mat-menu>

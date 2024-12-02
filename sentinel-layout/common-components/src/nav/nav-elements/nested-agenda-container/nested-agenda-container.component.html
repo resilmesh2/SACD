@@ -1,0 +1,47 @@
+<div class="nested-container" [class.root-nested]="topLevelAgendaContainersCollapsed">
+  <button
+    [class.root-nested]="topLevelAgendaContainersCollapsed"
+    mat-button
+    (click)="expanded = !expanded"
+    [matTooltip]="
+      agendaContainer?.label | sentinelDefaultValueString | sentinelTooltipOnShortened: maxElementNameLength
+    "
+    matTooltipPosition="above"
+  >
+    {{ agendaContainer?.label | sentinelDefaultValueString | sentinelShortString: maxElementNameLength }}
+    <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </button>
+</div>
+
+@if (expanded) {
+  <div class="nested" [class.root-nested]="topLevelAgendaContainersCollapsed">
+    @for (element of agendaContainer?.children ?? []; track element.label) {
+      <ng-container
+        [ngTemplateOutlet]="(element | isAgendaContainer) ? nestedAgendaContainerTemplate : agendaTemplate"
+        [ngTemplateOutletContext]="{ $implicit: element }"
+      >
+      </ng-container>
+    }
+  </div>
+}
+
+<ng-template #agendaTemplate let-element>
+  <sentinel-agenda-element
+    [topLevelAgendaContainersCollapsed]="topLevelAgendaContainersCollapsed"
+    [nested]="true"
+    [doubleNested]="doubleNested"
+    [agenda]="element"
+    [maxElementNameLength]="maxElementNameLength"
+    (agendaSelected)="onAgendaSelected($event)"
+  ></sentinel-agenda-element>
+</ng-template>
+
+<ng-template #nestedAgendaContainerTemplate let-element>
+  <sentinel-nested-agenda-container
+    [topLevelAgendaContainersCollapsed]="topLevelAgendaContainersCollapsed"
+    [doubleNested]="true"
+    [agendaContainer]="element"
+    [maxElementNameLength]="maxElementNameLength"
+    (agendaSelected)="onAgendaSelected($event)"
+  ></sentinel-nested-agenda-container>
+</ng-template>

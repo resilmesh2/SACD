@@ -1,0 +1,9 @@
+@for (rootAgendaContainer of elements; track rootAgendaContainer.label) {
+  <sentinel-root-agenda-container
+    [topLevelAgendaContainersCollapsed]="topLevelAgendaContainersCollapsed"
+    [rootAgendaContainer]="rootAgendaContainer"
+    [maxElementNameLength]="maxElementNameLength"
+    (agendaSelected)="onAgendaSelected($event)"
+  >
+  </sentinel-root-agenda-container>
+}

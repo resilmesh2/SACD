@@ -1,0 +1,185 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+$sentinel-base-font: 'Source Sans Pro', sans-serif;
+
+$m2-sentinel-primary-palette: mat.m2-define-palette(mat.$m2-indigo-palette);
+$m2-sentinel-accent-palette:  mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$m2-sentinel-warn-palette:    mat.m2-define-palette(mat.$m2-red-palette);
+$m2-sentinel-theme: mat.m2-define-light-theme((
+    color: (
+      primary: $m2-sentinel-primary-palette,
+      accent: $m2-sentinel-accent-palette,
+      warn: $m2-sentinel-warn-palette
+    ),
+    density: 0
+));
+
+$m2-sentinel-typography: mat.m2-define-typography-config(
+  $font-family: $sentinel-base-font,
+  $headline-1:     mat.m2-define-typography-level(112px, 112px, 300, $font-family: $sentinel-base-font, $letter-spacing: -0.05em),
+  $headline-2:     mat.m2-define-typography-level(56px, 56px, 400, $font-family: $sentinel-base-font, $letter-spacing: -0.02em),
+  $headline-3:     mat.m2-define-typography-level(45px, 48px, 400, $font-family: $sentinel-base-font, $letter-spacing: -0.005em),
+  $headline-4:     mat.m2-define-typography-level(34px, 40px, 400, $font-family: $sentinel-base-font),
+  $headline-5:      mat.m2-define-typography-level(24px, 32px, 400, $font-family: $sentinel-base-font),
+  $headline-6:         mat.m2-define-typography-level(20px, 32px, 500, $font-family: $sentinel-base-font),
+  $subtitle-1:  mat.m2-define-typography-level(16px, 28px, 400, $font-family: $sentinel-base-font),
+  $subtitle-2:        mat.m2-define-typography-level(14px, 24px, 500, $font-family: $sentinel-base-font),
+  $body-1:  mat.m2-define-typography-level(15px, 24px, 400, $font-family: $sentinel-base-font),
+  $body-2:        mat.m2-define-typography-level(14px, 20px, 400, $font-family: $sentinel-base-font),
+  $caption:       mat.m2-define-typography-level(12px, 20px, 400, $font-family: $sentinel-base-font),
+  $button:        mat.m2-define-typography-level(14px, 14px, 500, $font-family: $sentinel-base-font)
+);
+$m2-primary: mat.m2-get-color-from-palette($m2-sentinel-primary-palette);
+$m2-accent: mat.m2-get-color-from-palette($m2-sentinel-accent-palette);
+$m2-warn: mat.m2-get-color-from-palette($m2-sentinel-warn-palette);
+
+
+$sentinel-palettes: (
+  primary: (
+    0: #000000,
+    10: #00006E,
+    20: #0000AC,
+    25: #0000CD,
+    30: #1318E1,
+    35: #272FEB,
+    40: #3741F7,
+    50: #5A64FF,
+    60: #7C84FF,
+    70: #9DA3FF,
+    80: #BFC2FF,
+    90: #E0E0FF,
+    95: #F1EFFF,
+    98: #FBF8FF,
+    99: #FFFBFF,
+    100: #ffffff,
+  ),
+  secondary: (
+    0: #000000,
+    10: #0A0D30,
+    20: #2B2D51,
+    25: #36385C,
+    30: #414469,
+    35: #4D4F75,
+    40: #595B82,
+    50: #72749C,
+    60: #8B8DB7,
+    70: #A6A8D3,
+    80: #C2C3EF,
+    90: #E0E0FF,
+    95: #F1EFFF,
+    98: #FBF8FF,
+    99: #FFFBFF,
+    100: #ffffff,
+  ),
+  tertiary: (
+    0: #000000,
+    10: #261900,
+    20: #402d00,
+    25: #4e3800,
+    30: #5c4200,
+    35: #6b4d00,
+    40: #7a5900,
+    50: #997000,
+    60: #b98900,
+    70: #dba200,
+    80: #fabd29,
+    90: #ffdea2,
+    95: #ffefd6,
+    98: #fff8f2,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+  neutral: (
+    0: #000000,
+    4: #111114,
+    6: #1B1B1F,
+    10: #1B1B1F,
+    12: #262529,
+    17: #262529,
+    20: #303034,
+    22: #303034,
+    24: #3C3B3F,
+    25: #3C3B3F,
+    30: #47464A,
+    35: #535256,
+    40: #5F5E62,
+    50: #78767A,
+    60: #929094,
+    70: #ADAAAF,
+    80: #C8C5CA,
+    87: #E5E1E6,
+    90: #E5E1E6,
+    92: #F3EFF4,
+    94: #F3EFF4,
+    95: #F3EFF4,
+    96: #FCF8FD,
+    98: #FCF8FD,
+    99: #ffffff,
+    100: #ffffff,
+  ),
+  neutral-variant: (
+    0: #000000,
+    10: #1b1b23,
+    20: #303038,
+    25: #3b3b43,
+    30: #46464f,
+    35: #52515b,
+    40: #5e5d67,
+    50: #777680,
+    60: #91909a,
+    70: #acaab4,
+    80: #c7c5d0,
+    90: #e4e1ec,
+    95: #f1f2f2,
+    98: #fbf8ff,
+    99: #fbfcff,
+    100: #ffffff,
+  ),
+  error: (
+    0: #000000,
+    10: #410002,
+    20: #690005,
+    25: #7e0007,
+    30: #93000a,
+    35: #a80710,
+    40: #ba1a1a,
+    50: #de3730,
+    60: #ff5449,
+    70: #ff897d,
+    80: #ffb4ab,
+    90: #ffdad6,
+    95: #ffedea,
+    98: #fff8f7,
+    99: #fffbff,
+    100: #ffffff,
+  ),
+);
+
+$_rest: (
+  secondary: map.get($sentinel-palettes, secondary),
+  neutral: map.get($sentinel-palettes, neutral),
+  neutral-variant: map.get($sentinel-palettes,  neutral-variant),
+  error: map.get($sentinel-palettes, error),
+);
+$_primary: map.merge(map.get($sentinel-palettes, primary), $_rest);
+$_tertiary: map.merge(map.get($sentinel-palettes, tertiary), $_rest);
+
+$sentinel-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $_primary,
+    tertiary: $_tertiary,
+  ),
+  typography: (
+    plain-family: $sentinel-base-font,
+    brand-family: $sentinel-base-font,
+    bold-weight: 700,
+    medium-weight: 500,
+    regular-weight: 400,
+    use-system-variables: true
+  ),
+  density: (
+    scale: -2
+  )
+));

@@ -1,0 +1,20 @@
+@if (notification$ | sAsync; as notification) {
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <sentinel-notification-icon mat-card-avatar [type]="notification.type"></sentinel-notification-icon>
+      <mat-card-title class="wrapped"> {{ notification.title | titlecase }}</mat-card-title>
+      <mat-card-subtitle class="wrapped">{{ i18n().source }}: {{ notification.source }}</mat-card-subtitle>
+      <mat-card-subtitle class="wrapped">{{ i18n().type }}: {{ notification.type | titlecase }}</mat-card-subtitle>
+      @if (notification.timestamp) {
+        <mat-card-subtitle class="wrapped"
+          >{{ i18n().created }}: {{ notification.timestamp | date: 'medium' }}</mat-card-subtitle
+        >
+      }
+    </mat-card-header>
+    <mat-card-content class="wrapped">
+      @for (message of notification?.additionalInfo ?? []; track message) {
+        <p>{{ message }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+}

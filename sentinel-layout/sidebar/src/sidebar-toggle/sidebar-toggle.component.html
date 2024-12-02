@@ -1,0 +1,11 @@
+@if (insideSidebar || (activeBreakpoint$ | async) === 'small') {
+  @if (state$ | async; as state) {
+    <button
+      mat-icon-button
+      (click)="toggleSidebar()"
+      [matTooltip]="state === 'expanded' ? i18n().collapseSidebar : i18n().expandSidebar"
+    >
+      <mat-icon>{{ state === 'expanded' ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  }
+}

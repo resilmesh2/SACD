@@ -1,0 +1,9 @@
+.wrapped {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+mat-card-content {
+  padding-top: 16px;
+}

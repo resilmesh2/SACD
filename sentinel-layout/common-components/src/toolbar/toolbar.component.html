@@ -1,0 +1,46 @@
+<ng-container *ngTemplateOutlet="withBreadcrumbs ? multiRowToolbar : singleRowToolbar"></ng-container>
+<ng-template #singleRowToolbar>
+  <mat-toolbar color="primary" class="single-row">
+    <ng-container *ngTemplateOutlet="toolbarFirstRowContent"></ng-container>
+  </mat-toolbar>
+</ng-template>
+
+<ng-template #multiRowToolbar>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row class="first">
+      <ng-container *ngTemplateOutlet="toolbarFirstRowContent"></ng-container>
+    </mat-toolbar-row>
+    <mat-toolbar-row class="second">
+      <ng-container *ngTemplateOutlet="toolbarSecondRowContent"></ng-container>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</ng-template>
+
+<ng-template #toolbarFirstRowContent>
+  @if (displayNavToggle) {
+    <button id="hamburger-menu-toggle" data-cy="hamburger-menu" mat-icon-button (click)="onNavToggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <span class="spacer"></span>
+  <ng-content></ng-content>
+  <sentinel-notification-menu
+    [notifications]="notifications"
+    [lastNotification]="lastNotification"
+    [notificationsRoute]="notificationsRoute"
+    (refreshNotifications)="onRefreshNotifications()"
+  >
+  </sentinel-notification-menu>
+  @if (user) {
+    <sentinel-user-menu [user]="user" [userProfileRoute]="userProfileRoute" (login)="onLogin()" (logout)="onLogout()">
+    </sentinel-user-menu>
+  }
+</ng-template>
+
+<ng-template #toolbarSecondRowContent>
+  <sentinel-breadcrumbs
+    [breadcrumbs]="breadcrumbs"
+    [divider]="breadcrumbsDivider"
+    [maxLength]="breadcrumbMaxLength"
+  ></sentinel-breadcrumbs>
+</ng-template>

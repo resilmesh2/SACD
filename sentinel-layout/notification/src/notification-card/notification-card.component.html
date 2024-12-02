@@ -1,0 +1,28 @@
+<mat-card
+  appearance="outlined"
+  class="notification-card"
+  [ngClass]="{ compact: !detailed }"
+  data-cy="sentinel-notification-card"
+>
+  @if (notification; as notification) {
+    <mat-card-content class="wrapped">
+      <sentinel-notification-icon mat-card-avatar [type]="notification.type"></sentinel-notification-icon>
+      <div>
+        <div>
+          <b>{{ notification.title | sentinelShortString: titleMaxLength }}</b>
+        </div>
+        <div>
+          {{ notificationAdditionalInfo | sentinelShortString: additionalInfoMaxLength }}
+        </div>
+        @if (detailed) {
+          <div>
+            <span>{{ i18n().source }}:</span> {{ notification?.source }}
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  }
+  <mat-card-footer>
+    <mat-card-subtitle>{{ notification?.timestamp ?? 0 | date: 'medium' }}</mat-card-subtitle>
+  </mat-card-footer>
+</mat-card>

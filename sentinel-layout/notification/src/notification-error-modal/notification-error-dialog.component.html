@@ -1,0 +1,20 @@
+<div class="mat-typography" data-cy="sentinel-error-dialog">
+  <h1 mat-dialog-title>{{ data.title | titlecase }}</h1>
+  <div matDialogContent>
+    @if (data.source) {
+      <p>{{ i18n().source }}: {{ data.source }}</p>
+    }
+    @for (message of data.additionalInfo ?? []; track message) {
+      <p>{{ message }}</p>
+    }
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button color="primary" (click)="close()">OK</button>
+    <span class="spacer"></span>
+    @if (data.action) {
+      <button mat-button color="primary" (click)="confirmAction()">
+        {{ data.action | titlecase }}
+      </button>
+    }
+  </div>
+</div>

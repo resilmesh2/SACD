@@ -1,0 +1,18 @@
+@if (user; as user) {
+  <div class="user">
+    <div class="user-picture-container">
+      @if (iconSrc) {
+        <img loading="lazy" [alt]="user.name" [src]="iconSrc" />
+      } @else {
+        <mat-icon>face</mat-icon>
+      }
+    </div>
+    <mat-divider></mat-divider>
+    <div class="mat-typography">
+      <div class="user-details">
+        <p class="mat-headline-6">{{ user?.name }}</p>
+        <p class="mat-caption">{{ user?.login }}</p>
+      </div>
+    </div>
+  </div>
+}

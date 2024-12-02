@@ -1,0 +1,46 @@
+<ng-container
+  *ngTemplateOutlet="
+    topLevelAgendaContainersCollapsed ? nestedAgendaContainerTemplate : rootTemplate;
+    context: { $implicit: rootAgendaContainer }
+  "
+>
+</ng-container>
+<ng-template #rootTemplate>
+  <div
+    class="container"
+    data-cy="sentinel-agenda"
+    [matTooltip]="
+      rootAgendaContainer?.label | sentinelDefaultValueString | sentinelTooltipOnShortened: maxElementNameLength
+    "
+  >
+    {{ rootAgendaContainer?.label | sentinelDefaultValueString | sentinelShortString: maxElementNameLength }}
+  </div>
+  <mat-divider></mat-divider>
+  @for (element of rootAgendaContainer?.children ?? []; track element.label) {
+    <ng-container class="agenda">
+      <ng-container
+        [ngTemplateOutlet]="(element | isAgendaContainer) ? nestedAgendaContainerTemplate : agendaTemplate"
+        [ngTemplateOutletContext]="{ $implicit: element }"
+      >
+      </ng-container>
+    </ng-container>
+  }
+</ng-template>
+
+<ng-template #agendaTemplate let-element>
+  <sentinel-agenda-element
+    [agenda]="element"
+    [maxElementNameLength]="maxElementNameLength"
+    (agendaSelected)="onAgendaSelected($event)"
+  ></sentinel-agenda-element>
+</ng-template>
+
+<ng-template #nestedAgendaContainerTemplate let-element>
+  <sentinel-nested-agenda-container
+    [class.root-collapsed]="topLevelAgendaContainersCollapsed"
+    [topLevelAgendaContainersCollapsed]="topLevelAgendaContainersCollapsed"
+    [agendaContainer]="element"
+    [maxElementNameLength]="maxElementNameLength - 5"
+    (agendaSelected)="onAgendaSelected($event)"
+  ></sentinel-nested-agenda-container>
+</ng-template>
