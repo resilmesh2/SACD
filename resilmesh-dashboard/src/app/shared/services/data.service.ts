@@ -32,7 +32,7 @@ export class DataService {
       .query<any>({
         query: gql`
         {
-          IP(address: "${ip}") {
+          ips(where: {address: "${ip}"}) {
             ${this.getAttributesOfType('IP')}
           }
         }
@@ -40,7 +40,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(data.data.IP);
+          const { nodes, edges } = this.converToGraph(data.data.ips);
           return { nodes, edges };
         })
       );
@@ -56,7 +56,7 @@ export class DataService {
       .query<any>({
         query: gql`
         {
-          ${node.data.type}(_id: "${node.id}") {
+          ${node.data.type}(where {_id: "${node.id}"}) {
             ${this.getAttributesOfType(node.data.type)}
           }
         }
@@ -206,7 +206,7 @@ export class DataService {
       .query<any>({
         query: gql`
           {
-            Mission {
+            missions {
               name
             }
           }
@@ -214,7 +214,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const missions = data.data.Mission.map((mission: any) => mission.name);
+          const missions = data.data.missions.map((mission: any) => mission.name);
           return missions;
         })
       );
@@ -229,7 +229,7 @@ export class DataService {
     .query<any>({
       query: gql`
         {
-          Mission(name: "${name}") {
+          missions(where:{name: "${name}"}) {
             name,
             criticality,
             description,
@@ -240,7 +240,7 @@ export class DataService {
     })
     .pipe(
       map((response) => {
-        const missions: Mission[] = response.data.Mission
+        const missions: Mission[] = response.data.missions
         return missions;
       })
     );
