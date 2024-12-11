@@ -1,0 +1,30 @@
+<ng-container *sLet="selectedPortal$ | sAsync as portal">
+  @if (alwaysDisplaySidebar || portal) {
+    <mat-drawer-container [hasBackdrop]="false" [ngStyle]="{ height: height$ | sAsync }">
+      @if (state$ | sAsync; as state) {
+        <mat-drawer
+          class="sidebar-drawer"
+          position="end"
+          [mode]="mode$ | sAsync: 'side'"
+          [opened]="state === 'expanded' || state === 'semi-collapsed'"
+          [ngClass]="state"
+          [ngStyle]="{ width: width$ | async, transition: TRANSITION_STYLE }"
+        >
+          <div class="sidebar-toolbar" [ngClass]="state">
+            <sentinel-sidebar-toggle [insideSidebar]="true"></sentinel-sidebar-toggle>
+          </div>
+          <ng-template slot="sidebar" [cdkPortalOutlet]="portal"></ng-template>
+        </mat-drawer>
+      }
+      <mat-drawer-content [ngStyle]="{ marginRight: contentMargin$ | sAsync }">
+        <ng-container *ngTemplateOutlet="pageContent"></ng-container>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  } @else {
+    <ng-container *ngTemplateOutlet="pageContent"></ng-container>
+  }
+</ng-container>
+
+<ng-template #pageContent>
+  <ng-content></ng-content>
+</ng-template>

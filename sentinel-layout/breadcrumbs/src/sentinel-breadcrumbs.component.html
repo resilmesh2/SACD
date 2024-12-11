@@ -1,0 +1,80 @@
+<div #container class="sentinel-breadcrumbs">
+  @if (!overflowing) {
+    @for (breadcrumb of breadcrumbs; track breadcrumb.url; let i = $index; let isLast = $last) {
+      <div class="sentinel-breadcrumb" data-cy="sentinel-agenda-breadcrumb">
+        <ng-template
+          *ngTemplateOutlet="breadcrumbItem; context: { $implicit: breadcrumb, isLast: isLast }"
+        ></ng-template>
+        <a class="sentinel-breadcrumb-text" mat-button [disableRipple]="true" disabled>
+          @if (!isLast) {
+            <span>
+              {{ divider }}
+            </span>
+          }
+        </a>
+      </div>
+    }
+  } @else {
+    @for (breadcrumb of breadcrumbs; track breadcrumb.url; let i = $index; let isLast = $last; let isFirst = $first) {
+      @if (isFirst) {
+        <div class="sentinel-breadcrumb" data-cy="sentinel-agenda-breadcrumb">
+          <ng-template
+            *ngTemplateOutlet="breadcrumbItem; context: { $implicit: breadcrumb, isLast: isLast }"
+          ></ng-template>
+          <a class="sentinel-breadcrumb-text" mat-button [disableRipple]="true" disabled>
+            <span>
+              {{ divider }}
+            </span>
+          </a>
+        </div>
+      }
+      @if (isLast) {
+        <div class="sentinel-breadcrumb" data-cy="sentinel-agenda-breadcrumb">
+          <button
+            class="sentinel-breadcrumb-overflow-button"
+            mat-button
+            [disableRipple]="true"
+            [matMenuTriggerFor]="menu"
+          >
+            ...
+          </button>
+          <a class="sentinel-breadcrumb-text" mat-button [disableRipple]="true" disabled>
+            <span>
+              {{ divider }}
+            </span>
+          </a>
+          <ng-container
+            *ngTemplateOutlet="breadcrumbItem; context: { $implicit: breadcrumb, isLast: isLast }"
+          ></ng-container>
+        </div>
+      }
+    }
+    <mat-menu #menu="matMenu">
+      @for (bc of breadcrumbs | slice: 1 : -1; track bc.url) {
+        <button mat-menu-item [routerLink]="bc?.url" [matTooltip]="bc.label | sentinelTooltipOnShortened: maxLength">
+          {{ bc.label | sentinelShortString: maxLength }}
+        </button>
+      }
+    </mat-menu>
+  }
+</div>
+
+<ng-template #breadcrumbItem let-breadcrumb let-isLast="isLast">
+  <a
+    class="sentinel-breadcrumb-text"
+    mat-button
+    [routerLink]="breadcrumb?.url"
+    [matTooltip]="breadcrumb.label | sentinelTooltipOnShortened: maxLength"
+  >
+    <ng-container
+      *ngTemplateOutlet="isLast ? breadcrumbBoldLabel : breadcrumbLabel; context: { $implicit: breadcrumb.label }"
+    ></ng-container>
+  </a>
+</ng-template>
+<ng-template #breadcrumbLabel let-label>
+  <span>{{ label | sentinelShortString: maxLength }}</span>
+</ng-template>
+
+<ng-template #breadcrumbBoldLabel let-label>
+  <b>{{ label | sentinelShortString: maxLength }}</b>
+</ng-template>

@@ -1,0 +1,43 @@
+<button
+  [@preventInitialChildAnimations]
+  mat-icon-button
+  class="menu-trigger"
+  data-cy="sentinel-notification-menu"
+  [matMenuTriggerFor]="notificationMenu"
+  (menuOpened)="onOpenNotifications()"
+>
+  <mat-icon [@wobble]="lastNotification">notifications</mat-icon>
+</button>
+<mat-menu #notificationMenu="matMenu" xPosition="before" data-cy="sentinel-notification-menu-detail">
+  <div class="header">
+    <h3 class="mat-h3">{{ i18n().notifications }}</h3>
+    <mat-divider></mat-divider>
+  </div>
+  @if (notifications && notifications.length > 0) {
+    <div class="content">
+      @for (notification of notifications; track notification.id; let isLast = $last) {
+        @if (notificationsRoute; as route) {
+          <sentinel-notification-card
+            [notification]="notification"
+            [routerLink]="route | notificationNavigator: notification"
+          >
+          </sentinel-notification-card>
+        }
+        @if (!isLast) {
+          <mat-divider></mat-divider>
+        }
+      }
+
+      <div class="footer">
+        <mat-divider></mat-divider>
+        @if (notificationsRoute) {
+          <a mat-button color="accent" [routerLink]="notificationsRoute">{{ i18n().showAll }}</a>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="no-notifications">
+      <h4 class="mat-h4" data-cy="sentinel-notification-menu-empty">{{ i18n().noNotifications }}</h4>
+    </div>
+  }
+</mat-menu>

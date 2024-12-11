@@ -1,0 +1,25 @@
+<div class="nav-container">
+  <div class="sentinel-logo-wrapper">
+    @if (logoSrc) {
+      <a routerLink="/">
+        <img class="sentinel-logo" alt="logo" data-cy="sentinel-nav-logo" [src]="logoSrc" />
+      </a>
+    }
+  </div>
+  <div class="nav" data-cy="sentinel-nav">
+    <sentinel-nav-elements
+      [topLevelAgendaContainersCollapsed]="topLevelAgendaContainersCollapsed"
+      [elements]="agendaContainers"
+      [maxElementNameLength]="maxNavElementLength"
+      (agendaSelected)="onAgendaSelected($event)"
+    >
+    </sentinel-nav-elements>
+  </div>
+  <div class="spacer"></div>
+
+  <div id="version">
+    <span [matTooltip]="i18n().versionTooltip">
+      {{ version }}
+    </span>
+  </div>
+</div>

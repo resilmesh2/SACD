@@ -1,0 +1,41 @@
+@use '@angular/material' as mat;
+
+@mixin sidebar-page-layout-theme($theme) {
+  @if (mat.get-theme-version($theme) == 1) {
+    .sidebar-drawer.mat-drawer {
+      --mat-sidenav-container-divider-color: #{mat.get-theme-color(
+          $theme,
+          neutral-variant,
+          90
+        )};
+      --mat-sidenav-container-background-color: #{mat.get-theme-color(
+          $theme,
+          neutral-variant,
+          99
+        )};
+    }
+  } @else {
+    $foreground-palette: map-get($theme, foreground);
+    $background-palette: map-get($theme, background);
+    $drawer-container: map-get($background-palette, card);
+    $drawer: map-get($background-palette, app-bar);
+
+    .mat-drawer-container {
+      background-color: $drawer-container;
+    }
+
+    .mat-drawer-content {
+      background-color: $drawer-container;
+    }
+
+    .mat-drawer {
+      background-color: lighten($drawer, 3%);
+    }
+
+    .mat-drawer:not(.mat-drawer-side) {
+      background-color: lighten($drawer, 3%);
+      box-shadow: unset;
+      border-left: solid 1px rgba(0, 0, 0, 0.12);
+    }
+  }
+}

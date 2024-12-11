@@ -1,0 +1,26 @@
+<ng-container *sLet="notifications$ | sAsync: [] as notifications">
+  @for (notification of notifications; track notification.id) {
+    <div
+      [ngClass]="['sentinel-popup-notification', notification.type, 'sentinel-popup-notification-slide-top']"
+      (click)="close(notification)"
+    >
+      <div
+        [ngClass]="['sentinel-popup-notification-content', notification.action ? 'with-action' : 'without-action']"
+        data-cy="sentinel-notification-popup"
+      >
+        <sentinel-notification-icon class="popup" [type]="notification.type" [coloredIcon]="false">
+        </sentinel-notification-icon>
+        @if (notification.title; as title) {
+          <span class="mat-typography">
+            {{ title | sentinelShortString: 50 }}
+          </span>
+        }
+        @if (notification.action) {
+          <button class="sentinel-popup-notification-action" mat-button (click)="confirmAction(notification)">
+            {{ notification.action | titlecase }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</ng-container>

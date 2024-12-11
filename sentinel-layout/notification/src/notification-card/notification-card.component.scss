@@ -1,0 +1,36 @@
+mat-card.compact {
+  margin: 0;
+  padding: 10px;
+  border-radius: 0;
+  background: none;
+  width: 260px;
+  height: 100%;
+  box-shadow: none;
+  border: none;
+}
+
+mat-card {
+  margin: 5px;
+  padding: 10px;
+  height: 120px;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: row;
+}
+
+mat-card.compact mat-card-content, mat-card.compact mat-card-content.mat-mdc-card-content:first-child {
+  padding: 0;
+}
+
+mat-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wrapped {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}

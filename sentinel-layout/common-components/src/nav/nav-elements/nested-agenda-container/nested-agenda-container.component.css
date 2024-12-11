@@ -1,0 +1,14 @@
+.nested-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.root-nested{
+  justify-content: flex-start;
+  margin-left: 5px;
+}
+
+.root-nested.nested {
+  margin-left: 8px;
+}
+

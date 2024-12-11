@@ -1,0 +1,29 @@
+{
+  "extends": ["../.eslintrc.json"],
+  "ignorePatterns": [
+    "test.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["sentinel-layout/tsconfig.lib.eslint.json"],
+        "createDefaultProgram": true
+      },
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          { "type": "attribute", "prefix": "sentinel", "style": "camelCase" }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          { "type": "element", "prefix": "sentinel", "style": "kebab-case" }
+        ]
+      }
+    },
+    {
+      "files": ["*.component.html"],
+      "rules": {}
+    }
+  ]
+}

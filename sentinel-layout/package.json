@@ -1,0 +1,26 @@
+{
+  "name": "@sentinel/layout",
+  "version": "18.1.1",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^18.1.4",
+    "@angular/core": "^18.1.4",
+    "@angular/material": "^18.1.4",
+    "@sentinel/common": "~18.0.1",
+    "ngx-indexed-db": "^18.0.0"
+  },
+  "exports": {
+    "./theming": {
+      "sass": "./src/theming/_sentinel-variables.scss"
+    },
+    "./sentinel-layout-theme": {
+      "sass": "./src/theming/_sentinel-layout-theme.scss"
+    },
+    "./sidebar-mixin": {
+      "sass": "./sidebar/theming/_sidebar-page-layout-theme.scss"
+    },
+    "./notification-card-mixin": {
+      "sass": "./notification/theming/_notification-card-theme.scss"
+    }
+  }
+}

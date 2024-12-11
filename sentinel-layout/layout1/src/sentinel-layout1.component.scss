@@ -1,0 +1,52 @@
+mat-drawer-container {
+  min-height: 100vh;
+  width: 100%;
+}
+
+mat-drawer-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+mat-drawer {
+  text-align: center;
+  justify-content: center;
+  width: 140px;
+
+}
+
+.nav-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.nav-controls {
+  text-align: left;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  padding: 0;
+}
+
+.padded-content {
+  flex: 1;
+  padding: 40px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  > *:not(router-outlet) {
+    flex: 1;
+    display: block;
+  }
+}
+
+@media(max-width: 748px ) {
+  mat-drawer {
+    width: 100%;
+  }
+}

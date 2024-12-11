@@ -1,0 +1,9 @@
+export const HOME_PATH = 'home';
+export const NETWORK_PATH = 'network-vizualization';
+export const MISSION_PATH = 'missions';
+export const VULNERABILITY_PATH = 'vulnerability';
+export const GROUP_PATH = 'group';
+export const USER_PATH = 'user';
+export const NOTIFICATION_PATH = 'notifications';
+export const PRODUCT_OVERVIEW_PATH = 'product/overview';
+export const PRODUCT_NEW_PATH = 'product/new';

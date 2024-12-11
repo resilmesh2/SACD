@@ -1,0 +1,15 @@
+sentinel-notification-card {
+  cursor: pointer;
+}
+
+
+.notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.viewport {
+  height: 80vh;
+  width: 100%;
+}

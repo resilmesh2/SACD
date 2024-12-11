@@ -1,0 +1,19 @@
+.notification-icon {
+  color: white;
+}
+
+.notification-icon.sentinel-error {
+  color: red;
+}
+
+.notification-icon.sentinel-warning {
+  color: #FFAA00;
+}
+
+.notification-icon.sentinel-success {
+  color: #6DF000;
+}
+
+.notification-icon.sentinel-info {
+  color: #3f51b5;
+}
