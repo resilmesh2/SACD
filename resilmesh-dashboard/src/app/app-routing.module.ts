@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GROUP_PATH, HOME_PATH, NETWORK_PATH, MISSION_PATH, NOTIFICATION_PATH, PRODUCT_NEW_PATH, PRODUCT_OVERVIEW_PATH, USER_PATH } from './paths';
+import { GROUP_PATH, HOME_PATH, NETWORK_PATH, MISSION_PATH, NOTIFICATION_PATH, PRODUCT_NEW_PATH, PRODUCT_OVERVIEW_PATH, USER_PATH, VULNERABILITY_PATH } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
 
 const routes: Routes = [
@@ -23,6 +23,14 @@ const routes: Routes = [
         (m) => m.MissionPageModule,
       ),
     data: { breadcrumb: 'Missions' },
+  },
+  {
+    path: VULNERABILITY_PATH,
+    loadChildren: () =>
+      import('./vulnerability-page/vulnerability.module').then(
+        (m) => m.VulnerabilityModule,
+      ),
+    data: { breadcrumb: 'Vulnerability' },
   },
   {
     path: USER_PATH,

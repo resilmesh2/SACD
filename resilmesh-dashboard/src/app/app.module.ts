@@ -6,11 +6,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { SentinelBreadcrumbsModule } from '@sentinel/layout/breadcrumbs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GraphQLModule } from './shared/services/graphql.module';
+import { ApolloModule } from 'apollo-angular';
 
 // Network
 import { HttpClientModule } from '@angular/common/http';
 
-// Ngx-graph
+// Ngx-charts, Ngx-graph
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 /**
@@ -38,9 +40,10 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { MissionPageComponent } from './mission-page/mission-page.component';
 import { MissionGraphComponent } from './mission-page/mission-graph/mission-graph.component';
 import { NetworkVizualizationComponent } from './network-vizualization-page/network-vizualization.component';
+import { VulnerabilityComponent } from './vulnerability-page/vulnerability.component';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, NetworkVizualizationComponent, MissionPageComponent, MissionGraphComponent],
+  declarations: [AppComponent, HomePageComponent, NetworkVizualizationComponent, MissionPageComponent, MissionGraphComponent, VulnerabilityComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -63,10 +66,12 @@ import { NetworkVizualizationComponent } from './network-vizualization-page/netw
     FormsModule,
     ReactiveFormsModule,
     NgxGraphModule,
+    NgxChartsModule,
     MatTooltipModule,
     MatSelectModule,
     GraphQLModule,
-    HttpClientModule
+    HttpClientModule,
+    ApolloModule
   ],
   bootstrap: [AppComponent],
 })

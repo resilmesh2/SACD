@@ -1,4 +1,20 @@
-export const entities = {
+type EntityKey = {
+  bgColor: string,
+  showProperty: string[]
+}
+
+export type EntityStructure = {
+  IP: EntityKey,
+  DomainName: EntityKey,
+  Subnet: EntityKey,
+  Node: EntityKey,
+  SecurityEvent: EntityKey,
+  CVE: EntityKey,
+  Vulnerability: EntityKey,
+  SoftwareVersion: EntityKey
+}
+
+export const entities: EntityStructure = {
   IP: {
     bgColor: '#FF9800',
     showProperty: ['address'],
