@@ -38,25 +38,6 @@ const routes: Routes = [
     data: { breadcrumb: 'User' },
   },
   {
-    path: GROUP_PATH,
-    loadChildren: () => import('./group-example-page/group-example-page.module').then((m) => m.GroupExamplePageModule),
-    data: { breadcrumb: 'Group' },
-  },
-  {
-    path: PRODUCT_NEW_PATH,
-    loadChildren: () =>
-      import('./product-new-example-page/product-new-example-page.module').then((m) => m.ProductNewExamplePageModule),
-    data: { breadcrumb: 'New Product' },
-  },
-  {
-    path: PRODUCT_OVERVIEW_PATH,
-    loadChildren: () =>
-      import('./product-overview-example-page/product-overview-example-page.module').then(
-        (m) => m.ProductOverviewExamplePageModule,
-      ),
-    data: { breadcrumb: 'Product Overview' },
-  },
-  {
     path: NOTIFICATION_PATH,
     data: { breadcrumb: 'Notifications' },
     children: [
