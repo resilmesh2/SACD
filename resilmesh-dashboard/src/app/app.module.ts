@@ -33,6 +33,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule} from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 // Components
 import { AppComponent } from './app.component';
@@ -40,10 +42,21 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { MissionPageComponent } from './mission-page/mission-page.component';
 import { MissionGraphComponent } from './mission-page/mission-graph/mission-graph.component';
 import { NetworkVizualizationComponent } from './network-vizualization-page/network-vizualization.component';
+import { IssueComponent } from './issue-page/issue.component';
+import { IssueDetailComponent } from './issue-detail/issue-detail.component';
 import { VulnerabilityComponent } from './vulnerability-page/vulnerability.component';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, NetworkVizualizationComponent, MissionPageComponent, MissionGraphComponent, VulnerabilityComponent],
+  declarations: [
+    AppComponent,
+    HomePageComponent,
+    NetworkVizualizationComponent,
+    MissionPageComponent,
+    MissionGraphComponent,
+    IssueComponent,
+    IssueDetailComponent,
+    VulnerabilityComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -69,6 +82,8 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
     NgxChartsModule,
     MatTooltipModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     GraphQLModule,
     HttpClientModule,
     ApolloModule

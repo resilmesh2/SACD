@@ -1,6 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GROUP_PATH, HOME_PATH, NETWORK_PATH, MISSION_PATH, NOTIFICATION_PATH, PRODUCT_NEW_PATH, PRODUCT_OVERVIEW_PATH, USER_PATH, VULNERABILITY_PATH } from './paths';
+import { 
+  GROUP_PATH,
+  HOME_PATH,
+  NETWORK_PATH,
+  MISSION_PATH,
+  NOTIFICATION_PATH,
+  USER_PATH,
+  ISSUE_PATH,
+  VULNERABILITY_PATH
+} from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
 
 const routes: Routes = [
@@ -31,6 +40,28 @@ const routes: Routes = [
         (m) => m.VulnerabilityModule,
       ),
     data: { breadcrumb: 'Vulnerability' },
+  },
+  {
+    path: ISSUE_PATH,
+    data: { breadcrumb: 'Issues' },
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./issue-page/issue.module').then((m) => m.IssueModule),
+      },
+    ],
+  },
+  {
+    data: { type: 'Issue Details' },
+    path: ISSUE_PATH + '/:name',
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./issue-detail/issue-detail.module').then((m) => m.IssueDetailModule),
+      },
+    ],
   },
   {
     path: USER_PATH,
