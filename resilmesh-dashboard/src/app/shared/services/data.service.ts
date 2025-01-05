@@ -7,15 +7,13 @@ import gql from 'graphql-tag';
 import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map } from 'rxjs/operators';
-import { DocumentNode } from 'graphql';
 import { GraphInput } from '../models/graph.model';
-import { entities } from '../config/network-visualization.config';
-import { Attributes } from '../config/attributes';
-import { CVE } from '../models/vulnerability.model';
+import { entities, EntityStructure } from '../config/network-visualization.config';
+import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../models/mission.model';
 import { MissionStructure } from '../models/mission-structure.model';
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
-
+import { CVE, CVEResponse } from '../models/vulnerability.model';
+import { VulnerabilityData } from '../../vulnerability-page/vulnerability.component';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +30,7 @@ export class DataService {
       .query<any>({
         query: gql`
         {
-          ips(where: {address: "${ip}"}) {
+          IP(address: "${ip}") {
             ${this.getAttributesOfType('IP')}
           }
         }
@@ -40,7 +38,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(data.data.ips);
+          const { nodes, edges } = this.converToGraph(data.data.IP);
           return { nodes, edges };
         })
       );
@@ -56,7 +54,7 @@ export class DataService {
       .query<any>({
         query: gql`
         {
-          ${node.data.type}(where {_id: "${node.id}"}) {
+          ${node.data.type}(_id: "${node.id}") {
             ${this.getAttributesOfType(node.data.type)}
           }
         }
@@ -70,7 +68,7 @@ export class DataService {
       );
   }
 
-  getAttributesOfType(type: any): string {
+  getAttributesOfType(type: keyof AttributeStructure): string {
     return Attributes[type].toString();
   }
 
@@ -120,7 +118,7 @@ export class DataService {
    * @param node
    */
   public getLabel(node: any): string {
-    const initialLabel = node.__typename;
+    const initialLabel: keyof EntityStructure = node.__typename;
     if (typeof entities[initialLabel] === 'undefined') {
       return initialLabel;
     }
@@ -130,6 +128,10 @@ export class DataService {
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
     );
+
+    if (propKey === undefined) {
+      return ""
+    }
     if (typeof node[propKey] === 'undefined') {
       return initialLabel;
     }
@@ -141,7 +143,7 @@ export class DataService {
    * @param node
    */
   public getLabelName(node: any): string {
-    const initialLabel = node.__typename;
+    const initialLabel: keyof EntityStructure = node.__typename;
     if (typeof entities[initialLabel] === 'undefined') {
       return initialLabel;
     }
@@ -151,6 +153,10 @@ export class DataService {
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
     );
+
+    if (propKey === undefined) {
+      return ""
+    }
     if (typeof node[propKey] === 'undefined') {
       return initialLabel;
     }
@@ -162,7 +168,7 @@ export class DataService {
    * @param node
    */
   private getColor(node: any): string {
-    const initialLabel = node.__typename;
+    const initialLabel: keyof EntityStructure = node.__typename;
     return entities[initialLabel]?.bgColor || 'red';
   }
 
@@ -182,7 +188,7 @@ export class DataService {
    * @param node
    */
   public getLabelOfGraphNode(node: Node) {
-    const initialLabel = node.data.type;
+    const initialLabel: keyof EntityStructure = node.data.type;
     if (typeof entities[initialLabel] === 'undefined') {
       return initialLabel;
     }
@@ -192,6 +198,10 @@ export class DataService {
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node.data[pk] !== 'undefined' && node.data[pk] !== null
     );
+
+    if (propKey === undefined) {
+      return ""
+    }
     if (typeof node.data[propKey] === 'undefined') {
       return initialLabel;
     }
@@ -206,7 +216,7 @@ export class DataService {
       .query<any>({
         query: gql`
           {
-            missions {
+            Mission {
               name
             }
           }
@@ -214,7 +224,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const missions = data.data.missions.map((mission: any) => mission.name);
+          const missions = data.data.Mission.map((mission: any) => mission.name);
           return missions;
         })
       );
@@ -229,7 +239,7 @@ export class DataService {
     .query<any>({
       query: gql`
         {
-          missions(where:{name: "${name}"}) {
+          Mission(name: "${name}") {
             name,
             criticality,
             description,
@@ -240,7 +250,7 @@ export class DataService {
     })
     .pipe(
       map((response) => {
-        const missions: Mission[] = response.data.missions
+        const missions: Mission[] = response.data.Mission
         return missions;
       })
     );
@@ -254,9 +264,9 @@ export class DataService {
   public makeMissionsStructure(missions: Mission[]): MissionStructure {
     let result: MissionStructure;
     let structure: MissionStructure;
-
+    
     result = missions.reduce(
-      (acc, mission) => {
+      (acc: MissionStructure, mission: Mission) => {
         structure = JSON.parse(mission.structure);
         return {
           nodes: {
@@ -283,5 +293,192 @@ export class DataService {
     );
 
     return result;
+  }
+
+    /**
+   * Returns the description of vulnerability
+   */
+    public getCVEDetails(cveCode: string): Observable<CVE> {
+      return this.apollo
+        .query<{ CVE: CVE[] }>({
+          query: gql`
+        {
+          CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+            description
+            access_complexity
+            access_vector
+            attack_complexity
+            attack_vector
+            authentication
+            availability_impact_v2
+            availability_impact_v3
+            base_score_v2
+            base_score_v3
+            confidentiality_impact_v2
+            confidentiality_impact_v3
+            description
+            integrity_impact_v2
+            integrity_impact_v3
+            obtain_all_privilege
+            obtain_other_privilege
+            obtain_user_privilege
+            privileges_required
+            published_date
+            scope
+            user_interaction
+            impact
+          }
+        }
+        `,
+        })
+        .pipe(
+          map((response) => {
+            return response.data.CVE[0];
+          })
+        );
+    }
+
+      /**
+   * Returns vulnerable machines (software version, ip address, domain, subnet)
+   * @param cveCode CVE code of vulnerability
+   */
+  public getVulnerableMachines(cveCode: string): Observable<VulnerabilityData[] | null> {
+    return this.apollo
+      .query<CVEResponse>({
+        query: gql`
+      {
+        CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+          vulnerabilitys {
+            in {
+              version
+              on {
+                _id
+                nodes(first: 500) {
+                  _id
+                  has_assigned {
+                    _id
+                    address
+                    resolves_to {
+                      domain_name
+                    }
+                    part_of {
+                      range
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          const responseArray: VulnerabilityData[] = [];
+          if (!response.data.CVE[0]) {
+            return null;
+          }
+          response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
+            vuln.in.forEach((software) => {
+              _.uniqBy(software.on, (n) => n._id).forEach((host) => {
+                host.nodes.forEach((node) => {
+                  node.has_assigned.forEach((ip) => {
+                    let subnet = '';
+                    let domain = '';
+                    if (ip.part_of[0]) {
+                      subnet = `${ip.part_of[0].range}`;
+                      if (ip.part_of[0].note) {
+                        subnet += ` (${ip.part_of[0].note})`;
+                      }
+                    }
+                    if (ip.resolves_to[0]) {
+                      domain = ip.resolves_to[0].domain_name.toString();
+                    }
+                    responseArray.push({
+                      domainName: domain,
+                      subnet: subnet,
+                      ip: ip.address,
+                      software: software.version,
+                    });
+                  });
+                });
+              });
+            });
+          });
+          return responseArray;
+        })
+      );
+  }
+
+/**
+ * Returns all CVE objects in bulk
+ */
+public getAllCVEDetails(): Observable<CVE[]> {
+  return this.apollo
+    .query<{ CVE: CVE[] }>({
+      query: gql`
+      {
+        CVE(first: 10) {
+          CVE_id
+          description
+          access_complexity
+          access_vector
+          attack_complexity
+          attack_vector
+          authentication
+          availability_impact_v2
+          availability_impact_v3
+          base_score_v2
+          base_score_v3
+          confidentiality_impact_v2
+          confidentiality_impact_v3
+          integrity_impact_v2
+          integrity_impact_v3
+          obtain_all_privilege
+          obtain_other_privilege
+          obtain_user_privilege
+          privileges_required
+          published_date
+          scope
+          user_interaction
+          impact
+        }
+      }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        return response.data.CVE;
+      })
+    );
+  }
+
+public getIPAddresses(): Observable<string[]> {
+  return this.apollo
+    .query<any>({
+      query: gql`
+      {
+        IP(first: 10) {
+          _id
+          address
+        }
+      }
+    `,
+    })
+    .pipe(
+      map((response) => {
+        const ipAddresses: string[] = [];  
+
+        if (response.data && response.data.IP) {
+          response.data.IP.forEach((ipNode) => {
+            if (ipNode.address) {
+              ipAddresses.push(ipNode.address);
+            }
+          });
+        }
+        return ipAddresses;
+      })
+    );
   }
 }
