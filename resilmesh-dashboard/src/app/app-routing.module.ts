@@ -8,7 +8,9 @@ import {
   NOTIFICATION_PATH,
   USER_PATH,
   ISSUE_PATH,
-  VULNERABILITY_PATH
+  VULNERABILITY_PATH,
+  NETWORK_INTERACTIVE_PATH,
+  NETWORK_STATIC_LANDSCAPE,
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
 

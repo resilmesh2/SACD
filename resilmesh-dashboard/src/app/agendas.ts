@@ -4,7 +4,9 @@ import {
   NETWORK_PATH,
   MISSION_PATH,
   ISSUE_PATH,
-  VULNERABILITY_PATH
+  VULNERABILITY_PATH,
+  NETWORK_INTERACTIVE_PATH,
+  NETWORK_STATIC_LANDSCAPE
 } from './paths';
 
 export const agendaContainers = [
