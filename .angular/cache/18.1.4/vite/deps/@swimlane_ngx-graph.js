@@ -1,4 +1,7 @@
 import {
+  require_dagre
+} from "./chunk-ILRQUXYH.js";
+import {
   bundle_default,
   day_default,
   line_default,
@@ -13,9 +16,6 @@ import {
   utcYear_default,
   year_default
 } from "./chunk-ROWZNKDH.js";
-import {
-  require_dagre
-} from "./chunk-ILRQUXYH.js";
 import {
   animate,
   style,

@@ -38,28 +38,11 @@ export class DataService {
       })
       .pipe(
         map((data) => {
+	  console.log("getIPNode: ", data);
+
           const { nodes, edges } = this.converToGraph(data.data.IP);
           return { nodes, edges };
         })
-      );
-  }
-
-  public getSubnetNode(range: string): Observable<GraphInput> {
-    return this.apollo
-      .query<any>({
-	query: gpl`
-	{
-	  Subnet(range: "${range}") {
-	    ${this.getAttributesOfType('Subnet')}
-	  }
-	}
-      `,
-      })
-      .pipe(
-	map((data) => {
-	  const { nodes, edges } = this.convertToGraph(data.data.Subnet);
-	  return { nodes, edges };
-	})
       );
   }
 
@@ -86,6 +69,52 @@ export class DataService {
         })
       );
   }
+
+/**
+ * Fetches IP nodes associated with a given Subnet range.
+ * @param range - Subnet range, e.g., "147.251.96.0/24".
+ */
+public getIPNodesBySubnetRange(range: string): Observable<{ ip: string; subnet: string }[]> {
+  return this.apollo
+    .query<any>({
+      query: gql`
+      {
+	Subnet(filter: { range: "${range}" }) {
+          _id
+          range
+          note
+        }
+
+        IP(filter: { part_of: { range: "${range}" } }) {
+          _id
+          address
+          part_of {
+            range
+            note
+          }
+        }
+      }
+    `,
+    })
+    .pipe(
+      map((response) => {
+
+	console.log('Get IP Nodes Function Response: ', response);
+
+        const subnetData = response.data.Subnet?.[0];
+	const ipNodes = response.data.IP;
+
+        if (!subnetData || !ipNodes) {
+          return []; // Return empty array if no Subnet found
+        }
+
+        return ipNodes.map((ipNode: any) => ({
+          ip: ipNode.address,
+          subnet: subnetData.range + (subnetData.note ? ` (${subnetData.note})` : ''),
+        }));
+      })
+    );
+}
 
   getAttributesOfType(type: keyof AttributeStructure): string {
     return Attributes[type].toString();
