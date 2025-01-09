@@ -6,13 +6,6 @@ import {
   OverlayRef
 } from "./chunk-Q65YJ55Y.js";
 import {
-  BasePortalOutlet,
-  CdkPortalOutlet,
-  ComponentPortal,
-  PortalModule,
-  TemplatePortal
-} from "./chunk-GVIJH6CR.js";
-import {
   animate,
   animateChild,
   group,
@@ -22,6 +15,13 @@ import {
   transition,
   trigger
 } from "./chunk-Y3VWOF4Z.js";
+import {
+  BasePortalOutlet,
+  CdkPortalOutlet,
+  ComponentPortal,
+  PortalModule,
+  TemplatePortal
+} from "./chunk-GVIJH6CR.js";
 import {
   CdkScrollable
 } from "./chunk-QGXIL263.js";

@@ -1,0 +1,27 @@
+<div class="search-filter">
+  <mat-form-field appearance="outline">
+    <mat-label>Search Supernet node</mat-label>
+    <input matInput placeholder="" [(ngModel)]="subnetSearch" />
+    <mat-hint>Only search by Supernetwork range is supported</mat-hint>
+  </mat-form-field>
+  <button 
+    [disabled]="!subnetSearch" 
+    mat-raised-button 
+    color="primary" 
+    (click)="loadCytoscapeData()"
+    class="search-button"
+  >
+    <mat-icon>search</mat-icon>
+    Search
+  </button>
+</div>
+<div class="visualisation-container">
+  <div
+    id="cy"
+    *ngIf="graphData?.length; else noData"
+    class="cy-container"
+  ></div>
+  <ng-template #noData>
+    <div class="no-data-message">There are no assets being displayed.</div>
+  </ng-template>
+</div>

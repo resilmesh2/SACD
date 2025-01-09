@@ -66,6 +66,14 @@ const routes: Routes = [
     ],
   },
   {
+    path: NETWORK_INTERACTIVE_PATH,
+    loadChildren: () =>
+      import('./interactive-asset-page/interactive-asset.module').then(
+	(m) => m.InteractiveAssetModule,
+      ),
+    data: { breadcrumb: 'Interactive Asset Visualization' },
+  },
+  {
     path: USER_PATH,
     loadChildren: () => import('./user-example-page/user-example-page.module').then((m) => m.UserExamplePageModule),
     data: { breadcrumb: 'User' },

@@ -44,6 +44,25 @@ export class DataService {
       );
   }
 
+  public getSubnetNode(range: string): Observable<GraphInput> {
+    return this.apollo
+      .query<any>({
+	query: gpl`
+	{
+	  Subnet(range: "${range}") {
+	    ${this.getAttributesOfType('Subnet')}
+	  }
+	}
+      `,
+      })
+      .pipe(
+	map((data) => {
+	  const { nodes, edges } = this.convertToGraph(data.data.Subnet);
+	  return { nodes, edges };
+	})
+      );
+  }
+
   /**
    * Gets neighbours of given node
    * @param node

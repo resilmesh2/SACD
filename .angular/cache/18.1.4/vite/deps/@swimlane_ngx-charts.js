@@ -26,15 +26,15 @@ import {
   year_default
 } from "./chunk-ROWZNKDH.js";
 import {
-  ComponentPortal,
-  DomPortalOutlet
-} from "./chunk-GVIJH6CR.js";
-import {
   animate,
   style,
   transition,
   trigger
 } from "./chunk-Y3VWOF4Z.js";
+import {
+  ComponentPortal,
+  DomPortalOutlet
+} from "./chunk-GVIJH6CR.js";
 import {
   CommonModule,
   NgForOf,
