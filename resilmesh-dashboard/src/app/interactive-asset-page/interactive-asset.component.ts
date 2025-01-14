@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
 import cytoscape from 'cytoscape';
@@ -6,68 +6,71 @@ import cytoscape from 'cytoscape';
 @Component({
   selector: 'app-interactive-asset',
   templateUrl: './interactive-asset.component.html',
-  styleUrls: ['./interactive-asset.component.css']
+  styleUrls: ['./interactive-asset.component.css'],
 })
-
-export class InteractiveAssetComponent implements OnInit {
-  // subnetSearch: string = '147.251.96.0/24';
+export class InteractiveAssetComponent implements OnInit, AfterViewInit {
   subnetSearch: string = '';
-  graphData: any[] = [];
+  subnetNode: { _id: string; range: string; note: string } | null = null;
   errorMessage = '';
   dataLoading = false;
   cy: any;
 
-  constructor(private dataService: DataService, private route: ActivatedRoute){
-    if (route.snapshot.params && route.snapshot.params.range) {
+  constructor(private dataService: DataService, private route: ActivatedRoute) {
+    // Initialize subnetSearch from route parameters if available
+    if (route.snapshot.params?.range) {
       this.subnetSearch = route.snapshot.params.range;
-      this.loadCytoscapeData();
     }
   }
 
   ngOnInit(): void {
-
-    if (this.subnetSearch){
+    if (this.subnetSearch) {
       this.loadCytoscapeData();
     }
   }
 
-  loadCytoscapeData(): void {
-
-    this.dataLoading = true;
-    let supernet = null;
-
-    // Placeholder for loading graph data
-    console.log('Search triggered for:', this.subnetSearch);
-
-    // Example logic
-
-    this.dataService.getIPNodesBySubnetRange(this.subnetSearch).subscribe(
-      (data) => {
-	console.log('Loading Cytoscape Data: ', data);
-	supernet = this.subnetSearch;
-	this.graphData = data;
-	this.initializeCytoscape(this.subnetSearch);
-	this.dataLoading = false;
-      },
-      (error) => {
-	this.errorMessage = error;
-	this.dataLoading = false;
-      }
-    );
-
+  ngAfterViewInit(): void {
+    if (this.subnetNode) {
+      this.initializeCytoscape(this.subnetNode.range);
+    }
   }
 
-    initializeCytoscape(supernet: string): void {
-    // Destroy any existing Cytoscape instance to avoid duplicates
+  loadCytoscapeData(): void {
+    this.dataLoading = true;
+
+    console.log('Searching for Subnet:', this.subnetSearch);
+
+    // Fetch the Subnet node details
+    this.dataService.getSubnetNode(this.subnetSearch).subscribe(
+      (data) => {
+        console.log('Subnet Node Data:', data);
+        this.subnetNode = data;
+        this.initializeCytoscape(data.range); // Initialize Cytoscape with Subnet node
+        this.dataLoading = false;
+      },
+      (error) => {
+        console.error('Error loading Subnet Node:', error);
+        this.errorMessage = error;
+        this.dataLoading = false;
+      }
+    );
+  }
+
+  initializeCytoscape(range: string): void {
+    // Destroy existing Cytoscape instance to avoid duplicates
     if (this.cy) {
       this.cy.destroy();
     }
 
+    console.log('Initializing Cytoscape with range:', range);
+
     this.cy = cytoscape({
-      container: document.getElementById('cy'), // Bind to the 'cy' container
+      container: document.getElementById('cy'), // Bind to the container
       elements: [
         {
-          data: { id: 'supernet', label: supernet }, // Central supernet node
+          data: {
+            id: 'subnet',
+            label: range, // Use the range as the label
+          },
         },
       ],
       style: [
@@ -75,7 +78,7 @@ export class InteractiveAssetComponent implements OnInit {
           selector: 'node',
           style: {
             label: 'data(label)',
-            'background-color': 'black',
+            'background-color': 'blue',
             shape: 'ellipse',
             width: 120,
             height: 120,
@@ -86,10 +89,10 @@ export class InteractiveAssetComponent implements OnInit {
         },
       ],
       layout: {
-        name: 'preset', // No automatic layout as we only display the central node for now
+        name: 'preset', // Static layout
       },
     });
 
-    console.log('Cytoscape initialized with supernet:', supernet);
+    console.log('Cytoscape initialized successfully.');
   }
 }

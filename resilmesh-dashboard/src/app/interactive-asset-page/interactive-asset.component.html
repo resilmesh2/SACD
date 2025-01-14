@@ -1,27 +1,29 @@
 <div class="search-filter">
   <mat-form-field appearance="outline">
     <mat-label>Search Supernet node</mat-label>
-    <input matInput placeholder="" [(ngModel)]="subnetSearch" />
+    <input
+      matInput
+      placeholder="Enter CIDR range"
+      [(ngModel)]="subnetSearch"
+      aria-label="Search Supernet Node"
+    />
     <mat-hint>Only search by Supernetwork range is supported</mat-hint>
   </mat-form-field>
-  <button 
-    [disabled]="!subnetSearch" 
-    mat-raised-button 
-    color="primary" 
+  <button
+    [disabled]="!subnetSearch"
+    mat-raised-button
+    color="primary"
     (click)="loadCytoscapeData()"
     class="search-button"
+    aria-label="Search Button"
   >
     <mat-icon>search</mat-icon>
     Search
   </button>
-</div>
-<div class="visualisation-container">
-  <div
-    id="cy"
-    *ngIf="graphData?.length; else noData"
-    class="cy-container"
-  ></div>
-  <ng-template #noData>
-    <div class="no-data-message">There are no assets being displayed.</div>
-  </ng-template>
+</div><div class="visualisation-container">
+  <div id="cy" class="cy-container" [class.hidden]="dataLoading"></div>
+  <div *ngIf="dataLoading" class="loading-message">Loading data...</div>
+  <div *ngIf="!subnetNode && !dataLoading" class="no-data-message">
+    No data available for the given Subnet range.
+  </div>
 </div>

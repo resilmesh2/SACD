@@ -38,8 +38,6 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-	  console.log("getIPNode: ", data);
-
           const { nodes, edges } = this.converToGraph(data.data.IP);
           return { nodes, edges };
         })
@@ -51,7 +49,8 @@ export class DataService {
    * @param node
    */
   public getNodeNeighbours(node: Node): Observable<GraphInput> {
-    console.log(node, JSON.stringify(node));
+
+    console.log('getNodeNeighbors', JSON.stringify(node));
     return this.apollo
       .query<any>({
         query: gql`
@@ -71,20 +70,49 @@ export class DataService {
   }
 
 /**
- * Fetches IP nodes associated with a given Subnet range.
- * @param range - Subnet range, e.g., "147.251.96.0/24".
+ * Fetch a single Subnet node by range.
+ * @param range - Subnet range
  */
-public getIPNodesBySubnetRange(range: string): Observable<{ ip: string; subnet: string }[]> {
+public getSubnetNode(range: string): Observable<{ _id: string; range: string; note: string }> {
   return this.apollo
     .query<any>({
       query: gql`
       {
-	Subnet(filter: { range: "${range}" }) {
+        Subnet(filter: { range: "${range}" }) {
           _id
           range
           note
         }
+      }
+    `,
+    })
+    .pipe(
+      map((response) => {
+        console.log('Get Subnet Node Response:', response.data);
+        const subnetData = response.data.Subnet?.[0]; // Extract the first Subnet node
 
+        if (!subnetData) {
+          throw new Error(`No Subnet found for range: ${range}`);
+        }
+
+        return {
+          _id: subnetData._id,
+          range: subnetData.range,
+          note: subnetData.note,
+        };
+      })
+    );
+}
+
+/**
+ * Fetches IP nodes associated with a given Subnet range.
+ * @param range - Subnet range
+ */
+public getIPNodesBySubnetRange(range: string): Observable<{ string: _id; address: string; subnet: string }[]> {
+  return this.apollo
+    .query<any>({
+      query: gql`
+      {
         IP(filter: { part_of: { range: "${range}" } }) {
           _id
           address
@@ -101,16 +129,16 @@ public getIPNodesBySubnetRange(range: string): Observable<{ ip: string; subnet: 
 
 	console.log('Get IP Nodes Function Response: ', response);
 
-        const subnetData = response.data.Subnet?.[0];
 	const ipNodes = response.data.IP;
 
-        if (!subnetData || !ipNodes) {
+        if (!ipNodes) {
           return []; // Return empty array if no Subnet found
         }
 
         return ipNodes.map((ipNode: any) => ({
-          ip: ipNode.address,
-          subnet: subnetData.range + (subnetData.note ? ` (${subnetData.note})` : ''),
+	  id: ipNode._id,
+          address: ipNode.address,
+          subnet: range,
         }));
       })
     );
