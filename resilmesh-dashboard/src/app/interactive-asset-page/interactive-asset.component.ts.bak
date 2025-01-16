@@ -1,0 +1,104 @@
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { VirtualNetworkService } from '../shared/services/';
+import { DataService } from '../shared/services/';
+import { ActivatedRoute } from '@angular/router';
+import cytoscape from 'cytoscape';
+
+@Component({
+  selector: 'app-interactive-asset',
+  templateUrl: './interactive-asset.component.html',
+  styleUrls: ['./interactive-asset.component.css'],
+})
+
+export class InteractiveAssetComponent implements OnInit, AfterViewInit {
+  subnetSearch: string = '';
+  subnetNode: { _id: string; range: string; note: string } | null = null;
+  errorMessage = '';
+  dataLoading = false;
+  cy: any;
+
+  constructor(
+	private dataService: DataService, 
+	private virtualNetworkService: VirtualNetworkService, 
+	private route: ActivatedRoute) 
+  {
+    // Initialize subnetSearch from route parameters if available
+    if (route.snapshot.params?.range) {
+      this.subnetSearch = route.snapshot.params.range;
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.subnetSearch) {
+      this.loadCytoscapeData();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.subnetNode) {
+      this.initializeCytoscape(this.subnetNode.range);
+    }
+  }
+
+  loadCytoscapeData(): void {
+    this.dataLoading = true;
+
+    console.log('Searching for Subnet:', this.subnetSearch);
+
+    // Fetch the Subnet node details
+    this.dataService.getSubnetNode(this.subnetSearch).subscribe(
+      (data) => {
+        console.log('Subnet Node Data:', data);
+        this.subnetNode = data;
+        this.initializeCytoscape(data.range); // Initialize Cytoscape with Subnet node
+        this.dataLoading = false;
+      },
+      (error) => {
+        console.error('Error loading Subnet Node:', error);
+        this.errorMessage = error;
+        this.dataLoading = false;
+      }
+    );
+  }
+
+  initializeCytoscape(range: string): void {
+    // Destroy existing Cytoscape instance to avoid duplicates
+    if (this.cy) {
+      this.cy.destroy();
+    }
+
+    console.log('Initializing Cytoscape with range:', range);
+
+    this.cy = cytoscape({
+      container: document.getElementById('cy'), // Bind to the container
+      elements: [
+        {
+          data: {
+            id: 'subnet',
+            label: range, // Use the range as the label
+          },
+        },
+      ],
+      style: [
+        {
+          selector: 'node',
+          style: {
+            label: 'data(label)',
+            'background-color': 'blue',
+            shape: 'ellipse',
+            width: 120,
+            height: 120,
+            'text-valign': 'center',
+            color: '#fff',
+            'font-size': '15px',
+          },
+        },
+      ],
+      layout: {
+        name: 'preset', // Static layout
+      },
+    });
+
+    console.log('Cytoscape initialized successfully.');
+  }
+}

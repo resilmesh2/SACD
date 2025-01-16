@@ -13,7 +13,7 @@
     [disabled]="!subnetSearch"
     mat-raised-button
     color="primary"
-    (click)="loadCytoscapeData()"
+    (click)="initializeVirtualNetwork(subnetSearch)"
     class="search-button"
     aria-label="Search Button"
   >
@@ -23,7 +23,7 @@
 </div><div class="visualisation-container">
   <div id="cy" class="cy-container" [class.hidden]="dataLoading"></div>
   <div *ngIf="dataLoading" class="loading-message">Loading data...</div>
-  <div *ngIf="!subnetNode && !dataLoading" class="no-data-message">
+  <div *ngIf="!elements && !dataLoading" class="no-data-message">
     No data available for the given Subnet range.
   </div>
 </div>

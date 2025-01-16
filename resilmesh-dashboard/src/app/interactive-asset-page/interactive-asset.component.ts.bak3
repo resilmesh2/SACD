@@ -1,0 +1,280 @@
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { VirtualNetworkService } from '../shared/services/virtual.network.data';
+import { ActivatedRoute } from '@angular/router';
+import cytoscape from 'cytoscape';
+
+@Component({
+  selector: 'app-interactive-asset',
+  templateUrl: './interactive-asset.component.html',
+  styleUrls: ['./interactive-asset.component.css'],
+})
+export class InteractiveAssetComponent implements OnInit, AfterViewInit {
+  subnetSearch: string = '';
+  errorMessage = '';
+  dataLoading = false;
+  elements: any[] = []; // Initialized to an empty array
+  cy: any;
+  displayedNodeIDs: { [key: string]: boolean } = {};
+
+  constructor(
+    private virtualNetwork: VirtualNetworkService,
+    private route: ActivatedRoute
+  ) {
+    if (route.snapshot.params?.range) {
+      this.subnetSearch = route.snapshot.params.range;
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.subnetSearch) {
+      this.initializeVirtualNetwork(this.subnetSearch);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.elements) {
+      this.initializeCytoscape(this.elements);
+    }
+  }
+
+  initializeVirtualNetwork(netRange: string): void {
+    this.virtualNetwork.fetchInitialCDIRData(netRange)
+      .then(() => this.virtualNetwork.getVirtualNetworkData())
+      .then((elements) => this.initializeCytoscape(elements))
+      .catch((error) => {
+        console.error('Error during initialization:', error);
+      });
+  }
+
+  interface CytoscapeElement {
+    data: {
+      id: string;
+      label?: string;
+      type?: string;
+      [key: string]: any;
+    };
+    position?: {
+      x: number;
+      y: number;
+    };
+    group: string;
+    removed: boolean;
+    selected: boolean;
+    selectable: boolean;
+    locked: boolean;
+    grabbable: boolean;
+    pannable: boolean;
+    classes: string;
+  }
+
+  initializeCytoscape(elements: any[]): void {
+    if (!elements || elements.length === 0) {
+      console.warn('No elements to initialize Cytoscape.');
+      return;
+    }
+
+    const cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements,
+      style: [
+            {
+                selector: 'node[type="CIDR_Node"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'black',
+                    'shape': 'ellipse',
+                    'width': 120,
+                    'height': 120,
+                    'text-valign': 'center',
+                    'color': '#fff',
+                    'font-size': '15px'
+                }
+            },
+            {
+                selector: 'node[type="Subnet"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'skyblue',
+                    'shape': 'ellipse',
+                    'width': 120,
+                    'height': 120,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '15px'
+                }
+            },
+	    {
+                selector: 'node[type="IP"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'yellow',
+                    'shape': 'ellipse',
+                    'width': 100,
+                    'height': 100,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '12px'
+                }
+            },
+            {
+                selector: 'node[type="Node"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'black',
+                    'shape': 'ellipse',
+                    'width': 80,
+                    'height': 80,
+                    'text-valign': 'center',
+                    'color': '#fff',
+                    'font-size': '15px'
+                }
+            },
+            {
+                selector: 'node[type="DomainName"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'blue',
+                    'shape': 'rectangle',
+                    'width': 100,
+                    'height': 60,
+                    'text-valign': 'center',
+                    'color': '#fff',
+                    'font-size': '12px'
+                }
+            },
+	    {
+                selector: 'node[type="Host"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'lightgrey',
+                    'shape': 'ellipse',
+                    'width': 100,
+                    'height': 60,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '12px'
+                }
+            },
+            {
+                selector: 'node[type="SoftwareVersion"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'aqua',
+                    'shape': 'ellipse',
+                    'width': 100,
+                    'height': 80,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '12px'
+                }
+            },
+            {
+                selector: 'node[type="Vulnerability"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'red',
+                    'shape': 'rectangle',
+                    'width': 80,
+                    'height': 80,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '12px'
+                }
+            },
+            {
+                selector: 'node[type="CVE"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'orange',
+                    'shape': 'rectangle',
+                    'width': 160,
+                    'height': 50,
+                    'text-valign': 'center',
+                    'color': 'black',
+                    'font-size': '12px'
+                }
+            },
+	    {
+		selector: 'node[id^="compound-"]',
+		style: {
+		    'background-color': 'skyblue',
+		    'background-opacity': 0.333
+		}
+	    },
+	    {
+		selector: 'node[id^="vulnerability-compound-"]',
+		style: {
+		    'background-color': '#ad1a66',
+		    'background-opacity': 0.1667
+		}
+	    },
+            {
+                selector: 'edge',
+                style: {
+                    'width': 1,
+                    'line-color': 'black',
+                    'target-arrow-color': 'black',
+                    'target-arrow-shape': 'triangle',
+                    'label': 'data(label)',
+		    'opacity': 0.55,
+		    'curve-style': 'bezier',
+		    'arrow-scale': 1.5,
+                    'font-size': '14px',
+                    'text-rotation': 'autorotate',
+                    'color': 'blue'
+                }
+            }
+      ],
+      layout: {
+          name: 'breadthfirst',
+	  directed: true,
+	  padding: 50
+      },
+      minZoom: 0.5,
+      maxZoom: 2.0,
+      zoomingEnabled: true
+    }); 
+
+    cy.add(elements);
+
+    console.log('Cytoscape initialized with elements:', elements);
+
+    // Apply a layout after adding elements to properly position them
+    cy.layout({ name: 'breadthfirst', directed: true, padding: 50 }).run();
+
+    cy.elements().jsons().forEach((element: CytoscapeElement){
+
+	// Log the entire element
+	console.log('Cytoscape JSON Element:', element.data);
+
+	if (element.data.id) {
+
+	   console.log('Cytoscape JSON Element ID:', element.data.id);
+	   this.displayedNodeIDs[element.data.id] = true;
+	}
+
+    });
+
+    // click on an existing Node to show neighbors
+    cy.on('dbltap', 'node', async (event) => {
+
+	const node = event.target;
+        const nodeId = event.target.id();
+	const nodeType = node.data('type');
+
+	// check if node was in initial Neo4j query
+	if (!this.displayedNodeIDs[nodeId]) {
+	    console.log(`Node ${nodeId} was not part of the initial data`);
+	    return;
+	}
+
+	console.log('Node dbl tapped:', nodeData);
+    });
+
+    //cy.on('tap', 'node', (event) => {
+      //const nodeData = event.target.data();
+      //console.log('Node tapped:', nodeData);
+    //});
+  }
+
+}
