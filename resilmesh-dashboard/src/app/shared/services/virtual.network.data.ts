@@ -76,4 +76,25 @@ export class VirtualNetworkService {
       .then((response) => response?.message || 'Operation completed with no response.');
   }
 
+  /**
+   * Collapses the virtual network by removing neighbors of a specific node.
+   * @param expandedData The data of the expanded nodes to be removed.
+   * @returns A promise that resolves with the API response message.
+   */
+  collapseVirtualNetwork(expandedData: any[]): Promise<string> {
+    const url = `${this.apiUrl}/collapse-virtual-network`;
+
+    return this.http
+      .post<{ message: string }>(url, expandedData, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to collapse virtual network:', error);
+          return of({ message: 'Failed to collapse virtual network' });
+        })
+      )
+      .toPromise()
+      .then((response) => response?.message || 'Operation completed with no response.');
+    }
 }

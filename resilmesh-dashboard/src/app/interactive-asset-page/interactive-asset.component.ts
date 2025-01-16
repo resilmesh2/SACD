@@ -260,11 +260,20 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 
       console.log('Node dbl-tapped:', node.data());
 
-      this.expandCytoscapeVisualization(nodeId, nodeType);
+      // if selected nodeId is absent expand the graph else collapse the graph
+      if (this.expandedNodes.includes(nodeId)) {
+
+	console.log(`Collapsing neighbors of ${nodeId}`);
+	this.collapseRecursiveVisualization(nodeId);
+      } else {
+
+	console.log(`Expanding neighbors of ${nodeId}`);
+	this.expandVisualization(nodeId, nodeType);
+      }
     });
   }
 
-  expandCytoscapeVisualization(nodeId: number, nodeType: string): void {
+  expandVisualization(nodeId: number, nodeType: string): void {
     this.virtualNetwork.expandVirtualNetwork(nodeId, nodeType)
     .then(() => this.virtualNetwork.getVirtualNetworkData())
     .then((elements) => {
@@ -351,7 +360,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 	this.expandedNodes.push(nodeId);
       }
 
-      this.neighborSets[nodeId] = neighbors;
+      this.neighborSets[nodeId] = filteredData;
 
       // Update displayed nodes to avoid duplicates
       cy.elements().jsons().forEach((element: CytoscapeElement) => {
@@ -394,6 +403,57 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
     .catch((error) => {
       console.error('Error expanding virtual network:', error);
     });
+  }
+
+  collapseRecursiveVisualization(nodeId: number): void {
+    const cy = this.cy; // Access the initialized Cytoscape instance
+
+    // Retrieve the stored neighbors of this node
+    const neighbors = this.neighborSets[nodeId];
+
+    if (!neighbors) {
+      console.warn(`No neighbors stored for node ${nodeId}.`);
+      return;
+    }
+
+    this.virtualNetwork.collapseVirtualNetwork(neighbors);
+
+    // Remove neighbors and their edges
+    neighbors.forEach((element) => {
+      const { id, source, target } = element.data;
+
+      if (source && target) {
+        // Remove edge
+        const edge = cy.edges(`[source = "${source}"][target = "${target}"]`);
+        if (edge) edge.remove();
+      } else if (id) {
+        // Remove node
+        const node = cy.getElementById(id);
+        if (node) node.remove();
+      }
+    });
+
+    // Remove compound node if it exists
+    const compoundNodeId = `compound-${nodeId}`;
+    const compoundNode = cy.getElementById(compoundNodeId);
+    if (compoundNode) compoundNode.remove();
+
+    // Remove vulnerability compound node if it exists
+    const vulnerabilityCompoundNodeId = `vulnerability-compound-${nodeId}`;
+    const vulnerabilityCompoundNode = cy.getElementById(vulnerabilityCompoundNodeId);
+    if (vulnerabilityCompoundNode) vulnerabilityCompoundNode.remove();
+
+    neighbors.forEach(neighbor => {
+      delete this.displayedNodeIDs[neighbor.data.id];
+    });
+
+    // Update expanded nodes list
+    this.expandedNodes = this.expandedNodes.filter((id) => id !== nodeId);
+
+    // Clean up neighbor set
+    delete this.neighborSets[nodeId];
+
+    console.log(`Neighbors of node ${nodeId} collapsed.`);
   }
 
 }
