@@ -31,6 +31,7 @@ interface CytoscapeElement {
 })
 export class InteractiveAssetComponent implements OnInit, AfterViewInit {
   subnetSearch: string = '';
+  cidrSearch: string = '147.251.96.0/24';
   errorMessage = '';
   dataLoading = false;
   elements: CytoscapeElement[] = [];
@@ -62,8 +63,10 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
   }
 
   initializeVirtualNetwork(netRange: string): void {
+
+    if (netRange === this.cidrSearch) {
     this.virtualNetwork
-      .fetchInitialCDIRData(netRange)
+      .fetchInitialCIDRData()
       .then(() => this.virtualNetwork.getVirtualNetworkData())
       .then((elements) => {
 
@@ -79,6 +82,26 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
       .catch((error) => {
         console.error('Error during initialization:', error);
       });
+    } else {
+    
+    this.virtualNetwork
+      .fetchInitialSubnetData(netRange)
+      .then(() => this.virtualNetwork.getVirtualNetworkData())
+      .then((elements) => {
+
+        // Transform the data to ensure compatibility with Cytoscape
+        const validElements = elements.map((element) => ({
+          ...element,
+	  group: element.data.type ? 'nodes' : (element.data.source && element.data.target ? 'edges' : undefined),
+        }));
+
+        this.elements = validElements; // Store transformed elements
+        this.initializeCytoscape(validElements);
+      })
+      .catch((error) => {
+        console.error('Error during initialization:', error);
+      });
+    }
   }
 
   initializeCytoscape(elements: CytoscapeElement[]): void {
@@ -104,7 +127,19 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
             'font-size': '12px'
           },
         },
-
+            {
+                selector: 'node[type="CIDR_Node"]',
+                style: {
+                    'label': 'data(label)',
+                    'background-color': 'black',
+                    'shape': 'ellipse',
+                    'width': 120,
+                    'height': 120,
+                    'text-valign': 'center',
+                    'color': '#fff',
+                    'font-size': '15px'
+                }
+            },
         {
           selector: 'node[type="Subnet"]',
           style: {

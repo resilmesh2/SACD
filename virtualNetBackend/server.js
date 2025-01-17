@@ -10,6 +10,10 @@ const fs = require('fs');
 let virtualNetwork = new graphlib.Graph();
 const virtualNetworkFilePath = path.join(__dirname, 'data', 'virtualNetwork.json');
 
+// define a CIDR prefix
+const cidrPrefix = '147.251.96.';
+const cidrPostfix = '0/24';
+
 // Neo4j credentials from environment variables
 const uri = process.env.NEO4J_SERVER_URL || 'bolt://localhost:7687';
 const user = process.env.NEO4J_USERNAME || 'neo4j';
@@ -29,8 +33,78 @@ app.use(cors({
     allowedHeaders: 'Content-Type,Authorization'
 }));
 
+// initial data from Neo4j database
+async function getInitialCIDRNode() {
+    const session = driver.session();
+    // console.log('Initial CIDR Notation:');
+
+    try {
+
+	// define initial Neo4j query
+	const query = `MATCH (o:OrganizationUnit) WHERE o.name in ["FF"] WITH o ` +
+			`MATCH (o)-[r]-(s:Subnet) WHERE s.range IN ["${cidrPrefix}${cidrPostfix}"] ` +
+			`RETURN o, r, s;`;
+
+        // Run a query to fetch nodes (adjust the query as needed)
+        const result = await session.run(query);
+
+	const elements = [];
+
+        let nodeId = null;
+	let nodeType = 'CIDR_Node';
+	let nodeDetails = null;
+	let nodeLabel = null;
+
+	// Process the result and convert the responding nodes to Cytoscape elements
+	result.records.forEach(record => {
+
+	    record.keys.forEach(key => {
+
+		const node = record.get(key);
+
+		if (node && node.labels) {
+
+		    currentNode = node.labels[0];
+
+		    // handle node and create a CIDR_Node element
+		    if (currentNode === 'OrganizationUnit'){
+
+			// console.log('OrgUnit', currentNode);
+			nodeId = node.identity.low;
+			nodeDetails = node.properties.name;
+		    }
+
+		    else if (currentNode === 'Subnet'){
+
+			// console.log('Subnet', node);
+			nodeLabel = node.properties.range;
+		    }
+		}
+	    });
+
+	});
+
+        elements.push({
+	    data: {
+		id: nodeId,
+		type: nodeType,
+		label: nodeLabel,
+		details: nodeDetails
+	    }
+	});
+
+	// console.log('Initial Neo4j Query Elements: ', elements);
+	return elements;
+    } catch (error) {
+	console.error('Error fetching initial CIDR notation from Neo4j:', error);
+	return [];
+    } finally {
+	await session.close();
+    }
+}
+
 //   Neo4j Queries   //
-async function getInitialSupernetNode(netRange){
+async function getInitialSubnetNode(netRange){
     const session = driver.session();
 
     try {
@@ -92,7 +166,12 @@ async function getNeighborNodes(nodeId, nodeType) {
     try {
         let query = ''; // Change to let to allow reassignment
 
-        if (nodeType === 'Subnet') {
+        if (nodeType === 'CIDR_Node') {
+            query = `MATCH (o:OrganizationUnit) WHERE id(o) = $nodeId WITH o ` +
+                `MATCH (o)-[r]-(s:Subnet) WHERE s.range CONTAINS $cidrPrefix ` +
+                `AND NOT s.range ENDS WITH $cidrPostfix ` +
+                `RETURN r, s;`;
+        } else if (nodeType === 'Subnet') {
             query = `MATCH (s:Subnet)-[r]-(ip:IP) WHERE id(s) = $nodeId ` +
                 `RETURN s, r, ip;`;
         } else if (nodeType === 'IP') {
@@ -115,6 +194,8 @@ async function getNeighborNodes(nodeId, nodeType) {
         const result = await session.run(query, {
             nodeId: parseInt(nodeId),
             nodeType: nodeType,
+            cidrPrefix: cidrPrefix,
+            cidrPostfix: cidrPostfix
         });
 
         const elements = [];
@@ -223,10 +304,19 @@ function getNodeData(nodeType, nodeProperty){
     return { nodeLabel, nodeDetails };
 }
 
-// Fetch and populate CDIR data
-async function fetchAndPopulateCDIR(netRange) {
-    console.log(`Fetching and populating CIDR: ${netRange}`);
-    const initialSubnet = await getInitialSupernetNode(netRange); // Define this as per Neo4j query
+// Fetch and populate Supernet data
+async function fetchAndPopulateCIDR() {
+    console.log('Fetching and populating CIDR');
+    const initialSupernet = await getInitialCIDRNode(); // Define this as per Neo4j query
+    await populateVirtualNetwork(initialSupernet); // Define populate logic
+    saveVirtualNetwork();
+    console.log('Initial CIDR fetched and virtual network populated.');
+}
+
+// Fetch and populate Subnet data
+async function fetchAndPopulateSubnet(netRange) {
+    console.log(`Fetching and populating Subnet: ${netRange}`);
+    const initialSubnet = await getInitialSubnetNode(netRange); // Define this as per Neo4j query
     await populateVirtualNetwork(initialSubnet); // Define populate logic
     saveVirtualNetwork();
     console.log('Initial data fetched and virtual network populated.');
@@ -439,21 +529,34 @@ async function loadVirtualNetwork() {
 //  API calls  //
 // Export the function for use in the API route
 module.exports = {
-    getInitialSupernetNode,
+    getInitialCIDRNode,
+    getInitialSubnetNode,
     getNeighborNodes,
     getVirtualNetworkData
 };
 
 // API to fetch CIDR data and populate the network
-app.get('/api/fetch-cdir-data', async (req, res) => {
+app.get('/api/fetch-cidr-data', async (req, res) => {
+    try {
+        const data = await fetchAndPopulateCIDR();
+	// res.status(200).json(data);
+        res.status(200).json({ message: 'CIDR data fetched', data });
+    } catch (error) {
+        console.error('Error fetching CIDR data:', error);
+        res.status(500).json({ error: 'Failed to fetch CIDR data' });
+    }
+});
+
+// API to fetch Subnet data and populate the network
+app.get('/api/fetch-subnet-data', async (req, res) => {
     const { netRange } = req.query;
     if (!netRange) {
         return res.status(400).json({ error: 'netRange is required' });
     }
     try {
-        const data = await fetchAndPopulateCDIR(netRange);
+        const data = await fetchAndPopulateSubnet(netRange);
 	// res.status(200).json(data);
-        res.status(200).json({ message: 'CIDR data fetched', data });
+        res.status(200).json({ message: 'Subnet data fetched', data });
     } catch (error) {
         console.error('Error fetching CIDR data:', error);
         res.status(500).json({ error: 'Failed to fetch CIDR data' });

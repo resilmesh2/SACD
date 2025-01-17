@@ -14,11 +14,34 @@ export class VirtualNetworkService {
 
   /**
    * Fetches the initial CIDR data and populates the virtual network on the backend.
+   * @returns A promise that resolves when the operation is complete.
+  */
+  fetchInitialCIDRData(): Promise<void> {
+    const url = `${this.apiUrl}/fetch-cidr-data`;
+
+    return this.http
+      .get<{ message: string }>(url)
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to fetch initial CIDR data:', error);
+          return of({ message: 'Failed to fetch data' });
+        })
+      )
+      .toPromise()
+      .then((response) => {
+        if (response && response.message !== 'Failed to fetch data') {
+          console.log('Initial CIDR data fetched:', response.message);
+        }
+      });
+  }
+
+  /**
+   * Fetches the initial CIDR data and populates the virtual network on the backend.
    * @param netRange The network range to fetch.
    * @returns A promise that resolves when the operation is complete.
   */
-  fetchInitialCDIRData(netRange: string): Promise<void> {
-    const url = `${this.apiUrl}/fetch-cdir-data`;
+  fetchInitialSubnetData(netRange: string): Promise<void> {
+    const url = `${this.apiUrl}/fetch-subnet-data`;
 
     return this.http
       .get<{ message: string }>(url, { params: { netRange } })
