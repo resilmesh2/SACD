@@ -37,6 +37,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
   cy: any;
   displayedNodeIDs: { [key: string]: boolean } = {};
   expandedNodes: number[] = [];
+  //neighborSets: { [key: string]: CytoscapeElement[] } = {};
   neighborSets: { [key: number]: CytoscapeElement[] } = {};
 
   constructor(
@@ -264,6 +265,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
       if (this.expandedNodes.includes(nodeId)) {
 
 	console.log(`Collapsing neighbors of ${nodeId}`);
+	// this.collapseVisualization(nodeId);
 	this.collapseRecursiveVisualization(nodeId);
       } else {
 
@@ -356,6 +358,8 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
       // Add new elements to Cytoscape
       cy.add([...neighbors, ...filteredEdges]);
 
+      console.log("Debugger Log: - ", typeof nodeId, nodeId);
+
       if (!this.expandedNodes.includes(nodeId)) {
 	this.expandedNodes.push(nodeId);
       }
@@ -403,57 +407,63 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
     .catch((error) => {
       console.error('Error expanding virtual network:', error);
     });
+
+    console.log("Debugging Log - Expansion Expanded Data: ", this.expandedNodes);
   }
 
-  collapseRecursiveVisualization(nodeId: number): void {
-    const cy = this.cy; // Access the initialized Cytoscape instance
+collapseRecursiveVisualization(nodeId: number): void {
+  const cy = this.cy;
 
-    // Retrieve the stored neighbors of this node
-    const neighbors = this.neighborSets[nodeId];
+  console.log('Expanded Nodes: ', this.expandedNodes);
+  console.log('NeighborSets: ', this.neighborSets);
 
-    if (!neighbors) {
-      console.warn(`No neighbors stored for node ${nodeId}.`);
+  const recursiveCollapse = (currentNodeId: number): void => {
+    const neighbors = this.neighborSets[currentNodeId];
+
+    console.log('Current node to collapse: ', currentNodeId);
+    console.log('Neighbors to remove: ', neighbors);
+
+    if (!neighbors || !this.expandedNodes.includes(currentNodeId)) {
+      console.log('No neighbors to remove.');
       return;
     }
 
-    this.virtualNetwork.collapseVirtualNetwork(neighbors);
+    neighbors.forEach((neighbor) => {
+      const neighborId = Number(neighbor.data.id); // Ensure neighborId is a number
 
-    // Remove neighbors and their edges
-    neighbors.forEach((element) => {
-      const { id, source, target } = element.data;
+      console.log('Debugger Log: - Expanded Nodes: ', this.expandedNodes)
+      console.log('Debugger Log: - Neighbor ID: ', neighborId, neighborId.toString(), typeof neighborId);
 
-      if (source && target) {
-        // Remove edge
-        const edge = cy.edges(`[source = "${source}"][target = "${target}"]`);
-        if (edge) edge.remove();
-      } else if (id) {
-        // Remove node
-        const node = cy.getElementById(id);
-        if (node) node.remove();
+      if (this.expandedNodes.includes(neighborId)) {
+        console.log(`Collapsing expanded Node ${neighborId} recursively`);
+        recursiveCollapse(neighborId);
       }
+
+      const neighborNode = cy.getElementById(neighborId);
+      if (neighborNode) {
+        neighborNode.remove();
+      }
+
+      cy.edges(`[source = "${neighborId}"], [target = "${neighborId}"]`).remove();
+
+      // Remove compound nodes if they exist
+      const compoundNodeId = `compound-${neighborId}`;
+      const compoundNode = cy.getElementById(compoundNodeId);
+      if (compoundNode) compoundNode.remove();
+
+      const vulnerabilityCompoundNodeId = `vulnerability-compound-${neighborId}`;
+      const vulnerabilityCompoundNode = cy.getElementById(vulnerabilityCompoundNodeId);
+      if (vulnerabilityCompoundNode) vulnerabilityCompoundNode.remove();
     });
 
-    // Remove compound node if it exists
-    const compoundNodeId = `compound-${nodeId}`;
-    const compoundNode = cy.getElementById(compoundNodeId);
-    if (compoundNode) compoundNode.remove();
+    this.expandedNodes = this.expandedNodes.filter((id) => id !== currentNodeId);
+    delete this.neighborSets[currentNodeId];
+    console.log(`Neighbors of node ${currentNodeId} collapsed.`);
+  };
 
-    // Remove vulnerability compound node if it exists
-    const vulnerabilityCompoundNodeId = `vulnerability-compound-${nodeId}`;
-    const vulnerabilityCompoundNode = cy.getElementById(vulnerabilityCompoundNodeId);
-    if (vulnerabilityCompoundNode) vulnerabilityCompoundNode.remove();
+  recursiveCollapse(nodeId);
+}
 
-    neighbors.forEach(neighbor => {
-      delete this.displayedNodeIDs[neighbor.data.id];
-    });
-
-    // Update expanded nodes list
-    this.expandedNodes = this.expandedNodes.filter((id) => id !== nodeId);
-
-    // Clean up neighbor set
-    delete this.neighborSets[nodeId];
-
-    console.log(`Neighbors of node ${nodeId} collapsed.`);
-  }
 
 }
+
