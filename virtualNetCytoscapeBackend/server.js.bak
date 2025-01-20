@@ -1,0 +1,44 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const apiRoutes = require('./routes/api');
+
+const app = express();
+const PORT = 3000;
+
+const fs = require('fs');
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use('/api', apiRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Backend API running at http://localhost:${PORT}`);
+});
+
+// Close the Neo4j driver when the process exits
+process.on('exit', () => {
+    console.log('Exited');
+    driver.close();
+});
+
+// Delete the virtual network file and reset virtualNetwork on shutdown
+process.on('SIGINT', () => {
+    console.log('\nShutting down server...');
+
+    // Remove the JSON file if it exists
+    if (fs.existsSync(virtualNetworkFilePath)) {
+        try {
+            fs.unlinkSync(virtualNetworkFilePath);
+            console.log('virtualNetwork.json deleted successfully from directory.');
+        } catch (error) {
+            console.error('Error deleting virtualNetwork.json:', error);
+        }
+    }
+
+    // Clear the virtual network data
+    virtualNetwork = new graphlib.Graph(); // Re-initialize to empty
+
+    // Exit process
+    process.exit();
+});
