@@ -84,7 +84,7 @@ export class VirtualNetworkService {
    * @param nodeType The type of the node (e.g., Subnet, IP).
    * @returns A promise that resolves with the API response message.
    */
-  expandVirtualNetwork(nodeId: number, nodeType: string): Promise<string> {
+  expandVirtualNetwork(nodeId: string, nodeType: string): Promise<string> {
     const url = `${this.apiUrl}/expand-virtual-network/${nodeId}/${nodeType}`;
 
     return this.http

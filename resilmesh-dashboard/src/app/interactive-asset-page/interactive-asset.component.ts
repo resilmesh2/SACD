@@ -37,9 +37,8 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
   elements: CytoscapeElement[] = [];
   cy: any;
   displayedNodeIDs: { [key: string]: boolean } = {};
-  expandedNodes: number[] = [];
-  //neighborSets: { [key: string]: CytoscapeElement[] } = {};
-  neighborSets: { [key: number]: CytoscapeElement[] } = {};
+  expandedNodes: string[] = [];
+  neighborSets: { [key: string]: CytoscapeElement[] } = {};
 
   constructor(
     private virtualNetwork: VirtualNetworkService,
@@ -310,7 +309,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
     });
   }
 
-  expandVisualization(nodeId: number, nodeType: string): void {
+  expandVisualization(nodeId: string, nodeType: string): void {
     this.virtualNetwork.expandVirtualNetwork(nodeId, nodeType)
     .then(() => this.virtualNetwork.getVirtualNetworkData())
     .then((elements) => {
@@ -328,10 +327,6 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 
       const neighbors = filteredData.filter(el => el.group === 'nodes' && el.data.id !== nodeId);
 
-      console.log('FilteredData: ', filteredData);
-
-      console.log('Neighbors: ', neighbors);
-
       const filteredEdges = filteredData.filter(el => {
         if (el.group === 'edges') {
           const { source, target } = el.data;
@@ -347,10 +342,6 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 
         return false;
       });
-
-      console.log('FilteredEdges: ', filteredEdges);
-
-      // cy.add(filteredData);
 
       let compoundNodeId: string | null = null;
       let vulnerabilityCompoundNodeId: string | null = null;
@@ -393,8 +384,6 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
       // Add new elements to Cytoscape
       cy.add([...neighbors, ...filteredEdges]);
 
-      console.log("Debugger Log: - ", typeof nodeId, nodeId);
-
       if (!this.expandedNodes.includes(nodeId)) {
 	this.expandedNodes.push(nodeId);
       }
@@ -423,7 +412,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
         const compoundNode = cy.getElementById(compoundNodeId);
         if (compoundNode && compoundNode.children().length) {
 	  applyLayout(compoundNode.children(), {
-	    name: 'cola', // Use the cola layout
+	    name: 'breadthfirst', // Use the breadthfirst layout
 	    // animate: true, // Enable animation for smooth transitions
 	    // padding: 30, // Add padding around the layout
             // fit: true,
@@ -443,16 +432,12 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
       console.error('Error expanding virtual network:', error);
     });
 
-    console.log("Debugging Log - Expansion Expanded Data: ", this.expandedNodes);
   }
 
-collapseRecursiveVisualization(nodeId: number): void {
+collapseRecursiveVisualization(nodeId: string): void {
   const cy = this.cy;
 
-  console.log('Expanded Nodes: ', this.expandedNodes);
-  console.log('NeighborSets: ', this.neighborSets);
-
-  const recursiveCollapse = (currentNodeId: number): void => {
+  const recursiveCollapse = (currentNodeId: string): void => {
     const neighbors = this.neighborSets[currentNodeId];
 
     console.log('Current node to collapse: ', currentNodeId);
@@ -464,12 +449,10 @@ collapseRecursiveVisualization(nodeId: number): void {
     }
 
     neighbors.forEach((neighbor) => {
-      const neighborId = Number(neighbor.data.id); // Ensure neighborId is a number
-
-      console.log('Debugger Log: - Expanded Nodes: ', this.expandedNodes)
-      console.log('Debugger Log: - Neighbor ID: ', neighborId, neighborId.toString(), typeof neighborId);
+      const neighborId = neighbor.data.id;
 
       if (this.expandedNodes.includes(neighborId)) {
+
         console.log(`Collapsing expanded Node ${neighborId} recursively`);
         recursiveCollapse(neighborId);
       }
@@ -478,6 +461,8 @@ collapseRecursiveVisualization(nodeId: number): void {
       if (neighborNode) {
         neighborNode.remove();
       }
+
+      delete this.displayedNodeIDs[neighborId]
 
       cy.edges(`[source = "${neighborId}"], [target = "${neighborId}"]`).remove();
 
@@ -491,12 +476,39 @@ collapseRecursiveVisualization(nodeId: number): void {
       if (vulnerabilityCompoundNode) vulnerabilityCompoundNode.remove();
     });
 
+    // Clean up tracking of displayed nodes and expanded neighbors
     this.expandedNodes = this.expandedNodes.filter((id) => id !== currentNodeId);
     delete this.neighborSets[currentNodeId];
+
+    neighbors.forEach(neighbor => {
+      delete this.displayedNodeIDs[neighbor.data.id];
+    });
+
     console.log(`Neighbors of node ${currentNodeId} collapsed.`);
+
+    this.virtualNetwork.collapseVirtualNetwork(neighbors);
   };
 
   recursiveCollapse(nodeId);
+
+  // Apply layout to remaining nodes
+  const layoutOptions = {
+      name: 'breadthfirst',
+      directed: true,
+      padding: 10,
+      fit: true,
+      spacingFactor: 1.5,
+      animate: true,
+      roots: `[id = "${nodeId}"]`,
+  };
+
+  const layout = cy.layout(layoutOptions);
+  layout.run();
+
+  console.log('Expanded Nodes: ', this.expandedNodes);
+  console.log('NeighborSets: ', this.neighborSets);
+  console.log('displayed Nodes: ', this.displayedNodeIDs);
+
 }
 
 
