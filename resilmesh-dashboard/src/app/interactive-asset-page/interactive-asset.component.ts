@@ -2,9 +2,6 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { VirtualNetworkService } from '../shared/services/virtual.network.data';
 import { ActivatedRoute } from '@angular/router';
 import cytoscape, { EventObject, ElementsDefinition, LayoutOptions, Collection } from 'cytoscape';
-// import cola from 'cytoscape-cola';
-
-// cytoscape.use(cola);
 
 interface CytoscapeElement {
   data: {
@@ -336,8 +333,6 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 	    (neighbors.some(n => n.data.id === source) && neighbors.some(n => n.data.id === target))
 	  );
 
-          //return (source === nodeId && neighbors.some(n => n.data.id === target)) ||
-            //     (target === nodeId && neighbors.some(n => n.data.id === source));
         }
 
         return false;
@@ -372,10 +367,10 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
           });
         }
 
-        // Assign parent nodes to neighbors
+        // Assign parent nodes to neighbors based on the existence of a vulnerability compound
         neighbors.forEach((neighbor) => {
           const { type } = neighbor.data;
-          neighbor.data.parent = (type === 'Vulnerability' || type === 'CVE') && vulnerabilityCompoundNodeId
+          neighbor.data.parent = (type === 'Vulnerability' || type === 'CVE' || type === 'NetworkService' || type === 'SoftwareVersion') && vulnerabilityCompoundNodeId
             ? vulnerabilityCompoundNodeId
             : compoundNodeId;
         });
@@ -413,20 +408,46 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
         if (compoundNode && compoundNode.children().length) {
 	  applyLayout(compoundNode.children(), {
 	    name: 'breadthfirst', // Use the breadthfirst layout
-	    // animate: true, // Enable animation for smooth transitions
-	    // padding: 30, // Add padding around the layout
-            // fit: true,
-	    // nodeSpacing: 20
+	    animate: true, // Enable animation for smooth transitions
+	    animationDuration: 800,
+	    padding: 20, // Add padding around the layout
+            avoidOverlap: true,
+	    spacingFactor: 1.5
 	  });
 	}
       }
 
-      cy.layout({
+      if (vulnerabilityCompoundNodeId) {
+        const vulnerabilityCompoundNode = cy.getElementById(vulnerabilityCompoundNodeId);
+        if (vulnerabilityCompoundNode && vulnerabilityCompoundNode.children().length) {
+	  applyLayout(vulnerabilityCompoundNode.children(), {
+	    name: 'breadthfirst', // Use the breadthfirst layout
+	    animate: true, // Enable animation for smooth transitions
+	    animationDuration: 800,
+	    padding: 20, // Add padding around the layout
+            avoidOverlap: true,
+	    spacingFactor: 1.5
+	  });
+	}
+      }      
+
+      applyLayout(cy.elements(), {
         name: 'breadthfirst',
         directed: true,
         padding: 50,
-        roots: `[id="${nodeId}"]`,
-      }).run();
+	animate: true,
+	animationDuration: 800,
+        avoidOverlap: true,
+      });
+
+      // cy.layout({
+        //name: 'breadthfirst',
+        //directed: true,
+        //padding: 50,
+	//avoidOverlap: true
+        // roots: `[id="${nodeId}"]`,
+      //}).run();
+
     })
     .catch((error) => {
       console.error('Error expanding virtual network:', error);
@@ -495,10 +516,12 @@ collapseRecursiveVisualization(nodeId: string): void {
   const layoutOptions = {
       name: 'breadthfirst',
       directed: true,
-      padding: 10,
+      padding: 30,
       fit: true,
       spacingFactor: 1.5,
+      avoidOverlap: true,
       animate: true,
+      animationDuration: 800,
       roots: `[id = "${nodeId}"]`,
   };
 

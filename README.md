@@ -19,3 +19,15 @@ ng serve
 ```
 
 The dashboard will then be available at http://localhost:4200/
+
+## Running the JS backend for visualization
+
+The server for the visualization backend is in the 'virtualNetBackend' folder.
+```
+cd virtualNetBackend/
+```
+
+and the server is executed with the command.
+```
+node server.js
+```
