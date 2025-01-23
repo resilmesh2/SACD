@@ -16,6 +16,7 @@
     "express": "^4.21.2",
     "fs": "^0.0.1-security",
     "graphlib": "^2.1.8",
+    "ip-cidr": "^4.0.2",
     "neo4j-driver": "^5.27.0",
     "path": "^0.12.7"
   }

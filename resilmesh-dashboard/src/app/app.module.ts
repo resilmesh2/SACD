@@ -46,6 +46,7 @@ import { IssueComponent } from './issue-page/issue.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
 import { VulnerabilityComponent } from './vulnerability-page/vulnerability.component';
 import { InteractiveAssetComponent } from './interactive-asset-page/interactive-asset.component';
+import { NetworkLandscapeComponent } from './network-landscape-page/network-landscape.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { InteractiveAssetComponent } from './interactive-asset-page/interactive-
     IssueComponent,
     IssueDetailComponent,
     VulnerabilityComponent,
-    InteractiveAssetComponent
+    InteractiveAssetComponent,
+    NetworkLandscapeComponent
   ],
   imports: [
     BrowserModule,

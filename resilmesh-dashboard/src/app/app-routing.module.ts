@@ -10,7 +10,7 @@ import {
   ISSUE_PATH,
   VULNERABILITY_PATH,
   NETWORK_INTERACTIVE_PATH,
-  NETWORK_STATIC_LANDSCAPE,
+  NETWORK_STATIC_PATH,
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
 
@@ -72,6 +72,14 @@ const routes: Routes = [
 	(m) => m.InteractiveAssetModule,
       ),
     data: { breadcrumb: 'Interactive Asset Visualization' },
+  },
+  {
+    path: NETWORK_STATIC_PATH,
+    loadChildren: () =>
+      import('./network-landscape-page/network-landscape.module').then(
+	(m) => m.NetworkLandscapeAssetModule,
+      ),
+    data: { breadcrumb: 'Network Landscape Visualization' },
   },
   {
     path: USER_PATH,

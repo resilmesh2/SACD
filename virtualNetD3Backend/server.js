@@ -1,6 +1,7 @@
 const express = require('express');
 const neo4j = require('neo4j-driver');
 const path = require('path');
+const cors = require('cors');
 
 // define a new virtualNetwork
 const graphlib = require('graphlib');
@@ -19,18 +20,24 @@ const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 
 // Initialize Express.js
 const app = express();
-const port = 3000; // Port to run the web server
+const port = 3001; // Port to run the web server
 
-// Serve the static files (HTML, CSS, JS) from the public directory
+// Serve the static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://localhost:4200', // Allow only your Angular app
+    methods: 'GET,POST',
+    allowedHeaders: 'Content-Type,Authorization'
+}));
 
 const virtualNetworkFilePath = path.join(__dirname, 'data', 'virtualNetwork.json');
 
 //////   Neo4j Queries   //////
 // initial data from Neo4j database
 
-async function getInitialData() {
+async function getInitialData(netRangePrefix) {
     const session = driver.session();
 
     ipPrefix = "147.251";
@@ -38,7 +45,7 @@ async function getInitialData() {
     try {
 
 	const query = `MATCH (o:OrganizationUnit)-[r]-(s:Subnet), (s)-[r2]-(i:IP) ` +
-			`WHERE o.name in ["FF"] AND s.range STARTS WITH "${ipPrefix}" ` +
+			`WHERE o.name in ["FF"] AND s.range STARTS WITH "${netRangePrefix}" ` +
 			`RETURN o, r, s, i;`;
 
         // Run a query to fetch nodes (adjust the query as needed)
@@ -105,14 +112,14 @@ async function getInitialData() {
 	// make a second query to check whether any resulting IPs have vulnerabilities
 	const query2 = `MATCH (i:IP)-[r]-(n:Node), (n)-[r2]-(h:Host), ` +
 			`(h)-[r3]-(sv:SoftwareVersion), (sv)-[r4]-(v:Vulnerability) ` +
-			`WHERE i.address STARTS WITH "${ipPrefix}.96" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.97" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.98" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.99" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.100" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.101" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.102" ` +
-			`OR i.address STARTS WITH "${ipPrefix}.103" ` +
+			`WHERE i.address STARTS WITH "${netRangePrefix}.96" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.97" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.98" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.99" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.100" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.101" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.102" ` +
+			`OR i.address STARTS WITH "${netRangePrefix}.103" ` +
 			`RETURN i, count(v);`;
 
 
@@ -389,8 +396,8 @@ async function buildCIDRTreemap(supernet, cidrDict) {
 }
 
 // Consolidate the initial CDIR range fetch the node and save to virtual network
-async function fetchAndPopulateData() {
-    const initialCIDR = await getInitialData();
+async function fetchAndPopulateData(netRangePrefix) {
+    const initialCIDR = await getInitialData(netRangePrefix);
     await populateVirtualNetwork(initialCIDR);
     saveVirtualNetwork();
     console.log('Initial data fetched and virtual network populated.');
@@ -494,18 +501,21 @@ function saveVirtualNetwork() {
     }
 }
 
-// Load the virtual network data on server startup
+// Load the virtual network from a file or initialize it as empty
 async function loadVirtualNetwork() {
     try {
-        if (fs.existsSync(virtualNetworkFilePath,)) {
+        if (fs.existsSync(virtualNetworkFilePath)) {
             const data = fs.readFileSync(virtualNetworkFilePath, 'utf-8');
             if (data) {
                 virtualNetwork = graphlib.json.read(JSON.parse(data));
+                console.log('Virtual network loaded from file.');
             } else {
-                await fetchAndPopulateData();
+                console.log('Virtual network file is empty, initializing a new network.');
+                virtualNetwork = new graphlib.Graph();
             }
         } else {
-            await fetchAndPopulateData();
+            console.log('No virtual network file found, initializing a new network.');
+            virtualNetwork = new graphlib.Graph();
         }
     } catch (error) {
         console.error('Error loading virtual network:', error);
@@ -519,17 +529,22 @@ module.exports = {
     getVirtualNetworkData
 };
 
-app.get('/api/fetch-data', async (req, res) => {
+app.get('/api/fetch-cidr-data', async (req, res) => {
+
+    const { netRangePrefix } = req.query;
+    if (!netRangePrefix) {
+        return res.status(400).json({ error: 'The first two bit fields of Supernet required' });
+    }
     try {
-        await fetchAndPopulateData();
+        await fetchAndPopulateData(netRangePrefix);
         res.json({ message: 'Initial CDIR range fetched and virtual network saved.' });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch initial data.' });
+        res.status(500).json({ error: 'Failed to fetch initial CIDR data.' });
     }
 });
 
 // extract data from virtual network
-app.get('/api/virtualNetwork', async (req, res) => {
+app.get('/api/get-virtual-network-data', async (req, res) => {
     const data = await getVirtualNetworkData();
     res.json(data);
 });

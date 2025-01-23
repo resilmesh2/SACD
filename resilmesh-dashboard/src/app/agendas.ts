@@ -6,7 +6,7 @@ import {
   ISSUE_PATH,
   VULNERABILITY_PATH,
   NETWORK_INTERACTIVE_PATH,
-  NETWORK_STATIC_LANDSCAPE
+  NETWORK_STATIC_PATH
 } from './paths';
 
 export const agendaContainers = [
@@ -16,6 +16,6 @@ export const agendaContainers = [
     new Agenda('Vulnerability', VULNERABILITY_PATH),
     new Agenda('Issues', ISSUE_PATH),
     new Agenda('Interactive Visualization', NETWORK_INTERACTIVE_PATH),
-    new Agenda('Network Landscape', NETWORK_STATIC_LANDSCAPE)
+    new Agenda('Network Landscape', NETWORK_STATIC_PATH)
   ])
 ];
