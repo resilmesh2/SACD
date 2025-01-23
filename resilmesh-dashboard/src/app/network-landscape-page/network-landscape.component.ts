@@ -18,7 +18,6 @@ interface ExtendedHierarchyNode extends d3.HierarchyNode<any> {
   styleUrls: ['./network-landscape.component.css'],
 })
 export class NetworkLandscapeComponent implements OnInit {
-  networkSearch: string = '';
   selectedSupernet: string = '147.251.96.0/24';
   elements: string [] = [];
   svgHeight: number = 420;
@@ -36,29 +35,20 @@ export class NetworkLandscapeComponent implements OnInit {
  ];
 
   constructor(
-    private networkLandScapeService: NetworkLandscapeService,
-    private route: ActivatedRoute
-  ) {
-    if (route.snapshot.params?.range) {
-      this.networkSearch = route.snapshot.params.range;
-    }
-  }
+    private networkLandScapeService: NetworkLandscapeService, 
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    if (this.networkSearch) {
-      this.fetchVirtualNetwork(this.networkSearch);
+    if (this.selectedSupernet) {
+      this.fetchVirtualNetwork();
     } 
 
   }
 
-  fetchVirtualNetwork(netRangePrefix: string): void {
-    if (!netRangePrefix) {
-      console.warn('No network range provided.');
-      return;
-    }
+  fetchVirtualNetwork(): void {
 
     // Fetch initial CIDR data
-    this.networkLandScapeService.fetchInitialCIDRData(netRangePrefix).pipe(
+    this.networkLandScapeService.fetchInitialCIDRData().pipe(
       switchMap(cidrData => {
         console.log('Initialize Virtual Network - Fetched CIDR data:', cidrData);
 

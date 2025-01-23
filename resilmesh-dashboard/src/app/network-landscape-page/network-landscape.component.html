@@ -1,27 +1,4 @@
-<div class="search-container">
-  <div class="search-filter">
-    <mat-form-field appearance="outline" class="search-box">
-      <mat-label>Query Supernet prefix</mat-label>
-      <input
-        matInput
-        placeholder="Enter CIDR range"
-        [(ngModel)]="networkSearch"
-        aria-label="Search Network Node"
-      />
-      <mat-hint>Only search by the first two bit fields is supported (e.g., 147.251)</mat-hint>
-    </mat-form-field>
-    <button
-      [disabled]="!networkSearch"
-      mat-raised-button
-      color="primary"
-      (click)="fetchVirtualNetwork(networkSearch)"
-      class="search-button"
-      aria-label="Search Button"
-    >
-      <mat-icon>search</mat-icon>
-      Search
-    </button>
-  </div>
+<div class="dropdown-container">
   <div class="supernet-dropdown">
     <label for="supernet-dropdown" class="dropdown-label">Select CIDR Supernet:</label>
     <mat-form-field appearance="outline" class="dropdown">

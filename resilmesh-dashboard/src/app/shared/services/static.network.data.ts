@@ -14,12 +14,11 @@ export class NetworkLandscapeService {
 
   /**
    * Fetches the initial CIDR range data and populates the virtual network on the backend.
-   * @param netRangePrefix The network range to fetch.
    * @returns A promise that resolves when the operation is complete.
   */
-  fetchInitialCIDRData(netRangePrefix: string): Observable<any> {
+  fetchInitialCIDRData(): Observable<any> {
     const url = `${this.apiUrl}/fetch-cidr-data`;
-    return this.http.get(url, { params: { netRangePrefix } }).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Failed to fetch initial CIDR data:', error);
         return of(null); // Return null in case of error

@@ -37,7 +37,7 @@ const virtualNetworkFilePath = path.join(__dirname, 'data', 'virtualNetwork.json
 //////   Neo4j Queries   //////
 // initial data from Neo4j database
 
-async function getInitialData(netRangePrefix) {
+async function getInitialData() {
     const session = driver.session();
 
     ipPrefix = "147.251";
@@ -45,7 +45,7 @@ async function getInitialData(netRangePrefix) {
     try {
 
 	const query = `MATCH (o:OrganizationUnit)-[r]-(s:Subnet), (s)-[r2]-(i:IP) ` +
-			`WHERE o.name in ["FF"] AND s.range STARTS WITH "${netRangePrefix}" ` +
+			`WHERE o.name in ["FF"] AND s.range STARTS WITH "${ipPrefix}" ` +
 			`RETURN o, r, s, i;`;
 
         // Run a query to fetch nodes (adjust the query as needed)
@@ -112,14 +112,14 @@ async function getInitialData(netRangePrefix) {
 	// make a second query to check whether any resulting IPs have vulnerabilities
 	const query2 = `MATCH (i:IP)-[r]-(n:Node), (n)-[r2]-(h:Host), ` +
 			`(h)-[r3]-(sv:SoftwareVersion), (sv)-[r4]-(v:Vulnerability) ` +
-			`WHERE i.address STARTS WITH "${netRangePrefix}.96" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.97" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.98" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.99" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.100" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.101" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.102" ` +
-			`OR i.address STARTS WITH "${netRangePrefix}.103" ` +
+			`WHERE i.address STARTS WITH "${ipPrefix}.96" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.97" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.98" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.99" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.100" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.101" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.102" ` +
+			`OR i.address STARTS WITH "${ipPrefix}.103" ` +
 			`RETURN i, count(v);`;
 
 
@@ -396,8 +396,8 @@ async function buildCIDRTreemap(supernet, cidrDict) {
 }
 
 // Consolidate the initial CDIR range fetch the node and save to virtual network
-async function fetchAndPopulateData(netRangePrefix) {
-    const initialCIDR = await getInitialData(netRangePrefix);
+async function fetchAndPopulateData() {
+    const initialCIDR = await getInitialData();
     await populateVirtualNetwork(initialCIDR);
     saveVirtualNetwork();
     console.log('Initial data fetched and virtual network populated.');
@@ -530,13 +530,8 @@ module.exports = {
 };
 
 app.get('/api/fetch-cidr-data', async (req, res) => {
-
-    const { netRangePrefix } = req.query;
-    if (!netRangePrefix) {
-        return res.status(400).json({ error: 'The first two bit fields of Supernet required' });
-    }
     try {
-        await fetchAndPopulateData(netRangePrefix);
+        await fetchAndPopulateData();
         res.json({ message: 'Initial CDIR range fetched and virtual network saved.' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch initial CIDR data.' });

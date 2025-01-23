@@ -20,14 +20,16 @@ ng serve
 
 The dashboard will then be available at http://localhost:4200/
 
-## Running the JS backend for visualization
+## Running the backend API for Cytoscape Visualization (for the 'Interactive Visualization' panel)
 
-The server for the visualization backend is in the 'virtualNetBackend' folder.
+The server for the visualization backend is in the 'virtualNetCytoscapeBackend' folder.
 ```
-cd virtualNetBackend/
+cd virtualNetCytoscapeBackend/
 ```
 
 and the server is executed with the command.
 ```
 node server.js
 ```
+
+The Backend API for the Cytoscape visualization will be available at http://localhost:3000

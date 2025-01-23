@@ -159,8 +159,6 @@ async function getInitialSubnetNode(netRange){
 
 async function getNeighborNodes(nodeId, nodeType) {
 
-    console.log('getNeighborNodes: ', nodeType);
-
     const session = driver.session();
 
     try {
@@ -247,7 +245,6 @@ async function getNeighborNodes(nodeId, nodeType) {
             });
         });
 
-	console.log(`VirtualNetwork - getNodeNeighbors for ${nodeType} ${nodeId}: `, elements);
         return elements;
     } catch (error) {
         console.error('Error fetching neighbors from Neo4j:', error);
@@ -306,7 +303,6 @@ function getNodeData(nodeType, nodeProperty){
 
 // Fetch and populate Supernet data
 async function fetchAndPopulateCIDR() {
-    console.log('Fetching and populating CIDR');
     const initialSupernet = await getInitialCIDRNode(); // Define this as per Neo4j query
     await populateVirtualNetwork(initialSupernet); // Define populate logic
     saveVirtualNetwork();
@@ -315,7 +311,6 @@ async function fetchAndPopulateCIDR() {
 
 // Fetch and populate Subnet data
 async function fetchAndPopulateSubnet(netRange) {
-    console.log(`Fetching and populating Subnet: ${netRange}`);
     const initialSubnet = await getInitialSubnetNode(netRange); // Define this as per Neo4j query
     await populateVirtualNetwork(initialSubnet); // Define populate logic
     saveVirtualNetwork();
@@ -361,7 +356,6 @@ async function populateVirtualNetwork(data) {
 
 async function populateExpandedData(nodeId, nodeType) {
     const expandedData = await getNeighborNodes(nodeId, nodeType);
-    console.log('Populate Expanded Data: ', expandedData);
 
     // if the expanded node is an IP, define compound node for software and existing vulnerabilities
     if (nodeType === 'IP'){
@@ -421,14 +415,11 @@ async function populateExpandedData(nodeId, nodeType) {
 
     }
 
-    console.log('\n\nPopulate Network with Expanded Data: ', expandedData);
-
     await populateVirtualNetwork(expandedData);
 }
 
 async function collapseVirtualNetwork(expandedData) {
 
-    console.log('Expanded data to remove: ', expandedData);
     expandedData.forEach(element => {
         const { id, source, target, label, type, parent, details } = element.data;
 
@@ -483,7 +474,6 @@ async function getVirtualNetworkData() {
             });
         });
 
-	console.log('\n\ngetVirtualNetworkData: ', elements);
         return elements;
     } catch (error) {
         console.error('Error sending virtual network data:', error);

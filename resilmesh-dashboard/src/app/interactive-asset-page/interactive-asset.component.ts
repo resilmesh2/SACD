@@ -409,7 +409,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 	  applyLayout(compoundNode.children(), {
 	    name: 'breadthfirst', // Use the breadthfirst layout
 	    animate: true, // Enable animation for smooth transitions
-	    animationDuration: 800,
+	    animationDuration: 500,
 	    padding: 20, // Add padding around the layout
             avoidOverlap: true,
 	    spacingFactor: 1.5
@@ -423,7 +423,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
 	  applyLayout(vulnerabilityCompoundNode.children(), {
 	    name: 'breadthfirst', // Use the breadthfirst layout
 	    animate: true, // Enable animation for smooth transitions
-	    animationDuration: 800,
+	    animationDuration: 500,
 	    padding: 20, // Add padding around the layout
             avoidOverlap: true,
 	    spacingFactor: 1.5
@@ -436,7 +436,7 @@ export class InteractiveAssetComponent implements OnInit, AfterViewInit {
         directed: true,
         padding: 50,
 	animate: true,
-	animationDuration: 800,
+	animationDuration: 500,
         avoidOverlap: true,
       });
 
