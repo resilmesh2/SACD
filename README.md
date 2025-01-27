@@ -27,9 +27,43 @@ The server for the visualization backend is in the 'virtualNetCytoscapeBackend' 
 cd virtualNetCytoscapeBackend/
 ```
 
-and the server is executed with the command.
+Use node version 18.
+```
+nvm use 18
+```
+
+Install npm packages
+```
+npm install .
+```
+
+The server is executed with the command.
 ```
 node server.js
 ```
 
-The Backend API for the Cytoscape visualization will be available at http://localhost:3000
+The Backend API for the Cytoscape visualization will be available at http://localhost:3000.
+
+## Running the backend API for the D3 Visualization (for the 'Network Landscape' panel)
+
+The server for the visualization backend is in the 'virtualNetD3Backend' folder.
+```
+cd virtualNetD3Backend/
+```
+
+Use node version 18.
+```
+nvm use 18
+```
+
+Install npm packages
+```
+npm install .
+```
+
+The server is executed with the command.
+```
+node server.js
+```
+
+The Backend API for the D3 visualization will be available at http://localhost:3001.
