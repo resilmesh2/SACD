@@ -8,6 +8,7 @@ import {
   NOTIFICATION_PATH,
   USER_PATH,
   ISSUE_PATH,
+  SERVICE_PATH,
   VULNERABILITY_PATH
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
@@ -62,6 +63,14 @@ const routes: Routes = [
           import('./issue-detail/issue-detail.module').then((m) => m.IssueDetailModule),
       },
     ],
+  },
+  {
+    path: SERVICE_PATH,
+    loadChildren: () =>
+      import('./service-page/service.module').then(
+        (m) => m.ServicePageModule,
+      ),
+    data: { breadcrumb: 'Service' },
   },
   {
     path: USER_PATH,

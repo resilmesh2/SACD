@@ -44,6 +44,7 @@ import { MissionGraphComponent } from './mission-page/mission-graph/mission-grap
 import { NetworkVizualizationComponent } from './network-vizualization-page/network-vizualization.component';
 import { IssueComponent } from './issue-page/issue.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
+import { ServiceComponent } from './service-page/service.component';
 import { VulnerabilityComponent } from './vulnerability-page/vulnerability.component';
 
 @NgModule({
@@ -55,6 +56,7 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
     MissionGraphComponent,
     IssueComponent,
     IssueDetailComponent,
+    ServiceComponent,
     VulnerabilityComponent
   ],
   imports: [
