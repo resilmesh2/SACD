@@ -25,7 +25,7 @@
         [structure]="missionsStructure"
         [setSelectedNode]="setSelectedNode"
         ></mission-graph>
-        <p class="empty" *ngIf="missions.length === 0">No missions available.</p>
+        <p class="empty" *ngIf="missions.length === 0">No mission selected.</p>
       </div>
       <div class="node-wrapper">
         <ng-container *ngIf="selectedNode !== null">
