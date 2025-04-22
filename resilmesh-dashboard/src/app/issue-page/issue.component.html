@@ -48,14 +48,14 @@
       <h6>Search Issues by Date Range</h6>
     <mat-form-field class="date-range">
       <mat-label>Start Date</mat-label>
-      <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (input)="dateChange()" placeholder="yyyy/MM/dd">
+      <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
       <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field class="date-range-end">
       <mat-label>End Date</mat-label>
-      <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (input)="dateChange()" placeholder="yyyy/MM/dd">
+      <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
       <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
       <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
@@ -88,7 +88,11 @@
     <!-- Affected Entity Column -->
     <ng-container matColumnDef="affected_entity">
       <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.affected_entity }} </td>
+      <td mat-cell *matCellDef="let issue"> 
+        <a [routerLink]="['/network-vizualization', issue.affected_entity]" (click)="$event.stopPropagation()">
+          {{ issue.affected_entity }}
+        </a>
+      </td>
     </ng-container>
 
     <!-- Description Column -->

@@ -58,12 +58,12 @@ mat-paginator {
     text-align: right;
 }
 
-button {
+.mainButton {
     height: 40px;
     margin-left: 15px;
 }
 
-button:enabled {
+.mainButton:enabled {
     background-color: #1a237e;
     color: #f1f2f2;
     cursor: pointer;
@@ -71,4 +71,8 @@ button:enabled {
 
 .date-range-end {
     margin-left: 15px;
+}
+
+.example-chip-list {
+    width: 100%;
 }

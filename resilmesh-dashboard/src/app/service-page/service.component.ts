@@ -8,13 +8,26 @@ import { MatSort } from '@angular/material/sort';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, zip } from 'rxjs';
-import { CVE } from '../shared/models/vulnerability.model';
+import { CVE, Subnet } from '../shared/models/vulnerability.model';
 import { DataService } from '../shared/services/data.service';
+
+import { ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 export interface Service {
   name: string;
+  tag: string[];
+  subnet: string[];
   severity: string;
   last_seen: Date;
+}
+
+export interface IP {
+  _id: string;
+  address: string;
+  tag: string[];
+  part_of: Subnet[];
+  __typename: string;
 }
 
 @Component({
@@ -26,7 +39,7 @@ export interface Service {
 export class ServiceComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Service>();
 
-  displayedColumns: string[] = ['name', 'severity', 'last_seen'];
+  displayedColumns: string[] = ['name', 'tag', 'subnet', 'last_seen'];
   
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -46,9 +59,9 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
   
-  selectedSeverity = 'All';
+  selectedTag = 'All';
   selectedStatus = 'All';
-  issueSeverity: string[] = [];
+  tags: string[] = [];
   issueStatus: string[] = [];
 
   cveDetails: CVE[] = [];
@@ -57,21 +70,32 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   emptyResponse = false;
   errorResponse = '';
   ipAddresses: string[] = [];
-  issues: Service[] = [];
+  services: Service[] = [];
+  allTags: string[] = [];
   totalSortedIssues: number = 0;
+  ips: IP[] = []
 
   startDateControl = new FormControl();
   endDateControl = new FormControl();
   startDate: Date | null = null;
   endDate: Date | null = null;
   isDateRangeValid = false;
+  editOn: boolean = false;
+  separatorKeysCodes = [ENTER] as const;
+  tagInputs: string[] = [];
+  predefinedTags: string[] = ['aTag1', 'Tag2', 'Tag3'];
 
   constructor(
-    private data: DataService, 
+    private data: DataService,
     private changeDetector: ChangeDetectorRef,
     private router: Router
   ) {
     this.dataSource = new MatTableDataSource([]);
+  }
+
+  filterPredefinedTags(value: string): string {
+    console.log("here", value)
+    return this.predefinedTags.filter(tag => tag.toLocaleLowerCase().startsWith(this.currentTag))
   }
 
   ngOnInit(): void {
@@ -79,14 +103,15 @@ export class ServiceComponent implements OnInit, AfterViewInit {
 
     console.log('Data Loading');
     this.getCombinedData().subscribe(
-      ([cveDetails, ipAddresses]) => {
+      ([cveDetails, ips, allTags]) => {
         this.cveDetails = cveDetails;
-        this.ipAddresses = ipAddresses;
+        this.ips = ips;
+        this.allTags = allTags;
 
         this.processIssues();
 
 
-        if (this.cveDetails.length > 0 && this.ipAddresses.length > 0) {
+        if (this.cveDetails.length > 0 && this.ips.length > 0) {
           this.dataLoaded = true;
         } else {
           this.emptyResponse = true;
@@ -96,7 +121,6 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         this.updateTotalSortedIssues();
 
         this.changeDetector.detectChanges();
-
       },
       (error) => {
         console.error('Error:', error);
@@ -120,17 +144,14 @@ export class ServiceComponent implements OnInit, AfterViewInit {
       const matchesSearchTerm =
         data.name.toLowerCase().includes(searchTerm)
 
-      const matchesSeverity =
-        this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
-
-      const matchesStatus =
-        this.selectedStatus === 'All' || data.status === this.selectedStatus;
+      const matchesTag =
+        this.selectedTag === 'All' || data.tag.includes(this.selectedTag);
 
       const matchesDateRange =
         (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
         (!this.endDate || new Date(data.last_seen) <= this.endDate);
 
-      return matchesSearchTerm && matchesSeverity && matchesStatus && matchesDateRange;
+      return matchesSearchTerm && matchesTag && matchesDateRange;
     };
   }
 
@@ -207,7 +228,15 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onSeverityChange(): void {
+  changeEdit(): void {
+    this.editOn = !this.editOn
+  }
+
+  saveData(id: string, tags: string[]): void {
+    this.data.changeTag(Number(id), tags)
+  }
+
+  onTagChange(): void {
     this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
@@ -263,79 +292,37 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
 
   navigateToIssueDetail(issue: Service): void {
-    this.router.navigate(['/auth/panel/issue', issue.name], {
-      queryParams: {
-        severity: issue.severity,
-        status: issue.status,
-        description: issue.description,
-        impact: issue.impact,
-      },
-    });
+    // this.router.navigate(['/auth/panel/issue', issue.name], {
+    //   queryParams: {
+    //     severity: issue.tag,
+    //     status: issue.status,
+    //     description: issue.description,
+    //     impact: issue.impact,
+    //   },
+    // });
   }
 
   private getCombinedData(): Observable<[CVE[], string[]]> {
+    console.log("getCombinedData()");
     const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
-    const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
+    const ips$: Observable<IP[]> = this.data.getIPs();
+    const allTags$: Observable<string[]> = this.data.getAllTags();
    
-    return zip(cveDetails$, ipAddresses$);
+    return zip(cveDetails$, ips$, allTags$);
   }
 
   private processIssues(): void {
 
-    // this.issues = this.cveDetails.map((cve, index) => ({
-    //   name: cve.CVE_id,
-    //   severity: this.scoreClass(cve.base_score_v3, 3),
-    //   status: "Open",
-    //   affected_entity: this.ipAddresses[index],
-    //   description: cve.description,
-    //   last_seen: cve.published_date ? new Date(cve.published_date) : null,
-    //   impact: cve.impact
-    // }));
+    this.services = this.ips.map((ip, index) => ({
+      name: ip.address,
+      id: ip._id,
+      tag: [...ip.tag],
+      subnet: ip.part_of.map(item => item.range),
+      severity: ip.tag,
+      last_seen: "",
+    }));
 
-    this.issues = [
-      {
-        name: "10.1.5.2",
-        severity: "known",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.3",
-        severity: "known",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.4",
-        severity: "known",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.5",
-        severity: "unknown",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.6",
-        severity: "known",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.7",
-        severity: "unknown",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.8",
-        severity: "known",
-        last_seen: new Date(),
-      },
-      {
-        name: "10.1.5.9",
-        severity: "unknown",
-        last_seen: new Date(),
-      }
-  ]
-
-    this.dataSource.data = this.issues;
+    this.dataSource.data = this.services;
 
     // Update sorted issues
     this.updateTotalSortedIssues();
@@ -348,7 +335,30 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     
     this.changeDetector.detectChanges();
 
-    this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
-    this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
+    this.tags = Array.from(new Set(this.services.map(issue => issue.tag)));
+    this.issueStatus = Array.from(new Set(this.services.map(issue => issue.status)));
   }
+
+  add(event: MatChipInputEvent, tags: string[]): void {
+    const value = event.value;
+
+    if (value) {
+      tags.push(value)
+    }
+
+    event.chipInput!.clear();
+  }
+
+  remove(tag: string, tags: string[]): void {
+      const index = tags.indexOf(tag);
+      if (index >= 0) {
+        tags.splice(index, 1);
+      }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
+    tags.push(event.option.viewValue)
+    event.option.deselect();
+  }
+  
 }

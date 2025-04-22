@@ -11,16 +11,7 @@ import { Observable, zip } from 'rxjs';
 import { CVE } from '../shared/models/vulnerability.model';
 import { DataService } from '../shared/services/data.service';
 import { ISSUE_PATH } from '../paths';
-
-export interface Issue {
-  name: string;
-  severity: string;
-  status: string;
-  affected_entity: string;
-  description: string;
-  last_seen: Date;
-  impact: string;
-}
+import { Issue } from '../shared/models/issue.model';
 
 @Component({
   selector: 'app-issue',
@@ -33,9 +24,9 @@ export class IssueComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
   
-  private paginator: MatPaginator;
-  private sort: MatSort;
-
+  private paginator: MatPaginator | null = null;
+  private sort: MatSort | null = null;
+  
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -76,7 +67,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
     private changeDetector: ChangeDetectorRef,
     private router: Router
   ) {
-    this.dataSource = new MatTableDataSource([]);
+    this.dataSource = new MatTableDataSource<Issue>([]);
   }
 
   ngOnInit(): void {
@@ -133,6 +124,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
         this.selectedStatus === 'All' || data.status === this.selectedStatus;
 
       const matchesDateRange =
+       (data.last_seen !== null ) &&
         (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
         (!this.endDate || new Date(data.last_seen) <= this.endDate);
 
@@ -172,24 +164,19 @@ export class IssueComponent implements OnInit, AfterViewInit {
   }
 
   validateDateInputs(): void {
-    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/; 
-    
-    const startDateValid = datePattern.test(this.startDateControl.value);
-    const endDateValid = datePattern.test(this.endDateControl.value);
-
-    if (startDateValid) {
-      this.startDate = new Date(this.startDateControl.value.replace(/\//g, '-'));
+    if (this.startDateControl.value) {
+      this.startDate = this.startDateControl.value.toDate();
     } else {
       this.startDate = null;
     }
 
-    if (endDateValid) {
-      this.endDate = new Date(this.endDateControl.value.replace(/\//g, '-'));
+    if (this.endDateControl.value) {
+      this.endDate = this.endDateControl.value.toDate();
     } else {
       this.endDate = null;
     }
 
-    this.isDateRangeValid = startDateValid && endDateValid && !!this.startDate && !!this.endDate;
+    this.isDateRangeValid = this.startDateControl.value && this.endDateControl.value && !!this.startDate && !!this.endDate;
   }
 
   isValidDateFormat(date: Date | null): boolean {
@@ -201,6 +188,9 @@ export class IssueComponent implements OnInit, AfterViewInit {
   applyDateFilter(): void {
     if (this.isDateRangeValid) {
       this.dataSource.filterPredicate = (data: Issue, filter: string) => {
+        if (data.last_seen === null) {
+          return false;
+        }
         const lastSeenDate = new Date(data.last_seen);
         return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
       };
@@ -290,7 +280,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
 
     this.issues = this.cveDetails.map((cve, index) => ({
       name: cve.CVE_id,
-      severity: this.scoreClass(cve.base_score_v3, 3),
+      severity: this.scoreClass(cve.base_score_v3, 3) ?? "",
       status: "Open",
       affected_entity: this.ipAddresses[index],
       description: cve.description,
