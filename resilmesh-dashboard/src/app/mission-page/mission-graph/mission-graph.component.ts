@@ -1,11 +1,9 @@
-// @ts-nocheck
-
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Node, Edge, Layout } from '@swimlane/ngx-graph';
 import { CustomLayout } from './custom-layout';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { MissionStructure } from '../models/mission-structure.model';
+import { MissionStructure } from '../../shared/models/mission-structure.model';
 
 @Component({
   selector: 'mission-graph',
@@ -13,18 +11,18 @@ import { MissionStructure } from '../models/mission-structure.model';
   styleUrls: ['./mission-graph.component.scss'],
 })
 export class MissionGraphComponent implements OnInit, OnChanges {
-  edges: Edge[];
-  nodes: Node[];
-  title: string;
-  description: string;
+  edges?: Edge[];
+  nodes?: Node[];
+  title?: string;
+  description?: string;
   loading = true;
   error = false;
   customLayout: Layout = new CustomLayout();
   center$ = new Subject<any>();
-  @Input() structure: MissionStructure;
-  @Input() setSelectedNode: (node: Node) => void;
-  @Input() hosts: string[];
-  @Input() ips: string[];
+  @Input() structure?: MissionStructure;
+  @Input() setSelectedNode?: (node: Node) => void;
+  @Input() hosts?: string[];
+  @Input() ips?: string[];
   disabledNodes: number[] = [];
 
   constructor(private router: Router) {}
@@ -42,7 +40,7 @@ export class MissionGraphComponent implements OnInit, OnChanges {
   private updateGraph(): void {
     if (this.structure) {
       [this.nodes, this.edges] = this.structureToGraph(this.structure);
-      this.center$.next();
+      this.center$.next(undefined);
     }
   }
 
@@ -168,7 +166,7 @@ export class MissionGraphComponent implements OnInit, OnChanges {
   }
 
   selectNode(node: Node) {
-    if (node.data.type === 'mission' || node.data.type === 'host') {
+    if (this.setSelectedNode && (node.data.type === 'mission' || node.data.type === 'host')) {
       this.setSelectedNode(node)
     }
   }

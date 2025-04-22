@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
@@ -13,18 +12,18 @@ import { Node } from '@swimlane/ngx-graph';
   selector: 'mission-page',
   templateUrl: './mission-page.component.html',
   styleUrls: ['./mission-page.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MissionPageComponent implements OnInit {
   errorMessage = '';
   missionNames: string[] = [""];
   selectedMissionName = "";
-  selectedNode: Node = null;
+  selectedNode: Node | null = null;
   setSelectedNode = (node: Node) => {
     this.selectedNode = node
   }
   missions: Mission[] = [];
-  missionsStructure: MissionStructure;
+  missionsStructure: MissionStructure | null = null;
+  graphLoading: boolean = false;
 
   constructor(private dataService: DataService) {
   }
@@ -42,12 +41,22 @@ export class MissionPageComponent implements OnInit {
   }
 
   public getGraphData(): void {
+    this.graphLoading = true
     this.getMissions().subscribe(
       (missions) => {
         this.missions = missions;
         this.missionsStructure = this.dataService.makeMissionsStructure(missions);
+        this.graphLoading = false;
+        this.errorMessage = ""
+      },
+      (error) => {
+        this.missions = [];
+        this.missionsStructure = null;
+        this.graphLoading = false;
+        this.errorMessage = error.message;
       }
     );
+    this.selectedNode = null
   }
 
   /**

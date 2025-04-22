@@ -20,15 +20,23 @@
     <h3 class="header"><strong>Mission</strong></h3>
     <div class="content-container">
       <div class="missions-graph">
+        <ng-container *ngIf="graphLoading">
+          <div class="loader">
+            <mat-spinner></mat-spinner>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!graphLoading && errorMessage">
+          <p class="error-message">{{ errorMessage }}</p>
+        </ng-container>
         <mission-graph
-        *ngIf="missions.length > 0 && missionsStructure"
-        [structure]="missionsStructure"
-        [setSelectedNode]="setSelectedNode"
+          *ngIf="missions.length > 0 && missionsStructure && !graphLoading && !errorMessage"
+          [structure]="missionsStructure"
+          [setSelectedNode]="setSelectedNode"
         ></mission-graph>
-        <p class="empty" *ngIf="missions.length === 0">No mission selected.</p>
+        <p class="empty" *ngIf="missions.length === 0 && !graphLoading && !errorMessage">No missions available.</p>
       </div>
       <div class="node-wrapper">
-        <ng-container *ngIf="selectedNode !== null">
+        <ng-container *ngIf="selectedNode">
           <div class="node-card" >
             <p [style.color]="selectedNode.data.customColor" class="type-name">{{selectedNode.data.type.charAt(0).toUpperCase() + selectedNode.data.type.substring(1)}}</p>
             <h2 [style.color]="selectedNode.data.customColor">{{selectedNode.label}}</h2>
@@ -45,7 +53,7 @@
             </ul>
           </div>
         </ng-container>
-        <p class="vertical-center" *ngIf="selectedNode === null">No node selected.</p>
+        <p class="vertical-center" *ngIf="!selectedNode">No node selected.</p>
       </div>
   </div>
   </ng-container>

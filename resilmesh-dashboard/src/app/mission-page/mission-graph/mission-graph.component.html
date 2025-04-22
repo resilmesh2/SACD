@@ -1,4 +1,4 @@
-<ngx-graph
+<ngx-graph *ngIf="nodes && edges"
   [autoCenter]="true"
   [autoZoom]="true"
   [center$]="center$"
@@ -17,7 +17,8 @@
   <ng-template #clusterTemplate let-cluster>
     <svg:g
       class="node cluster"
-      ngx-tooltip
+      matTooltip="{{ cluster.label }}"
+      matTooltipPosition="above">
     >
       <svg:rect
         rx="5"
@@ -32,7 +33,9 @@
   <ng-template #nodeTemplate let-node>
     <svg:g
       class="node"
-      ngx-tooltip
+      [matTooltipDisabled]="node.data.type !== 'host'"
+      matTooltip="{{ node.data.ip }}"
+      matTooltipPosition="above"
       [style.cursor]="(node.data.type === 'mission' || node.data.type === 'host') ? 'pointer' : 'default'"
     >
       <svg:rect

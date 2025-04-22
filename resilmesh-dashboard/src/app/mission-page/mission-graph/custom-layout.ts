@@ -58,6 +58,9 @@ export class CustomLayout implements Layout {
       if (this.dagreGraph._nodes.hasOwnProperty(dagreNodeId)) {
         const dagreNode = this.dagreGraph._nodes[dagreNodeId];
         const node = graph.nodes.find((n) => n.id === dagreNode.id);
+        if (node === undefined) {
+          return graph
+        }
         node.position = {
           x: dagreNode.x,
           y: dagreNode.y,
@@ -75,6 +78,13 @@ export class CustomLayout implements Layout {
   updateEdge(graph: Graph, edge: Edge): Graph {
     const sourceNode = graph.nodes.find((n) => n.id === edge.source);
     const targetNode = graph.nodes.find((n) => n.id === edge.target);
+
+    if (sourceNode?.position === undefined
+      || sourceNode?.dimension?.height === undefined
+      || targetNode?.position === undefined
+      || targetNode?.dimension?.height === undefined) {
+      return graph
+    }
 
     // determine new arrow position
     const dir = sourceNode.position.y <= targetNode.position.y ? -1 : 1;
@@ -119,10 +129,16 @@ export class CustomLayout implements Layout {
 
     this.dagreNodes = graph.nodes.map((n) => {
       const node: any = Object.assign({}, n);
-      node.width = n.dimension.width;
-      node.height = n.dimension.height;
-      node.x = n.position.x;
-      node.y = n.position.y;
+      if (n.dimension !== undefined && n.dimension !== null) {
+        node.width = n.dimension.width;
+        node.height = n.dimension.height;
+      }
+
+      if (n.position !== undefined && n.position !== null) {
+        node.x = n.position.x;
+        node.y = n.position.y;
+      }
+
       return node;
     });
 
