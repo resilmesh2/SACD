@@ -303,30 +303,52 @@ export class DataService {
         .query<{ CVE: CVE[] }>({
           query: gql`
         {
-          CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+          cves(where: {cve_id: "${cveCode}"}) {
+            cwe
             description
-            access_complexity
-            access_vector
-            attack_complexity
-            attack_vector
-            authentication
-            availability_impact_v2
-            availability_impact_v3
-            base_score_v2
-            base_score_v3
-            confidentiality_impact_v2
-            confidentiality_impact_v3
-            description
-            integrity_impact_v2
-            integrity_impact_v3
-            obtain_all_privilege
-            obtain_other_privilege
-            obtain_user_privilege
-            privileges_required
-            published_date
-            scope
-            user_interaction
             impact
+            published
+            ref_tags
+            access_complexity_v2
+            access_vector_v2
+            authentication_v2
+            availability_impact_v2
+            confidentiality_impact_v2
+            integrity_impact_v2
+            base_score_v2
+            obtain_all_privilege_v2
+            obtain_other_privilege_v2
+            obtain_user_privilege_v2
+            attack_complexity_v30
+            attack_vector_v30
+            availability_impact_v30
+            base_score_v30
+            confidentiality_impact_v30
+            integrity_impact_v30
+            privileges_required_v30
+            scope_v30
+            user_interaction_v30
+            attack_vector_v31
+            attack_complexity_v31
+            privileges_required_v31
+            user_interaction_v31
+            scope_v31
+            confidentiality_impact_v31
+            integrity_impact_v31
+            availability_impact_v31
+            base_score_v31
+            attack_vector_v40
+            attack_complexity_v40
+            attack_requirements_v40
+            privileges_required_v40
+            user_interaction_v40
+            vulnerable_system_confidentiality_v40
+            vulnerable_system_integrity_v40
+            vulnerable_system_availability_v40
+            subsequent_system_confidentiality_v40
+            subsequent_system_integrity_v40
+            subsequent_system_availability_v40
+            base_score_v40
           }
         }
         `,
@@ -347,7 +369,7 @@ export class DataService {
       .query<CVEResponse>({
         query: gql`
       {
-        CVE(filter: {CVE_id_contains: "${cveCode}"}) {
+        cves(where: {cve_id: "${cveCode}"}) {
           vulnerabilitys {
             in {
               version
@@ -415,51 +437,32 @@ export class DataService {
  * Returns all CVE objects in bulk
  */
 public getAllCVEDetails(): Observable<CVE[]> {
+  console.log("getAllCVEDetails()");
   return this.apollo
     .query<{ CVE: CVE[] }>({
       query: gql`
       {
-        CVE(first: 10) {
-          CVE_id
-          description
-          access_complexity
-          access_vector
-          attack_complexity
-          attack_vector
-          authentication
-          availability_impact_v2
-          availability_impact_v3
-          base_score_v2
-          base_score_v3
-          confidentiality_impact_v2
-          confidentiality_impact_v3
-          integrity_impact_v2
-          integrity_impact_v3
-          obtain_all_privilege
-          obtain_other_privilege
-          obtain_user_privilege
-          privileges_required
-          published_date
-          scope
-          user_interaction
-          impact
+        cves {
+          cve_id
         }
       }
       `,
     })
     .pipe(
       map((response) => {
-        return response.data.CVE;
+        console.log("map response CVEDetails");
+        return response.data.cves;
       })
     );
   }
 
 public getIPAddresses(): Observable<string[]> {
+  console.log("getIPAddresses()");
   return this.apollo
     .query<any>({
       query: gql`
       {
-        IP(first: 10) {
+        ips {
           _id
           address
         }
@@ -470,8 +473,8 @@ public getIPAddresses(): Observable<string[]> {
       map((response) => {
         const ipAddresses: string[] = [];  
 
-        if (response.data && response.data.IP) {
-          response.data.IP.forEach((ipNode) => {
+        if (response.data && response.data.ips) {
+          response.data.ips.forEach((ipNode: IPNode) => {
             if (ipNode.address) {
               ipAddresses.push(ipNode.address);
             }
@@ -481,4 +484,69 @@ public getIPAddresses(): Observable<string[]> {
       })
     );
   }
+
+  public getIPs(): Observable<IP[]> {
+    console.log("getIPs()");
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          ips {
+            _id
+            address
+            tag
+          }
+        }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          console.log("map response IPs");
+          return response.data.IP;
+        })
+      );
+    }
+
+    public changeTag(id: number, tag: string[]): void {
+      this.apollo.mutate<any>({
+        mutation: gql`
+          mutation UpdateIPTag($id: Int!, $tag: [String!]!) {
+            updateIPTag(id: $id, tag: $tag) {
+              _id
+              address
+              tag
+            }
+          }
+        `,
+        variables: {
+          id: id,
+          tag: tag
+        },
+      }).subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        }
+      });
+    }
+
+    public getAllTags(): Observable<string[]> {
+      console.log("getAllTags()");
+      return this.apollo
+        .query<any>({
+          query: gql``,
+        //   {
+        //     allTags
+        //   }
+        // `,
+        })
+        .pipe(
+          map((response) => {
+            console.log("map response Tags");
+            return response.data.allTags;
+          })
+        );
+      }
 }
