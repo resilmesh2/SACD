@@ -27,7 +27,8 @@
         <ng-template #clusterTemplate let-cluster>
           <svg:g
             class="node cluster"
-            ngx-tooltip
+            matTooltip="{{ cluster.label }}"
+            matTooltipPosition="above">
           >
             <svg:rect
               rx="5"
@@ -42,9 +43,10 @@
         <ng-template #nodeTemplate let-node>
           <svg:g
             class="node"
-            ngx-tooltip
             (dblclick)="expandNode(node)"
             (click)="selectNode(node)"
+            matTooltip="{{ node.label }}"
+            matTooltipPosition="above">
           >
             <svg:rect
               [attr.width]="node.dimension.width"

@@ -42,10 +42,29 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { MissionPageComponent } from './mission-page/mission-page.component';
 import { MissionGraphComponent } from './mission-page/mission-graph/mission-graph.component';
 import { NetworkVizualizationComponent } from './network-vizualization-page/network-vizualization.component';
-import { IssueComponent } from './issue-page/issue.component';
-import { IssueDetailComponent } from './issue-detail/issue-detail.component';
-import { ServiceComponent } from './service-page/service.component';
 import { VulnerabilityComponent } from './vulnerability-page/vulnerability.component';
+import { IssueComponent } from './issue-page/issue.component';
+import { ServiceComponent } from './service-page/service.component';
+import { IssueDetailComponent } from './issue-detail/issue-detail.component';
+
+// Modules
+import { TagComponentModule } from './components/tag-component/tag-component.module';
+
+// Datetime handling
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+
+const DATE_FORMAT = {
+  parse: {
+    dateInput: 'YYYY/MM/DD',
+  },
+  display: {
+    dateInput: 'YYYY/MM/DD',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY'
+  }
+};
 
 @NgModule({
   declarations: [
@@ -54,10 +73,10 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
     NetworkVizualizationComponent,
     MissionPageComponent,
     MissionGraphComponent,
+    VulnerabilityComponent,
     IssueComponent,
-    IssueDetailComponent,
     ServiceComponent,
-    VulnerabilityComponent
+    IssueDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -88,7 +107,12 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
     MatNativeDateModule,
     GraphQLModule,
     HttpClientModule,
-    ApolloModule
+    ApolloModule,
+    TagComponentModule
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: DATE_FORMAT }
   ],
   bootstrap: [AppComponent],
 })

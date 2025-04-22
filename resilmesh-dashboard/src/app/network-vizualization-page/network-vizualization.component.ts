@@ -1,7 +1,7 @@
 // @ts-nocheck
+
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Node, Edge } from '@swimlane/ngx-graph';
-import { Cluster } from 'cluster';
 import { DataService } from '../shared/services/data.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -11,17 +11,15 @@ import _ from 'lodash';
   selector: 'network-vizualization',
   templateUrl: './network-vizualization.component.html',
   styleUrls: ['./network-vizualization.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkVizualizationComponent implements OnInit {
   nodes: Node[] = [];
   edges: Edge[] = [];
-  clusters: Cluster[] = [];
   error: any;
   selectedNode: Node = { id: '', label: '' };
   ipSearch = '';
   errorMessage = '';
-  graphLoading: boolean;
+  graphLoading?: boolean;
   center$: Subject<any> = new Subject();
 
   constructor(private dataService: DataService, private route: ActivatedRoute) {
