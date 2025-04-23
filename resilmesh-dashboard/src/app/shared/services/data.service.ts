@@ -295,7 +295,7 @@ export class DataService {
     return result;
   }
 
-    /**
+  /**
    * Returns the description of vulnerability
    */
     public getCVEDetails(cveCode: string): Observable<CVE> {
@@ -355,12 +355,12 @@ export class DataService {
         })
         .pipe(
           map((response) => {
-            return response.data.CVE[0];
+            return response.data.cves[0];
           })
         );
     }
 
-      /**
+  /**
    * Returns vulnerable machines (software version, ip address, domain, subnet)
    * @param cveCode CVE code of vulnerability
    */
@@ -370,20 +370,20 @@ export class DataService {
         query: gql`
       {
         cves(where: {cve_id: "${cveCode}"}) {
-          vulnerabilitys {
-            in {
+          vulnerability {
+            software_versions {
               version
-              on {
+              hosts {
                 _id
-                nodes(first: 500) {
+                node {
                   _id
-                  has_assigned {
+                  ips {
                     _id
                     address
-                    resolves_to {
-                      domain_name
+                    domain_names { 
+                      domain_name 
                     }
-                    part_of {
+                    subnets {
                       range
                     }
                   }
@@ -398,32 +398,27 @@ export class DataService {
       .pipe(
         map((response) => {
           const responseArray: VulnerabilityData[] = [];
-          if (!response.data.CVE[0]) {
+          if (!response.data.cves[0]) {
             return null;
           }
-          response.data.CVE[0].vulnerabilitys.forEach((vuln) => {
-            vuln.in.forEach((software) => {
-              _.uniqBy(software.on, (n) => n._id).forEach((host) => {
-                host.nodes.forEach((node) => {
-                  node.has_assigned.forEach((ip) => {
-                    let subnet = '';
-                    let domain = '';
-                    if (ip.part_of[0]) {
-                      subnet = `${ip.part_of[0].range}`;
-                      if (ip.part_of[0].note) {
-                        subnet += ` (${ip.part_of[0].note})`;
-                      }
-                    }
-                    if (ip.resolves_to[0]) {
-                      domain = ip.resolves_to[0].domain_name.toString();
-                    }
-                    responseArray.push({
+          let domain = '';
+          let subnet = '';
+          let software = '';
+          response.data.cves[0].vulnerability.software_versions.forEach((software_version) => {
+            software = software_version.version;
+            software_version.hosts.forEach((host) => {
+              host.node.ips.forEach((ip) => {
+                if (ip.domain_names) {
+                  domain = ip.domain_names[0].domain_name;
+                }
+                if (ip.subnets) {
+                  subnet = ip.subnets[0].range;
+                }
+                responseArray.push({
                       domainName: domain,
                       subnet: subnet,
                       ip: ip.address,
-                      software: software.version,
-                    });
-                  });
+                      software: software,
                 });
               });
             });
@@ -502,7 +497,7 @@ public getIPAddresses(): Observable<string[]> {
       .pipe(
         map((response) => {
           console.log("map response IPs");
-          return response.data.IP;
+          return response.data.ips;
         })
       );
     }
@@ -536,11 +531,11 @@ public getIPAddresses(): Observable<string[]> {
       console.log("getAllTags()");
       return this.apollo
         .query<any>({
-          query: gql``,
-        //   {
-        //     allTags
-        //   }
-        // `,
+          query: gql`
+          {
+            allTags
+          }
+        `,
         })
         .pipe(
           map((response) => {
