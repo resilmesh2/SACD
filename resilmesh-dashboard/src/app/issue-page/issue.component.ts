@@ -279,8 +279,8 @@ export class IssueComponent implements OnInit, AfterViewInit {
   private processIssues(): void {
 
     this.issues = this.cveDetails.map((cve, index) => ({
-      name: cve.CVE_id,
-      severity: this.scoreClass(cve.base_score_v3, 3) ?? "",
+      name: cve.cve_id,
+      severity: this.scoreClass(cve.base_score_v31, 3) ?? "",
       status: "Open",
       affected_entity: this.ipAddresses[index],
       description: cve.description,

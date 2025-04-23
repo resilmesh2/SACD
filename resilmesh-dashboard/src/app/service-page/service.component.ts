@@ -94,14 +94,12 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
 
   filterPredefinedTags(value: string): string {
-    console.log("here", value)
     return this.predefinedTags.filter(tag => tag.toLocaleLowerCase().startsWith(this.currentTag))
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
 
-    console.log('Data Loading');
     this.getCombinedData().subscribe(
       ([cveDetails, ips, allTags]) => {
         this.cveDetails = cveDetails;
@@ -109,7 +107,6 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         this.allTags = allTags;
 
         this.processIssues();
-
 
         if (this.cveDetails.length > 0 && this.ips.length > 0) {
           this.dataLoaded = true;
@@ -303,7 +300,6 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
 
   private getCombinedData(): Observable<[CVE[], string[]]> {
-    console.log("getCombinedData()");
     const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
     const ips$: Observable<IP[]> = this.data.getIPs();
     const allTags$: Observable<string[]> = this.data.getAllTags();
@@ -312,17 +308,19 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
 
   private processIssues(): void {
-
+    
     this.services = this.ips.map((ip, index) => ({
       name: ip.address,
       id: ip._id,
-      tag: [...ip.tag],
-      subnet: ip.part_of.map(item => item.range),
-      severity: ip.tag,
+      //tag: [...ip.tag],
+      tag: ip.tag,
+      subnet: (ip.subnets && ip.subnets[0]) ? ip.subnets[0].range : "0.0.0.0/0",
+      //severity: ip.tag,
       last_seen: "",
     }));
 
     this.dataSource.data = this.services;
+    //console.log(this.services);
 
     // Update sorted issues
     this.updateTotalSortedIssues();
@@ -335,7 +333,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     
     this.changeDetector.detectChanges();
 
-    this.tags = Array.from(new Set(this.services.map(issue => issue.tag)));
+    //this.tags = Array.from(new Set(this.services.map(issue => issue.tag)));
     this.issueStatus = Array.from(new Set(this.services.map(issue => issue.status)));
   }
 

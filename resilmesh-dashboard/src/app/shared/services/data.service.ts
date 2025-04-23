@@ -432,27 +432,69 @@ export class DataService {
  * Returns all CVE objects in bulk
  */
 public getAllCVEDetails(): Observable<CVE[]> {
-  console.log("getAllCVEDetails()");
   return this.apollo
     .query<{ CVE: CVE[] }>({
       query: gql`
       {
         cves {
-          cve_id
+            cve_id
+            cwe
+            description
+            impact
+            published
+            ref_tags
+            access_complexity_v2
+            access_vector_v2
+            authentication_v2
+            availability_impact_v2
+            confidentiality_impact_v2
+            integrity_impact_v2
+            base_score_v2
+            obtain_all_privilege_v2
+            obtain_other_privilege_v2
+            obtain_user_privilege_v2
+            attack_complexity_v30
+            attack_vector_v30
+            availability_impact_v30
+            base_score_v30
+            confidentiality_impact_v30
+            integrity_impact_v30
+            privileges_required_v30
+            scope_v30
+            user_interaction_v30
+            attack_vector_v31
+            attack_complexity_v31
+            privileges_required_v31
+            user_interaction_v31
+            scope_v31
+            confidentiality_impact_v31
+            integrity_impact_v31
+            availability_impact_v31
+            base_score_v31
+            attack_vector_v40
+            attack_complexity_v40
+            attack_requirements_v40
+            privileges_required_v40
+            user_interaction_v40
+            vulnerable_system_confidentiality_v40
+            vulnerable_system_integrity_v40
+            vulnerable_system_availability_v40
+            subsequent_system_confidentiality_v40
+            subsequent_system_integrity_v40
+            subsequent_system_availability_v40
+            base_score_v40
         }
       }
       `,
     })
     .pipe(
       map((response) => {
-        console.log("map response CVEDetails");
         return response.data.cves;
       })
     );
   }
 
 public getIPAddresses(): Observable<string[]> {
-  console.log("getIPAddresses()");
   return this.apollo
     .query<any>({
       query: gql`
@@ -467,7 +509,6 @@ public getIPAddresses(): Observable<string[]> {
     .pipe(
       map((response) => {
         const ipAddresses: string[] = [];  
-
         if (response.data && response.data.ips) {
           response.data.ips.forEach((ipNode: IPNode) => {
             if (ipNode.address) {
@@ -481,7 +522,6 @@ public getIPAddresses(): Observable<string[]> {
   }
 
   public getIPs(): Observable<IP[]> {
-    console.log("getIPs()");
     return this.apollo
       .query<any>({
         query: gql`
@@ -489,6 +529,9 @@ public getIPAddresses(): Observable<string[]> {
           ips {
             _id
             address
+            subnets {
+              range
+            }
             tag
           }
         }
@@ -496,7 +539,6 @@ public getIPAddresses(): Observable<string[]> {
       })
       .pipe(
         map((response) => {
-          console.log("map response IPs");
           return response.data.ips;
         })
       );
@@ -528,19 +570,29 @@ public getIPAddresses(): Observable<string[]> {
     }
 
     public getAllTags(): Observable<string[]> {
-      console.log("getAllTags()");
       return this.apollo
         .query<any>({
           query: gql`
           {
-            allTags
+            ips {
+              tag
+            }
           }
         `,
         })
         .pipe(
           map((response) => {
-            console.log("map response Tags");
-            return response.data.allTags;
+            const allTags: String[] = [];
+            response.data.ips.forEach((ip) => {
+              if (ip.tag) {
+                ip.tag.forEach((tag) => {
+                  if (! allTags.includes(tag)) {
+                    allTags.push(tag);
+                  }
+                });
+              }
+            });
+            return allTags;
           })
         );
       }
