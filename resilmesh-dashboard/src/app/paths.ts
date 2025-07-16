@@ -1,6 +1,7 @@
 export const HOME_PATH = 'home';
 export const NETWORK_PATH = 'network-vizualization';
 export const MISSION_PATH = 'missions';
+export const DASHBOARD_PATH = 'dashboard'
 export const ISSUE_PATH = 'issues';
 export const SERVICE_PATH = 'service';
 export const VULNERABILITY_PATH = 'vulnerability';

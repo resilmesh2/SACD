@@ -46,6 +46,7 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
 import { IssueComponent } from './issue-page/issue.component';
 import { ServiceComponent } from './service-page/service.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
+import { BlankComponent } from './blank.component';
 
 // Modules
 import { TagComponentModule } from './components/tag-component/tag-component.module';
@@ -76,7 +77,8 @@ const DATE_FORMAT = {
     VulnerabilityComponent,
     IssueComponent,
     ServiceComponent,
-    IssueDetailComponent
+    IssueDetailComponent,
+    BlankComponent
   ],
   imports: [
     BrowserModule,

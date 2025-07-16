@@ -9,9 +9,11 @@ import {
   USER_PATH,
   ISSUE_PATH,
   SERVICE_PATH,
-  VULNERABILITY_PATH
+  VULNERABILITY_PATH,
+  DASHBOARD_PATH
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
+import { BlankComponent } from './blank.component';
 
 const routes: Routes = [
   {
@@ -33,6 +35,11 @@ const routes: Routes = [
         (m) => m.MissionPageModule,
       ),
     data: { breadcrumb: 'Missions' },
+  },
+    {
+    path: DASHBOARD_PATH,
+    component: BlankComponent,
+    data: { breadcrumb: 'Dashboard' },
   },
   {
     path: VULNERABILITY_PATH,
