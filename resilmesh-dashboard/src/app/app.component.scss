@@ -1,3 +1,98 @@
 .page-content {
   padding: 20px;
 }
+
+// Hide Sentinel layout elements when in fullscreen dashboard mode
+:host ::ng-deep sentinel-layout1.layout-hidden {
+  // Hide sidebar elements
+  mat-sidenav,
+  .mat-drawer,
+  .sidebar-drawer,
+  .mat-sidenav,
+  nav,
+  .navigation,
+  .side-nav,
+  .mat-sidenav-container .mat-sidenav {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+  
+  // Hide toolbar completely
+  .mat-toolbar,
+  sentinel-toolbar,
+  .toolbar-container,
+  .header-container {
+    display: none !important;
+    height: 0 !important;
+  }
+  
+  // Make content area fullscreen
+  .mat-sidenav-content,
+  .mat-drawer-content,
+  .main-container,
+  .content-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  
+  // Ensure router outlet content takes full space
+  router-outlet + * {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 10000 !important;
+  }
+}
+
+// Sidebar collapsed state for normal mode
+:host ::ng-deep sentinel-layout1.sidebar-collapsed:not(.layout-hidden) {
+  .mat-sidenav,
+  .mat-drawer,
+  .sidebar,
+  nav,
+  .navigation,
+  .side-nav {
+    width: 60px !important;
+    min-width: 60px !important;
+    overflow: hidden !important;
+    
+    span:not(.mat-icon):not(.material-icons),
+    .mat-list-text,
+    .agenda-text,
+    .nav-text {
+      display: none !important;
+    }
+    
+    .mat-icon,
+    .material-icons {
+      margin: 0 auto !important;
+    }
+    
+    .mat-list-item {
+      justify-content: center !important;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
+  }
+}
+
+// Toolbar styles
+.hamburger-btn {
+  margin-right: 8px;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+[data-cy="customized-toolbar-content"] {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}

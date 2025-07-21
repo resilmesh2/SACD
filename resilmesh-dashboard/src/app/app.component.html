@@ -4,13 +4,24 @@
   userProfileRoute="user"
   notificationsRoute="notifications"
   [agendaContainers]="agendaContainers"
+  [class.layout-hidden]="isFullscreen"
+  [class.sidebar-collapsed]="isSidebarCollapsed && !isFullscreen"
   version="1.0.0"
   logoSrc="assets/Resilmesh_Logo_Negative.jpg"
 >
-  <div data-cy="customized-toolbar-content" role="toolbar">
-    <button mat-icon-button (click)="addNotification()">
+  <div data-cy="customized-toolbar-content" role="toolbar" *ngIf="!isFullscreen">
+    <button 
+      mat-icon-button 
+      (click)="toggleSidebar()" 
+      title="Toggle Sidebar"
+      class="hamburger-btn">
+      <mat-icon>{{ isSidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
+    <span class="toolbar-spacer"></span>
+    <button mat-icon-button (click)="addNotification()" title="Notifications">
       <mat-icon>add_alert</mat-icon>
     </button>
   </div>
+  
   <router-outlet></router-outlet>
 </sentinel-layout1>

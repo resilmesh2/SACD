@@ -13,7 +13,7 @@ import {
   DASHBOARD_PATH
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
-import { BlankComponent } from './blank.component';
+import { NetworkRiskComponent } from './blank.component';
 
 const routes: Routes = [
   {
@@ -38,7 +38,7 @@ const routes: Routes = [
   },
     {
     path: DASHBOARD_PATH,
-    component: BlankComponent,
+    component: NetworkRiskComponent,
     data: { breadcrumb: 'Dashboard' },
   },
   {
