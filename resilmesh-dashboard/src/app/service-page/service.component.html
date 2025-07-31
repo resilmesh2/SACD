@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8 issue-table-container">
+<div class="mat-elevation-z8 service-table-container">
     <!-- Show spinner while loading data -->
   <ng-container *ngIf="dataLoading">
     <mat-spinner></mat-spinner>
@@ -20,8 +20,8 @@
   </ng-container>
 
   <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse" class="full-width-table">
-  <div class="total-issues">
-    Total Number of Issues: {{ totalSortedIssues }}
+  <div class="total-services">
+    Total Number of Assets: {{ totalSortedAssets }}
   </div>  
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event)" placeholder="Search by IP address">
@@ -37,17 +37,17 @@
 
     <!-- Date Range Filter -->
     <div class="date-range-filters">
-      <h6>Search Services by Date Range</h6>
+      <h6>Search Assets by Date Range</h6>
     <mat-form-field class="date-range">
       <mat-label>Start Date</mat-label>
-      <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (input)="dateChange()" placeholder="yyyy/MM/dd">
+      <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
       <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field class="date-range-end">
       <mat-label>End Date</mat-label>
-      <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (input)="dateChange()" placeholder="yyyy/MM/dd">
+      <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
       <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
       <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
@@ -61,47 +61,41 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let issue">
-        <a [routerLink]="['/network-vizualization', issue.name]">
-          {{ issue.name }}
+      <td mat-cell *matCellDef="let asset">
+        <a [routerLink]="['/asset-visualization', asset.name]">
+          {{ asset.name }}
         </a>
       </td>
     </ng-container>
 
-    <!-- Subnet Column -->
+    <!-- Name Column -->
     <ng-container matColumnDef="subnet">
       <th mat-header-cell *matHeaderCellDef> Subnet </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.subnet }} </td>
+      <td mat-cell *matCellDef="let asset"> {{ asset.subnet }} </td>
     </ng-container>
 
     <!-- Tag Column -->
     <ng-container matColumnDef="tag">
       <th mat-header-cell *matHeaderCellDef> Tag </th>
-      <td mat-cell *matCellDef="let issue"> 
+      <td mat-cell *matCellDef="let asset"> 
         <tag-component 
-          [id]="issue.id"
-          [inputTags]="issue.tag"
+          [id]="asset.id"
+          [inputTags]="asset.tag"
           [onSubmit]="saveData.bind(this)"
           [allTags]="allTags"
         />
       </td>
     </ng-container>
 
-    <!-- Severity Column -->
-    <!-- <ng-container matColumnDef="severity">
-      <th mat-header-cell *matHeaderCellDef> Severity </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
-    </ng-container> -->
-
     <!-- Last Seen Date Column -->
     <ng-container matColumnDef="last_seen">
       <th mat-header-cell *matHeaderCellDef> Last Seen </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.last_seen | date:'yyyy/MM/dd\'T\'HH:mm:ss' }} </td>
+      <td mat-cell *matCellDef="let asset"> {{ asset.last_seen | date:'yyyy/MM/dd\'T\'HH:mm:ss' }} </td>
     </ng-container>
 
     <!-- Table Header and Rows -->
     <tr mat-header *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToIssueDetail(row)"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
   <!-- Paginator -->

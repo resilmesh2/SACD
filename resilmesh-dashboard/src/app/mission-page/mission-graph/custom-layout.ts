@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import * as dagre from 'dagre';
 import { Graph, Layout, Edge } from '@swimlane/ngx-graph';
 

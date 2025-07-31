@@ -16,8 +16,9 @@
 }
 
 .search-filter button {
-    height: 60px;
-    top: 4px;
+    height: 42px;
+    width: 105px;
+    top: 5px;
     margin-left: 25px;
 }
 

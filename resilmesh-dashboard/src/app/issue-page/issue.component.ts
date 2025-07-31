@@ -1,11 +1,8 @@
-// @ts-nocheck
-
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { CVE } from '../shared/models/vulnerability.model';
@@ -22,7 +19,7 @@ import { Issue } from '../shared/models/issue.model';
 export class IssueComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Issue>();
 
-  displayedColumns: string[] = ['name', 'severity', 'status', 'affected_entity', 'description', 'last_seen'];
+  displayedColumns: string[] = ['name', 'severity', 'status', 'description', 'last_seen'];
   
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -52,7 +49,6 @@ export class IssueComponent implements OnInit, AfterViewInit {
   dataLoading = false;
   emptyResponse = false;
   errorResponse = '';
-  ipAddresses: string[] = [];
   issues: Issue[] = [];
   totalSortedIssues: number = 0;
 
@@ -74,15 +70,14 @@ export class IssueComponent implements OnInit, AfterViewInit {
     this.dataLoading = true;
 
     console.log('Data Loading');
-    this.getCombinedData().subscribe(
-      ([cveDetails, ipAddresses]) => {
+    this.getData().subscribe(
+      (cveDetails) => {
         this.cveDetails = cveDetails;
-        this.ipAddresses = ipAddresses;
 
         this.processIssues();
 
 
-        if (this.cveDetails.length > 0 && this.ipAddresses.length > 0) {
+        if (this.cveDetails.length > 0) {
           this.dataLoaded = true;
         } else {
           this.emptyResponse = true;
@@ -114,8 +109,7 @@ export class IssueComponent implements OnInit, AfterViewInit {
       const searchTerm = filter.trim().toLowerCase();
 
       const matchesSearchTerm =
-        data.name.toLowerCase().includes(searchTerm) ||
-        data.affected_entity.toLowerCase().includes(searchTerm);
+        data.name.toLowerCase().includes(searchTerm);
 
       const matchesSeverity =
         this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
@@ -269,20 +263,16 @@ export class IssueComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private getCombinedData(): Observable<[CVE[], string[]]> {
-    const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
-    const ipAddresses$: Observable<string[]> = this.data.getIPAddresses();
-   
-    return zip(cveDetails$, ipAddresses$);
+  private getData(): Observable<CVE[]> {
+    return this.data.getAllCVEDetails();
   }
 
   private processIssues(): void {
 
     this.issues = this.cveDetails.map((cve, index) => ({
-      name: cve.cve_id,
-      severity: this.scoreClass(cve.base_score_v31, 3) ?? "",
+      name: cve.CVE_id,
+      severity: this.scoreClass(cve.base_score_v3, 3) ?? "",
       status: "Open",
-      affected_entity: this.ipAddresses[index],
       description: cve.description,
       last_seen: cve.published_date ? new Date(cve.published_date) : null,
       impact: cve.impact

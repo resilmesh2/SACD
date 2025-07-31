@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { DataService } from '../shared/services/data.service'
 import { Mission } from '../shared/models/mission.model';

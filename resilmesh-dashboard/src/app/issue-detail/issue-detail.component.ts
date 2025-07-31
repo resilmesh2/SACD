@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
@@ -34,7 +33,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
 
-  private paginator: MatPaginator;
+  paginator: MatPaginator | null = null;
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
@@ -63,7 +62,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
     private location: Location,
     private data: DataService,
   ) {
-      this.dataSource = new MatTableDataSource([]);
+      this.dataSource = new MatTableDataSource<IssueDetail>([]);
     }
 
   ngOnInit(): void {
@@ -108,7 +107,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
         })
       )
       .subscribe(
-        (vulnerables: VulnerabilityData[]) => {
+        (vulnerables: VulnerabilityData[] | null) => {
           if (vulnerables && vulnerables.length > 0) {
             // Filter and map valid rows
             this.issueDetails = vulnerables

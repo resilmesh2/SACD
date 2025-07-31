@@ -1,11 +1,8 @@
-// @ts-nocheck
-
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, zip } from 'rxjs';
 import { CVE, Subnet } from '../shared/models/vulnerability.model';
@@ -13,13 +10,15 @@ import { DataService } from '../shared/services/data.service';
 
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 export interface Service {
   name: string;
+  id: string;
   tag: string[];
   subnet: string[];
-  severity: string;
-  last_seen: Date;
+  severity: string[];
+  last_seen: Date | null;
 }
 
 export interface IP {
@@ -41,8 +40,8 @@ export class ServiceComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['name', 'tag', 'subnet', 'last_seen'];
   
-  private paginator: MatPaginator;
-  private sort: MatSort;
+  private paginator: MatPaginator | null = null;
+  private sort: MatSort | null = null;
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
@@ -60,19 +59,15 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
   
   selectedTag = 'All';
-  selectedStatus = 'All';
-  tags: string[] = [];
-  issueStatus: string[] = [];
+  tags: string[][] = [];
 
-  cveDetails: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
   errorResponse = '';
-  ipAddresses: string[] = [];
   services: Service[] = [];
   allTags: string[] = [];
-  totalSortedIssues: number = 0;
+  totalSortedAssets: number = 0;
   ips: IP[] = []
 
   startDateControl = new FormControl();
@@ -82,40 +77,35 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   isDateRangeValid = false;
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
-  tagInputs: string[] = [];
-  predefinedTags: string[] = ['aTag1', 'Tag2', 'Tag3'];
 
   constructor(
     private data: DataService,
     private changeDetector: ChangeDetectorRef,
     private router: Router
   ) {
-    this.dataSource = new MatTableDataSource([]);
-  }
-
-  filterPredefinedTags(value: string): string {
-    return this.predefinedTags.filter(tag => tag.toLocaleLowerCase().startsWith(this.currentTag))
+    this.dataSource = new MatTableDataSource<Service>([]);
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
 
+    console.log('Data Loading');
     this.getCombinedData().subscribe(
-      ([cveDetails, ips, allTags]) => {
-        this.cveDetails = cveDetails;
+      ([ips, allTags]) => {
         this.ips = ips;
         this.allTags = allTags;
 
-        this.processIssues();
+        this.processServices();
 
-        if (this.cveDetails.length > 0 && this.ips.length > 0) {
+
+        if (this.ips.length > 0) {
           this.dataLoaded = true;
         } else {
           this.emptyResponse = true;
         }
         this.dataLoading = false;
 
-        this.updateTotalSortedIssues();
+        this.updateTotalSortedServices();
 
         this.changeDetector.detectChanges();
       },
@@ -145,6 +135,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
         this.selectedTag === 'All' || data.tag.includes(this.selectedTag);
 
       const matchesDateRange =
+      (data.last_seen === null ) ||
         (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
         (!this.endDate || new Date(data.last_seen) <= this.endDate);
 
@@ -160,7 +151,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
 
-    this.updateTotalSortedIssues();
+    this.updateTotalSortedServices();
   }
 
   dateChange(): void {
@@ -179,40 +170,33 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-    this.updateTotalSortedIssues();
+    this.updateTotalSortedServices();
     this.isDateRangeValid = false;
   }
 
   validateDateInputs(): void {
-    const datePattern = /^\d{4}\/\d{2}\/\d{2}$/; 
-    
-    const startDateValid = datePattern.test(this.startDateControl.value);
-    const endDateValid = datePattern.test(this.endDateControl.value);
-
-    if (startDateValid) {
-      this.startDate = new Date(this.startDateControl.value.replace(/\//g, '-'));
+    if (this.startDateControl.value) {
+      this.startDate = this.startDateControl.value.toDate();
     } else {
       this.startDate = null;
     }
 
-    if (endDateValid) {
-      this.endDate = new Date(this.endDateControl.value.replace(/\//g, '-'));
+    if (this.endDateControl.value) {
+      this.endDate = this.endDateControl.value.toDate();
     } else {
       this.endDate = null;
     }
 
-    this.isDateRangeValid = startDateValid && endDateValid && !!this.startDate && !!this.endDate;
-  }
-
-  isValidDateFormat(date: Date | null): boolean {
-    if (!date) return false;
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '/');
-    return /^\d{4}\/\d{2}\/\d{2}$/.test(dateStr);
+    this.isDateRangeValid = this.startDateControl.value && this.endDateControl.value && !!this.startDate && !!this.endDate;
   }
 
   applyDateFilter(): void {
     if (this.isDateRangeValid) {
       this.dataSource.filterPredicate = (data: Service, filter: string) => {
+        console.log("Here")
+        if (data.last_seen === null) {
+          return false;
+        }
         const lastSeenDate = new Date(data.last_seen);
         return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
       };
@@ -221,12 +205,8 @@ export class ServiceComponent implements OnInit, AfterViewInit {
       if (this.dataSource.paginator) {
         this.dataSource.paginator.firstPage();
       }
-      this.updateTotalSortedIssues();
+      this.updateTotalSortedServices();
     }
-  }
-
-  changeEdit(): void {
-    this.editOn = !this.editOn
   }
 
   saveData(id: string, tags: string[]): void {
@@ -240,90 +220,34 @@ export class ServiceComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
 
-    this.updateTotalSortedIssues();
+    this.updateTotalSortedServices();
   }
 
-  onStatusChange(): void {
-    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-
-    this.updateTotalSortedIssues();
+  updateTotalSortedServices(): void {
+    this.totalSortedAssets = this.dataSource.filteredData.length;
   }
 
-  updateTotalSortedIssues(): void {
-    this.totalSortedIssues = this.dataSource.filteredData.length;
-  }
-
-  scoreClass(value: string, type: number) {
-    if (type === 2) {
-      if (Number(value) <= 3.9) {
-        return 'low';
-      }
-
-      if (Number(value) > 3.9 && Number(value) <= 6.9) {
-        return 'medium';
-      }
-
-      if (Number(value) > 6.9) {
-        return 'high';
-      }
-    } else if (type === 3) {
-      if (Number(value) > 8.9) {
-        return 'critical';
-      }
-      if (Number(value) <= 3.9) {
-        return 'low';
-      }
-
-      if (Number(value) > 3.9 && Number(value) <= 6.9) {
-        return 'medium';
-      }
-
-      if (Number(value) > 6.9) {
-        return 'high';
-      }
-    }
-  }
-
-  navigateToIssueDetail(issue: Service): void {
-    // this.router.navigate(['/auth/panel/issue', issue.name], {
-    //   queryParams: {
-    //     severity: issue.tag,
-    //     status: issue.status,
-    //     description: issue.description,
-    //     impact: issue.impact,
-    //   },
-    // });
-  }
-
-  private getCombinedData(): Observable<[CVE[], string[]]> {
-    const cveDetails$: Observable<CVE[]> = this.data.getAllCVEDetails();
+  private getCombinedData(): Observable<[IP[], string[]]> {
     const ips$: Observable<IP[]> = this.data.getIPs();
     const allTags$: Observable<string[]> = this.data.getAllTags();
    
-    return zip(cveDetails$, ips$, allTags$);
+    return zip(ips$, allTags$);
   }
 
-  private processIssues(): void {
-    
+  private processServices(): void {
     this.services = this.ips.map((ip, index) => ({
       name: ip.address,
       id: ip._id,
-      //tag: [...ip.tag],
-      tag: ip.tag,
-      subnet: (ip.subnets && ip.subnets[0]) ? ip.subnets[0].range : "0.0.0.0/0",
-      //severity: ip.tag,
-      last_seen: "",
+      tag: [...ip.tag],
+      subnet: ip.part_of.map(item => item.range),
+      severity: ip.tag,
+      last_seen: null,
     }));
 
     this.dataSource.data = this.services;
-    //console.log(this.services);
 
-    // Update sorted issues
-    this.updateTotalSortedIssues();
+    // Update sorted services
+    this.updateTotalSortedServices();
 
     
     if (this.paginator && this.sort) {
@@ -333,8 +257,7 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     
     this.changeDetector.detectChanges();
 
-    //this.tags = Array.from(new Set(this.services.map(issue => issue.tag)));
-    this.issueStatus = Array.from(new Set(this.services.map(issue => issue.status)));
+    this.tags = Array.from(new Set(this.services.map(service => service.tag)));
   }
 
   add(event: MatChipInputEvent, tags: string[]): void {

@@ -32,7 +32,7 @@ export class TagComponent {
 
   ngOnInit(): void {
     this.tags.set(this.inputTags);
-    this.tagsCache.set(this.inputTags);
+    this.tagsCache.set([...this.inputTags]);
   }
 
 

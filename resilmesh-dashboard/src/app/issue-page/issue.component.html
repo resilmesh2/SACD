@@ -21,10 +21,10 @@
 
   <ng-container *ngIf="dataLoaded && !dataLoading && !emptyResponse" class="full-width-table">
   <div class="total-issues">
-    Total Number of Issues: {{ totalSortedIssues }}
+    Total Number of Vulnerabilities: {{ totalSortedIssues }}
   </div>  
   <mat-form-field>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Issue Name / Affected Asset">
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search by Vulnerability Name ">
   </mat-form-field>
 
   <mat-form-field class="filter-dropdown">
@@ -45,7 +45,7 @@
 
     <!-- Date Range Filter -->
     <div class="date-range-filters">
-      <h6>Search Issues by Date Range</h6>
+      <h6>Search Vulnerabilities by Date Range</h6>
     <mat-form-field class="date-range">
       <mat-label>Start Date</mat-label>
       <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
@@ -70,7 +70,11 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let issue"> {{ issue.name }} </td>
+      <td mat-cell *matCellDef="let issue">
+        <a [routerLink]="['/vulnerability-visualization', issue.name]" (click)="$event.stopPropagation()">
+          {{ issue.name }}
+        </a>
+      </td>
     </ng-container>
 
     <!-- Severity Column -->
@@ -83,16 +87,6 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
       <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
-    </ng-container>
-
-    <!-- Affected Entity Column -->
-    <ng-container matColumnDef="affected_entity">
-      <th mat-header-cell *matHeaderCellDef> Affected Asset </th>
-      <td mat-cell *matCellDef="let issue"> 
-        <a [routerLink]="['/network-vizualization', issue.affected_entity]" (click)="$event.stopPropagation()">
-          {{ issue.affected_entity }}
-        </a>
-      </td>
     </ng-container>
 
     <!-- Description Column -->

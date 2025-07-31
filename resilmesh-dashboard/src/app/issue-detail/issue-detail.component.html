@@ -1,6 +1,8 @@
 <div class="issue-details-container">
-  <button (click)="goBack()"><-- Issues</button>
-  <span>{{ issueName }}</span>
+  <button mat-raised-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Vulnerabilities</button>
+  <a [routerLink]="['/vulnerability-visualization', issueName]" (click)="$event.stopPropagation()">
+    <span>{{ issueName }}</span>
+  </a>
 </div>
 
 <div class="issue-header">

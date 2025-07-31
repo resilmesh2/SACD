@@ -21,7 +21,7 @@
 }
 
 /* Add elevation for table container to give it edges */
-.issue-table-container {
+.service-table-container {
     margin: 20px;
     padding: 20px;
 }
@@ -53,7 +53,7 @@ mat-paginator {
     margin-bottom: 16px;
 }
 
-.total-issues {
+.total-services {
     font-weight: bold;
     text-align: right;
 }

@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Node, Edge } from '@swimlane/ngx-graph';
 import { DataService } from '../shared/services/data.service';
