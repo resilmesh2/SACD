@@ -40,8 +40,8 @@ export class NetworkVizualizationComponent implements OnInit {
     this.graphLoading = true;
     this.errorMessage = '';
     this.selectedNode = { id: '', label: '' };
-    this.dataService.getIPNode(this.ipSearch).subscribe(
-      (res) => {
+    this.dataService.getIPNode(this.ipSearch).subscribe({
+      next: (res) => {
         this.edges = res.edges;
         this.nodes = res.nodes;
         if (this.nodes.length === 0 && this.edges.length === 0) {
@@ -51,14 +51,14 @@ export class NetworkVizualizationComponent implements OnInit {
         this.updateChart();
         this.graphLoading = false;
       },
-      (error) => {
+      error: (error) => {
         this.edges = [];
         this.nodes = [];
         this.errorMessage = error;
         this.graphLoading = false;
-      }
-    );
-  }
+      },
+  });
+}
 
   /**
    * This function is called when a user clicks on graph node
@@ -86,10 +86,10 @@ export class NetworkVizualizationComponent implements OnInit {
   }
 
   public expandNode(node: Node) {
-    this.dataService.getNodeNeighbours(node).subscribe(
-      (res) => {
-        this.edges = _.unionBy(this.edges, res.edges, (e) => [e.source, e.target, e.label].join());
-        this.nodes = _.unionBy(this.nodes, res.nodes, (n) => n.id);
+    this.dataService.getNodeNeighbours(node).subscribe({
+      next: (res) => {
+        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) => [e.source, e.target, e.label].join());
+        this.nodes = _.unionBy(this.nodes, res.nodes, (n: Node) => n.id);
 
         if (this.nodes.length === 0 && this.edges.length === 0) {
           this.errorMessage = 'Empty result.';
@@ -97,13 +97,14 @@ export class NetworkVizualizationComponent implements OnInit {
 
         this.graphLoading = false;
       },
-      (error) => {
+      error: (error) => {
         this.edges = [];
         this.nodes = [];
         this.errorMessage = error;
         this.updateChart();
         this.graphLoading = false;
-      }
+      },
+    }
     );
   }
 
