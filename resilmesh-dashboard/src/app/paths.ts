@@ -7,3 +7,4 @@ export const VULNERABILITY_PATH = 'vulnerability';
 export const GROUP_PATH = 'group';
 export const USER_PATH = 'user';
 export const NOTIFICATION_PATH = 'notifications';
+export const SUBNET_PATH = 'subnets';

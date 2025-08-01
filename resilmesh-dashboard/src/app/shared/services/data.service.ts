@@ -596,4 +596,44 @@ public getIPAddresses(): Observable<string[]> {
           })
         );
       }
+
+  public getAllSubnets(): Observable<Subnet[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          subnets {
+            _id,
+            note,
+            range,
+            org_units {
+            name
+          },
+          contacts {
+            name
+          },
+          parent_subnet {
+            _id,
+            note,
+            range
+          }
+        },
+      }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          const subnets: Subnet[] = response.data.subnets.map((subnet: any) => ({
+            _id: subnet._id,
+            range: subnet.range,
+            note: subnet.note || null,
+            org_units: subnet.org_units.map((ou: any) => ou.name),
+            contacts: subnet.contacts.map((contact: any) => contact.name),
+            parent_subnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0] : null
+          }));
+          console.log('Subnets fetched:', subnets);
+          return subnets;
+        })
+      );
+  }
 }

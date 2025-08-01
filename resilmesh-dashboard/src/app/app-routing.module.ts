@@ -9,7 +9,8 @@ import {
   USER_PATH,
   ISSUE_PATH,
   SERVICE_PATH,
-  VULNERABILITY_PATH
+  VULNERABILITY_PATH,
+  SUBNET_PATH
 } from './paths';
 import { HomePageComponent } from './home-page/home-page.component';
 
@@ -76,6 +77,14 @@ const routes: Routes = [
     path: USER_PATH,
     loadChildren: () => import('./user-example-page/user-example-page.module').then((m) => m.UserExamplePageModule),
     data: { breadcrumb: 'User' },
+  },
+  {
+    path: SUBNET_PATH,
+    loadChildren: () =>
+      import('./subnet-page/subnet.module').then(
+        (m) => m.SubnetModule,
+      ),
+    data: { breadcrumb: 'Subnets' },
   },
   {
     path: NOTIFICATION_PATH,
