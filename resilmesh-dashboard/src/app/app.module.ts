@@ -46,7 +46,7 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
 import { IssueComponent } from './issue-page/issue.component';
 import { ServiceComponent } from './service-page/service.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
-import { SubnetComponent } from './subnet-page/subnet.component';
+import { InsertSubnetDialog, SubnetComponent } from './subnet-page/subnet.component';
 
 // Modules
 import { TagComponentModule } from './components/tag-component/tag-component.module';
@@ -54,6 +54,8 @@ import { TagComponentModule } from './components/tag-component/tag-component.mod
 // Datetime handling
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 const DATE_FORMAT = {
   parse: {
@@ -78,7 +80,8 @@ const DATE_FORMAT = {
     IssueComponent,
     ServiceComponent,
     IssueDetailComponent,
-    SubnetComponent
+    SubnetComponent,
+    InsertSubnetDialog
   ],
   imports: [
     BrowserModule,
@@ -110,7 +113,9 @@ const DATE_FORMAT = {
     GraphQLModule,
     HttpClientModule,
     ApolloModule,
-    TagComponentModule
+    TagComponentModule,
+    MatDialogModule,
+    MatAutocompleteModule
   ],
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },

@@ -636,4 +636,38 @@ public getIPAddresses(): Observable<string[]> {
         })
       );
   }
+
+  public insertSubnet(subnet: { range: string, note: string, parent_subnet: string | null }): void {
+    console.log('Inserting subnet:', subnet);
+    this.apollo.mutate<any>({
+      mutation: gql`
+        mutation CreateSubnet($range: String!, $note: String) {
+          createSubnets(input: [
+            {
+              range: $range,
+              note: $note,
+            }
+          ]) {
+            subnets {
+              _id
+              range
+              note
+            }
+          }
+        }
+      `,
+      variables: {
+        range: subnet.range,
+        note: subnet.note,
+        // parentSubnet: subnet.parent_subnet || null,
+      },
+    }).subscribe({
+      error: (error) => {
+        console.error('Error running mutation', error);
+      },
+      complete: () => {
+        console.log('Mutation completed');
+      }
+    });
+  }
 }

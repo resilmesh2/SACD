@@ -1,5 +1,8 @@
 <h1>Subnets</h1>
 <!-- Search bar -->
+<button class="dialog-trigger" mat-raised-button (click)="openDialog('0ms', '0ms')">
+  Insert subnet
+</button>
 <ng-container *ngIf="dataLoading">
   <mat-spinner></mat-spinner>
 </ng-container>
