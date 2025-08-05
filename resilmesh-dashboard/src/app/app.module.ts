@@ -46,7 +46,10 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
 import { IssueComponent } from './issue-page/issue.component';
 import { ServiceComponent } from './service-page/service.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
-import { ChipsContacts, InsertSubnetDialog, SubnetComponent } from './subnet-page/subnet.component';
+import { SubnetComponent } from './subnet-page/subnet.component';
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
 
 // Modules
 import { TagComponentModule } from './components/tag-component/tag-component.module';
@@ -54,9 +57,9 @@ import { TagComponentModule } from './components/tag-component/tag-component.mod
 // Datetime handling
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { MatDialogModule} from '@angular/material/dialog';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatChipsModule } from '@angular/material/chips';
+import { InsertSubnetDialog } from './subnet-page/insert-subnet-dialog/insert.subnet.component';
+import { ChipsContacts } from './subnet-page/insert-subnet-dialog/chips-contacts/chips-contacts.component';
+
 
 const DATE_FORMAT = {
   parse: {

@@ -9,6 +9,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { SubnetExtendedData } from '../shared/models/subnet.model';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
 
 
 @Component({
@@ -94,79 +95,5 @@ export class SubnetComponent implements OnInit, AfterViewInit {
       enterAnimationDuration,
       exitAnimationDuration,
     });
-  }
-}
-
-@Component({
-  selector: 'chips-contacts',
-  templateUrl: 'chips-contacts.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-
-export class ChipsContacts {
-  readonly addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  readonly contacts = model<string[]>([]);
-
-  add(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-
-    // Add new contact
-    if (value) {
-      this.contacts.update(contacts => [...contacts, value]);
-    }
-
-    // Clear the input value
-    event.chipInput!.clear();
-  }
-
-  remove(contact: any): void {
-    this.contacts.update(contacts => {
-      const index = contacts.indexOf(contact);
-      if (index < 0) {
-        return contacts;
-      }
-
-      contacts.splice(index, 1);
-      return [...contacts];
-    });
-  }
-}
-
-
-@Component({
-  selector: 'insert-subnet-dialog',
-  templateUrl: 'insert-subnet-dialog.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-
-export class InsertSubnetDialog implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<InsertSubnetDialog>);
-
-  subnetRange: string = '';
-  subnetNote: string = '';
-  organizationUnit?: string;
-  parentSubnet?: SubnetExtendedData;
-  allSubnets: Signal<SubnetExtendedData[]>;
-  allOrgUnits: Signal<{ _id: string; name: string }[]>;
-  contacts: WritableSignal<string[]> = signal(['example@example.com']);
-
-  constructor(private data: DataService) {
-    this.allSubnets = toSignal(this.data.getSubnets(), { initialValue: [] });
-    this.allOrgUnits = toSignal(this.data.getOrgUnits(), { initialValue: [] });
-  }
-
-  ngOnInit(): void {}
-
-  insertSubnet() {
-    const newSubnet = {
-      range: this.subnetRange,
-      note: this.subnetNote,
-      parentSubnet: this.parentSubnet?.range,
-      orgUnit: this.organizationUnit,
-      contacts: this.contacts(),
-    };
-
-    this.data.insertSubnet(newSubnet);
   }
 }
