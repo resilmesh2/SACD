@@ -5,18 +5,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { map, startWith, Observable, filter, take, tap } from 'rxjs';
-import { FormControl } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { SubnetExtendedData } from '../shared/models/subnet.model';
 
-export interface SubnetExtendedData {
-  _id: string;
-  note: string;
-  range: string;
-  org_units: string[];
-  contacts: string[];
-  parent_subnet: { note?: string, range: string } | null;
-}
+
 
 @Component({
   selector: 'app-subnet',
@@ -115,16 +107,11 @@ export class InsertSubnetDialog implements OnInit {
 
   subnetRange: string = '';
   subnetNote: string = '';
-
-  parentSubnetControl = new FormControl<string>('');
+  parentSubnet: SubnetExtendedData | null = null;
   options: Signal<SubnetExtendedData[]>;
 
   constructor(private data: DataService) {
-    this.options = toSignal(this.data.getAllSubnets().pipe(
-      tap(() => {
-        this.parentSubnetControl.setValue('');
-      })
-    ) , { initialValue: [] });
+    this.options = toSignal(this.data.getAllSubnets(), { initialValue: [] });
   }
 
   ngOnInit(): void {}
@@ -133,7 +120,7 @@ export class InsertSubnetDialog implements OnInit {
     const subnetData = {
       range: this.subnetRange,
       note: this.subnetNote,
-      parent_subnet: this.parentSubnetControl.value || null,
+      parent_subnet: this.parentSubnet?.range || null,
     };
 
     this.data.insertSubnet(subnetData);

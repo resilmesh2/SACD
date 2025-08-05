@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import gql from 'graphql-tag';
 import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { GraphInput } from '../models/graph.model';
 import { entities, EntityStructure } from '../config/network-visualization.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
@@ -641,25 +641,22 @@ public getIPAddresses(): Observable<string[]> {
     console.log('Inserting subnet:', subnet);
     this.apollo.mutate<any>({
       mutation: gql`
-        mutation CreateSubnet($range: String!, $note: String) {
-          createSubnets(input: [
-            {
+        mutation InsertSubnet($range: String!, $note: String!, $parentSubnet: ID) {
+          insertSubnet(
               range: $range,
               note: $note,
-            }
-          ]) {
-            subnets {
-              _id
-              range
-              note
-            }
+              parentSubnet: $parentSubnet
+          ) {
+            _id,
+            note,
+            range
           }
         }
       `,
       variables: {
         range: subnet.range,
         note: subnet.note,
-        // parentSubnet: subnet.parent_subnet || null,
+        parentSubnet: subnet.parent_subnet || null,
       },
     }).subscribe({
       error: (error) => {
