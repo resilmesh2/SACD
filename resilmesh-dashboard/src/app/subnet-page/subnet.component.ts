@@ -18,22 +18,8 @@ import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.compone
   styleUrls: ['./subnet.component.scss'],
 })
 export class SubnetComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet'];
+  displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
   dataSource: MatTableDataSource<SubnetExtendedData>;
-  colorScheme = {
-    domain: [
-      '#e0f7fa',
-      '#b2ebf2',
-      '#80deea',
-      '#4dd0e1',
-      '#26c6da',
-      '#00bcd4',
-      '#00acc1',
-      '#0097a7',
-      '#00838f',
-      '#006064',
-    ],
-  };
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
   dataLoaded = false;
@@ -95,5 +81,10 @@ export class SubnetComponent implements OnInit, AfterViewInit {
       enterAnimationDuration,
       exitAnimationDuration,
     });
+  }
+
+  deleteSubnet(subnet: SubnetExtendedData): void {
+    console.warn('Delete subnet not implemented yet:', subnet);
+    // TODO: Implement deletion logic here
   }
 }
