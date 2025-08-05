@@ -46,7 +46,7 @@ import { VulnerabilityComponent } from './vulnerability-page/vulnerability.compo
 import { IssueComponent } from './issue-page/issue.component';
 import { ServiceComponent } from './service-page/service.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
-import { InsertSubnetDialog, SubnetComponent } from './subnet-page/subnet.component';
+import { ChipsContacts, InsertSubnetDialog, SubnetComponent } from './subnet-page/subnet.component';
 
 // Modules
 import { TagComponentModule } from './components/tag-component/tag-component.module';
@@ -56,6 +56,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatDialogModule} from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
 
 const DATE_FORMAT = {
   parse: {
@@ -81,7 +82,8 @@ const DATE_FORMAT = {
     ServiceComponent,
     IssueDetailComponent,
     SubnetComponent,
-    InsertSubnetDialog
+    InsertSubnetDialog,
+    ChipsContacts
   ],
   imports: [
     BrowserModule,
@@ -115,7 +117,8 @@ const DATE_FORMAT = {
     ApolloModule,
     TagComponentModule,
     MatDialogModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatChipsModule,
   ],
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },

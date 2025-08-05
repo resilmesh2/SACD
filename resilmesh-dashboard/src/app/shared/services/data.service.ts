@@ -597,7 +597,7 @@ public getIPAddresses(): Observable<string[]> {
         );
       }
 
-  public getAllSubnets(): Observable<Subnet[]> {
+  public getSubnets(): Observable<Subnet[]> {
     return this.apollo
       .query<any>({
         query: gql`
@@ -637,34 +637,136 @@ public getIPAddresses(): Observable<string[]> {
       );
   }
 
-  public insertSubnet(subnet: { range: string, note: string, parent_subnet: string | null }): void {
-    console.log('Inserting subnet:', subnet);
-    this.apollo.mutate<any>({
-      mutation: gql`
-        mutation InsertSubnet($range: String!, $note: String!, $parentSubnet: ID) {
-          insertSubnet(
-              range: $range,
-              note: $note,
-              parentSubnet: $parentSubnet
-          ) {
-            _id,
-            note,
-            range
+  public getOrgUnits(): Observable<{ _id: string; name: string }[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          organizationUnits {
+            _id
+            name
           }
         }
       `,
+      })
+      .pipe(
+        map((response) => {
+          return response.data.organizationUnits;
+        })
+      );
+    }
+
+  public createSubnet(range: string, note: string): Observable<Subnet> {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation CreateSubnet($range: String!, $note: String!) {
+            createSubnets(input: [
+                {
+                    note: $note,
+                    range: $range
+                }
+            ]) {
+                subnets {
+                    range
+                    note
+                }
+            }
+        }
+      `,
       variables: {
-        range: subnet.range,
-        note: subnet.note,
-        parentSubnet: subnet.parent_subnet || null,
+        range: range,
+        note: note,
       },
     }).subscribe({
-      error: (error) => {
-        console.error('Error running mutation', error);
-      },
-      complete: () => {
-        console.log('Mutation completed');
-      }
+        next: (response) => {
+          console.log('Subnet created:', response.data.createSubnets.subnets[0]);
+          return response.data.createSubnets.subnets[0];
+        },
+        error: (error) => { 
+          console.error('Error creating subnet:', error);
+          return throwError(() => new Error('Failed to create subnet'));
+        }
     });
+  }
+
+  public linkSubnetToParent(subnetRange: string, parentSubnetRange: string): void {
+    return this.apollo.mutate<any>({
+        mutation: gql`
+          mutation LinkSubnetToParent($subnetRange: String!, $parentSubnetRange: String!) {
+            linkSubnetToParent(subnetRange: $subnetRange, parentSubnetRange: $parentSubnetRange) {
+              _id
+              range
+              note
+            }
+          }
+        `,
+        variables: {
+          subnetRange: subnetRange,
+          parentSubnetRange: parentSubnetRange
+        }
+      }).subscribe();
+  }
+
+  public linkSubnetToOrgUnit(subnetRange: string, orgUnitName: string): void {
+    return this.apollo.mutate<any>({
+        mutation: gql`
+          mutation LinkSubnetToOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+            linkSubnetToOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
+              _id
+              range
+              note
+            }
+          }
+        `,
+        variables: {
+          subnetRange: subnetRange,
+          orgUnitName: orgUnitName
+        }
+      }).subscribe();
+    }
+
+  public mergeSubnetWithContacts(subnetRange: string, contactNames: string[]): Observable<any> {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+          mutation MergeSubnetWithContacts($subnetRange: String!, $contactNames: [String!]!) {
+            mergeSubnetWithContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
+              _id
+              range
+              note
+            }
+          }
+        `,
+        variables: {
+          subnetRange: subnetRange,
+          contactNames: contactNames
+        }
+      }).subscribe();
+    }
+
+
+  public insertSubnet(subnet: { 
+    range: string, 
+    note: string, 
+    parentSubnet?: string, 
+    orgUnit?: string, 
+    contacts?: string[]
+  }): void {
+    if (!(this.createSubnet(subnet.range, subnet.note))) {
+      console.error('Failed to create subnet');
+      // TODO: Handle error (e.g., show notification to user)
+      return;
+    }
+
+    if (subnet.parentSubnet) {
+      this.linkSubnetToParent(subnet.range, subnet.parentSubnet);
+    }
+
+    if (subnet.orgUnit) {
+      this.linkSubnetToOrgUnit(subnet.range, subnet.orgUnit);
+    }
+
+    if (subnet.contacts && subnet.contacts.length > 0) {
+      this.mergeSubnetWithContacts(subnet.range, subnet.contacts);
+    }
   }
 }

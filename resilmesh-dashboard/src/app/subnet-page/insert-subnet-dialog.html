@@ -7,23 +7,33 @@
 
     <mat-label for="subnetNote">Subnet note:</mat-label>
     <mat-form-field id="subnetNote">
-        <input matInput required placeholder="" [(ngModel)]="subnetNote" />
+        <input matInput placeholder="" [(ngModel)]="subnetNote" />
     </mat-form-field>
 
     <mat-label for="parentSubnet">Parent subnet:</mat-label>
     <mat-form-field id="parentSubnet">
         <mat-select [(value)]="parentSubnet">
             <mat-option value="none">None</mat-option>
-            @for (option of options(); track option) {
-            <mat-option [value]="option">{{option.range}}</mat-option>
+            @for (subnet of allSubnets(); track subnet) {
+            <mat-option [value]="subnet">{{subnet.range}}</mat-option>
             }
         </mat-select>
     </mat-form-field>
+    <mat-label for="orgUnit">Organizational unit:</mat-label>
+    <mat-form-field id="orgUnit">
+        <mat-select [(value)]="organizationUnit">
+            <mat-option value="none">None</mat-option>
+            @for (orgUnit of allOrgUnits(); track orgUnit) {
+            <mat-option [value]="orgUnit.name">{{orgUnit.name}}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+    <chips-contacts [(contacts)]="contacts"></chips-contacts>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-button mat-dialog-close cdkFocusInitial (click)="insertSubnet()"
-            [disabled]="!subnetRange || !subnetNote">
+            [disabled]="!subnetRange">
         Insert
     </button>
 </mat-dialog-actions>
