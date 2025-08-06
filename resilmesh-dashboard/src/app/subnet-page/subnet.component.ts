@@ -7,8 +7,6 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SubnetExtendedData } from '../shared/models/subnet.model';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
 
 
@@ -48,9 +46,9 @@ export class SubnetComponent implements OnInit, AfterViewInit {
           _id: subnet._id,
           note: subnet.note ?? "---",
           range: subnet.range, // Can't be null or undefined, so no need for a fallback
-          org_units: subnet.org_units.length == 0 ? ["---"] : subnet.org_units,
+          organizationUnit: subnet.organizationUnit ?? "---",
+          parentSubnet: subnet.parentSubnet ?? "---",
           contacts: subnet.contacts.length == 0 ? ["---"] : subnet.contacts,
-          parent_subnet: subnet.parent_subnet ?? { note: '---', range: '---' }
         })));
 
         console.log('Subnets fetched:', this.dataSource.data);
@@ -75,11 +73,20 @@ export class SubnetComponent implements OnInit, AfterViewInit {
 
   readonly dialog = inject(MatDialog);
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, subnet: Partial<SubnetExtendedData>): void {
     this.dialog.open(InsertSubnetDialog, {
       width: '24em',
       enterAnimationDuration,
       exitAnimationDuration,
+      data: {
+        subnet: {
+          range: subnet.range,
+          note: subnet.note,
+          organizationUnit: subnet.organizationUnit,
+          parentSubnet: subnet.parentSubnet,
+          contacts: subnet.contacts,
+        }
+      },
     });
   }
 

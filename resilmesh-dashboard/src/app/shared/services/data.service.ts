@@ -14,6 +14,7 @@ import { Mission } from '../models/mission.model';
 import { MissionStructure } from '../models/mission-structure.model';
 import { CVE, CVEResponse } from '../models/vulnerability.model';
 import { VulnerabilityData } from '../../vulnerability-page/vulnerability.component';
+import { SubnetExtendedData } from '../models/subnet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -623,13 +624,13 @@ public getIPAddresses(): Observable<string[]> {
       })
       .pipe(
         map((response) => {
-          const subnets: Subnet[] = response.data.subnets.map((subnet: any) => ({
+          const subnets: SubnetExtendedData[] = response.data.subnets.map((subnet: any) => ({
             _id: subnet._id,
             range: subnet.range,
             note: subnet.note || null,
-            org_units: subnet.org_units.map((ou: any) => ou.name),
+            organizationUnit: subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
             contacts: subnet.contacts.map((contact: any) => contact.name),
-            parent_subnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0] : null
+            parentSubnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0].range : ""
           }));
           console.log('Subnets fetched:', subnets);
           return subnets;
@@ -659,7 +660,7 @@ public getIPAddresses(): Observable<string[]> {
   public createSubnet(range: string, note: string): Observable<Subnet> {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation CreateSubnet($range: String!, $note: String!) {
+        mutation CreateSubnet($range: String!, $note: String) {
             createSubnets(input: [
                 {
                     note: $note,
@@ -677,16 +678,7 @@ public getIPAddresses(): Observable<string[]> {
         range: range,
         note: note,
       },
-    }).subscribe({
-        next: (response) => {
-          console.log('Subnet created:', response.data.createSubnets.subnets[0]);
-          return response.data.createSubnets.subnets[0];
-        },
-        error: (error) => { 
-          console.error('Error creating subnet:', error);
-          return throwError(() => new Error('Failed to create subnet'));
-        }
-    });
+    })
   }
 
   public linkSubnetToParent(subnetRange: string, parentSubnetRange: string): void {
@@ -704,7 +696,16 @@ public getIPAddresses(): Observable<string[]> {
           subnetRange: subnetRange,
           parentSubnetRange: parentSubnetRange
         }
-      }).subscribe();
+      }).subscribe({
+        next: (response) => {
+          console.log('Subnet linked to parent:', response.data.linkSubnetToParent);
+          return response.data.linkSubnetToParent;
+        },
+        error: (error) => {
+          console.error('Error linking subnet to parent:', error);
+          return throwError(() => new Error('Failed to link subnet to parent'));
+        }
+      });
   }
 
   public linkSubnetToOrgUnit(subnetRange: string, orgUnitName: string): void {
@@ -722,10 +723,19 @@ public getIPAddresses(): Observable<string[]> {
           subnetRange: subnetRange,
           orgUnitName: orgUnitName
         }
-      }).subscribe();
+      }).subscribe({
+        next: (response) => {
+          console.log('Subnet linked to org unit:', response.data.linkSubnetToOrgUnit);
+          return response.data.linkSubnetToOrgUnit;
+        },
+        error: (error) => {
+          console.error('Error linking subnet to org unit:', error);
+          return throwError(() => new Error('Failed to link subnet to org unit'));
+        }
+      });
     }
 
-  public mergeSubnetWithContacts(subnetRange: string, contactNames: string[]): Observable<any> {
+  public mergeSubnetWithContacts(subnetRange: string, contactNames: string[]): void {
     return this.apollo.mutate<any>({
       mutation: gql`
           mutation MergeSubnetWithContacts($subnetRange: String!, $contactNames: [String!]!) {
@@ -740,34 +750,43 @@ public getIPAddresses(): Observable<string[]> {
           subnetRange: subnetRange,
           contactNames: contactNames
         }
-      }).subscribe();
+      }).subscribe({
+        next: (response) => {
+          console.log('Subnet merged with contacts:', response.data.mergeSubnetWithContacts);
+          return response.data.mergeSubnetWithContacts;
+        },
+        error: (error) => {
+          console.error('Error merging subnet with contacts:', error);
+          return throwError(() => new Error('Failed to merge subnet with contacts'));
+        }
+      });
     }
 
 
-  public insertSubnet(subnet: { 
-    range: string, 
-    note: string, 
-    parentSubnet?: string, 
-    orgUnit?: string, 
-    contacts?: string[]
-  }): void {
-    if (!(this.createSubnet(subnet.range, subnet.note))) {
-      console.error('Failed to create subnet');
-      // TODO: Handle error (e.g., show notification to user)
-      return;
-    }
+  public insertSubnet(subnet: Omit<SubnetExtendedData, "_id">): void {
+    console.log('Inserting subnet with data:', subnet);
 
-    if (subnet.parentSubnet) {
-      this.linkSubnetToParent(subnet.range, subnet.parentSubnet);
-    }
+    // First create the subnet and if successful, link it to parent, org unit, and contacts
+    this.createSubnet(subnet.range, subnet.note).subscribe({
+      next: (response) => {
+        console.log('Subnet created:', response.data.createSubnets.subnets[0]);
+        if (subnet.parentSubnet) {
+          this.linkSubnetToParent(subnet.range, subnet.parentSubnet);
+        }
 
-    if (subnet.orgUnit) {
-      this.linkSubnetToOrgUnit(subnet.range, subnet.orgUnit);
-    }
+        if (subnet.organizationUnit) {
+          this.linkSubnetToOrgUnit(subnet.range, subnet.organizationUnit);
+        }
 
-    if (subnet.contacts && subnet.contacts.length > 0) {
-      this.mergeSubnetWithContacts(subnet.range, subnet.contacts);
-    }
+        if (subnet.contacts && subnet.contacts.length > 0) {
+          this.mergeSubnetWithContacts(subnet.range, subnet.contacts);
+        }
+      },
+      error: (error) => {
+        console.error('Error creating subnet:', error);
+        return throwError(() => new Error('Failed to create subnet'));
+      }
+    });
   }
 
   public deleteSubnet(range: string): boolean {

@@ -2,26 +2,26 @@
 <mat-dialog-content>
     <mat-label for="subnetRange">Subnet range:</mat-label>
     <mat-form-field id="subnetRange">
-        <input matInput required placeholder="" [(ngModel)]="subnetRange" />
+        <input matInput required placeholder="" [(ngModel)]="data.subnet.range" />
     </mat-form-field>
 
     <mat-label for="subnetNote">Subnet note:</mat-label>
     <mat-form-field id="subnetNote">
-        <input matInput placeholder="" [(ngModel)]="subnetNote" />
+        <input matInput placeholder="" [(ngModel)]="data.subnet.note" />
     </mat-form-field>
 
     <mat-label for="parentSubnet">Parent subnet:</mat-label>
     <mat-form-field id="parentSubnet">
-        <mat-select [(value)]="parentSubnet">
+        <mat-select [(value)]="data.subnet.parentSubnet">
             <mat-option value="none">None</mat-option>
-            @for (subnet of allSubnets(); track subnet) {
-            <mat-option [value]="subnet">{{subnet.range}}</mat-option>
+            @for (subnet of allSubnets(); track subnet.range) {
+            <mat-option [value]="subnet.range">{{subnet.range}}</mat-option>
             }
         </mat-select>
     </mat-form-field>
     <mat-label for="orgUnit">Organizational unit:</mat-label>
     <mat-form-field id="orgUnit">
-        <mat-select [(value)]="organizationUnit">
+        <mat-select [(value)]="data.subnet.organizationUnit">
             <mat-option value="none">None</mat-option>
             @for (orgUnit of allOrgUnits(); track orgUnit) {
             <mat-option [value]="orgUnit.name">{{orgUnit.name}}</mat-option>
@@ -33,7 +33,7 @@
 <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>
     <button mat-button mat-dialog-close cdkFocusInitial (click)="insertSubnet()"
-            [disabled]="!subnetRange">
+            [disabled]="!data.subnet.range">
         Insert
     </button>
 </mat-dialog-actions>

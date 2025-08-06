@@ -1,7 +1,7 @@
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { ChangeDetectionStrategy, Component, inject, model, OnInit, signal, Signal, WritableSignal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, signal, Signal, WritableSignal } from "@angular/core";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { SubnetExtendedData } from "../../shared/models/subnet.model";
 import { DataService } from "../../shared/services/data.service";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -16,30 +16,34 @@ import { toSignal } from "@angular/core/rxjs-interop";
 export class InsertSubnetDialog implements OnInit {
   readonly dialogRef = inject(MatDialogRef<InsertSubnetDialog>);
 
-  subnetRange: string = '';
-  subnetNote: string = '';
-  organizationUnit?: string;
-  parentSubnet?: SubnetExtendedData;
+  data = inject(MAT_DIALOG_DATA) as { subnet: SubnetExtendedData };
+  
+  // subnetRange: string = '';
+  // subnetNote: string = '';
+  
+  // parentSubnet?: SubnetExtendedData;
   allSubnets: Signal<SubnetExtendedData[]>;
   allOrgUnits: Signal<{ _id: string; name: string }[]>;
-  contacts: WritableSignal<string[]> = signal(['example@example.com']);
+  contacts: WritableSignal<string[]> = signal(this.data.subnet.contacts || []);
 
-  constructor(private data: DataService) {
-    this.allSubnets = toSignal(this.data.getSubnets(), { initialValue: [] });
-    this.allOrgUnits = toSignal(this.data.getOrgUnits(), { initialValue: [] });
+  constructor(private dataService: DataService) {
+    this.allSubnets = toSignal(this.dataService.getSubnets(), { initialValue: [] });
+    this.allOrgUnits = toSignal(this.dataService.getOrgUnits(), { initialValue: [] });
+
+    console.log('Input data:', this.data);
   }
 
   ngOnInit(): void {}
 
   insertSubnet() {
     const newSubnet = {
-      range: this.subnetRange,
-      note: this.subnetNote,
-      parentSubnet: this.parentSubnet?.range,
-      orgUnit: this.organizationUnit,
+      range: this.data.subnet.range,
+      note: this.data.subnet.note,
+      parentSubnet: this.data.subnet.parentSubnet,
+      organizationUnit: this.data.subnet.organizationUnit,
       contacts: this.contacts(),
     };
 
-    this.data.insertSubnet(newSubnet);
+    this.dataService.insertSubnet(newSubnet);
   }
 }
