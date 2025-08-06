@@ -1,6 +1,4 @@
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, signal, Signal, WritableSignal } from "@angular/core";
-import { MatChipInputEvent } from "@angular/material/chips";
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, Output, output, OutputEmitterRef, signal, Signal, WritableSignal } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { SubnetExtendedData } from "../../shared/models/subnet.model";
 import { DataService } from "../../shared/services/data.service";
@@ -22,32 +20,48 @@ export class InsertSubnetDialog implements OnInit {
   
   allSubnets: Signal<SubnetExtendedData[]>;
   allOrgUnits: Signal<{ _id: string; name: string }[]>;
+
+  updateSubnetDataSource = output<{ oldRange: string; subnet: SubnetExtendedData }>();
+
   range = signal(this.data.subnet.range || '');
-  contacts: WritableSignal<string[]> = signal(this.data.subnet.contacts || []);  
+  note = signal(this.data.subnet.note || '');
+  contacts = signal(this.data.subnet.contacts || []);
+  parentSubnet = signal(this.data.subnet.parentSubnet || null);
+  orgUnit = signal(this.data.subnet.organizationUnit || null);
 
   constructor(private dataService: DataService) {
     this.allSubnets = toSignal(this.dataService.getSubnets(), { initialValue: [] });
     this.allOrgUnits = toSignal(this.dataService.getOrgUnits(), { initialValue: [] });
-
-    console.log('Input data:', this.data);
   }
 
   ngOnInit(): void {}
 
-  insertSubnet() {
-    const newSubnet = {
-      range: this.range(),
-      note: this.data.subnet.note,
-      parentSubnet: this.data.subnet.parentSubnet,
-      organizationUnit: this.data.subnet.organizationUnit,
-      contacts: this.contacts(),
-    };
+  updatedSubnet = computed(() => ({
+    ...this.data.subnet,
+    range: this.range(),
+    note: this.note(),
+    parentSubnet: this.parentSubnet(),
+    organizationUnit: this.orgUnit(),
+    contacts: this.contacts(),
+  }));
 
-    this.dataService.insertSubnet(newSubnet);
+  insertSubnet() {
+    this.dataService.insertSubnet(this.updatedSubnet());
+
+    this.updateSubnetDataSource.emit({
+      oldRange: this.data.subnet.range,
+      subnet: this.updatedSubnet()
+    });
   }
 
   editSubnet() {
     console.log(`Updating subnet ${this.data.subnet.range} -> ${this.range()} | ${this.data.subnet.note}`);
-    this.dataService.updateSubnet(this.data.subnet.range, this.range(), this.data.subnet.note);
+    this.dataService.editSubnet(this.data.subnet, this.updatedSubnet());
+
+    this.updateSubnetDataSource.emit({ 
+      oldRange: this.data.subnet.range,
+      subnet: this.updatedSubnet()
+    });
   }
+  
 }

@@ -632,7 +632,6 @@ public getIPAddresses(): Observable<string[]> {
             contacts: subnet.contacts.map((contact: any) => contact.name),
             parentSubnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0].range : ""
           }));
-          console.log('Subnets fetched:', subnets);
           return subnets;
         })
       );
@@ -689,6 +688,9 @@ public getIPAddresses(): Observable<string[]> {
               _id
               range
               note
+              parent_subnet {
+                range
+              }
             }
           }
         `,
@@ -698,7 +700,7 @@ public getIPAddresses(): Observable<string[]> {
         }
       }).subscribe({
         next: (response) => {
-          console.log('Subnet linked to parent:', response.data.linkSubnetToParent);
+          console.log('Subnet linked to parent:', response.data.linkSubnetToParent.parent_subnet[0].range);
           return response.data.linkSubnetToParent;
         },
         error: (error) => {
@@ -839,20 +841,110 @@ public getIPAddresses(): Observable<string[]> {
         newRange: newRange,
         note: note,
       },
-    }).subscribe({
+    });
+  }
+
+public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation UnlinkSubnetFromParent($subnetRange: String!, $parentRange: String!) {
+          unlinkSubnetFromParent(subnetRange: $subnetRange, parentRange: $parentRange) {
+            _id
+            range
+            note
+          }
+        }
+      `,
+      variables: {
+        subnetRange: subnetRange,
+        parentRange: parentRange
+      }
+    })
+  }
+
+  public unlinkSubnetFromOrgUnit(subnetRange: string, orgUnitName: string): void {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation UnlinkSubnetFromOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+          unlinkSubnetFromOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
+            _id
+            range
+            note
+          }
+        }
+      `,
+      variables: {
+        subnetRange: subnetRange,
+        orgUnitName: orgUnitName
+      }
+    });
+  }
+
+  public unlinkSubnetFromContacts(subnetRange: string, contactNames: string[]): void {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation UnlinkSubnetFromContacts($subnetRange: String!, $contactNames: [String!]!) {
+          unlinkSubnetFromContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
+            _id
+            range
+            note
+          }
+        }
+      `,
+      variables: {
+        subnetRange: subnetRange,
+        contactNames: contactNames
+      }
+    });
+  }
+
+  public editSubnet(oldSubnet: SubnetExtendedData, newSubnet: SubnetExtendedData): void {
+    this.updateSubnet(oldSubnet.range, newSubnet.range, newSubnet.note).subscribe({
       next: (response) => { 
         console.log('Subnet updated:', response.data.updateSubnets.subnets[0]);
-        return response.data.updateSubnets.subnets[0];
+
+        this.unlinkSubnetFromParent(oldSubnet.range, oldSubnet.parentSubnet).subscribe({
+          next: () => {
+            console.log('Subnet unlinked from parent:', oldSubnet.parentSubnet);
+            if (newSubnet.parentSubnet && newSubnet.range !== newSubnet.parentSubnet) {
+              this.linkSubnetToParent(newSubnet.range, newSubnet.parentSubnet);
+            }
+          },
+          error: (error) => {
+            console.error('Error unlinking subnet from parent:', error);
+          }
+        });
+
+        this.unlinkSubnetFromOrgUnit(oldSubnet.range, oldSubnet.organizationUnit).subscribe({
+          next: () => {
+            console.log('Subnet unlinked from org unit:', oldSubnet.organizationUnit);
+            if (newSubnet.organizationUnit && newSubnet.organizationUnit !== oldSubnet.organizationUnit) {
+              this.linkSubnetToOrgUnit(newSubnet.range, newSubnet.organizationUnit);
+            }
+          },
+          error: (error) => {
+            console.error('Error unlinking subnet from org unit:', error);
+          }
+        });
+
+        this.unlinkSubnetFromContacts(oldSubnet.range, oldSubnet.contacts).subscribe({
+          next: () => {
+            console.log('Subnet unlinked from contacts:', oldSubnet.contacts);
+            if (newSubnet.contacts && newSubnet.contacts.length > 0) {
+              console.log('Merging subnet with contacts:', newSubnet.contacts);
+              this.mergeSubnetWithContacts(newSubnet.range, newSubnet.contacts);
+            }
+          },
+          error: (error) => {
+            console.error('Error unlinking subnet from contacts:', error);
+          }
+        });
       },
       error: (error) => {
         console.error('Error updating subnet:', error);
         return throwError(() => new Error('Failed to update subnet'));
       }
     });
-  }
-
-  public editSubnet(subnet: SubnetExtendedData): void {
-
   }
 
 }
