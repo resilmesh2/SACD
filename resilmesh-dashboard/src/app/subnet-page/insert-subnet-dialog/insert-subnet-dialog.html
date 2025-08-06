@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>Insert subnet</h2>
+<h2 mat-dialog-title>{{ title() }}</h2>
 <mat-dialog-content>
     <mat-label for="subnetRange">Subnet range:</mat-label>
     <mat-form-field id="subnetRange">
-        <input matInput required placeholder="" [(ngModel)]="data.subnet.range" />
+        <input matInput required placeholder="" [(ngModel)]="range" />
     </mat-form-field>
 
     <mat-label for="subnetNote">Subnet note:</mat-label>
@@ -32,8 +32,12 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button mat-dialog-close cdkFocusInitial (click)="insertSubnet()"
-            [disabled]="!data.subnet.range">
+    <button mat-button mat-dialog-close cdkFocusInitial (click)="editSubnet()" *ngIf="data.mode === 'edit'">
+        Save
+    </button>
+    <button mat-button mat-dialog-close cdkFocusInitial 
+        (click)="insertSubnet()" [disabled]="!data.subnet.range" *ngIf="data.mode === 'insert'"
+    >
         Insert
     </button>
 </mat-dialog-actions>

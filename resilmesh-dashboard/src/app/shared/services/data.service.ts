@@ -816,4 +816,43 @@ public getIPAddresses(): Observable<string[]> {
         }
     });
   }
+
+  public updateSubnet(oldRange: string, newRange: string, note: string): Observable<Subnet> {
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation UpdateSubnet($oldRange: String!, $newRange: String!, $note: String) {
+          updateSubnets(
+            where: { 
+              range: $oldRange 
+            }
+            update: { 
+              range: $newRange
+              note: $note 
+            }
+          ) {
+            subnets {_id, note, range}
+          }
+        }
+      `,
+      variables: {
+        oldRange: oldRange,
+        newRange: newRange,
+        note: note,
+      },
+    }).subscribe({
+      next: (response) => { 
+        console.log('Subnet updated:', response.data.updateSubnets.subnets[0]);
+        return response.data.updateSubnets.subnets[0];
+      },
+      error: (error) => {
+        console.error('Error updating subnet:', error);
+        return throwError(() => new Error('Failed to update subnet'));
+      }
+    });
+  }
+
+  public editSubnet(subnet: SubnetExtendedData): void {
+
+  }
+
 }

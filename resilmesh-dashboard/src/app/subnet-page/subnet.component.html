@@ -1,6 +1,6 @@
 <h1>Subnets</h1>
 <!-- Search bar -->
-<button class="dialog-trigger" mat-raised-button (click)="openDialog('0ms', '0ms', {})">
+<button class="dialog-trigger" mat-raised-button (click)="openDialog('0ms', '0ms', {}, 'insert')">
   Insert subnet
 </button>
 <ng-container *ngIf="dataLoading">
@@ -71,7 +71,7 @@
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let row" >
           <div class="actions">
-            <button class="action" matIconButton (click)="openDialog('0ms', '0ms', row)">
+            <button class="action" matIconButton (click)="openDialog('0ms', '0ms', row, 'edit')">
               <mat-icon fontIcon="edit" aria-label="Edit subnet"></mat-icon>
             </button>
             <button class="action destructive" matIconButton (click)="deleteSubnet(row)">

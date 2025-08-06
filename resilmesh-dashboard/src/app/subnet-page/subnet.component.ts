@@ -73,7 +73,7 @@ export class SubnetComponent implements OnInit, AfterViewInit {
 
   readonly dialog = inject(MatDialog);
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, subnet: Partial<SubnetExtendedData>): void {
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, subnet: Partial<SubnetExtendedData>, mode: 'insert' | 'edit'): void {
     this.dialog.open(InsertSubnetDialog, {
       width: '24em',
       enterAnimationDuration,
@@ -85,7 +85,8 @@ export class SubnetComponent implements OnInit, AfterViewInit {
           organizationUnit: subnet.organizationUnit,
           parentSubnet: subnet.parentSubnet,
           contacts: subnet.contacts,
-        }
+        },
+        mode: mode 
       },
     });
   }
