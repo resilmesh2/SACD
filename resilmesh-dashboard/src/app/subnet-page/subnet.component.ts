@@ -85,6 +85,12 @@ export class SubnetComponent implements OnInit, AfterViewInit {
 
   deleteSubnet(subnet: SubnetExtendedData): void {
     console.warn('Delete subnet not implemented yet:', subnet);
-    // TODO: Implement deletion logic here
+    if (this.data.deleteSubnet(subnet.range)) {
+      // Handle successful deletion (e.g., show a message, refresh the list)
+      this.dataSource.data = this.dataSource.data.filter(item => item.range !== subnet.range);
+    } else {
+      // Handle deletion failure (e.g., show an error message)
+      console.error('Failed to delete subnet:', subnet);
+    }
   }
 }

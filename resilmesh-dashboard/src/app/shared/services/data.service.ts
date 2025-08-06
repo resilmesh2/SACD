@@ -6,7 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import gql from 'graphql-tag';
 import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
-import { map, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../models/graph.model';
 import { entities, EntityStructure } from '../config/network-visualization.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
@@ -768,5 +768,33 @@ public getIPAddresses(): Observable<string[]> {
     if (subnet.contacts && subnet.contacts.length > 0) {
       this.mergeSubnetWithContacts(subnet.range, subnet.contacts);
     }
+  }
+
+  public deleteSubnet(range: string): boolean {
+    console.log('Deleting subnet with range:', range);
+    return this.apollo.mutate<any>({
+      mutation: gql`
+        mutation DeleteSubnet($range: String!) {
+            deleteSubnets(where: {
+                range: $range
+            }) {
+                nodesDeleted
+                relationshipsDeleted
+            }
+        }
+      `,
+      variables: {
+        range: range,
+      },
+    }).pipe(take(1)).subscribe({
+        next: (response) => {
+          console.log('Subnet deleted:', response.data.deleteSubnets.nodesDeleted);
+          return response.data.deleteSubnets.nodesDeleted > 0;
+        },
+        error: (error) => { 
+          console.error('Error deleting subnet:', error);
+          return throwError(() => new Error('Failed to delete subnet'));
+        }
+    });
   }
 }

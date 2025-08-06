@@ -60,7 +60,6 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { InsertSubnetDialog } from './subnet-page/insert-subnet-dialog/insert.subnet.component';
 import { ChipsContacts } from './subnet-page/insert-subnet-dialog/chips-contacts/chips-contacts.component';
 
-
 const DATE_FORMAT = {
   parse: {
     dateInput: 'YYYY/MM/DD',
@@ -86,7 +85,7 @@ const DATE_FORMAT = {
     IssueDetailComponent,
     SubnetComponent,
     InsertSubnetDialog,
-    ChipsContacts
+    ChipsContacts,
   ],
   imports: [
     BrowserModule,
