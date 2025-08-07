@@ -6,7 +6,15 @@
     width: 100%;
 }
 
-button.dialog-trigger {
+.top-bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1em;
+}
+
+button.top-bar-button {
     cursor: pointer;
     width: fit-content;
     background-color: #1a1a1b;

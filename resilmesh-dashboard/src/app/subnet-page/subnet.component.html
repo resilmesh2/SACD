@@ -1,8 +1,13 @@
 <h1>Subnets</h1>
-<!-- Search bar -->
-<button class="dialog-trigger" mat-raised-button (click)="openDialog('0ms', '0ms', {}, 'insert')">
-  Insert subnet
-</button>
+<!-- Top button bar -->
+<div class="top-bar">
+  <button class="top-bar-button" mat-raised-button (click)="openDialog('0ms', '0ms', {}, 'insert')">
+    Insert subnet
+  </button>
+  <button class="top-bar-button" mat-raised-button (click)="reorganiseDatabase()">
+    Reorganize database
+  </button>
+</div>
 <ng-container *ngIf="dataLoading">
   <mat-spinner></mat-spinner>
 </ng-container>

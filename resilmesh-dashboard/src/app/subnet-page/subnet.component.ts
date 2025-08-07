@@ -122,4 +122,8 @@ export class SubnetComponent implements OnInit, AfterViewInit {
       console.error('Failed to delete subnet:', subnet);
     }
   }
+
+  reorganiseDatabase(): void {
+    alert('TODO: Reorganize database when API is ready');
+  }
 }
