@@ -1,12 +1,45 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
-import { MatIconButton } from "@angular/material/button";
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
 import { AgendaContainer, SentinelUser } from "@sentinel/layout";
 import { SentinelBreadcrumb, SentinelBreadcrumbBuilder } from "@sentinel/layout/breadcrumbs";
 import { SentinelLayout1Component } from "@sentinel/layout/layout1";
 import { SentinelNotificationService, SentinelNotificationTypeEnum } from "@sentinel/layout/notification";
 import { filter, map, Observable } from "rxjs";
-import {MatIconModule} from '@angular/material/icon';
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { GraphQLModule } from "./services/graphql.module";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { Apollo, gql } from "apollo-angular";
+
+/**
+ * Angular Material
+ */
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableModule } from '@angular/material/table';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinner, MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule} from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips';
+import { SubnetComponent } from "./pages/subnet-page/subnet.component";
+import { InsertSubnetDialog } from "./pages/subnet-page/insert-subnet-dialog/insert.subnet.component";
+import { ChipsContacts } from "./pages/subnet-page/insert-subnet-dialog/chips-contacts/chips-contacts.component";
+import { CommonModule } from "@angular/common";
+import { SubnetRoutingModule } from "./pages/subnet-page/subnet-routing.module";
+import { agendaContainers } from "./agendas";
 
 export const user = {
   picture:
@@ -24,7 +57,40 @@ export const user = {
     RouterOutlet, 
     SentinelLayout1Component,
     MatIconButton,
-    MatIconModule
+    MatIconModule,
+    // MatTableModule,
+    // MatButtonModule,
+    // MatPaginatorModule,
+    // MatSortModule,
+    // MatIconModule,
+    // MatProgressSpinnerModule,
+    // FormsModule,
+    // CommonModule, 
+    // SubnetRoutingModule,
+    // BrowserModule,
+    // MatButtonModule,
+    // MatProgressSpinnerModule,
+    // MatTabsModule,
+    // MatSnackBarModule,
+    // MatPaginatorModule,
+    // MatCardModule,
+    // MatIconModule,
+    // MatMenuModule,
+    // MatFormFieldModule,
+    // MatTableModule,
+    // MatSortModule,
+    // MatInputModule,
+    // MatCheckboxModule,
+    // FormsModule,
+    // ReactiveFormsModule,
+    // MatTooltipModule,
+    // MatSelectModule,
+    // MatDatepickerModule,
+    // MatNativeDateModule,
+    // GraphQLModule,
+    HttpClientModule,
+    // MatDialogModule,
+    // MatChipsModule,
   ],
 })
 export class AppComponent implements OnInit {
@@ -33,7 +99,7 @@ export class AppComponent implements OnInit {
   private notificationService = inject(SentinelNotificationService, { optional: true });
 
   protected readonly title = signal('SACD');
-  agendaContainers: AgendaContainer[] = [];
+  agendaContainers: AgendaContainer[] = agendaContainers;
   user: SentinelUser;
   breadcrumbs$?: Observable<SentinelBreadcrumb[]>;
 

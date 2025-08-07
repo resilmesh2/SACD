@@ -13,11 +13,11 @@
 
 
 @include mat.core();
-@include mat.all-component-themes(sentinel.$sentinel-theme);
+@include mat.all-component-themes(sentinel.$m2-sentinel-theme);
 @include mat.all-component-typographies(sentinel.$m2-sentinel-typography);
-@include layout.sentinel-layout-theme(sentinel.$sentinel-theme);
-@include sidebar.sidebar-page-layout-theme(sentinel.$sentinel-theme);
-@include notification-card.notification-card-theme(sentinel.$sentinel-theme);
+@include layout.sentinel-layout-theme(sentinel.$m2-sentinel-theme);
+@include sidebar.sidebar-page-layout-theme(sentinel.$m2-sentinel-theme);
+@include notification-card.notification-card-theme(sentinel.$m2-sentinel-theme);
 
 :root {
   font-family: sentinel.$sentinel-base-font;
@@ -25,4 +25,12 @@
 
 body {
   margin: 0;
+}
+
+.mat-toolbar {
+  --mat-toolbar-container-background-color: #44BFEC;
+}
+
+.nav-drawer.mat-drawer {
+  background-color: #343F5D;
 }
