@@ -1,0 +1,16 @@
+<sentinel-layout1
+  [user]="user"
+  [displayScrollButtons]="true"
+  userProfileRoute="user"
+  notificationsRoute="notifications"
+  [agendaContainers]="agendaContainers"
+  version="1.0.0"
+  logoSrc="resilmesh-logo-negative.jpg"
+>
+  <div data-cy="customized-toolbar-content" role="toolbar">
+    <button mat-icon-button (click)="addNotification()">
+      <mat-icon>add_alert</mat-icon>
+    </button>
+  </div>
+  <router-outlet></router-outlet>
+</sentinel-layout1>
