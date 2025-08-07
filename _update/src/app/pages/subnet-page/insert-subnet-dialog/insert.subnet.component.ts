@@ -9,6 +9,7 @@ import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
+import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 
 @Component({
   selector: 'insert-subnet-dialog',
@@ -24,7 +25,8 @@ import { MatButton } from "@angular/material/button";
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    MatButton
+    MatButton,
+    SentinelButtonWithIconComponent
   ],
 })
 
@@ -63,12 +65,18 @@ export class InsertSubnetDialog implements OnInit {
   }));
 
   insertSubnet() {
+    if (!this.range()) {
+      console.error('Range is required for inserting a subnet');
+      return;
+    }
     this.dataService.insertSubnet(this.updatedSubnet());
 
     this.updateSubnetDataSource.emit({
       oldRange: this.data.subnet.range,
       subnet: this.updatedSubnet()
     });
+
+    this.dialogRef.close();
   }
 
   editSubnet() {

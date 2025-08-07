@@ -12,6 +12,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+//import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
+//import { defer, Observable, of, take } from 'rxjs';
 
 
 @Component({
@@ -27,7 +29,8 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     MatIcon,
     MatProgressSpinner,
     FormsModule,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    //SentinelControlsComponent,
   ],
 })
 export class SubnetComponent implements OnInit, AfterViewInit {
@@ -37,6 +40,20 @@ export class SubnetComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
   dataLoaded = false;
   dataLoading = true;
+  // controls: SentinelControlItem[] = [];
+  // saveDisabled$: Signal<boolean> = signal(false);
+
+  // constructor(id: string, label: string | Signal<string>, isSortColumn: boolean, sortName?: string, headerStyle?: NgStyleArg)
+
+  // sentinelTableData = new SentinelTable([
+  //   // constructor(element: T, actions?: RowAction[] | RowActionSignal[], clickable?: boolean, rowStyles?: NgStyleArg, cellStyles?: Map<string, NgStyleArg>, selectionDisabled?: Signal<boolean>)
+  //   new Row("145"),
+  // ], ["test", "ip"].map(col => {
+  //   return { id: col, label: col.replace('_', ' ').toUpperCase(), isSortColumn: col === 'range', 
+  //     labelSig: computed(() => col.replace('_', ' ').toUpperCase()),
+  //     sortName: col
+  //   }}
+  // ));
 
   constructor(private data: DataService, private changeDetector: ChangeDetectorRef, private route: ActivatedRoute) {
     this.dataSource = new MatTableDataSource<SubnetExtendedData>([]);
@@ -46,7 +63,17 @@ export class SubnetComponent implements OnInit, AfterViewInit {
   emptyResponse = false;
   errorResponse = '';
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // this.controls = [
+    //   new SentinelControlItem('edit-action', 'Edit', 'primary', this.saveDisabled$, defer(async () => console.log('Save clicked')), of(false), 'edit'),
+    //   new SentinelControlItem('delete-action', 'Delete', 'warn', this.saveDisabled$, defer(async () => this.openDialog('0.5s', '0.5s', {}, 'insert')), of(false), 'delete')
+    // ];
+  }
+
+  // onControlsAction(control: SentinelControlItemSignal) {
+  //   control.result$?.pipe(take(1)).subscribe();
+  // }
+
 
   ngAfterViewInit(): void {}
 
