@@ -18,6 +18,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
 import { MatNativeDateModule } from '@angular/material/core';
+import { SentinelCardComponent } from '@sentinel/components/card';
+import { SentinelControlItem } from '@sentinel/components/controls';
+import { TagComponent } from '../../components/tag-component/tag.component';
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 
 export interface Service {
   name: string;
@@ -52,7 +56,10 @@ export interface IP {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    DatePipe
+    DatePipe,
+    SentinelCardComponent,
+    TagComponent,
+    SentinelButtonWithIconComponent
   ]
 })
 
@@ -98,6 +105,8 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   isDateRangeValid = false;
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
+
+  controls: SentinelControlItem[] = [];
 
   constructor(
     private data: DataService,
@@ -195,6 +204,10 @@ export class ServiceComponent implements OnInit, AfterViewInit {
   }
 
   validateDateInputs(): void {
+    console.log("Start Date:", this.startDate);
+    console.log("End Date:", this.endDate);
+    console.log('Checking date range validity:', this.startDateControl.value, this.endDateControl.value);
+
     if (this.startDateControl.value) {
       this.startDate = this.startDateControl.value.toDate();
     } else {
@@ -208,6 +221,8 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     }
 
     this.isDateRangeValid = this.startDateControl.value && this.endDateControl.value && !!this.startDate && !!this.endDate;
+
+    console.log('Is date range valid:', this.isDateRangeValid);
   }
 
   applyDateFilter(): void {

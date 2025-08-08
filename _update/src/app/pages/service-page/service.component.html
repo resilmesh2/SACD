@@ -1,4 +1,5 @@
-<div class="mat-elevation-z8 service-table-container">
+<h1>Assets list</h1>
+<sentinel-card [controls]="controls">
     <!-- Show spinner while loading data -->
   @if (dataLoading) {
     <ng-container>
@@ -21,46 +22,55 @@
     </ng-container>
   } @else if (dataLoaded && !dataLoading && !emptyResponse) {
   <ng-container class="full-width-table">
-    <div class="total-services">
-      Total Number of Assets: {{ totalSortedAssets }}
-    </div>  
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Search by IP address">
-    </mat-form-field>
+    <div class="service-header">
+        <div class="header-line">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Search by IP address">
+          </mat-form-field>
 
-    <mat-form-field class="filter-dropdown">
-      <mat-label>Filter by Tags</mat-label>
-      <mat-select [(value)]="selectedTag" (selectionChange)="onTagChange()">
-        <mat-option value="All">All</mat-option>
-        @for (tag of allTags; track tag) {
-          <mat-option [value]="tag">{{ tag }}</mat-option>
-        }
-        <!-- <mat-option *ngFor="let tag of allTags" [value]="tag">{{ tag }}</mat-option> -->
-      </mat-select>
-    </mat-form-field>
+          <mat-form-field class="filter-dropdown">
+            <mat-label>Filter by Tags</mat-label>
+            <mat-select [(value)]="selectedTag" (selectionChange)="onTagChange()">
+              <mat-option value="All">All</mat-option>
+              @for (tag of allTags; track tag) {
+                <mat-option [value]="tag">{{ tag }}</mat-option>
+              }
+              <!-- <mat-option *ngFor="let tag of allTags" [value]="tag">{{ tag }}</mat-option> -->
+            </mat-select>
+          </mat-form-field>
+          <div class="total-services">
+            Total Number of Assets: {{ totalSortedAssets }}
+          </div>
+        </div>
+        <h5>Search Assets by Date Range</h5>
+        <div class="header-line">
+          <!-- Date Range Filter -->
+            <mat-form-field class="date-range">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
 
-      <!-- Date Range Filter -->
-      <div class="date-range-filters">
-        <h6>Search Assets by Date Range</h6>
-      <mat-form-field class="date-range">
-        <mat-label>Start Date</mat-label>
-        <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
+            <mat-form-field class="date-range-end">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
 
-      <mat-form-field class="date-range-end">
-        <mat-label>End Date</mat-label>
-        <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-
-      <!-- Search Button -->
-      <button class="mainButton" mat-raised-button color="primary" [disabled]="!isDateRangeValid" (click)="applyDateFilter()">
-        Search
-      </button>
-      </div>
+            <!-- Search Button -->
+            <sentinel-button-with-icon
+              color="primary"
+              icon="search"
+              tooltip="Search assets by date range"
+              (click)="applyDateFilter()"
+              [disabled]="!isDateRangeValid"
+            >
+              Search
+            </sentinel-button-with-icon>
+        </div>
+    </div>
     <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -83,12 +93,12 @@
       <ng-container matColumnDef="tag">
         <th mat-header-cell *matHeaderCellDef> Tag </th>
         <td mat-cell *matCellDef="let asset"> 
-          <!-- <tag-component 
+          <tag-component 
             [id]="asset.id"
             [inputTags]="asset.tag"
             [onSubmit]="saveData.bind(this)"
             [allTags]="allTags"
-          /> -->
+          />
         </td>
       </ng-container>
 
@@ -107,4 +117,4 @@
     <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
   </ng-container>
   }
-</div>
+</sentinel-card>

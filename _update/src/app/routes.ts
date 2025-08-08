@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ASSETS_PATH, HOME_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { SubnetsComponent } from './pages/subnet-page/subnets.component';
-import { AssetsComponent } from './pages/assets-page/assets.component';
+import { NetworkNodesComponent } from './pages/network-node-page/network-node.component';
 import { ServiceComponent } from './pages/service-page/service.component';
 
 export const ROOT_ROUTES: Routes = [
@@ -25,13 +25,13 @@ export const ROOT_ROUTES: Routes = [
     //   import('./network-vizualization-page/network-vizualization.module').then(
     //     (m) => m.NetworkVizualizationModule,
     //   ),
-    component: AssetsComponent,
-    data: { breadcrumb: 'Network Visualization' },
+    component: NetworkNodesComponent,
+    data: { breadcrumb: 'Network Nodes' },
   },
   {
     path: SERVICE_PATH,
     component: ServiceComponent,
-    data: { breadcrumb: 'Service' },
+    data: { breadcrumb: 'Assets' },
   },
   // {
   //   path: MISSION_PATH,

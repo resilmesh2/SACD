@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/materia
 import { SubnetExtendedData } from "../../../models/subnet.model";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { DataService } from "../../../services/data.service";
-import { ChipsContacts } from "./chips-contacts/chips-contacts.component";
+import { ChipsContacts } from "../../../components/chips-contacts/chips-contacts.component";
 import { MatLabel, MatOption, MatSelectModule } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";

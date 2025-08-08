@@ -36,7 +36,7 @@ import { MatDialogModule} from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { SubnetsComponent } from "./pages/subnet-page/subnets.component";
 import { InsertSubnetDialog } from "./pages/subnet-page/insert-subnet-dialog/insert.subnet.component";
-import { ChipsContacts } from "./pages/subnet-page/insert-subnet-dialog/chips-contacts/chips-contacts.component";
+import { ChipsContacts } from "./components/chips-contacts/chips-contacts.component";
 import { CommonModule } from "@angular/common";
 import { SubnetRoutingModule } from "./pages/subnet-page/subnet-routing.module";
 import { agendaContainers } from "./agendas";
