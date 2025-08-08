@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
-import { ASSETS_PATH, HOME_PATH, SUBNETS_PATH } from './paths';
+import { ASSETS_PATH, HOME_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { SubnetsComponent } from './pages/subnet-page/subnets.component';
 import { AssetsComponent } from './pages/assets-page/assets.component';
+import { ServiceComponent } from './pages/service-page/service.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -26,6 +27,11 @@ export const ROOT_ROUTES: Routes = [
     //   ),
     component: AssetsComponent,
     data: { breadcrumb: 'Network Visualization' },
+  },
+  {
+    path: SERVICE_PATH,
+    component: ServiceComponent,
+    data: { breadcrumb: 'Service' },
   },
   // {
   //   path: MISSION_PATH,
@@ -64,14 +70,6 @@ export const ROOT_ROUTES: Routes = [
   //         import('./issue-detail/issue-detail.module').then((m) => m.IssueDetailModule),
   //     },
   //   ],
-  // },
-  // {
-  //   path: SERVICE_PATH,
-  //   loadChildren: () =>
-  //     import('./service-page/service.module').then(
-  //       (m) => m.ServicePageModule,
-  //     ),
-  //   data: { breadcrumb: 'Service' },
   // },
   // {
   //   path: USER_PATH,

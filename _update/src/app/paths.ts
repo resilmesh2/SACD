@@ -6,6 +6,7 @@ export const MISSION_PATH = 'missions';
 export const ISSUE_PATH = 'issues';
 export const SERVICE_PATH = 'service';
 export const VULNERABILITY_PATH = 'vulnerability';
+
 export const GROUP_PATH = 'group';
 export const USER_PATH = 'user';
 export const NOTIFICATION_PATH = 'notifications';

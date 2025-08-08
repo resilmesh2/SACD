@@ -88,7 +88,6 @@ export const user = {
     // MatDatepickerModule,
     // MatNativeDateModule,
     // GraphQLModule,
-    HttpClientModule,
     // MatDialogModule,
     // MatChipsModule,
   ],
