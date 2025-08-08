@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/cache';
 import { provideHttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 const graphqlApi = environment.graphqlApi;
 
@@ -25,5 +26,6 @@ export const APP_CONFIG: ApplicationConfig = {
         // other options...
       };
     }),
+     provideAnimations()
   ]
 };

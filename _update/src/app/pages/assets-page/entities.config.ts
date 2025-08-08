@@ -24,11 +24,11 @@ export const entities: EntityStructure = {
     showProperty: ['domain_name'],
   },
   Subnet: {
-    bgColor: '#176BA0',
+    bgColor: '#6877CA',
     showProperty: ['range'],
   },
   Node: {
-    bgColor: '#F44336',
+    bgColor: '#DC4141',
     showProperty: ['topology_betweenness'],
   },
   SecurityEvent: {

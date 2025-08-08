@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { HOME_PATH, SUBNET_PATH } from './paths';
+import { ASSETS_PATH, HOME_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
-import { SubnetComponent } from './pages/subnet-page/subnet.component';
+import { SubnetsComponent } from './pages/subnet-page/subnets.component';
+import { AssetsComponent } from './pages/assets-page/assets.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -9,55 +10,93 @@ export const ROOT_ROUTES: Routes = [
     component: HomePageComponent,
   },
   {
-    path: SUBNET_PATH,
+    path: SUBNETS_PATH,
     // loadChildren: () =>
     //   import('./pages/subnet-page/subnet.module').then(
     //     (m) => m.SubnetModule,
     //   ),
-    component: SubnetComponent,
+    component: SubnetsComponent,
     data: { breadcrumb: 'Subnets' },
   },
+    {
+    path: ASSETS_PATH,
+    // loadChildren: () =>
+    //   import('./network-vizualization-page/network-vizualization.module').then(
+    //     (m) => m.NetworkVizualizationModule,
+    //   ),
+    component: AssetsComponent,
+    data: { breadcrumb: 'Network Visualization' },
+  },
+  // {
+  //   path: MISSION_PATH,
+  //   loadChildren: () =>
+  //     import('./mission-page/mission-page.module').then(
+  //       (m) => m.MissionPageModule,
+  //     ),
+  //   data: { breadcrumb: 'Missions' },
+  // },
+  // {
+  //   path: VULNERABILITY_PATH,
+  //   loadChildren: () =>
+  //     import('./vulnerability-page/vulnerability.module').then(
+  //       (m) => m.VulnerabilityModule,
+  //     ),
+  //   data: { breadcrumb: 'Vulnerability' },
+  // },
+  // {
+  //   path: ISSUE_PATH,
+  //   data: { breadcrumb: 'Issues' },
+  //   children: [
+  //     {
+  //       path: '',
+  //       loadChildren: () =>
+  //         import('./issue-page/issue.module').then((m) => m.IssueModule),
+  //     },
+  //   ],
+  // },
+  // {
+  //   data: { type: 'Issue Details' },
+  //   path: ISSUE_PATH + '/:name',
+  //   children: [
+  //     {
+  //       path: '',
+  //       loadChildren: () =>
+  //         import('./issue-detail/issue-detail.module').then((m) => m.IssueDetailModule),
+  //     },
+  //   ],
+  // },
+  // {
+  //   path: SERVICE_PATH,
+  //   loadChildren: () =>
+  //     import('./service-page/service.module').then(
+  //       (m) => m.ServicePageModule,
+  //     ),
+  //   data: { breadcrumb: 'Service' },
+  // },
   // {
   //   path: USER_PATH,
   //   loadChildren: () => import('./user-example-page/user-example-page.module').then((m) => m.UserExamplePageModule),
   //   data: { breadcrumb: 'User' },
   // },
-
-//   {
-//     path: USER_PATH,
-//     loadChildren: () => import('./user-example-page/user-example-page.module').then((m) => m.UserExamplePageModule),
-//     data: { breadcrumb: 'User' },
-//   },
-//   {
-//     path: GROUP_PATH,
-//     loadChildren: () => import('./group-example-page/group-example-page.module').then((m) => m.GroupExamplePageModule),
-//     data: { breadcrumb: 'Group' },
-//   },
-//   {
-//     path: PRODUCT_NEW_PATH,
-//     loadChildren: () =>
-//       import('./product-new-example-page/product-new-example-page.module').then((m) => m.ProductNewExamplePageModule),
-//     data: { breadcrumb: 'New Product' },
-//   },
-//   {
-//     path: PRODUCT_OVERVIEW_PATH,
-//     loadChildren: () =>
-//       import('./product-overview-example-page/product-overview-example-page.module').then(
-//         (m) => m.ProductOverviewExamplePageModule,
-//       ),
-//     data: { breadcrumb: 'Product Overview' },
-//   },
-//   {
-//     path: NOTIFICATION_PATH,
-//     data: { breadcrumb: 'Notifications' },
-//     children: [
-//       {
-//         path: '',
-//         loadChildren: () =>
-//           import('./notification-page/notification-page-overview.module').then((m) => m.NotificationPageOverviewModule),
-//       },
-//     ],
-//   },
+  // {
+  //   path: SUBNET_PATH,
+  //   loadChildren: () =>
+  //     import('./subnet-page/subnet.module').then(
+  //       (m) => m.SubnetModule,
+  //     ),
+  //   data: { breadcrumb: 'Subnets' },
+  // },
+  // {
+  //   path: NOTIFICATION_PATH,
+  //   data: { breadcrumb: 'Notifications' },
+  //   children: [
+  //     {
+  //       path: '',
+  //       loadChildren: () =>
+  //         import('./notification-page/notification-page-overview.module').then((m) => m.NotificationPageOverviewModule),
+  //     },
+  //   ],
+  // },
   {
     path: '',
     pathMatch: 'full',

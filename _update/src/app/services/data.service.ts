@@ -8,7 +8,7 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../../../models/graph.model';
-import { entities, EntityStructure } from '../config/network-visualization.config';
+import { entities, EntityStructure } from '../pages/assets-page/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';
@@ -170,7 +170,7 @@ export class DataService {
    */
   private getColor(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
-    return entities[initialLabel]?.bgColor || 'red';
+    return entities[initialLabel]?.bgColor || '#DC4141';
   }
 
   /**

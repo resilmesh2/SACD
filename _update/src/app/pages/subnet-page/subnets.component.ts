@@ -7,7 +7,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SubnetExtendedData } from '../../models/subnet.model';
 import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
 import { DataService } from '../../services/data.service';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
@@ -17,15 +16,14 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 
 
 @Component({
-  selector: 'app-subnet',
-  templateUrl: './subnet.component.html',
-  styleUrls: ['./subnet.component.scss'],
+  selector: 'app-subnets',
+  templateUrl: './subnets.component.html',
+  styleUrls: ['./subnets.component.scss'],
   imports: [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
-    MatButton,
     MatIcon,
     MatProgressSpinner,
     FormsModule,
@@ -33,7 +31,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     //SentinelControlsComponent,
   ],
 })
-export class SubnetComponent implements OnInit, AfterViewInit {
+export class SubnetsComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
   dataSource: MatTableDataSource<SubnetExtendedData>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;

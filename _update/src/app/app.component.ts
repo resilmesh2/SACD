@@ -34,7 +34,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule} from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
-import { SubnetComponent } from "./pages/subnet-page/subnet.component";
+import { SubnetsComponent } from "./pages/subnet-page/subnets.component";
 import { InsertSubnetDialog } from "./pages/subnet-page/insert-subnet-dialog/insert.subnet.component";
 import { ChipsContacts } from "./pages/subnet-page/insert-subnet-dialog/chips-contacts/chips-contacts.component";
 import { CommonModule } from "@angular/common";

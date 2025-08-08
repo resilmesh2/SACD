@@ -1,12 +1,12 @@
 import { AgendaContainer } from '@sentinel/layout';
 import { Agenda } from '@sentinel/layout';
 import { 
-  NETWORK_PATH,
+  ASSETS_PATH,
   MISSION_PATH,
   ISSUE_PATH,
   SERVICE_PATH,
   VULNERABILITY_PATH,
-  SUBNET_PATH
+  SUBNETS_PATH
 } from './paths';
 
 export const agendaContainers = [
@@ -15,9 +15,9 @@ export const agendaContainers = [
 //     new Agenda('Vulnerabilities', ISSUE_PATH)
 //   ]),
   new AgendaContainer('Visualizations', [
-    // new Agenda('Assets', NETWORK_PATH),
+    new Agenda('Assets', ASSETS_PATH),
     // new Agenda('Vulnerabilities', VULNERABILITY_PATH),
     // new Agenda('Missions', MISSION_PATH),
-    new Agenda('Subnets', SUBNET_PATH)
+    new Agenda('Subnets', SUBNETS_PATH)
   ])
 ];
