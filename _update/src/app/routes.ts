@@ -4,7 +4,7 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
 import { NetworkPageComponent } from './pages/network-page/network-page.component';
-import { ServicePageComponent } from './pages/asset-page/service-page.component';
+import { ServicePageComponent } from './pages/service-page/service-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {

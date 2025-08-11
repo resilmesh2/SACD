@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import type { SimpleChanges } from '@angular/core'
 import { Node, Edge, Layout, NgxGraphModule } from '@swimlane/ngx-graph';
 import { CustomLayout } from './custom-layout';
 import { Subject } from 'rxjs';

@@ -45,30 +45,30 @@
         <h5>Search Assets by Date Range</h5>
         <div class="header-line">
           <!-- Date Range Filter -->
-            <mat-form-field class="date-range" subscriptSizing="dynamic">
-              <mat-label>Start Date</mat-label>
-              <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
-              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-              <mat-datepicker #startPicker></mat-datepicker>
-            </mat-form-field>
+          <mat-form-field class="date-range" subscriptSizing="dynamic">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
 
-            <mat-form-field class="date-range-end" subscriptSizing="dynamic">
-              <mat-label>End Date</mat-label>
-              <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
-              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-              <mat-datepicker #endPicker></mat-datepicker>
-            </mat-form-field>
+          <mat-form-field class="date-range-end" subscriptSizing="dynamic">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
 
-            <!-- Search Button -->
-            <sentinel-button-with-icon
-              color="primary"
-              icon="search"
-              tooltip="Search assets by date range"
-              (click)="applyDateFilter()"
-              [disabled]="!isDateRangeValid"
-            >
-              Search
-            </sentinel-button-with-icon>
+          <!-- Search Button -->
+          <sentinel-button-with-icon
+            color="primary"
+            icon="search"
+            tooltip="Search assets by date range"
+            (click)="applyDateFilter()"
+            [disabled]="!isDateRangeValid"
+          >
+            Search
+          </sentinel-button-with-icon>
         </div>
     </div>
     <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">

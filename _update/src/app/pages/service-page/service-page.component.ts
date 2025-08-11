@@ -22,6 +22,7 @@ import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
 import { TagComponent } from '../../components/tag-component/tag.component';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { DateRange } from '@sentinel/common';
 
 export interface Service {
   name: string;
@@ -59,7 +60,7 @@ export interface IP {
     DatePipe,
     SentinelCardComponent,
     TagComponent,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
   ]
 })
 
@@ -242,6 +243,10 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
       }
       this.updateTotalSortedServices();
     }
+  }
+
+  onDateRangeChange(event: DateRange): void {
+    console.log('Date range changed:', this.startDate, this.endDate);
   }
 
   saveData(id: string, tags: string[]): void {
