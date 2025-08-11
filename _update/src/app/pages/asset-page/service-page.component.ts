@@ -41,9 +41,9 @@ export interface IP {
 }
 
 @Component({
-  selector: 'app-service',
-  templateUrl: './service.component.html',
-  styleUrls: ['./service.component.scss'],
+  selector: 'service-page',
+  templateUrl: './service-page.component.html',
+  styleUrls: ['./service-page.component.scss'],
   imports: [
     MatProgressSpinnerModule,
     MatFormFieldModule,
@@ -63,7 +63,7 @@ export interface IP {
   ]
 })
 
-export class ServiceComponent implements OnInit, AfterViewInit {
+export class ServicePageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Service>();
 
   displayedColumns: string[] = ['name', 'tag', 'subnet', 'last_seen'];

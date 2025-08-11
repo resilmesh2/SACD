@@ -8,7 +8,7 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../../../models/graph.model';
-import { entities, EntityStructure } from '../pages/network-node-page/entities.config';
+import { entities, EntityStructure } from '../pages/network-page/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';

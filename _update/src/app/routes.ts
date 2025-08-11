@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { ASSETS_PATH, HOME_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
-import { SubnetsComponent } from './pages/subnet-page/subnets.component';
-import { NetworkNodesComponent } from './pages/network-node-page/network-node.component';
-import { ServiceComponent } from './pages/service-page/service.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
+import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
+import { NetworkPageComponent } from './pages/network-page/network-page.component';
+import { ServicePageComponent } from './pages/asset-page/service-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -17,7 +17,7 @@ export const ROOT_ROUTES: Routes = [
     //   import('./pages/subnet-page/subnet.module').then(
     //     (m) => m.SubnetModule,
     //   ),
-    component: SubnetsComponent,
+    component: SubnetPageComponent,
     data: { breadcrumb: 'Subnets' },
   },
     {
@@ -26,12 +26,12 @@ export const ROOT_ROUTES: Routes = [
     //   import('./network-vizualization-page/network-vizualization.module').then(
     //     (m) => m.NetworkVizualizationModule,
     //   ),
-    component: NetworkNodesComponent,
+    component: NetworkPageComponent,
     data: { breadcrumb: 'Network Nodes' },
   },
   {
     path: SERVICE_PATH,
-    component: ServiceComponent,
+    component: ServicePageComponent,
     data: { breadcrumb: 'Assets' },
   },
   {

@@ -16,9 +16,9 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 
 
 @Component({
-  selector: 'app-subnets',
-  templateUrl: './subnets.component.html',
-  styleUrls: ['./subnets.component.scss'],
+  selector: 'subnet-page',
+  templateUrl: './subnet-page.component.html',
+  styleUrls: ['./subnet-page.component.scss'],
   imports: [
     MatTableModule,
     MatPaginatorModule,
@@ -31,7 +31,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     //SentinelControlsComponent,
   ],
 })
-export class SubnetsComponent implements OnInit, AfterViewInit {
+export class SubnetPageComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
   dataSource: MatTableDataSource<SubnetExtendedData>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;

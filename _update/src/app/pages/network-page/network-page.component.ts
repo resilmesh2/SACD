@@ -13,9 +13,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 
 @Component({
-  selector: 'network-node',
-  templateUrl: './network-node.component.html',
-  styleUrls: ['./network-node.component.scss'],
+  selector: 'network-page',
+  templateUrl: './network-page.component.html',
+  styleUrls: ['./network-page.component.scss'],
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -28,7 +28,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
   ]
 })
 
-export class NetworkNodesComponent implements OnInit {
+export class NetworkPageComponent implements OnInit {
   nodes: Node[] = [];
   edges: Edge[] = [];
   error: any;
