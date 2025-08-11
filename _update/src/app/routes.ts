@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { ASSETS_PATH, HOME_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
+import { ASSETS_PATH, HOME_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { SubnetsComponent } from './pages/subnet-page/subnets.component';
 import { NetworkNodesComponent } from './pages/network-node-page/network-node.component';
 import { ServiceComponent } from './pages/service-page/service.component';
+import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -33,14 +34,11 @@ export const ROOT_ROUTES: Routes = [
     component: ServiceComponent,
     data: { breadcrumb: 'Assets' },
   },
-  // {
-  //   path: MISSION_PATH,
-  //   loadChildren: () =>
-  //     import('./mission-page/mission-page.module').then(
-  //       (m) => m.MissionPageModule,
-  //     ),
-  //   data: { breadcrumb: 'Missions' },
-  // },
+  {
+    path: MISSION_PATH,
+    component: MissionPageComponent,
+    data: { breadcrumb: 'Missions' },
+  },
   // {
   //   path: VULNERABILITY_PATH,
   //   loadChildren: () =>

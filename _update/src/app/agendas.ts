@@ -17,7 +17,7 @@ export const agendaContainers = [
   new AgendaContainer('Visualizations', [
     new Agenda('Network', ASSETS_PATH),
     // new Agenda('Vulnerabilities', VULNERABILITY_PATH),
-    // new Agenda('Missions', MISSION_PATH),
+    new Agenda('Missions', MISSION_PATH),
     new Agenda('Subnets', SUBNETS_PATH)
   ])
 ];

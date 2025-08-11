@@ -1,0 +1,79 @@
+<div class="top-bar">
+    @if (missionNames && missionNames.length > 0) {
+      <ng-container>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Mission</mat-label>
+          <mat-select [(ngModel)]="selectedMissionName">
+            <mat-option></mat-option>
+            @for (mission of missionNames; track $index) {
+              <mat-option [value]="mission">
+                {{ mission }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+    }
+    <sentinel-button-with-icon
+      color="primary" 
+      icon="search"
+      tooltip=""
+      [disabled]="!selectedMissionName"
+      (click)="getGraphData()"
+    >
+      Search
+    </sentinel-button-with-icon>
+  </div>
+  
+  <ng-container>
+    <h3 class="header"><strong>Mission</strong></h3>
+    <div class="content-container">
+      <div class="missions-graph">
+        @if (graphLoading) {
+          <ng-container>
+            <div class="loader">
+              <mat-spinner></mat-spinner>
+            </div>
+          </ng-container>
+        } @else if (!graphLoading && errorMessage) {
+          <ng-container *ngIf="!graphLoading && errorMessage">
+            <p class="error-message">{{ errorMessage }}</p>
+          </ng-container>
+        } @else if (missions.length > 0 && missionsStructure && !graphLoading && !errorMessage) {
+          <mission-graph
+            [structure]="missionsStructure"
+            [setSelectedNode]="setSelectedNode"
+          ></mission-graph>
+        } @else {
+          <p class="empty">No missions available.</p>
+        }
+      </div>
+      <div class="node-wrapper">
+        @if (selectedNode) {
+          <ng-container>
+            <div class="node-card" >
+              <p [style.color]="selectedNode.data.customColor" class="type-name">{{selectedNode.data.type.charAt(0).toUpperCase() + selectedNode.data.type.substring(1)}}</p>
+              <h2 [style.color]="selectedNode.data.customColor">{{selectedNode.label}}</h2>
+              <hr/>
+              <p class="heading">Attributes:</p>
+              @if (selectedNode.data.type == 'mission') {
+                <ul>
+                  <li><strong>ID:</strong> {{selectedNode.id}}</li>
+                  <li><strong>Criticality:</strong> {{selectedNode.data.criticality}}</li>
+                  <li><strong>Description:</strong> {{selectedNode.data.description}}</li>
+                </ul>
+              } @else if (selectedNode.data.type == 'host') {
+                <ul>
+                  <li><strong>ID:</strong> {{selectedNode.id}}</li>
+                  <li><strong>IP:</strong> {{selectedNode.data.ip}}</li>
+                </ul>
+              }
+            </div>
+          </ng-container>
+        } @else {
+          <p class="vertical-center">No node selected.</p>
+        }
+      </div>
+  </div>
+  </ng-container>
+  
