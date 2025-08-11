@@ -8,9 +8,10 @@
   <sentinel-button-with-icon
     color="primary" 
     icon="search"
-    tooltip=""
+    tooltip="Only search by IP address is supported"
     [disabled]="!ipSearch"
     (click)="loadGraphData()"
+    style="margin-bottom: 20px;"
   >
     Search
   </sentinel-button-with-icon>
