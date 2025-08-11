@@ -1,0 +1,135 @@
+<h1>Vulnerabilities</h1>
+<sentinel-card [controls]="controls">
+    <!-- Show spinner while loading data -->
+  @if (dataLoading) {
+    <ng-container>
+      <mat-spinner></mat-spinner>
+    </ng-container>
+  } @else if (errorResponse && !dataLoading) {
+    <!-- Show error message if there's an error -->
+    <ng-container>
+      <p class="error">
+        <strong>Error fetching data from GraphQL API.</strong><br />
+        <span>Error message: {{ errorResponse }}</span>
+      </p>
+    </ng-container>
+  } @else if (emptyResponse && !dataLoading && !errorResponse) {
+    <!-- Show no data message if the response is empty -->
+    <ng-container>
+      <p class="no-data">
+        <strong>No available data.</strong>
+      </p>
+    </ng-container>
+  } @else if (dataLoaded && !dataLoading && !emptyResponse) {
+  <ng-container>
+    <div class="header-line">
+      <mat-form-field subscriptSizing="dynamic">
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search by CVE ID">
+      </mat-form-field>
+
+      <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+        <mat-label>Filter by Issue Status</mat-label>
+        <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
+          <mat-option value="All">All</mat-option>
+          @for (status of issueStatus; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+        <mat-label>Filter by Severity</mat-label>
+        <mat-select [(value)]="selectedSeverity" (selectionChange)="onSeverityChange()">
+          <mat-option value="All">All</mat-option>
+          @for (severity of issueSeverity; track severity) {
+            <mat-option [value]="severity">{{ severity }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="total-vulnerabilities">
+        Total Number of Vulnerabilities: {{ totalSortedIssues }}
+      </div>  
+    </div>
+    <h5>Search Vulnerabilities by Date Range</h5>
+    <!-- Date Range Filter -->
+    <div class="header-line">
+      <mat-form-field class="date-range" subscriptSizing="dynamic">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="date-range-end" subscriptSizing="dynamic">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" [formControl]="endDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Search Button -->
+      <sentinel-button-with-icon
+        color="primary"
+        icon="search"
+        tooltip="Search by date range"
+        (click)="applyDateFilter()"
+        [disabled]="!isDateRangeValid"
+      >
+        Search
+      </sentinel-button-with-icon>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let issue">
+          {{issue.name}}
+          <!-- <a [routerLink]="['/vulnerability-visualization', issue.name]" (click)="$event.stopPropagation()">
+            {{ issue.name }}
+          </a> -->
+        </td>
+      </ng-container>
+
+      <!-- Severity Column -->
+      <ng-container matColumnDef="severity">
+        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.severity }} </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.description }} </td>
+      </ng-container>
+
+      <!-- Last Seen Date Column -->
+      <ng-container matColumnDef="last_seen">
+        <th mat-header-cell *matHeaderCellDef> Last Seen </th>
+        <td mat-cell *matCellDef="let issue"> {{ issue.last_seen | date:'yyyy/MM/dd\'T\'HH:mm:ss' }} </td>
+      </ng-container>
+
+      <!-- Table Header and Rows -->
+      <tr mat-header *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToIssueDetail(row)"></tr>
+    </table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+  </ng-container>
+  } @else {
+    <!-- Fallback for any other case -->
+    <ng-container>
+      <p class="no-data">
+        <strong>No data available.</strong>
+      </p>
+    </ng-container>
+  }
+</sentinel-card>

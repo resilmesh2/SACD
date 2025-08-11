@@ -370,7 +370,7 @@ export class DataService {
       .query<CVEResponse>({
         query: gql`
       {
-        cves(where: {cve_id: "${cveCode}"}) {
+        cves(where: {CVE_id: "${cveCode}"}) {
           vulnerability {
             software_versions {
               version
@@ -438,7 +438,7 @@ public getAllCVEDetails(): Observable<CVE[]> {
       query: gql`
       {
         cves {
-            cve_id
+            CVE_id
             cwe
             description
             impact

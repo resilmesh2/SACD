@@ -438,7 +438,7 @@ public getAllCVEDetails(): Observable<CVE[]> {
       query: gql`
       {
         cves {
-            cve_id
+            CVE_id
             cwe
             description
             impact

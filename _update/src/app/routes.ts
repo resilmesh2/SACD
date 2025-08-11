@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { ASSETS_PATH, HOME_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
+import { ASSETS_PATH, HOME_PATH, ISSUE_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
 import { NetworkPageComponent } from './pages/network-page/network-page.component';
 import { ServicePageComponent } from './pages/service-page/service-page.component';
+import { IssuePageComponent } from './pages/issue-page/issue-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -27,7 +28,7 @@ export const ROOT_ROUTES: Routes = [
     //     (m) => m.NetworkVizualizationModule,
     //   ),
     component: NetworkPageComponent,
-    data: { breadcrumb: 'Network Nodes' },
+    data: { breadcrumb: 'Network nodes' },
   },
   {
     path: SERVICE_PATH,
@@ -39,6 +40,11 @@ export const ROOT_ROUTES: Routes = [
     component: MissionPageComponent,
     data: { breadcrumb: 'Missions' },
   },
+    {
+    path: ISSUE_PATH,
+    component: IssuePageComponent,
+    data: { breadcrumb: 'Issues' },
+  },
   // {
   //   path: VULNERABILITY_PATH,
   //   loadChildren: () =>
@@ -47,17 +53,7 @@ export const ROOT_ROUTES: Routes = [
   //     ),
   //   data: { breadcrumb: 'Vulnerability' },
   // },
-  // {
-  //   path: ISSUE_PATH,
-  //   data: { breadcrumb: 'Issues' },
-  //   children: [
-  //     {
-  //       path: '',
-  //       loadChildren: () =>
-  //         import('./issue-page/issue.module').then((m) => m.IssueModule),
-  //     },
-  //   ],
-  // },
+
   // {
   //   data: { type: 'Issue Details' },
   //   path: ISSUE_PATH + '/:name',

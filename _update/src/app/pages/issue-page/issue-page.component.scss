@@ -1,0 +1,18 @@
+.header-line {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 1em;
+}
+
+.total-vulnerabilities {
+    font-weight: bold;
+    margin-left: auto;
+    align-self: flex-start;
+}
+
+.mat-mdc-table  {
+    margin-top: 2em;
+}

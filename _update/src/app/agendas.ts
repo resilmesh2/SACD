@@ -12,10 +12,10 @@ import {
 export const agendaContainers = [
   new AgendaContainer('Lists', [
     new Agenda('Assets', SERVICE_PATH),
-    //new Agenda('Vulnerabilities', ISSUE_PATH)
+    new Agenda('Vulnerabilities', ISSUE_PATH)
   ]),
   new AgendaContainer('Visualizations', [
-    new Agenda('Network', ASSETS_PATH),
+    new Agenda('Network nodes', ASSETS_PATH),
     // new Agenda('Vulnerabilities', VULNERABILITY_PATH),
     new Agenda('Missions', MISSION_PATH),
     new Agenda('Subnets', SUBNETS_PATH)
