@@ -1,18 +1,16 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, computed, effect, WritableSignal, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
-import { Observable, zip } from 'rxjs';
 import { Issue } from '../../models/issue.model';
 import { CVE } from '../../models/vulnerability.model';
 import { DataService } from '../../services/data.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -20,6 +18,16 @@ import { DatePipe } from '@angular/common';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { DATE_FORMAT } from '../../config/dateFormat';
+import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
+
+interface Filter {
+    name: string;
+    options: string[];
+    defaultValue: string;
+}
+
 
 @Component({
   selector: 'issue-page',
@@ -41,7 +49,11 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     ReactiveFormsModule,
     DatePipe,
     SentinelCardComponent,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    CvssScoreChipComponent
+  ],
+  providers: [
+    provideMomentDateAdapter(DATE_FORMAT)
   ]
 })
 
@@ -67,25 +79,29 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-  
-  selectedSeverity = 'All';
-  selectedStatus = 'All';
-  issueSeverity: string[] = [];
-  issueStatus: string[] = [];
 
   cveDetails: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
   errorResponse = '';
-  issues: Issue[] = [];
-  totalSortedIssues: number = 0;
 
-  startDateControl = new FormControl();
-  endDateControl = new FormControl();
-  startDate: Date | null = null;
-  endDate: Date | null = null;
-  isDateRangeValid = false;
+  issues = signal<Issue[]>([]);
+  totalSortedIssues = computed(() => this.dataSource.filteredData.length);
+
+  filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
+  defaultValue = "All";
+  filterDictionary = new Map<string, string>();
+
+  selectedSeverity: WritableSignal<string> = signal(this.defaultValue);
+  selectedStatus: WritableSignal<string> = signal(this.defaultValue);
+
+  severityOptions = computed(() => Array.from(new Set(this.issues().map(issue => issue.severity))));
+  statusOptions = computed(() => Array.from(new Set(this.issues().map(issue => issue.status))));
+
+  startDate: WritableSignal<Date | null> = signal(null);
+  endDate: WritableSignal<Date | null> = signal(null);
+  isDateRangeValid = computed(() => this.startDate() !== null && this.endDate() !== null);
 
   controls: SentinelControlItem[] = [];
 
@@ -95,18 +111,25 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {
     this.dataSource = new MatTableDataSource<Issue>([]);
+
+    // Fires whenever date range becomes valid or invalid
+    effect(() => {
+      if (this.isDateRangeValid()) {
+        this.applyDateFilter();
+      } else {
+        this.clearDateFilter();
+      }
+    })
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
 
-    console.log('Data Loading');
-    this.getData().subscribe(
-      (cveDetails) => {
+    this.data.getAllCVEDetails().subscribe({
+      next: (cveDetails) => {
         this.cveDetails = cveDetails;
 
         this.processIssues();
-
 
         if (this.cveDetails.length > 0) {
           this.dataLoaded = true;
@@ -115,171 +138,147 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
         }
         this.dataLoading = false;
 
-        this.updateTotalSortedIssues();
-
         this.changeDetector.detectChanges();
-
       },
-      (error) => {
+      error: (error) => {
         console.error('Error:', error);
         this.errorResponse = error;
         this.dataLoading = false;
-        this.changeDetector.detectChanges()
+        this.changeDetector.detectChanges();
       }
-    );
+    });
+
+    this.filters.push({name: 'severity', options: this.severityOptions(), defaultValue: this.defaultValue});
+    this.filters.push({name: 'status', options: this.statusOptions(), defaultValue: this.defaultValue});
   }
 
   ngAfterViewInit() {
-    
+  
     if (this.dataLoaded && this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
 
-    this.dataSource.filterPredicate = (data: Issue, filter: string): boolean => {
-      const searchTerm = filter.trim().toLowerCase();
+    /**
+     * Custom filter predicate for the data source.
+     */
+    this.dataSource.filterPredicate = function (record, filter) {
+      var map: Map<string, any> = new Map(JSON.parse(filter));
+      let isMatch = false;
+      for(let [key,value] of map){
+        // Name filter (CVE ID)
+        if (key === 'name') {
+          isMatch = (value === "All") || (value == '') || record.name.toLowerCase().includes(value.trim().toLowerCase());
+          if (!isMatch) return false;
+        } else if (key === 'dateRange') {
+          console.log('Applying date range filter:', value);
+          if (!value || value === '') {
+            isMatch = true; // If no date range is specified, match all records
+            continue;
+          }
 
-      const matchesSearchTerm =
-        data.name.toLowerCase().includes(searchTerm);
+          const dateRange = JSON.parse(value);
+          const startDate = new Date(dateRange.start);
+          const endDate = new Date(dateRange.end);
+          const lastSeenDate = record.last_seen ? new Date(record.last_seen) : null;
+          isMatch = (!lastSeenDate || (lastSeenDate >= startDate && lastSeenDate <= endDate));
 
-      const matchesSeverity =
-        this.selectedSeverity === 'All' || data.severity === this.selectedSeverity;
+          if (!isMatch) return false;
+        } else {
+          isMatch = (value=="All") || (record[key as keyof Issue] == value); 
+          if(!isMatch) return false;
+        }
+      }
 
-      const matchesStatus =
-        this.selectedStatus === 'All' || data.status === this.selectedStatus;
-
-      const matchesDateRange =
-       (data.last_seen !== null ) &&
-        (!this.startDate || new Date(data.last_seen) >= this.startDate) &&
-        (!this.endDate || new Date(data.last_seen) <= this.endDate);
-
-      return matchesSearchTerm && matchesSeverity && matchesStatus && matchesDateRange;
+      return isMatch;
     };
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  /**
+   * Used for applying filters from the select dropdowns.
+   * @param event MatSelectChange event containing the selected value.
+   */
+  applySelectFilter(event: MatSelectChange, filter: Filter) {
+    this.filterDictionary.set(filter.name, event.value);
+
+    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    
+    this.dataSource.filter = jsonString;
     
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
 
-    this.updateTotalSortedIssues();
+    console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
-  dateChange(): void {
-    this.validateDateInputs();
+  applyNameFilter(event: Event): void {
+    this.filterDictionary.set('name', (event.target as HTMLInputElement).value.trim().toLowerCase());
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
-    // If either start or end date is cleared, reset the filter
-    if (!this.startDateControl.value || !this.endDateControl.value) {
-      this.clearDateFilter();
+  applyDateFilter(): void {
+    console.log('Applying date filter:', this.startDate(), this.endDate());
+    if (this.isDateRangeValid()) {
+      this.filterDictionary.set('dateRange', JSON.stringify({
+        start: this.startDate()?.toISOString(),
+        end: this.endDate()?.toISOString()
+      }));
+      this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    }
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
   clearDateFilter(): void {
-    // Clear the filter predicate and reset the data
-    this.dataSource.filterPredicate = () => true;
-    this.dataSource.filter = ''; // Trigger the reset
+    this.filterDictionary.set('dateRange', '');
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-    this.updateTotalSortedIssues();
-    this.isDateRangeValid = false;
   }
 
-  validateDateInputs(): void {
-    if (this.startDateControl.value) {
-      this.startDate = this.startDateControl.value.toDate();
-    } else {
-      this.startDate = null;
-    }
-
-    if (this.endDateControl.value) {
-      this.endDate = this.endDateControl.value.toDate();
-    } else {
-      this.endDate = null;
-    }
-
-    this.isDateRangeValid = this.startDateControl.value && this.endDateControl.value && !!this.startDate && !!this.endDate;
-  }
-
-  isValidDateFormat(date: Date | null): boolean {
-    if (!date) return false;
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '/');
-    return /^\d{4}\/\d{2}\/\d{2}$/.test(dateStr);
-  }
-
-  applyDateFilter(): void {
-    if (this.isDateRangeValid) {
-      this.dataSource.filterPredicate = (data: Issue, filter: string) => {
-        if (data.last_seen === null) {
-          return false;
-        }
-        const lastSeenDate = new Date(data.last_seen);
-        return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
-      };
-
-      this.dataSource.filter = 'filterDate'; // Trigger the filter to run
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
-      }
-      this.updateTotalSortedIssues();
-    }
-  }
-
-  onSeverityChange(): void {
-    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-
-    this.updateTotalSortedIssues();
-  }
-
-  onStatusChange(): void {
-    this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-
-    this.updateTotalSortedIssues();
-  }
-
-  updateTotalSortedIssues(): void {
-    this.totalSortedIssues = this.dataSource.filteredData.length;
-  }
-
-  scoreClass(value: string, type: number) {
+  scoreClass(value: string | number | null, type: number) {
     console.log('Calculating score class for value:', value, 'type:', type);
+    if (value === null || value === undefined) {
+        return 'unknown';
+    }
+
+    if (typeof value == 'string') {
+      value = ~~value; // Convert string to number
+    }
+
     if (type === 2) {
-      if (Number(value) <= 3.9) {
+      if (value <= 3.9) {
         return 'low';
       }
 
-      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+      if (value > 3.9 && value <= 6.9) {
         return 'medium';
       }
 
-      if (Number(value) > 6.9) {
+      if (value > 6.9) {
         return 'high';
       }
     } else if (type === 3) {
-      if (Number(value) > 8.9) {
+      if (value > 8.9) {
         return 'critical';
       }
 
-      if (Number(value) > 6.9) {
+      if (value > 6.9) {
         return 'high';
       }
 
-      if (Number(value) > 3.9 && Number(value) <= 6.9) {
+      if (value > 3.9 && value <= 6.9) {
         return 'medium';
       }
 
-      if (Number(value) <= 3.9) {
+      if (value <= 3.9) {
         return 'low';
       }
     }
@@ -301,27 +300,19 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   //   });
   // }
 
-  private getData(): Observable<CVE[]> {
-    return this.data.getAllCVEDetails();
-  }
-
   private processIssues(): void {
-
-    this.issues = this.cveDetails.map((cve, index) => ({
+    this.issues.set(this.cveDetails.map((cve, _) => ({
       name: cve.CVE_id,
-      severity: this.scoreClass(cve.base_score_v3, 3) ?? "",
+      severity: this.scoreClass(cve.base_score_v31, 3) ?? "",
       status: "Open",
       description: cve.description,
-      last_seen: cve.published_date ? new Date(cve.published_date) : null,
-      impact: cve.impact
-    }));
+      last_seen: cve.published ? new Date(cve.published) : null,
+      impact: cve.impact,
+    })));
 
-    this.dataSource.data = this.issues;
+    this.dataSource.data = this.issues();
 
     console.log('Processed Issues:', this.issues, this.dataSource.data);
-
-    // Update sorted issues
-    this.updateTotalSortedIssues();
 
     
     if (this.paginator && this.sort) {
@@ -330,8 +321,5 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
     
     this.changeDetector.detectChanges();
-
-    this.issueSeverity = Array.from(new Set(this.issues.map(issue => issue.severity)));
-    this.issueStatus = Array.from(new Set(this.issues.map(issue => issue.status)));
   }
 }

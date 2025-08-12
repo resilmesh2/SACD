@@ -8,7 +8,6 @@ import { InMemoryCache } from '@apollo/client/cache';
 import { provideHttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 
 const graphqlApi = environment.graphqlApi;
 
@@ -28,6 +27,5 @@ export const APP_CONFIG: ApplicationConfig = {
       };
     }),
     provideAnimations(),
-    provideMomentDateAdapter()
   ]
 };
