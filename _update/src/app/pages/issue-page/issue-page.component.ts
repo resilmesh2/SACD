@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, computed, effect, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, computed, effect, WritableSignal, signal, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Issue } from '../../models/issue.model';
 import { CVE } from '../../models/vulnerability.model';
 import { DataService } from '../../services/data.service';
@@ -21,6 +21,7 @@ import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
 import { scoreToClassCVSS } from '../../utils/utils';
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 
 interface Filter {
     name: string;
@@ -49,7 +50,9 @@ interface Filter {
     ReactiveFormsModule,
     DatePipe,
     SentinelCardComponent,
-    CvssScoreChipComponent
+    CvssScoreChipComponent,
+    RouterLink,
+    SentinelButtonWithIconComponent
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
@@ -79,6 +82,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  private router = inject(Router);
+
   cveDetails: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
@@ -107,7 +112,6 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   constructor(
     private data: DataService, 
     private changeDetector: ChangeDetectorRef,
-    private router: Router
   ) {
     this.dataSource = new MatTableDataSource<Issue>([]);
 
@@ -243,10 +247,18 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
 
-
   navigateToIssueDetail(issue: Issue): void {
     console.log('Navigating to issue detail:', issue);
   }
+
+  navigateToVulnDetail(issue: Issue): void {
+    this.router.navigate(['/vulnerability'], {
+      queryParams: {
+        cve: issue.name,
+      }
+    });
+  }
+
 
   // navigateToIssueDetail(issue: Issue): void {
   //   this.router.navigate([ISSUE_PATH, issue.name], {

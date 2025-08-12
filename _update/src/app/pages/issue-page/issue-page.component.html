@@ -68,10 +68,9 @@
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name </th>
         <td mat-cell *matCellDef="let issue">
-          {{issue.name}}
-          <!-- <a [routerLink]="['/vulnerability-visualization', issue.name]" (click)="$event.stopPropagation()">
+          <a (click)="navigateToVulnDetail(issue)" class="issue-link">
             {{ issue.name }}
-          </a> -->
+          </a>
         </td>
       </ng-container>
 
