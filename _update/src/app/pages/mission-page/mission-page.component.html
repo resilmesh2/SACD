@@ -2,7 +2,7 @@
 <div class="top-bar">
     @if (missionNames && missionNames.length > 0) {
       <ng-container>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-form-field subscriptSizing="dynamic">
           <mat-label>Mission</mat-label>
           <mat-select [(ngModel)]="selectedMissionName">
             <mat-option></mat-option>
@@ -27,7 +27,6 @@
   </div>
   
   <ng-container>
-    <h3 class="header"><strong>Mission</strong></h3>
     <div class="content-container">
       <div class="missions-graph">
         @if (graphLoading) {
@@ -37,7 +36,7 @@
             </div>
           </ng-container>
         } @else if (!graphLoading && errorMessage) {
-          <ng-container *ngIf="!graphLoading && errorMessage">
+          <ng-container>
             <p class="error-message">{{ errorMessage }}</p>
           </ng-container>
         } @else if (missions.length > 0 && missionsStructure && !graphLoading && !errorMessage) {

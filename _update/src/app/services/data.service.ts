@@ -304,7 +304,7 @@ export class DataService {
         .query<{ CVE: CVE[] }>({
           query: gql`
         {
-          cves(where: {cve_id: "${cveCode}"}) {
+          cves(where: {CVE_id: "${cveCode}"}) {
             cwe
             description
             impact
@@ -370,7 +370,7 @@ export class DataService {
       .query<CVEResponse>({
         query: gql`
       {
-        cves(where: {cve_id: "${cveCode}"}) {
+        cves(where: {CVE_id: "${cveCode}"}) {
           vulnerability {
             software_versions {
               version

@@ -17,10 +17,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
-import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
+import { scoreToClassCVSS } from '../../utils/utils';
 
 interface Filter {
     name: string;
@@ -49,7 +49,6 @@ interface Filter {
     ReactiveFormsModule,
     DatePipe,
     SentinelCardComponent,
-    SentinelButtonWithIconComponent,
     CvssScoreChipComponent
   ],
   providers: [
@@ -243,47 +242,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  scoreClass(value: string | number | null, type: number) {
-    console.log('Calculating score class for value:', value, 'type:', type);
-    if (value === null || value === undefined) {
-        return 'unknown';
-    }
 
-    if (typeof value == 'string') {
-      value = ~~value; // Convert string to number
-    }
-
-    if (type === 2) {
-      if (value <= 3.9) {
-        return 'low';
-      }
-
-      if (value > 3.9 && value <= 6.9) {
-        return 'medium';
-      }
-
-      if (value > 6.9) {
-        return 'high';
-      }
-    } else if (type === 3) {
-      if (value > 8.9) {
-        return 'critical';
-      }
-
-      if (value > 6.9) {
-        return 'high';
-      }
-
-      if (value > 3.9 && value <= 6.9) {
-        return 'medium';
-      }
-
-      if (value <= 3.9) {
-        return 'low';
-      }
-    }
-    return 'unknown';
-  }
 
   navigateToIssueDetail(issue: Issue): void {
     console.log('Navigating to issue detail:', issue);
@@ -303,7 +262,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   private processIssues(): void {
     this.issues.set(this.cveDetails.map((cve, _) => ({
       name: cve.CVE_id,
-      severity: this.scoreClass(cve.base_score_v31, 3) ?? "",
+      severity: scoreToClassCVSS(cve.base_score_v31, 3) ?? "",
       status: "Open",
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,

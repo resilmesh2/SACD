@@ -34,6 +34,7 @@
     "@sentinel/common": "^20.0.2",
     "@sentinel/components": "^20.0.2",
     "@sentinel/layout": "^20.0.2",
+    "@swimlane/ngx-charts": "^23.0.0",
     "@swimlane/ngx-graph": "^11.0.0-alpha.0",
     "apollo-angular": "^11.0.0",
     "dagre": "^0.8.5",

@@ -11,18 +11,18 @@ export class CvssScoreChipComponent {
   score = input<number | null>(null);
   type = input<2 | 3 | 4>(3); // 2 for CVSS v2, 3 for CVSS v3, 4 for CVSS v4
   tooltip = input<string>('CVSS Score');
-  //label = computed(() => this.scoreClass(this.score(), this.type()));
+  //label = computed(() => scoreToClassCVSS(this.score(), this.type()));
   label = input<string>('unknown');
 
   color = computed(() => {
     const severity = this.label();
     switch (severity) {
       case 'low':
-        return '#d4edda';
+        return '#d4edda'; // '#f2cc0c', #f6d55c
       case 'medium':
-        return '#fff3cd';
+        return '#fff3cd'; // '#ec971f', #ed913b
       case 'high':
-        return '#f8d7da';
+        return '#f8d7da'; // '#d9534f', #f44336
       case 'critical':
         return '#1C1D21';
       default:
@@ -33,46 +33,4 @@ export class CvssScoreChipComponent {
   labelColor = computed(() => {
     return this.label() == 'critical' ? '#ffff': '#1C1D21';
   });
-
-  scoreClass(value: number | null, type: number) {
-    console.log('Calculating score class for value:', value, 'type:', type);
-    if (value === null || value === undefined) {
-        return 'unknown';
-    }
-
-    // if (typeof value == 'string') {
-    //   value = ~~value; // Convert string to number
-    // }
-
-    if (type === 2) {
-      if (value <= 3.9) {
-        return 'low';
-      }
-
-      if (value > 3.9 && value <= 6.9) {
-        return 'medium';
-      }
-
-      if (value > 6.9) {
-        return 'high';
-      }
-    } else if (type === 3) {
-      if (value > 8.9) {
-        return 'critical';
-      }
-
-      if (value > 6.9) {
-        return 'high';
-      }
-
-      if (value > 3.9 && value <= 6.9) {
-        return 'medium';
-      }
-
-      if (value <= 3.9) {
-        return 'low';
-      }
-    }
-    return 'unknown';
-  }
 }

@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-import { ASSETS_PATH, HOME_PATH, ISSUE_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH } from './paths';
+import { ASSETS_PATH, HOME_PATH, ISSUE_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
 import { NetworkPageComponent } from './pages/network-page/network-page.component';
 import { ServicePageComponent } from './pages/service-page/service-page.component';
 import { IssuePageComponent } from './pages/issue-page/issue-page.component';
+import { VulnerabilityPageComponent } from './pages/vulnerability-page/vulnerability.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -40,11 +41,17 @@ export const ROOT_ROUTES: Routes = [
     component: MissionPageComponent,
     data: { breadcrumb: 'Missions' },
   },
-    {
+  {
     path: ISSUE_PATH,
     component: IssuePageComponent,
     data: { breadcrumb: 'Issues' },
   },
+    {
+    path: VULNERABILITY_PATH,
+    component: VulnerabilityPageComponent,
+    data: { breadcrumb: 'Vulnerabilities' },
+  },
+
   // {
   //   path: VULNERABILITY_PATH,
   //   loadChildren: () =>
