@@ -7,6 +7,7 @@ import { NetworkPageComponent } from './pages/network-page/network-page.componen
 import { ServicePageComponent } from './pages/service-page/service-page.component';
 import { IssuePageComponent } from './pages/issue-page/issue-page.component';
 import { VulnerabilityPageComponent } from './pages/vulnerability-page/vulnerability.component';
+import { IssueDetailComponent } from './pages/issue-detail/issue-detail.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -46,7 +47,12 @@ export const ROOT_ROUTES: Routes = [
     component: IssuePageComponent,
     data: { breadcrumb: 'Issues' },
   },
-    {
+  {
+    path: ISSUE_PATH + '/:name',
+    component: IssueDetailComponent,
+    data: { breadcrumb: 'Issue Details' },
+  },
+  {
     path: VULNERABILITY_PATH,
     component: VulnerabilityPageComponent,
     data: { breadcrumb: 'Vulnerabilities' },

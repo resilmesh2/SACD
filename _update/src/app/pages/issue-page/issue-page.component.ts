@@ -22,6 +22,8 @@ import { DATE_FORMAT } from '../../config/dateFormat';
 import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
 import { scoreToClassCVSS } from '../../utils/utils';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { MatIcon } from '@angular/material/icon';
+import { ISSUE_PATH } from '../../paths';
 
 interface Filter {
     name: string;
@@ -51,6 +53,7 @@ interface Filter {
     DatePipe,
     SentinelCardComponent,
     CvssScoreChipComponent,
+    MatIcon
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
@@ -244,11 +247,6 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-  navigateToIssueDetail(issue: Issue): void {
-    console.log('Navigating to issue detail:', issue);
-  }
-
   navigateToVulnDetail(issue: Issue): void {
     this.router.navigate(['/vulnerability'], {
       queryParams: {
@@ -257,17 +255,16 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     });
   }
 
-
-  // navigateToIssueDetail(issue: Issue): void {
-  //   this.router.navigate([ISSUE_PATH, issue.name], {
-  //     queryParams: {
-  //       severity: issue.severity,
-  //       status: issue.status,
-  //       description: issue.description,
-  //       impact: issue.impact,
-  //     },
-  //   });
-  // }
+  navigateToIssueDetail(issue: Issue): void {
+    this.router.navigate([ISSUE_PATH, issue.name], {
+      queryParams: {
+        severity: issue.severity,
+        status: issue.status,
+        description: issue.description,
+        impact: issue.impact,
+      },
+    });
+  }
 
   private processIssues(): void {
     this.issues.set(this.cveDetails.map((cve, _) => ({

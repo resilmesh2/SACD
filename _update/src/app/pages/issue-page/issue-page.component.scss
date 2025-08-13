@@ -40,3 +40,24 @@
 .issue-link:hover {
     background-color: #dcdcdc;
 }
+
+.issue-link.square-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2em;
+    width: fit-content;
+    height: fit-content;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.issue-link.square-icon:hover {
+    background-color: #e3e3e3;
+}
+
+.issue-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}

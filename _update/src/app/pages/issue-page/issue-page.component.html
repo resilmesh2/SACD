@@ -68,9 +68,14 @@
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Name </th>
         <td mat-cell *matCellDef="let issue">
-          <a (click)="navigateToVulnDetail(issue)" class="issue-link">
-            {{ issue.name }}
-          </a>
+          <div class="issue-nav">
+            <a (click)="navigateToVulnDetail(issue)" class="issue-link square-icon">
+              <mat-icon class="issue-icon">analytics</mat-icon>
+            </a>
+            <a (click)="navigateToIssueDetail(issue)" class="issue-link">
+              {{ issue.name }}
+            </a>
+          </div>
         </td>
       </ng-container>
 
@@ -102,7 +107,7 @@
 
       <!-- Table Header and Rows -->
       <tr mat-header *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToIssueDetail(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
     <!-- Paginator -->
