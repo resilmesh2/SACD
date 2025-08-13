@@ -22,7 +22,38 @@
     </ng-container>
   } @else if (dataLoaded && !dataLoading && !emptyResponse) {
   <ng-container class="full-width-table">
-    <div class="service-header">
+    <div class="header-line">
+      <mat-form-field subscriptSizing="dynamic">
+        <input matInput (keyup)="applyNameFilter($event)" placeholder="Search by IP address">
+      </mat-form-field>
+
+      <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+        <mat-label>Filter by Tags</mat-label>
+        <mat-select [(value)]="selectedTag" (selectionChange)="applySelectFilter($event, filters[0])">
+          <mat-option value="All">All</mat-option>
+          @for (tag of tagOptions(); track tag) {
+            <mat-option [value]="tag">{{ tag }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field subscriptSizing="dynamic">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" [(ngModel)]="startDate">
+          <input matEndDate placeholder="End date" [(ngModel)]="endDate">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+
+      <div class="total-assets">
+        Total Number of Assets: {{ totalSortedServices() }}
+      </div>  
+    </div>
+
+    <!-- <div class="service-header">
         <div class="header-line">
           <mat-form-field>
             <input matInput (keyup)="applyFilter($event)" placeholder="Search by IP address">
@@ -36,15 +67,15 @@
                 <mat-option [value]="tag">{{ tag }}</mat-option>
               }
               <!-- <mat-option *ngFor="let tag of allTags" [value]="tag">{{ tag }}</mat-option> -->
-            </mat-select>
+            <!-- </mat-select>
           </mat-form-field>
           <div class="total-services">
             Total Number of Assets: {{ totalSortedAssets }}
-          </div>
-        </div>
-        <h5>Search Assets by Date Range</h5>
+          </div> -->
+        <!-- </div> -->
+        <!-- <h5>Search Assets by Date Range</h5>
         <div class="header-line">
-          <!-- Date Range Filter -->
+
           <mat-form-field class="date-range" subscriptSizing="dynamic">
             <mat-label>Start Date</mat-label>
             <input matInput [matDatepicker]="startPicker" [formControl]="startDateControl" (dateInput)="dateChange()" placeholder="yyyy/MM/dd">
@@ -59,7 +90,6 @@
             <mat-datepicker #endPicker></mat-datepicker>
           </mat-form-field>
 
-          <!-- Search Button -->
           <sentinel-button-with-icon
             color="primary"
             icon="search"
@@ -69,8 +99,7 @@
           >
             Search
           </sentinel-button-with-icon>
-        </div>
-    </div>
+        </div> -->
     <table mat-table [dataSource]="dataSource" class="mat-table">
       <!-- Name Column -->
       <ng-container matColumnDef="name">
@@ -97,7 +126,7 @@
             [id]="asset.id"
             [inputTags]="asset.tag"
             [onSubmit]="saveData.bind(this)"
-            [allTags]="allTags"
+            [allTags]="tags()"
           />
         </td>
       </ng-container>
