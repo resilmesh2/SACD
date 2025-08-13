@@ -88,8 +88,6 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
           contacts: subnet.contacts.length == 0 ? ["---"] : subnet.contacts,
         })));
 
-        console.log('Subnets fetched:', this.dataSource.data);
-
         this.dataLoading = false;
         this.dataLoaded = true;
         this.changeDetector.detectChanges();
@@ -143,21 +141,22 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
           });
 
           this.dataSource._updateChangeSubscription(); // Refresh the data source
+          this.openSnackBar(`Subnet ${subnet.range} updated successfully.`, 'Close');
         } else {
           this.dataSource.data = [...this.dataSource.data, subnet]; // Add new subnet if it doesn't exist
+          this.openSnackBar(`Subnet ${subnet.range} [${subnet.note}] added successfully.`, 'Close');
         }
     });
   }
 
   deleteSubnet(subnet: SubnetExtendedData): void {
-    console.warn('Delete subnet not implemented yet:', subnet);
     if (this.data.deleteSubnet(subnet.range)) {
       // Handle successful deletion (e.g., show a message, refresh the list)
       this.dataSource.data = this.dataSource.data.filter(item => item.range !== subnet.range);
       this.openSnackBar(`Subnet ${subnet.range} deleted successfully.`, 'Close');
     } else {
       // Handle deletion failure (e.g., show an error message)
-      console.error('Failed to delete subnet:', subnet);
+      this.openSnackBar(`Failed to delete subnet ${subnet.range}.`, 'Close');
     }
   }
 

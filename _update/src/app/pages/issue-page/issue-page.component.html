@@ -42,7 +42,7 @@
         <mat-select [(value)]="selectedSeverity" (selectionChange)="applySelectFilter($event, filters[0])">
           <mat-option value="All">All</mat-option>
           @for (severity of severityOptions(); track severity) {
-            <mat-option [value]="severity">{{ severity }}</mat-option>
+            <mat-option [value]="severity">{{ severity.toUpperCase() }}</mat-option>
           }
         </mat-select>
       </mat-form-field>

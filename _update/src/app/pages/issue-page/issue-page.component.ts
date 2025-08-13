@@ -267,10 +267,10 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   private processIssues(): void {
-    this.issues.set(this.cveDetails.map((cve, _) => ({
+    this.issues.set(this.cveDetails.map((cve, index) => ({
       name: cve.CVE_id,
       severity: scoreToClassCVSS(cve.base_score_v31, 3) ?? "",
-      status: "Open",
+      status: index % 2 === 0 ? 'Open' : 'Closed', //! Example status, replace with actual logic
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
       impact: cve.impact,
