@@ -10,7 +10,7 @@
     Insert new subnet
   </sentinel-button-with-icon>
   <sentinel-button-with-icon
-    color="primary"
+    color="accent"
     icon="loop"
     tooltip="Updates all [PART OF] relationships"
     (click)="reorganiseDatabase()"
@@ -89,12 +89,6 @@
       <!-- Action column -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <!-- <td mat-cell *matCellDef="let row" >
-          <sentinel-controls
-            [controls]="controls"
-            (itemClicked)="onControlsAction($event)">
-          </sentinel-controls>
-        </td> -->
 
         <td mat-cell *matCellDef="let row">
           <div class="actions">

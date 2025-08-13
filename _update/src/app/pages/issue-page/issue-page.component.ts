@@ -51,8 +51,6 @@ interface Filter {
     DatePipe,
     SentinelCardComponent,
     CvssScoreChipComponent,
-    RouterLink,
-    SentinelButtonWithIconComponent
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)

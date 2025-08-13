@@ -11,6 +11,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent } from '@sentinel/components/controls';
+import { defer, of, take } from 'rxjs';
+import { SENTINEL_CONTROLS_CONFIG } from '@sentinel/components/config';
+import { MatSnackBar } from '@angular/material/snack-bar';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -28,7 +32,6 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     MatProgressSpinner,
     FormsModule,
     SentinelButtonWithIconComponent,
-    //SentinelControlsComponent,
   ],
 })
 export class SubnetPageComponent implements OnInit, AfterViewInit {
@@ -38,8 +41,6 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
   dataLoaded = false;
   dataLoading = true;
-  // controls: SentinelControlItem[] = [];
-  // saveDisabled$: Signal<boolean> = signal(false);
 
   // constructor(id: string, label: string | Signal<string>, isSortColumn: boolean, sortName?: string, headerStyle?: NgStyleArg)
 
@@ -61,17 +62,13 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   emptyResponse = false;
   errorResponse = '';
 
-  ngOnInit(): void {
-    // this.controls = [
-    //   new SentinelControlItem('edit-action', 'Edit', 'primary', this.saveDisabled$, defer(async () => console.log('Save clicked')), of(false), 'edit'),
-    //   new SentinelControlItem('delete-action', 'Delete', 'warn', this.saveDisabled$, defer(async () => this.openDialog('0.5s', '0.5s', {}, 'insert')), of(false), 'delete')
-    // ];
+  private _snackBar = inject(MatSnackBar);
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action);
   }
 
-  // onControlsAction(control: SentinelControlItemSignal) {
-  //   control.result$?.pipe(take(1)).subscribe();
-  // }
-
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {}
 
@@ -157,6 +154,7 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
     if (this.data.deleteSubnet(subnet.range)) {
       // Handle successful deletion (e.g., show a message, refresh the list)
       this.dataSource.data = this.dataSource.data.filter(item => item.range !== subnet.range);
+      this.openSnackBar(`Subnet ${subnet.range} deleted successfully.`, 'Close');
     } else {
       // Handle deletion failure (e.g., show an error message)
       console.error('Failed to delete subnet:', subnet);

@@ -38,8 +38,8 @@ button.action {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    padding: 0.2em;
-    font-size: 1em;
+    padding: 0.25em;
+    font-size: 0.75em;
 }
 
 button.action.destructive {
@@ -58,4 +58,9 @@ button.action.destructive:hover {
 .actions {
     display: flex;
     gap: 0.5em;
+}
+
+.success-snackbar {
+    background-color: #4caf50; /* Green background for success messages */
+    color: white; /* White text for better contrast */
 }
