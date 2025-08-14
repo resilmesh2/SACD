@@ -1,0 +1,50 @@
+type EntityKey = {
+  bgColor: string,
+  showProperty: string[]
+}
+
+export type EntityStructure = {
+  IP: EntityKey,
+  DomainName: EntityKey,
+  Subnet: EntityKey,
+  Node: EntityKey,
+  SecurityEvent: EntityKey,
+  CVE: EntityKey,
+  Vulnerability: EntityKey,
+  SoftwareVersion: EntityKey
+}
+
+export const entities: EntityStructure = {
+  IP: {
+    bgColor: '#FF9800',
+    showProperty: ['address'],
+  },
+  DomainName: {
+    bgColor: '#19AADE',
+    showProperty: ['domain_name'],
+  },
+  Subnet: {
+    bgColor: '#6877CA',
+    showProperty: ['range'],
+  },
+  Node: {
+    bgColor: '#DC4141',
+    showProperty: ['topology_betweenness'],
+  },
+  SecurityEvent: {
+    bgColor: '#009688',
+    showProperty: ['type'],
+  },
+  CVE: {
+    bgColor: '#9C27B0',
+    showProperty: ['CVE_id'],
+  },
+  Vulnerability: {
+    bgColor: '#FF5722',
+    showProperty: ['name'],
+  },
+  SoftwareVersion: {
+    bgColor: '#8BC34A',
+    showProperty: ['version'],
+  },
+};

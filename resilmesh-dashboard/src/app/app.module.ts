@@ -35,6 +35,9 @@ import { MatTooltipModule} from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule} from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatChipsModule } from '@angular/material/chips';
 
 // Components
 import { AppComponent } from './app.component';
@@ -47,9 +50,6 @@ import { IssueComponent } from './issue-page/issue.component';
 import { ServiceComponent } from './service-page/service.component';
 import { IssueDetailComponent } from './issue-detail/issue-detail.component';
 import { SubnetComponent } from './subnet-page/subnet.component';
-import { MatDialogModule} from '@angular/material/dialog';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatChipsModule } from '@angular/material/chips';
 
 // Modules
 import { TagComponentModule } from './components/tag-component/tag-component.module';

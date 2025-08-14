@@ -97,7 +97,6 @@ export class ServiceComponent implements OnInit, AfterViewInit {
 
         this.processServices();
 
-
         if (this.ips.length > 0) {
           this.dataLoaded = true;
         } else {
@@ -238,8 +237,8 @@ export class ServiceComponent implements OnInit, AfterViewInit {
     this.services = this.ips.map((ip, index) => ({
       name: ip.address,
       id: ip._id,
-      tag: [...ip.tag],
-      subnet: ip.part_of.map(item => item.range),
+      tag: [...(ip.tag ?? [])],
+      subnet: (ip.part_of ?? []).map(item => item.range),
       severity: ip.tag,
       last_seen: null,
     }));
