@@ -25,6 +25,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { DateRange } from '@sentinel/common';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
+import { MatIcon } from '@angular/material/icon';
 
 export interface Service {
   name: string;
@@ -69,6 +70,7 @@ interface Filter {
     SentinelCardComponent,
     TagComponent,
     SentinelButtonWithIconComponent,
+    MatIcon
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)

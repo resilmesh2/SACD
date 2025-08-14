@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetector
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { Router, RouterLink } from '@angular/router';
 import { Issue } from '../../models/issue.model';
 import { CVE } from '../../models/vulnerability.model';
@@ -112,7 +112,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   isDateRangeValid = computed(() => this.startDate() !== null && this.endDate() !== null);
 
   controls: SentinelControlItem[] = [];
-
+  
   constructor(
     private data: DataService, 
     private changeDetector: ChangeDetectorRef,
@@ -157,6 +157,24 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
     this.filters.push({name: 'severity', options: this.severityOptions(), defaultValue: this.defaultValue});
     this.filters.push({name: 'status', options: this.statusOptions(), defaultValue: this.defaultValue});
+
+    // Custom sorting logic (esp. needed for severity)
+    this.dataSource.sortData = (data: Issue[], sort: Sort): Issue[] => {
+      if (!sort.active || sort.direction === '') {
+        return data;
+      }
+
+      return data.sort((a, b) => {
+        const isAsc = sort.direction === 'asc';
+        switch (sort.active) {
+          case 'name': return this.compare(a.name, b.name, isAsc);
+          case 'severity': return this.compareSeverity(a.severity, b.severity, isAsc);
+          case 'status': return this.compare(a.status, b.status, isAsc);
+          case 'last_seen': return this.compare(a.last_seen, b.last_seen, isAsc);
+          default: return 0;
+        }
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -281,6 +299,17 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
         impact: issue.impact,
       },
     });
+  }
+
+  private compare(a: any, b: any, isAsc: boolean): number {
+      return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  private compareSeverity(a: string, b: string, isAsc: boolean): number {
+    const severityOrder = ['critical', 'high', 'medium', 'low', 'unknown'];
+    const indexA = severityOrder.indexOf(a.toLowerCase());
+    const indexB = severityOrder.indexOf(b.toLowerCase());
+    return (indexA < indexB ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   private processIssues(): void {

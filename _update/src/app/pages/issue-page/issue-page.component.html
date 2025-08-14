@@ -75,7 +75,7 @@
     <table mat-table [dataSource]="dataSource" matSort>
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
         <td mat-cell *matCellDef="let issue">
           <div class="issue-nav">
             <a (click)="navigateToVulnDetail(issue)" class="issue-link square-icon">
@@ -90,7 +90,7 @@
 
       <!-- Severity Column -->
       <ng-container matColumnDef="severity">
-        <th mat-header-cell *matHeaderCellDef> Severity </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Severity </th>
         <td mat-cell *matCellDef="let issue"> 
           <cvss-score-chip [label]="issue.severity"></cvss-score-chip>
         </td>
@@ -98,7 +98,7 @@
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
         <td mat-cell *matCellDef="let issue"> {{ issue.status }} </td>
       </ng-container>
 
@@ -110,17 +110,26 @@
 
       <!-- Last Seen Date Column -->
       <ng-container matColumnDef="last_seen">
-        <th mat-header-cell *matHeaderCellDef> Last Seen </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Seen </th>
         <td mat-cell *matCellDef="let issue"> {{ issue.last_seen | date:'yyyy/MM/dd\'T\'HH:mm:ss' }} </td>
       </ng-container>
 
-      <!-- Table Header and Rows -->
-      <tr mat-header *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <!-- Row shown when there is no matching data. -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">
+            <div class="no-data">
+              <mat-icon class="no-data-icon">info</mat-icon>
+              <div class="no-data-text">No data matching the CVE code</div>
+            </div>
+          </td>
+        </tr>
     </table>
 
     <!-- Paginator -->
-    <mat-paginator [pageSize]="6" [pageSizeOptions]="[6, 12, 18]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 200, 500]" showFirstLastButtons></mat-paginator>
   </div>
   } @else {
     <!-- Fallback for any other case -->
