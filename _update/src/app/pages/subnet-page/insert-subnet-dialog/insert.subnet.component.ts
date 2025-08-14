@@ -33,11 +33,12 @@ import { SentinelButtonWithIconComponent } from "@sentinel/components/button-wit
 export class InsertSubnetDialog implements OnInit {
   readonly dialogRef = inject(MatDialogRef<InsertSubnetDialog>);
 
-  data = inject(MAT_DIALOG_DATA) as { subnet: SubnetExtendedData, mode: 'insert' | 'edit' };
-  
+  data = inject(MAT_DIALOG_DATA) as { allSubnets: SubnetExtendedData[], subnet: SubnetExtendedData, mode: 'insert' | 'edit' };
+
   title = computed(() => this.data.mode === 'insert' ? 'Insert Subnet' : 'Edit Subnet');
   
-  allSubnets: Signal<SubnetExtendedData[]>;
+  //allSubnets: Signal<SubnetExtendedData[]>;
+  allSubnets: WritableSignal<SubnetExtendedData[]> = model(this.data.allSubnets || []);
   allOrgUnits: Signal<{ _id: string; name: string }[]>;
 
   updateSubnetDataSource = output<{ oldRange: string; subnet: SubnetExtendedData }>();
@@ -49,7 +50,7 @@ export class InsertSubnetDialog implements OnInit {
   orgUnit = signal(this.data.subnet.organizationUnit || null);
 
   constructor(private dataService: DataService) {
-    this.allSubnets = toSignal(this.dataService.getSubnets(), { initialValue: [] });
+    //this.allSubnets = toSignal(this.dataService.getSubnets(), { initialValue: [] });
     this.allOrgUnits = toSignal(this.dataService.getOrgUnits(), { initialValue: [] });
   }
 

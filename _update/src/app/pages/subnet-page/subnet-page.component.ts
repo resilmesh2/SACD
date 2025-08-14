@@ -114,6 +114,7 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
       enterAnimationDuration,
       exitAnimationDuration,
       data: {
+        allSubnets: this.dataSource.data,
         subnet: {
           range: subnet.range,
           note: subnet.note,
