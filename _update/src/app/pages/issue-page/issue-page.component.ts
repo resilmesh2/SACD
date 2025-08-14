@@ -53,7 +53,8 @@ interface Filter {
     DatePipe,
     SentinelCardComponent,
     CvssScoreChipComponent,
-    MatIcon
+    MatIcon,
+    SentinelButtonWithIconComponent
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
@@ -97,6 +98,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
   defaultValue = "All";
   filterDictionary = new Map<string, string>();
+
+  searchTerm: WritableSignal<string> = signal('');
 
   selectedSeverity: WritableSignal<string> = signal(this.defaultValue);
   selectedStatus: WritableSignal<string> = signal(this.defaultValue);
@@ -175,7 +178,6 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
           isMatch = (value === "All") || (value == '') || record.name.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
-          console.log('Applying date range filter:', value);
           if (!value || value === '') {
             isMatch = true; // If no date range is specified, match all records
             continue;
@@ -216,8 +218,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
-  applyNameFilter(event: Event): void {
-    this.filterDictionary.set('name', (event.target as HTMLInputElement).value.trim().toLowerCase());
+  applyNameFilter(): void {
+    this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     
     if (this.dataSource.paginator) {
@@ -226,7 +228,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   applyDateFilter(): void {
-    console.log('Applying date filter:', this.startDate(), this.endDate());
+    if (!this.isDateRangeValid()) { return; }
+    
     if (this.isDateRangeValid()) {
       this.filterDictionary.set('dateRange', JSON.stringify({
         start: this.startDate()?.toISOString(),
@@ -242,6 +245,20 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  resetFilters(): void {
+    this.filterDictionary.clear();
+    this.dataSource.filter = '';
+    this.selectedSeverity.set(this.defaultValue);
+    this.selectedStatus.set(this.defaultValue);
+    this.startDate.set(null);
+    this.endDate.set(null);
+    this.searchTerm.set('');
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }

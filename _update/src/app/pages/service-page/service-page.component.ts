@@ -39,7 +39,7 @@ export interface IP {
   _id: string;
   address: string;
   tag: string[];
-  part_of: Subnet[];
+  subnets: Subnet[];
   __typename: string;
 }
 
@@ -110,18 +110,19 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
   separatorKeysCodes = [ENTER] as const;
 
   services = signal<Service[]>([]);
-  tags = signal<string[]>([]);
   totalSortedServices = computed(() => this.dataSource.filteredData.length);
 
   filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
   defaultValue = "All";
   filterDictionary = new Map<string, string>();
 
-  selectedTag: WritableSignal<string> = signal(this.defaultValue);
-  //selectedStatus: WritableSignal<string> = signal(this.defaultValue);
+  searchTerm: WritableSignal<string> = signal('');
 
-  tagOptions = computed(() => Array.from(new Set(this.services().flatMap(service => service.tag))));
-  //statusOptions = computed(() => Array.from(new Set(this.services().map(service => service.status))));
+  selectedTag: WritableSignal<string> = signal(this.defaultValue);
+  selectedSubnet: WritableSignal<string> = signal(this.defaultValue);
+
+  tags = computed(() => Array.from(new Set(this.services().flatMap(service => service.tag))));
+  subnets = computed(() => Array.from(new Set(this.services().flatMap(service => service.subnet))));
 
   startDate: WritableSignal<Date | null> = signal(null);
   endDate: WritableSignal<Date | null> = signal(null);
@@ -141,12 +142,15 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
     this.dataLoading = true;
 
     console.log('Data Loading');
-    this.getCombinedData().subscribe({
-      next: ([ips, allTags]) => {
+    this.data.getIPs().subscribe({
+      next: (ips) => {
         this.ips = ips;
-        this.tags.set(allTags);
+
+        console.log('Combined Data Loaded:', this.ips, this.tags());
 
         this.processServices();
+
+        console.log('Processed Services:', this.services());
 
         if (this.ips.length > 0) {
           this.dataLoaded = true;
@@ -154,8 +158,6 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
           this.emptyResponse = true;
         }
         this.dataLoading = false;
-
-        //this.updateTotalSortedServices();
 
         this.changeDetector.detectChanges();
       },
@@ -166,7 +168,8 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
         this.changeDetector.detectChanges();
       }
     });
-    this.filters.push({name: 'tag', options: this.tagOptions(), defaultValue: this.defaultValue});
+    this.filters.push({name: 'tag', options: this.tags(), defaultValue: this.defaultValue});
+    this.filters.push({name: 'subnet', options: this.subnets(), defaultValue: this.defaultValue});
   }
 
   ngAfterViewInit() {
@@ -188,9 +191,9 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
           isMatch = (value === "All") || (value == '') || record.name.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
-          console.log('Applying date range filter:', value);
+          // If no date range is specified, match all records
           if (!value || value === '') {
-            isMatch = true; // If no date range is specified, match all records
+            isMatch = true;
             continue;
           }
 
@@ -204,6 +207,10 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
         } else if (key === 'tag') {
           isMatch = (value === "All") || (value == '') || record.tag.includes(value.trim().toLowerCase());
           if (!isMatch) return false;
+        } else {
+          // For any other filters, check if the value matches the record's property
+          isMatch = (value=="All") || (record[key as keyof Service] == value); 
+          if(!isMatch) return false;
         }
       }
 
@@ -238,8 +245,8 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
     console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
-  applyNameFilter(event: Event): void {
-    this.filterDictionary.set('name', (event.target as HTMLInputElement).value.trim().toLowerCase());
+  applyNameFilter(): void {
+    this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     
     if (this.dataSource.paginator) {
@@ -269,70 +276,19 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // dateChange(): void {
-  //   this.validateDateInputs();
+  resetFilters(): void {
+    this.filterDictionary.clear();
+    this.dataSource.filter = '';
+    this.selectedTag.set(this.defaultValue);
+    this.selectedSubnet.set(this.defaultValue);
+    this.startDate.set(null);
+    this.endDate.set(null);
+    this.searchTerm.set('');
 
-  //   // If either start or end date is cleared, reset the filter
-  //   if (!this.startDateControl.value || !this.endDateControl.value) {
-  //     this.clearDateFilter();
-  //   }
-  // }
-
-  // clearDateFilter(): void {
-  //   // Clear the filter predicate and reset the data
-  //   this.dataSource.filterPredicate = () => true;
-  //   this.dataSource.filter = ''; // Trigger the reset
-  //   if (this.dataSource.paginator) {
-  //     this.dataSource.paginator.firstPage();
-  //   }
-  //   this.updateTotalSortedServices();
-  //   this.isDateRangeValid = false;
-  // }
-
-  // validateDateInputs(): void {
-  //   console.log("Start Date:", this.startDate);
-  //   console.log("End Date:", this.endDate);
-  //   console.log('Checking date range validity:', this.startDateControl.value, this.endDateControl.value);
-
-  //   if (this.startDateControl.value) {
-  //     this.startDate = this.startDateControl.value.toDate();
-  //   } else {
-  //     this.startDate = null;
-  //   }
-
-  //   if (this.endDateControl.value) {
-  //     this.endDate = this.endDateControl.value.toDate();
-  //   } else {
-  //     this.endDate = null;
-  //   }
-
-  //   this.isDateRangeValid = this.startDateControl.value && this.endDateControl.value && !!this.startDate && !!this.endDate;
-
-  //   console.log('Is date range valid:', this.isDateRangeValid);
-  // }
-
-  // applyDateFilter(): void {
-  //   if (this.isDateRangeValid) {
-  //     this.dataSource.filterPredicate = (data: Service, filter: string) => {
-  //       console.log("Here")
-  //       if (data.last_seen === null) {
-  //         return false;
-  //       }
-  //       const lastSeenDate = new Date(data.last_seen);
-  //       return lastSeenDate >= this.startDate! && lastSeenDate <= this.endDate!;
-  //     };
-
-  //     this.dataSource.filter = 'filterDate'; // Trigger the filter to run
-  //     if (this.dataSource.paginator) {
-  //       this.dataSource.paginator.firstPage();
-  //     }
-  //     this.updateTotalSortedServices();
-  //   }
-  // }
-
-  // onDateRangeChange(event: DateRange): void {
-  //   console.log('Date range changed:', this.startDate, this.endDate);
-  // }
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
   saveData(id: string, tags: string[]): void {
     this.data.changeTag(Number(id), tags)
@@ -348,31 +304,17 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
   //   this.updateTotalSortedServices();
   // }
 
-  // updateTotalSortedServices(): void {
-  //   this.totalSortedAssets = this.dataSource.filteredData.length;
-  // }
-
-  private getCombinedData(): Observable<[IP[], string[]]> {
-    const ips$: Observable<IP[]> = this.data.getIPs();
-    const allTags$: Observable<string[]> = this.data.getAllTags();
-   
-    return zip(ips$, allTags$);
-  }
-
   private processServices(): void {
-    this.services.set(this.ips.map((ip, index) => ({
+    this.services.set(this.ips.map((ip, _) => ({
       name: ip.address,
       id: ip._id,
       tag: [...(ip.tag ?? [])],
-      subnet: (ip.part_of ?? []).map(item => item.range),
+      subnet: (ip.subnets ?? []).map(item => item.range),
       severity: ip.tag,
       last_seen: null,
     })));
 
     this.dataSource.data = this.services();
-
-    // Update sorted services
-    //this.updateTotalSortedServices();
 
     
     if (this.paginator && this.sort) {
@@ -381,8 +323,6 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
     }
     
     this.changeDetector.detectChanges();
-
-    this.tags.set(Array.from(new Set(this.services().flatMap(service => service.tag))));
   }
 
   add(event: MatChipInputEvent, tags: string[]): void {
