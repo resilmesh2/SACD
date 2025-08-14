@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ASSETS_PATH, HOME_PATH, ISSUE_PATH, MISSION_PATH, SERVICE_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from './paths';
+import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANISATION_PATH, SERVICE_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
@@ -8,6 +8,7 @@ import { ServicePageComponent } from './pages/service-page/service-page.componen
 import { IssuePageComponent } from './pages/issue-page/issue-page.component';
 import { VulnerabilityPageComponent } from './pages/vulnerability-page/vulnerability.component';
 import { IssueDetailComponent } from './pages/issue-detail/issue-detail.component';
+import { OrgUnitsComponent } from './pages/org-units-page/org-units.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -15,20 +16,17 @@ export const ROOT_ROUTES: Routes = [
     component: HomePageComponent,
   },
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: HOME_PATH,
+  },
+  {
     path: SUBNETS_PATH,
-    // loadChildren: () =>
-    //   import('./pages/subnet-page/subnet.module').then(
-    //     (m) => m.SubnetModule,
-    //   ),
     component: SubnetPageComponent,
     data: { breadcrumb: 'Subnets' },
   },
-    {
-    path: ASSETS_PATH,
-    // loadChildren: () =>
-    //   import('./network-vizualization-page/network-vizualization.module').then(
-    //     (m) => m.NetworkVizualizationModule,
-    //   ),
+  {
+    path: NETWORK_NODES_PATH,
     component: NetworkPageComponent,
     data: { breadcrumb: 'Network nodes' },
   },
@@ -57,40 +55,18 @@ export const ROOT_ROUTES: Routes = [
     component: VulnerabilityPageComponent,
     data: { breadcrumb: 'Vulnerabilities' },
   },
+  {
+    path: ORGANISATION_PATH,
+    component: OrgUnitsComponent,
+    data: { breadcrumb: 'Organisation Units' },
+  },
 
-  // {
-  //   path: VULNERABILITY_PATH,
-  //   loadChildren: () =>
-  //     import('./vulnerability-page/vulnerability.module').then(
-  //       (m) => m.VulnerabilityModule,
-  //     ),
-  //   data: { breadcrumb: 'Vulnerability' },
-  // },
-
-  // {
-  //   data: { type: 'Issue Details' },
-  //   path: ISSUE_PATH + '/:name',
-  //   children: [
-  //     {
-  //       path: '',
-  //       loadChildren: () =>
-  //         import('./issue-detail/issue-detail.module').then((m) => m.IssueDetailModule),
-  //     },
-  //   ],
-  // },
   // {
   //   path: USER_PATH,
   //   loadChildren: () => import('./user-example-page/user-example-page.module').then((m) => m.UserExamplePageModule),
   //   data: { breadcrumb: 'User' },
   // },
   // {
-  //   path: SUBNET_PATH,
-  //   loadChildren: () =>
-  //     import('./subnet-page/subnet.module').then(
-  //       (m) => m.SubnetModule,
-  //     ),
-  //   data: { breadcrumb: 'Subnets' },
-  // },
   // {
   //   path: NOTIFICATION_PATH,
   //   data: { breadcrumb: 'Notifications' },
@@ -102,9 +78,5 @@ export const ROOT_ROUTES: Routes = [
   //     },
   //   ],
   // },
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: HOME_PATH,
-  },
+
 ];

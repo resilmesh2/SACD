@@ -1,27 +1,12 @@
 <h2 mat-dialog-title>{{ title() }}</h2>
 <mat-dialog-content>
-    <mat-label for="subnetRange">Subnet range:</mat-label>
-    <mat-form-field id="subnetRange">
-        <input matInput required placeholder="" [(ngModel)]="range" />
+    <mat-label for="orgUnitName">Org unit name:</mat-label>
+    <mat-form-field id="orgUnitName">
+        <input matInput required placeholder="" [(ngModel)]="name" />
     </mat-form-field>
-
-    <mat-label for="subnetNote">Subnet note:</mat-label>
-    <mat-form-field id="subnetNote">
-        <input matInput placeholder="" [(ngModel)]="note" />
-    </mat-form-field>
-
-    <mat-label for="parentSubnet">Parent subnet:</mat-label>
-    <mat-form-field id="parentSubnet">
-        <mat-select [(value)]="parentSubnet">
-            <mat-option value="null">---</mat-option>
-            @for (subnet of allSubnets(); track subnet.range) {
-            <mat-option [value]="subnet.range">{{subnet.range}}</mat-option>
-            }
-        </mat-select>
-    </mat-form-field>
-    <mat-label for="orgUnit">Organizational unit:</mat-label>
+    <mat-label for="orgUnit">Parent organizational unit:</mat-label>
     <mat-form-field id="orgUnit">
-        <mat-select [(value)]="orgUnit">
+        <mat-select [(value)]="parentOrgUnit">
             <mat-option value="null">---</mat-option>
             @for (orgUnit of allOrgUnits(); track orgUnit) {
             <mat-option [value]="orgUnit.name">{{orgUnit.name}}</mat-option>
@@ -37,7 +22,7 @@
             color="primary"
             icon="save"
             tooltip=""
-            (click)="editSubnet()"
+            (click)="editOrgUnit()"
             mat-dialog-close
             cdkFocusInitial
         >
@@ -48,9 +33,9 @@
             color="primary"
             icon="add"
             tooltip=""
-            (click)="insertSubnet()"
+            (click)="insertOrgUnit()"
             cdkFocusInitial
-            [disabled]="!range()"
+            [disabled]="!name()"
         >
             Insert
         </sentinel-button-with-icon>
