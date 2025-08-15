@@ -44,11 +44,14 @@
         [attr.height]="node.dimension.height"
         [attr.fill]="node.data.disabled ? 'red' : node.data.customColor"
         [attr.stroke]="'transparent'"
+        [attr.rx]="4"
+        [attr.ry]="4"
       />
       <svg:text
         [attr.fill]="node.data.disabled ? '#fff' : node.data.textColor"
-        alignment-baseline="central"
-        [attr.x]="10"
+        dominant-baseline="middle" 
+        text-anchor="middle" 
+        [attr.x]="node.dimension.width / 2" 
         [attr.y]="node.dimension.height / 2"
       >
         {{ node.label }}
