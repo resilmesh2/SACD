@@ -85,7 +85,7 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
           note: subnet.note ?? "---",
           organizationUnit: subnet.organizationUnit ?? "---",
           parentSubnet: subnet.parentSubnet ?? "---",
-          contacts: subnet.contacts.length == 0 ? ["---"] : subnet.contacts,
+          contacts: subnet.contacts.length == 0 ? [] : subnet.contacts,
         })));
 
         this.dataLoading = false;

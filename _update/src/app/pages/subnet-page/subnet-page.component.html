@@ -68,7 +68,7 @@
       <ng-container matColumnDef="contacts">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Contacts</th>
         <td mat-cell *matCellDef="let row">
-          <span class="subnet-contacts">{{ row.contacts.join(', ') }}</span>
+          <span class="subnet-contacts">{{ row.contacts.length > 0 ? row.contacts.join(', ') : '---' }}</span>
         </td>
       </ng-container>
 

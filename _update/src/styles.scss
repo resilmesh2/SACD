@@ -41,6 +41,14 @@ $resilmesh-theme: mat.m2-define-light-theme((
     container-color: #343F5D,
   ));
 
+  @include mat.button-toggle-overrides((
+    selected-state-text-color: #FFFFFF,
+    selected-state-background-color: #3f51b5, //#44BFEC,
+    disabled-state-background-color: #CACACA,
+    disabled-selected-state-background-color: red,
+    label-text-weight: bold,
+  ));
+
   --mat-divider-color : #777680;
 }
 

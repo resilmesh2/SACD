@@ -315,72 +315,86 @@ export class DataService {
         .query<{ CVE: CVE[] }>({
           query: gql`
         {
-          cves(where: {CVE_id: "${cveCode}"}) {
-            cwe
+          cves(where: {cve_id: "${cveCode}"}) {
             description
-            impact
-            published_date
+            cwe
+            cpe_type
             ref_tags
-
-            base_score_v3
-            attack_vector
-            attack_complexity
-            access_complexity
-            access_vector
-            privileges_required
-            user_interaction
-            scope
-            authentication
-            confidentiality_impact_v3
-            integrity_impact_v3
-            availability_impact_v3
-
-            access_complexity_v2
-            access_vector_v2
-            authentication_v2
-            availability_impact_v2
-            confidentiality_impact_v2
-            integrity_impact_v2
-            base_score_v2
-            obtain_all_privilege_v2
-            obtain_other_privilege_v2
-            obtain_user_privilege_v2
-            attack_complexity_v30
-            attack_vector_v30
-            availability_impact_v30
-            base_score_v30
-            confidentiality_impact_v30
-            integrity_impact_v30
-            privileges_required_v30
-            scope_v30
-            user_interaction_v30
-            attack_vector_v31
-            attack_complexity_v31
-            privileges_required_v31
-            user_interaction_v31
-            scope_v31
-            confidentiality_impact_v31
-            integrity_impact_v31
-            availability_impact_v31
-            base_score_v31
-            attack_vector_v40
-            attack_complexity_v40
-            attack_requirements_v40
-            privileges_required_v40
-            user_interaction_v40
-            vulnerable_system_confidentiality_v40
-            vulnerable_system_integrity_v40
-            vulnerable_system_availability_v40
-            subsequent_system_confidentiality_v40
-            subsequent_system_integrity_v40
-            subsequent_system_availability_v40
-            base_score_v40
+            published
+            last_modified
+            result_impacts
+            cvss_v2 {
+              vector_string
+              access_vector
+              access_complexity
+              authentication
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+              ac_insuf_info
+              obtain_all_privilege
+              obtain_user_privilege
+              obtain_other_privilege
+              user_interaction_required
+            }
+            cvss_v30 {
+              vector_string
+              attack_vector
+              attack_complexity
+              privileges_required
+              user_interaction
+              scope
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+            }
+            cvss_v31 {
+              vector_string
+              attack_vector
+              attack_complexity
+              privileges_required
+              user_interaction
+              scope
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+            }
+            cvss_v40 {
+              vector_string
+              attack_vector
+              attack_complexity
+              attack_requirements
+              privileges_required
+              user_interaction
+              vulnerable_system_confidentiality
+              vulnerable_system_integrity
+              vulnerable_system_availability
+              subsequent_system_confidentiality
+              subsequent_system_integrity
+              subsequent_system_availability
+              base_score
+              base_severity
+              exploit_maturity
+            }
           }
         }
         `,
         })
         .pipe(
           map((response) => {
+            console.log('CVE Details loaded:', response.data.cves[0]);
             return response.data.cves[0];
           })
         );
@@ -395,7 +409,7 @@ export class DataService {
       .query<CVEResponse>({
         query: gql`
       {
-        cves(where: {CVE_id: "${cveCode}"}) {
+        cves(where: {cve_id: "${cveCode}"}) {
           vulnerability {
             software_versions {
               version
