@@ -91,6 +91,7 @@ export class DataService {
           label: this.getLabel(item),
           data: {
             customColor: this.getColor(item),
+            textColor: this.getTextColor(item),
             type: item.__typename,
             labelName: this.getLabelName(item),
             ...this.clearAttributes(item),
@@ -172,6 +173,15 @@ export class DataService {
   private getColor(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
     return entities[initialLabel]?.bgColor || '#DC4141';
+  }
+
+  /**
+   * Return text color that should be assigned to given node
+   * @param node
+   */
+  private getTextColor(node: any): string {
+    const initialLabel: keyof EntityStructure = node.__typename;
+    return entities[initialLabel]?.textColor || '#fff';
   }
 
   /**

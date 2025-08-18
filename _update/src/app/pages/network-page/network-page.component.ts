@@ -11,6 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { SentinelCardComponent } from '@sentinel/components/card';
+import { SentinelControlItem } from '@sentinel/components/controls';
+
 
 @Component({
   selector: 'network-page',
@@ -24,7 +27,8 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     MatProgressSpinner,
     NgxGraphModule,
     MatTooltipModule,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    SentinelCardComponent,
   ]
 })
 
@@ -37,6 +41,7 @@ export class NetworkPageComponent implements OnInit {
   errorMessage = '';
   graphLoading?: boolean;
   center$: Subject<any> = new Subject();
+  controls: SentinelControlItem[] = [];
 
   constructor(private dataService: DataService, private route: ActivatedRoute) {
     console.log("params", route.snapshot.params);
@@ -100,6 +105,7 @@ export class NetworkPageComponent implements OnInit {
     const attr = { ...node.data };
     delete attr.color;
     delete attr.customColor;
+    delete attr.textColor;
     delete attr.type;
     delete attr.labelName;
     return Object.entries(attr).filter((a) => typeof a[1] === 'string' || typeof a[1] === 'number');
@@ -130,6 +136,10 @@ export class NetworkPageComponent implements OnInit {
       },
     }
     );
+  }
+
+  navigateToAssetDetail(assetId: string) {
+    // Implement navigation logic to asset detail page
   }
 
   updateChart() {

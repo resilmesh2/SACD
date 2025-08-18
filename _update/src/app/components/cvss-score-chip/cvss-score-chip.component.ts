@@ -18,11 +18,11 @@ export class CvssScoreChipComponent {
     const severity = this.label();
     switch (severity) {
       case 'low':
-        return '#d4edda'; // '#f2cc0c', #f6d55c
+        return '#f6d55c'; // '#f2cc0c', #f6d55c, #d4edda
       case 'medium':
-        return '#fff3cd'; // '#ec971f', #ed913b
+        return '#ed913b'; // '#ec971f', #ed913b, #fff3cd
       case 'high':
-        return '#f8d7da'; // '#d9534f', #f44336
+        return '#d9534f'; // '#d9534f', #f44336, #f8d7da
       case 'critical':
         return '#1C1D21';
       default:
