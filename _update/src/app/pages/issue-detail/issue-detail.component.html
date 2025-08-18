@@ -78,7 +78,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-      <mat-paginator [pageSize]="30" [pageSizeOptions]="[30, 60, 90]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>
 } @else if (errorResponse) {
   <div class="error-message">

@@ -127,7 +127,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
           if (vulnerables && vulnerables.length > 0) {
             // Filter and map valid rows
             this.issueDetails = vulnerables
-              .filter(row => row.ip && row.domainName && row.subnet && row.software)
+              .filter(row => row.ip && row.subnet && row.software)
               .map(row => ({
                 affectedAsset: row.ip,
                 description: this.issueDescription,

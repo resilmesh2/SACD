@@ -319,8 +319,22 @@ export class DataService {
             cwe
             description
             impact
-            published
+            published_date
             ref_tags
+
+            base_score_v3
+            attack_vector
+            attack_complexity
+            access_complexity
+            access_vector
+            privileges_required
+            user_interaction
+            scope
+            authentication
+            confidentiality_impact_v3
+            integrity_impact_v3
+            availability_impact_v3
+
             access_complexity_v2
             access_vector_v2
             authentication_v2
@@ -420,10 +434,10 @@ export class DataService {
             software = software_version.version;
             software_version.hosts.forEach((host) => {
               host.node.ips.forEach((ip) => {
-                if (ip.domain_names) {
+                if (ip.domain_names && ip.domain_names.length > 0) {
                   domain = ip.domain_names[0].domain_name;
                 }
-                if (ip.subnets) {
+                if (ip.subnets && ip.subnets.length > 0) {
                   subnet = ip.subnets[0].range;
                 }
                 responseArray.push({
@@ -453,8 +467,22 @@ public getAllCVEDetails(): Observable<CVE[]> {
             cwe
             description
             impact
-            published
+            published_date
             ref_tags
+
+            base_score_v3
+            attack_vector
+            attack_complexity
+            access_complexity
+            access_vector
+            privileges_required
+            user_interaction
+            scope
+            authentication
+            confidentiality_impact_v3
+            integrity_impact_v3
+            availability_impact_v3
+
             access_complexity_v2
             access_vector_v2
             authentication_v2
