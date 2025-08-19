@@ -19,7 +19,7 @@ import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
-import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
+import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
 import { scoreToClassCVSS } from '../../utils/utils';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatIcon } from '@angular/material/icon';
@@ -52,7 +52,7 @@ interface Filter {
     ReactiveFormsModule,
     DatePipe,
     SentinelCardComponent,
-    CvssScoreChipComponent,
+    CvssChipComponent,
     MatIcon,
     SentinelButtonWithIconComponent
   ],
@@ -313,13 +313,15 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   private processIssues(): void {
+    console.log('Processing CVE Details:', this.cveDetails);
     this.issues.set(this.cveDetails.map((cve, index) => ({
-      name: cve.cve_id ?? `fallback`, // Fallback if cve_id is null
-      severity: scoreToClassCVSS(42, 3) ?? "",
+      ... this.cveDetails[index], // Spread CVE properties
+      name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
+      severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
       status: index % 2 === 0 ? 'Open' : 'Closed', //! Example status, replace with actual logic
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
-      impact: 'TODO',
+      impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available', // Example impact, replace with actual logic
     })));
 
     this.dataSource.data = this.issues();

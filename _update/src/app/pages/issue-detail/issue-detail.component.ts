@@ -10,7 +10,7 @@ import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { Issue } from '../../models/issue.model';
-import { CvssScoreChipComponent } from '../../components/cvss-score-chip/cvss-score-chip.component';
+import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
 import { scoreToClassCVSS } from '../../utils/utils';
 
 export interface IssueDetail {
@@ -37,7 +37,7 @@ export interface VulnerabilityData {
     MatIconModule,
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
-    CvssScoreChipComponent
+    CvssChipComponent
   ]
 })
 

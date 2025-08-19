@@ -4,7 +4,7 @@ export interface Issue {
     status: string;
     description: string;
     last_seen: Date | null;
-    impact: string;
+    impact?: string; // Optional field for impact, can be added later
 }
 
 export interface IPNode {
