@@ -15,6 +15,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MissionGraphComponent } from './mission-graph/mission-graph.component';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { SentinelCardComponent } from '@sentinel/components/card';
+import { SentinelControlItem } from '@sentinel/components/controls';
 
 @Component({
   selector: 'mission-page',
@@ -32,7 +34,8 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
     MatProgressSpinnerModule,
     NgxGraphModule,
     MissionGraphComponent,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    SentinelCardComponent,
   ]
 })
 
@@ -47,6 +50,8 @@ export class MissionPageComponent implements OnInit {
   missions: Mission[] = [];
   missionsStructure: MissionStructure | null = null;
   graphLoading: boolean = false;
+
+  controls: SentinelControlItem[] = [];
 
   constructor(private dataService: DataService) {
   }
@@ -93,6 +98,11 @@ export class MissionPageComponent implements OnInit {
         }
       })
     );
+  }
+
+  public getLabel(node: Node) {
+    console.log("Getting label for node", node);
+    return this.dataService.getLabelOfGraphNode(node);
   }
 }
 

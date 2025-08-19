@@ -14,74 +14,70 @@
     gap: 1em;
 }
 
-.header {
-    color: #513A72;
-    margin-bottom: 16px;
- }
-
 .content-container {
-    background-color: #fff;
-    height: 500px;
-    border: 1px solid #cbc4d5;
     display: flex;
 }
 
-.content-container .missions-graph {
+.graph-wrapper {
     display: flex;
-    justify-content: center;
-    align-items: center;
     width: 70%;
+    height: 100%;
+    height: 32em;
     overflow: hidden;
 }
 
-.content-container .node-wrapper {
+.node-wrapper {
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     width: 30%;
     border-left: 1px solid #cbc4d5;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; 
+    padding: 0em 2em;
 }
 
-.content-container .node-wrapper .vertical-center {
-    margin: auto;
-}
-
-.loader {
-    margin: auto;
-}
-
-.content-container .empty {
-    text-align: center;
-    margin-top: 50px;
- }
-
-.node-card {
-    background-color: #fff;
-    box-sizing: border-box;
+.node-detail {
     width: 100%;
-    padding: 25px;
+    height: 100%;
 }
 
-.node-card h2 {
+.badge {
+    font-weight: bold;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    width: fit-content;
+    background-color: #cacaca;
+    text-transform: uppercase;
+}
+
+.node-detail h2 {
     margin-bottom: 0;
     word-wrap: break-word;
 }
 
-.node-card .type-name {
-    font-size: 14px;
-    margin-top: 0;
+.node-detail .attributes-title {
+    font-size: 1em;
+    font-weight: 500;
     margin-bottom: 0;
 }
 
-.node-card .heading {
-    font-size: 16xp;
-    font-weight: bold;
-    margin-bottom: 0;
+.node-attributes {
+    padding-left: 1em;
 }
 
-.node-card ul {
+.node-detail ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    justify-content: flex-start;
+    word-break: break-all;
     list-style: none;
+}
+
+.node-detail li {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
 }
 
 button:enabled {

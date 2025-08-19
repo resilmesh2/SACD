@@ -25,55 +25,61 @@
       Search
     </sentinel-button-with-icon>
   </div>
-  
-  <ng-container>
-    <div class="content-container">
-      <div class="missions-graph">
-        @if (graphLoading) {
-          <ng-container>
-            <div class="loader">
-              <mat-spinner></mat-spinner>
-            </div>
-          </ng-container>
-        } @else if (!graphLoading && errorMessage) {
-          <ng-container>
-            <p class="error-message">{{ errorMessage }}</p>
-          </ng-container>
-        } @else if (missions.length > 0 && missionsStructure && !graphLoading && !errorMessage) {
-          <mission-graph
-            [structure]="missionsStructure"
-            [setSelectedNode]="setSelectedNode"
-          ></mission-graph>
-        } @else {
-          <p class="empty">No missions available.</p>
-        }
-      </div>
-      <div class="node-wrapper">
-        @if (selectedNode) {
-          <ng-container>
-            <div class="node-card" >
-              <p [style.color]="selectedNode.data.customColor" class="type-name">{{selectedNode.data.type.charAt(0).toUpperCase() + selectedNode.data.type.substring(1)}}</p>
-              <h2 [style.color]="selectedNode.data.customColor">{{selectedNode.label}}</h2>
-              <hr/>
-              <p class="heading">Attributes:</p>
+
+  <sentinel-card class="graph-card" [controls]="controls">
+  <div class="content-container">
+    <div class="graph-wrapper">
+      @if (graphLoading) {
+        <ng-container>
+          <div class="loader">
+            <mat-spinner></mat-spinner>
+          </div>
+        </ng-container>
+      } @else if (!graphLoading && errorMessage) {
+        <ng-container>
+          <p class="error-message">{{ errorMessage }}</p>
+        </ng-container>
+      } @else if (missions.length > 0 && missionsStructure && !graphLoading && !errorMessage) {
+        <mission-graph
+          [structure]="missionsStructure"
+          [setSelectedNode]="setSelectedNode"
+        ></mission-graph>
+      } @else {
+        <p class="empty">No missions available.</p>
+      }
+    </div>
+    <div class="node-wrapper">
+        <ng-container>
+          <div class="node-detail">
+            @if (selectedNode && selectedNode.id !== '') {
+              <div class="badge" [style.background-color]="selectedNode.data.customColor" [style.color]="selectedNode.data.textColor">
+                <span>{{ selectedNode.data.type }}</span>
+              </div>
+              <h2>{{ selectedNode.label }}</h2>
+              <hr />
+              <p class="attributes-title">Attributes:</p>
               @if (selectedNode.data.type == 'mission') {
-                <ul>
-                  <li><strong>ID:</strong> {{selectedNode.id}}</li>
+                <ul class="node-attributes">
+                  <li><strong>ID:</strong> {{selectedNode.data.id}}</li>
                   <li><strong>Criticality:</strong> {{selectedNode.data.criticality}}</li>
                   <li><strong>Description:</strong> {{selectedNode.data.description}}</li>
                 </ul>
               } @else if (selectedNode.data.type == 'host') {
-                <ul>
+                <ul class="node-attributes">
                   <li><strong>ID:</strong> {{selectedNode.id}}</li>
-                  <li><strong>IP:</strong> {{selectedNode.data.ip}}</li>
+                  <li>
+                    <strong>IP:</strong>
+                    <div class="badge">
+                      {{selectedNode.data.ip}}
+                    </div>
+                  </li>
                 </ul>
               }
-            </div>
-          </ng-container>
-        } @else {
-          <p class="vertical-center">No node selected.</p>
-        }
-      </div>
+            } @else {
+              <p class="vertical-center">No node selected.</p>
+            }
+          </div>
+        </ng-container>
+    </div>
   </div>
-  </ng-container>
-  
+</sentinel-card>
