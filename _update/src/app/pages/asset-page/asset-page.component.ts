@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, signal, computed, WritableSignal } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, signal, computed, WritableSignal, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -51,9 +51,9 @@ interface Filter {
 }
 
 @Component({
-  selector: 'service-page',
-  templateUrl: './service-page.component.html',
-  styleUrls: ['./service-page.component.scss'],
+  selector: 'asset-page',
+  templateUrl: './asset-page.component.html',
+  styleUrls: ['./asset-page.component.scss'],
   imports: [
     MatProgressSpinnerModule,
     MatFormFieldModule,
@@ -77,7 +77,7 @@ interface Filter {
   ]
 })
 
-export class ServicePageComponent implements OnInit, AfterViewInit {
+export class AssetPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Service>();
 
   displayedColumns: string[] = ['name', 'tag', 'subnet', 'last_seen'];
@@ -135,10 +135,11 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
   constructor(
     private data: DataService,
     private changeDetector: ChangeDetectorRef,
-    private router: Router
   ) {
     this.dataSource = new MatTableDataSource<Service>([]);
   }
+
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.dataLoading = true;
@@ -219,15 +220,6 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
       return isMatch;
     };
   }
-
-  // applyFilter(event: Event): void {
-  //   const filterValue = (event.target as HTMLInputElement).value;
-  //   this.dataSource.filter = filterValue.trim().toLowerCase();
-    
-  //   if (this.dataSource.paginator) {
-  //     this.dataSource.paginator.firstPage();
-  //   }
-  // }
 
   /**
    * Used for applying filters from the select dropdowns.
@@ -347,6 +339,12 @@ export class ServicePageComponent implements OnInit, AfterViewInit {
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
     tags.push(event.option.viewValue)
     event.option.deselect();
+  }
+
+  navigateToNetworkNodeView(asset: Service): void {
+    this.router.navigate(['/network-nodes'], {
+      queryParams: { ip: asset.name }
+    });
   }
   
 }

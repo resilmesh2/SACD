@@ -164,4 +164,8 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   reorganiseDatabase(): void {
     alert('TODO: Reorganize database when API is ready');
   }
+
+  navigateToSubnetDetail(subnet: SubnetExtendedData): void {
+    console.log('Navigating to subnet detail:', subnet);
+  }
 }

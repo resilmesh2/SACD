@@ -476,7 +476,7 @@ public getAllCVEDetails(): Observable<CVE[]> {
     .query<{ CVE: CVE[] }>({
       query: gql`
       {
-        cves(where: {cve_id: "CVE-2025-9103"}) {
+        cves {
           cve_id
           description
           cwe

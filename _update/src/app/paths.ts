@@ -2,7 +2,7 @@ export const HOME_PATH = 'home';
 
 // lists
 export const ISSUE_PATH = 'issues';
-export const SERVICE_PATH = 'service';
+export const ASSETS_PATH = 'assets';
 
 // visualizations
 export const MISSION_PATH = 'missions';

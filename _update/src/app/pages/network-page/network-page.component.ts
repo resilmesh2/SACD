@@ -37,18 +37,19 @@ export class NetworkPageComponent implements OnInit {
   edges: Edge[] = [];
   error: any;
   selectedNode: Node = { id: '', label: '' };
-  ipSearch = '10.0.0.1';
+  ipSearch = '4.122.55.26';
   errorMessage = '';
   graphLoading?: boolean;
   center$: Subject<any> = new Subject();
   controls: SentinelControlItem[] = [];
 
   constructor(private dataService: DataService, private route: ActivatedRoute) {
-    console.log("params", route.snapshot.params);
-    if (route.snapshot.params && route.snapshot.params['ip']) {
-      this.ipSearch = route.snapshot.params['ip'];
-      this.loadGraphData();
-    }
+    this.route.queryParams.subscribe(params => {
+      if (params['ip']) {
+        this.ipSearch = params['ip'];
+        this.loadGraphData();
+      }
+    });
   }
 
   ngOnInit(): void {

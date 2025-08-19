@@ -4,7 +4,7 @@ import {
   NETWORK_NODES_PATH,
   MISSION_PATH,
   ISSUE_PATH,
-  SERVICE_PATH,
+  ASSETS_PATH,
   VULNERABILITY_PATH,
   SUBNETS_PATH,
   ORGANISATION_PATH
@@ -12,7 +12,7 @@ import {
 
 export const agendaContainers = [
   new AgendaContainer('Lists', [
-    new Agenda('Assets', SERVICE_PATH),
+    new Agenda('Assets', ASSETS_PATH),
     new Agenda('Vulnerabilities', ISSUE_PATH)
   ]),
   new AgendaContainer('Visualizations', [

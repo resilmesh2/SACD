@@ -29,6 +29,23 @@
     font-size: 1.2em;
 }
 
+.asset-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    background-color: #e3e3e3;
+    cursor: pointer;
+}
+
+.asset-link:hover {
+    background-color: #dcdcdc;
+}
+
 // .full-width-table {
 //     width: 100%;
 //     border-collapse: collapse; 

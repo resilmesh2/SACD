@@ -52,7 +52,9 @@
       <ng-container matColumnDef="range">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Range</th>
         <td mat-cell *matCellDef="let row">
-          <span class="subnet-range">{{ row.range }}</span>
+          <a (click)="navigateToSubnetDetail(row)" class="subnet-detail-link">
+            {{ row.range }}
+          </a>
         </td>
       </ng-container>
 
