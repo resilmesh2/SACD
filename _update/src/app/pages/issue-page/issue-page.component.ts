@@ -158,7 +158,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     this.filters.push({name: 'severity', options: this.severityOptions(), defaultValue: this.defaultValue});
     this.filters.push({name: 'status', options: this.statusOptions(), defaultValue: this.defaultValue});
 
-    // Custom sorting logic (esp. needed for severity)
+    // Custom sorting logic (needed mainly for severity)
     this.dataSource.sortData = (data: Issue[], sort: Sort): Issue[] => {
       if (!sort.active || sort.direction === '') {
         return data;
@@ -186,6 +186,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
     /**
      * Custom filter predicate for the data source.
+     * Filters the data based on the filterDictionary - stringified JSON of key-value pairs.
      */
     this.dataSource.filterPredicate = function (record, filter) {
       var map: Map<string, any> = new Map(JSON.parse(filter));
@@ -236,6 +237,9 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
+  /**
+   * Applies the search term filter (CVE ID) to the data source.
+   */
   applyNameFilter(): void {
     this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
@@ -318,10 +322,10 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       ... this.cveDetails[index], // Spread CVE properties
       name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
       severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-      status: index % 2 === 0 ? 'Open' : 'Closed', //! Example status, replace with actual logic
+      status: index % 2 === 0 ? 'Open' : 'Closed', //! TODO: Example status, replace with actual logic if needed
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
-      impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available', // Example impact, replace with actual logic
+      impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available',
     })));
 
     this.dataSource.data = this.issues();

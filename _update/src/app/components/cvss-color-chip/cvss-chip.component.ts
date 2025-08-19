@@ -18,16 +18,16 @@ export class CvssChipComponent {
   property = input<string>('base_severity'); // Default to base_severity
   version = input<string>('v31'); // Default to v31
 
+  propertySeverity = computed(() => {
+    if (!this.label()) return 'unknown';
+    const propertyTable = colorLookupTable[this.version()]?.[this.property().toLowerCase()] || colorLookupTable['default'][this.property().toLowerCase()] || {};
+    return propertyTable[this.label()?.toLowerCase() ?? 'unknown'] || 'unknown';
+  });
+
   color = computed(() => {
     console.log('Computing color for:', this.label(), this.property(), this.version());
 
-    let propertySeverity = this.label() ?? 'unknown';
-
-    if (this.property() != 'base_severity') {
-      propertySeverity = colorLookupTable[this.version().toLowerCase()][this.property().toLowerCase()][this.label()?.toLowerCase() ?? 'unknown'] || 'unknown';
-    }
-    
-    switch (propertySeverity) {
+    switch (this.property() != 'base_severity' ? this.propertySeverity() : this.label()?.toLowerCase()) {
       case 'none':
         return '#86B46A';
       case 'low':
@@ -39,7 +39,7 @@ export class CvssChipComponent {
       case 'critical':
         return '#1C1D21';
       default:
-        return '#efefef';
+        return '#cacaca';
     }
   });
 

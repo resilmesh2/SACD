@@ -70,7 +70,6 @@
     flex-direction: column;
     gap: 0.5em;
     justify-content: flex-start;
-    word-break: break-all;
     list-style: none;
 }
 
@@ -78,6 +77,10 @@
     display: flex;
     align-items: center;
     gap: 0.5em;
+}
+
+.node-detail li.description {
+    align-items: flex-start;
 }
 
 button:enabled {
