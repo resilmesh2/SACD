@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetector
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SubnetExtendedData } from '../../models/subnet.model';
 import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
@@ -11,10 +11,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { SentinelControlItem, SentinelControlItemSignal, SentinelControlsComponent } from '@sentinel/components/controls';
-import { defer, of, take } from 'rxjs';
-import { SENTINEL_CONTROLS_CONFIG } from '@sentinel/components/config';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SUBNETS_PATH } from '../../paths';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -39,8 +37,13 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<SubnetExtendedData>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
+  
+  
   dataLoaded = false;
   dataLoading = true;
+  emptyResponse = false;
+  errorResponse = '';
+  
 
   // constructor(id: string, label: string | Signal<string>, isSortColumn: boolean, sortName?: string, headerStyle?: NgStyleArg)
 
@@ -54,15 +57,13 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   //   }}
   // ));
 
-  constructor(private data: DataService, private changeDetector: ChangeDetectorRef, private route: ActivatedRoute) {
+  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
     this.dataSource = new MatTableDataSource<SubnetExtendedData>([]);
     this.getAllSubnets();
   }
 
-  emptyResponse = false;
-  errorResponse = '';
-
   private _snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action);
@@ -167,5 +168,6 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
 
   navigateToSubnetDetail(subnet: SubnetExtendedData): void {
     console.log('Navigating to subnet detail:', subnet);
+    this.router.navigate([SUBNETS_PATH, subnet.range]);
   }
 }

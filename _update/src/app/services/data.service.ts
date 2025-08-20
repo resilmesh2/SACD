@@ -16,6 +16,7 @@ import { CVE, CVEResponse } from '../../../models/vulnerability.model';
 import { VulnerabilityData } from '../../vulnerability-page/vulnerability.component';
 import { SubnetExtendedData } from '../../../models/subnet.model';
 import { OrgUnitData } from '../models/org-unit.model';
+import { ChildIP } from '../models/subnet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -1028,6 +1029,94 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
     });
   }
 
+  /**
+   * Gets subnet details based on its range
+   * @param range range of the subnet
+   */
+  public getSubnet(range: String): Observable<SubnetExtendedData> {
+    if (!range) {
+      return throwError(() => new Error('Range is required to fetch subnet details'));
+    }
+    return this.apollo // Assuming 'this' has an Apollo instance
+    .query<any>({
+      query: gql`
+        {
+          subnets(where: { range: "${range}" }) {
+            _id
+            note
+            range
+            org_units {
+              name
+            }
+            contacts {
+              name
+            }
+            parent_subnet {
+              _id
+              note
+              range
+            }
+          }
+        }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const subnet: SubnetExtendedData = response.data.subnets[0] || {};
+        return {
+            range: subnet.range,
+            note: subnet.note || null,
+            organizationUnit: subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
+            contacts: subnet.contacts.map((contact: any) => contact.name),
+            parentSubnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0].range : ""
+        };
+      })
+    );
+  }
+
+  /**
+   * Gets all child IPs of a subnet based on its range
+   * @param range range of the subnet
+   */
+  public getChildIPs(range: String): Observable<ChildIP[]> {
+    console.log('Fetching child IPs for subnet range:', range);
+    return this.apollo
+    .query<any>({
+      query: gql`
+        {
+          ips(where: { subnetsConnection_SINGLE: { node: { range: "${range}" } } }) {
+            address
+            version
+            nodes {
+              host {
+                software_versions {
+                  vulnerabilities {
+                    cve {
+                      cve_id
+                    }
+                  }
+                  version
+                }
+              }
+            }
+          }
+        }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const childIPs: any[] = response.data.ips.map((ip: any) => ({
+          address: ip.address,
+          version: ip.version,
+          affectedBy: ip.nodes.map((node: any) => node.host.software_versions.map((sv: any) => sv.vulnerabilities.map((v: any) => v.cve.cve_id))).flat(2),
+          softwareVersion: ip.nodes.map((node: any) => node.host.software_versions.map((sv: any) => sv.version)).flat(2)
+        }));
+        return childIPs;
+      })
+    );
+  }
+
+
   //? ORGANIZATION UNITS QUERIES AND MUTATIONS
 
   public createOrgUnit(name: string): Observable<OrgUnitData> {
@@ -1252,3 +1341,4 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
     });
   }
 }
+

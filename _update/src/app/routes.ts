@@ -9,6 +9,7 @@ import { IssuePageComponent } from './pages/issue-page/issue-page.component';
 import { VulnerabilityPageComponent } from './pages/vulnerability-page/vulnerability.component';
 import { IssueDetailComponent } from './pages/issue-detail/issue-detail.component';
 import { OrgUnitsComponent } from './pages/org-units-page/org-units.component';
+import { SubnetDetailComponent } from './pages/subnet-detail/subnet-detail.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -24,6 +25,11 @@ export const ROOT_ROUTES: Routes = [
     path: SUBNETS_PATH,
     component: SubnetPageComponent,
     data: { breadcrumb: 'Subnets' },
+  },
+  {
+    path: SUBNETS_PATH + '/:range',
+    component: SubnetDetailComponent,
+    data: { breadcrumb: 'Subnet Details' },
   },
   {
     path: NETWORK_NODES_PATH,
