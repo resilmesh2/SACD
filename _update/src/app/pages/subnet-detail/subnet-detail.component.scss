@@ -65,3 +65,16 @@
     margin-top: 1em;
     gap: 0.5em;
 }
+
+.subnet-detail-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    background-color: #e3e3e3;
+    cursor: pointer;
+}

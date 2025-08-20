@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild, WritableSignal } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, signal, ViewChild, WritableSignal } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.component";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
+import { SUBNETS_PATH } from "../../paths";
 
 
 @Component({
@@ -28,7 +29,7 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 })
 export class SubnetDetailComponent {
     dataSource = new MatTableDataSource<ChildIP>();
-    displayedColumns: string[] = ['ip', 'softwareVersion', 'affectedBy'];
+    displayedColumns: string[] = ['ip', 'subnet', 'softwareVersion', 'affectedBy'];
     paginator: MatPaginator | null = null;
 
     @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
@@ -43,6 +44,11 @@ export class SubnetDetailComponent {
     subnetDetail: WritableSignal<SubnetExtendedData | null> = signal(null);
     range: string = '';
     pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
+    customColors = [
+        { name: 'Free', value: '#324376' },
+        { name: 'Occupied', value: '#94BFBE' },
+        { name: 'Affected', value: '#F76C5E' }
+    ]
 
     private router = inject(Router);
 
@@ -53,8 +59,8 @@ export class SubnetDetailComponent {
 
     constructor(
         private route: ActivatedRoute,
-        private location: Location,
         private data: DataService,
+        private changeDetectorRefs: ChangeDetectorRef
     ) {
         this.dataSource = new MatTableDataSource<ChildIP>([]);
     }
@@ -88,14 +94,26 @@ export class SubnetDetailComponent {
     }
 
     getChildIPs(): ChildIP[] {
-        this.data.getChildIPs(this.range).subscribe({
-            next: (childIPs: ChildIP[]) => {
-                this.dataSource.data = childIPs;
-                this.pieChartData.set(this.calculateOccupancyData());
-                console.log('Child IPs fetched:', childIPs);
+        // First get all child subnets for the current subnet (1 layer deep)
+        this.data.getChildSubnets(this.range).subscribe({
+            next: (childSubnets: { range: string }[]) => {
+                // Fetch child IPs for parent subnet and each child subnet
+                [{ range: this.range }, ...childSubnets].map((subnet) => {
+                    console.log('Fetching child IPs for subnet:', subnet.range);
+                    this.data.getChildIPs(subnet.range).subscribe({
+                        next: (childIPs: ChildIP[]) => {
+                            this.dataSource.data = this.dataSource.data.concat(childIPs);
+                            this.pieChartData.set(this.calculateOccupancyData());
+                        },
+                        error: (error) => {
+                            console.error('Error fetching child IPs:', error);
+                        }
+                    });
+                }
+                );
             },
             error: (error) => {
-                console.error('Error fetching child IPs:', error);
+                console.error('Error fetching child subnets:', error);
             }
         });
         
@@ -114,7 +132,7 @@ export class SubnetDetailComponent {
         if (!cidr || parseInt(cidr) < 0 || parseInt(cidr) > 32) {
             return 0;
         }
-        return cidr ? Math.pow(2, 32 - parseInt(cidr)) : 0;
+        return cidr ? Math.pow(2, 32 - parseInt(cidr)) - 2 : 0;
     }
 
     calculateOccupancyData(): { name: string; value: number }[] {
@@ -124,14 +142,14 @@ export class SubnetDetailComponent {
         const affectedCount = this.dataSource.data.filter(ip => ip.affectedBy && ip.affectedBy.length > 0).length;
 
         return [
-            { name: 'Occupied', value: occupied - affectedCount },
             { name: 'Free', value: free },
+            { name: 'Occupied', value: occupied - affectedCount },
             { name: 'Affected', value: affectedCount },
         ];
     }
 
     goBack(): void {
-        this.location.back();
+        this.router.navigate([SUBNETS_PATH]);
     }
 
 
@@ -148,4 +166,18 @@ export class SubnetDetailComponent {
         //     this.issueImpact = params['impact'] || '';
         // });
     }
+
+      navigateToSubnetDetail(subnetRange: string): void {
+        console.log('Navigating to subnet detail:', subnetRange);
+        this.router.navigate([SUBNETS_PATH, subnetRange]).then(() => {
+            // Reset the subnet detail and data source when navigating to a new subnet
+            this.subnetDetail.set(null);
+            this.dataSource.data = [];
+            this.dataLoading = true; // Reset loading state
+            this.getSubnetDetail(); // Fetch new subnet details
+            this.getChildIPs(); // Fetch child IPs for the new subnet
+
+            this.changeDetectorRefs.detectChanges(); // Ensure the view updates
+        });
+      }
 }

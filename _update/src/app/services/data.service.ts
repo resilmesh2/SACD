@@ -1087,6 +1087,9 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
           ips(where: { subnetsConnection_SINGLE: { node: { range: "${range}" } } }) {
             address
             version
+            subnets {
+              range
+            }
             nodes {
               host {
                 software_versions {
@@ -1108,10 +1111,32 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
         const childIPs: any[] = response.data.ips.map((ip: any) => ({
           address: ip.address,
           version: ip.version,
+          subnet: ip.subnets.length > 0 ? ip.subnets[0].range : "",
           affectedBy: ip.nodes.map((node: any) => node.host.software_versions.map((sv: any) => sv.vulnerabilities.map((v: any) => v.cve.cve_id))).flat(2),
           softwareVersion: ip.nodes.map((node: any) => node.host.software_versions.map((sv: any) => sv.version)).flat(2)
         }));
         return childIPs;
+      })
+    );
+  }
+
+  public getChildSubnets(range: String): Observable<{range: string}[]> {
+      return this.apollo
+    .query<any>({
+      query: gql`
+        {
+          subnets(where: { parent_subnet: { range: "${range}" } }) {
+            range
+          }
+        }
+      `,
+    })
+    .pipe(
+      map((response) => {
+        const childSubnets: any[] = response.data.subnets.map((subnet: any) => ({
+          range: subnet.range,
+        }));
+        return childSubnets;
       })
     );
   }
