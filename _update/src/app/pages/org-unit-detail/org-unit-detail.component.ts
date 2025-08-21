@@ -12,12 +12,13 @@ import { Location } from '@angular/common';
 import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.component";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { ORGANISATION_PATH, SUBNETS_PATH } from "../../paths";
+import { OrgUnitData } from "../../models/org-unit.model";
 
 
 @Component({
-  selector: 'subnet-detail',
-  templateUrl: './subnet-detail.component.html',
-  styleUrls: ['./subnet-detail.component.scss'],
+  selector: 'org-unit-detail',
+  templateUrl: './org-unit-detail.component.html',
+  styleUrls: ['./org-unit-detail.component.scss'],
   imports: [
     MatPaginatorModule,
     MatTableModule,
@@ -27,7 +28,7 @@ import { ORGANISATION_PATH, SUBNETS_PATH } from "../../paths";
     NgxChartsModule
   ]
 })
-export class SubnetDetailComponent {
+export class OrgUnitDetailComponent {
     dataSource = new MatTableDataSource<ChildIP>();
     displayedColumns: string[] = ['ip', 'subnet', 'softwareVersion', 'affectedBy'];
     paginator: MatPaginator | null = null;
@@ -41,8 +42,8 @@ export class SubnetDetailComponent {
         this.dataSource.paginator = this.paginator;
     }
 
-    subnetDetail: WritableSignal<SubnetExtendedData | null> = signal(null);
-    range: string = '';
+    orgUnitDetail: WritableSignal<OrgUnitData | null> = signal(null);
+    orgName: string = '';
     pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
     customColors = [
         { name: 'Free', value: '#324376' },
@@ -68,8 +69,7 @@ export class SubnetDetailComponent {
     ngOnInit(): void {
         this.dataLoading = true;    
         this.getRouteParameters();
-        this.getSubnetDetail();
-        this.getChildIPs();
+        this.getOrgUnitDetail();
     }
 
     ngAfterViewInit(): void {
@@ -78,13 +78,14 @@ export class SubnetDetailComponent {
         }
     }
 
-    getSubnetDetail(): void {
-        this.data.getSubnet(this.range).subscribe({
-            next: (subnetDetail: SubnetExtendedData) => {
-                this.subnetDetail.set(subnetDetail);
+    getOrgUnitDetail(): void {
+        this.data.getOrgUnit(this.orgName).subscribe({
+            next: (orgUnitDetail: OrgUnitData) => {
+                this.orgUnitDetail.set(orgUnitDetail);
                 this.dataLoading = false;
                 this.dataLoaded = true;
-                console.log('Subnet detail fetched:', subnetDetail);
+                console.log('Org Unit detail fetched:', orgUnitDetail);
+                this.getChildIPs();
             },
             error: (error) => {
                 console.error('Error fetching subnet details:', error);
@@ -93,31 +94,19 @@ export class SubnetDetailComponent {
         });
     }
 
-    getChildIPs(): ChildIP[] {
-        // First get all child subnets for the current subnet (1 layer deep)
-        this.data.getChildSubnets(this.range).subscribe({
-            next: (childSubnets: { range: string }[]) => {
-                // Fetch child IPs for parent subnet and each child subnet
-                [{ range: this.range }, ...childSubnets].map((subnet) => {
-                    console.log('Fetching child IPs for subnet:', subnet.range);
-                    this.data.getChildIPs(subnet.range).subscribe({
-                        next: (childIPs: ChildIP[]) => {
-                            this.dataSource.data = this.dataSource.data.concat(childIPs);
-                            this.pieChartData.set(this.calculateOccupancyData());
-                        },
-                        error: (error) => {
-                            console.error('Error fetching child IPs:', error);
-                        }
-                    });
+    getChildIPs(): void {
+        this.orgUnitDetail()?.subnets.map((subnet) => {
+            console.log('Fetching child IPs for subnet:', subnet);
+            this.data.getChildIPs(subnet).subscribe({
+                next: (childIPs: ChildIP[]) => {
+                    this.dataSource.data = this.dataSource.data.concat(childIPs);
+                    this.pieChartData.set(this.calculateOccupancyData());
+                },
+                error: (error) => {
+                    console.error('Error fetching child IPs:', error);
                 }
-                );
-            },
-            error: (error) => {
-                console.error('Error fetching child subnets:', error);
-            }
+            });
         });
-        
-        return [];        
     }
 
     getSaneAffectedBy(affectedBy: string[]): string {
@@ -127,8 +116,8 @@ export class SubnetDetailComponent {
         return affectedBy.slice(0, 5).join(', ') + (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '');
     }
 
-    calcSubnetSize(): number {
-        let cidr = this.range.split('/')[1];
+    calcSubnetSize(range: string): number {
+        let cidr = range.split('/')[1];
         if (!cidr || parseInt(cidr) < 0 || parseInt(cidr) > 32) {
             return 0;
         }
@@ -136,7 +125,7 @@ export class SubnetDetailComponent {
     }
 
     calculateOccupancyData(): { name: string; value: number }[] {
-        const total = this.calcSubnetSize();
+        const total = this.orgUnitDetail()?.subnets.reduce((acc, subnet) => acc + this.calcSubnetSize(subnet), 0) || 0;
         const occupied = this.dataSource.data.length;
         const free = total - occupied;
         const affectedCount = this.dataSource.data.filter(ip => ip.affectedBy && ip.affectedBy.length > 0).length;
@@ -149,39 +138,31 @@ export class SubnetDetailComponent {
     }
 
     goBack(): void {
-        this.router.navigate([SUBNETS_PATH]);
+        this.router.navigate([ORGANISATION_PATH]);
     }
 
 
     getRouteParameters(): void {
 
         this.route.paramMap.subscribe(params => {
-            this.range = params.get('range') || '';
+            this.orgName = params.get('orgName') || '';
         });
-
-        // this.route.queryParams.subscribe(params => {
-        //     this.issueSeverity = params['severity'] || '';
-        //     this.issueStatus = params['status'] || '';
-        //     this.issueDescription = params['description'] || '';
-        //     this.issueImpact = params['impact'] || '';
-        // });
-    }
-
-    navigateToSubnetDetail(subnetRange: string): void {
-        console.log('Navigating to subnet detail:', subnetRange);
-        this.router.navigate([SUBNETS_PATH, subnetRange]).then(() => {
-            // Reset the subnet detail and data source when navigating to a new subnet
-            this.subnetDetail.set(null);
-            this.dataSource.data = [];
-            this.dataLoading = true; // Reset loading state
-            this.getSubnetDetail(); // Fetch new subnet details
-            this.getChildIPs(); // Fetch child IPs for the new subnet
-
-            this.changeDetectorRefs.detectChanges(); // Ensure the view updates
-        });  
     }
 
     navigateToOrgUnitDetail(orgName: string): void {
-        this.router.navigate([ORGANISATION_PATH, orgName]);
+        console.log('Navigating to org unit detail:', orgName);
+        this.router.navigate([ORGANISATION_PATH, orgName]).then(() => {
+            // Reset the org unit detail and data source when navigating to a new org unit
+            this.orgUnitDetail.set(null);
+            this.dataSource.data = [];
+            this.dataLoading = true; // Reset loading state
+            this.getOrgUnitDetail(); // Fetch new org unit details & child IPs
+
+            this.changeDetectorRefs.detectChanges(); // Ensure the view updates
+        });
+    }
+
+    navigateToSubnetDetail(subnetRange: string): void {
+        this.router.navigate([SUBNETS_PATH, subnetRange]);
     }
 }

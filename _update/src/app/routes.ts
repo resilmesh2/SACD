@@ -10,6 +10,7 @@ import { VulnerabilityPageComponent } from './pages/vulnerability-page/vulnerabi
 import { IssueDetailComponent } from './pages/issue-detail/issue-detail.component';
 import { OrgUnitsComponent } from './pages/org-units-page/org-units.component';
 import { SubnetDetailComponent } from './pages/subnet-detail/subnet-detail.component';
+import { OrgUnitDetailComponent } from './pages/org-unit-detail/org-unit-detail.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -65,6 +66,11 @@ export const ROOT_ROUTES: Routes = [
     path: ORGANISATION_PATH,
     component: OrgUnitsComponent,
     data: { breadcrumb: 'Organisation Units' },
+  },
+  {
+    path: ORGANISATION_PATH + '/:orgName',
+    component: OrgUnitDetailComponent,
+    data: { breadcrumb: 'Organisation Unit Details' },
   },
 
   // {

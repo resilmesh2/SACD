@@ -110,7 +110,7 @@ $resilmesh-theme: mat.m2-define-light-theme((
 
   @include mat.snack-bar-overrides((
     button-color: #FFFFFF,
-    container-color: var(--color-primary),
+    container-color: #324376,
   ));
 
   @include mat.button-toggle-overrides((

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetector
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { OrgUnitCrudDialog } from './org-unit-crud-dialog/org-unit-crud.component';
 import { DataService } from '../../services/data.service';
@@ -13,6 +13,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrgUnitData } from '../../models/org-unit.model';
 import { DialogRef } from '@angular/cdk/dialog';
+import { ORGANISATION_PATH } from '../../paths';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -51,6 +52,7 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
 
   dialogRef: MatDialogRef<OrgUnitCrudDialog, unknown> | null = null;
   private _snackBar = inject(MatSnackBar);
+  private router = inject(Router);
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action);
@@ -145,5 +147,9 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
 
   reorganiseDatabase(): void {
     alert('TODO: Reorganize database when API is ready');
+  }
+
+  navigateToOrgUnitDetail(org: OrgUnitData): void {
+    this.router.navigate([ORGANISATION_PATH, org.name]);
   }
 }

@@ -736,7 +736,7 @@ public getIPAddresses(): Observable<string[]> {
           return orgUnits;
         })
       );
-    }
+  }
 
   public createSubnet(range: string, note: string): Observable<Subnet> {
     return this.apollo.mutate<any>({
@@ -1139,6 +1139,40 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
         return childSubnets;
       })
     );
+  }
+
+  public getOrgUnit(orgName: string): Observable<OrgUnit> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          organizationUnits(where: { name: "${orgName}" }) {
+            name,
+            subnets {
+              range
+            },
+            contacts {
+              name
+            },
+            parent_org_unit {
+              name
+            }
+          }
+        }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
+            name: orgUnit.name,
+            subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+            contacts: orgUnit.contacts.map((contact: any) => contact.name),
+            parentOrgUnit: orgUnit.parent_org_unit[0]?.name || "---",
+          }));
+          console.log('Org Units loaded:', orgUnits);
+          return orgUnits[0] || null;
+        })
+      );
   }
 
 

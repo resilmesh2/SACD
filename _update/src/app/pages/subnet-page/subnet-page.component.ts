@@ -167,7 +167,6 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   }
 
   navigateToSubnetDetail(subnet: SubnetExtendedData): void {
-    console.log('Navigating to subnet detail:', subnet);
     this.router.navigate([SUBNETS_PATH, subnet.range]);
   }
 }

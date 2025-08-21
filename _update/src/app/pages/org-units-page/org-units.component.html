@@ -45,9 +45,12 @@
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Org Unit</th>
         <td mat-cell *matCellDef="let row">
-          <span class="org-unit-name">{{ row.name }}</span>
+          <a (click)="navigateToOrgUnitDetail(row)" class="org-unit-detail-link">
+            {{ row.name }}
+          </a>
         </td>
       </ng-container>
+
       <!-- Org Unit subnets column -->
       <ng-container matColumnDef="subnets">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Subnets</th>
