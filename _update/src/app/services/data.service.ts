@@ -612,11 +612,11 @@ public getIPAddresses(): Observable<string[]> {
       );
     }
 
-    public changeTag(id: number, tag: string[]): void {
+    public changeTag(address: string, tag: string[]): void {
       this.apollo.mutate<any>({
         mutation: gql`
-          mutation UpdateIPTag($id: Int!, $tag: [String!]!) {
-            updateIPTag(id: $id, tag: $tag) {
+          mutation UpdateIPTag($address: String!, $tag: [String!]!) {
+            updateIPTag(address: $address, tag: $tag) {
               _id
               address
               tag
@@ -624,7 +624,7 @@ public getIPAddresses(): Observable<string[]> {
           }
         `,
         variables: {
-          id: id,
+          address: address,
           tag: tag
         },
       }).subscribe({

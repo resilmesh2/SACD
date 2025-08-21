@@ -284,8 +284,8 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  saveData(id: string, tags: string[]): void {
-    this.data.changeTag(Number(id), tags)
+  saveData(address: string, tags: string[]): void {
+    this.data.changeTag(address, tags)
   }
 
   // onTagChange(): void {

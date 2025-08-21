@@ -80,9 +80,6 @@
           <a (click)="navigateToNetworkNodeView(asset)" class="asset-link">
             {{ asset.name }}
           </a>
-          <!-- <a [routerLink]="['/network-visualization', asset.name]">
-            {{ asset.name }}
-          </a> -->
         </td>
       </ng-container>
 
@@ -97,7 +94,7 @@
         <th mat-header-cell *matHeaderCellDef> Tag </th>
         <td mat-cell *matCellDef="let asset"> 
           <tag-component 
-            [id]="asset.id"
+            [id]="asset.name"
             [inputTags]="asset.tag"
             [onSubmit]="saveData.bind(this)"
             [allTags]="tags()"
