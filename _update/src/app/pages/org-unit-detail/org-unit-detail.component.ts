@@ -46,7 +46,7 @@ export class OrgUnitDetailComponent {
     orgName: string = '';
     pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
     customColors = [
-        { name: 'Free', value: '#324376' },
+        { name: 'Unoccupied', value: '#324376' },
         { name: 'Occupied', value: '#98bac7' }, //749dad
         { name: 'Affected', value: '#d54d55' }
     ]
@@ -127,11 +127,11 @@ export class OrgUnitDetailComponent {
     calculateOccupancyData(): { name: string; value: number }[] {
         const total = this.orgUnitDetail()?.subnets.reduce((acc, subnet) => acc + this.calcSubnetSize(subnet), 0) || 0;
         const occupied = this.dataSource.data.length;
-        const free = total - occupied;
+        const unoccupied = total - occupied;
         const affectedCount = this.dataSource.data.filter(ip => ip.affectedBy && ip.affectedBy.length > 0).length;
 
         return [
-            { name: 'Free', value: free },
+            { name: 'Unoccupied', value: unoccupied },
             { name: 'Occupied', value: occupied - affectedCount },
             { name: 'Affected', value: affectedCount },
         ];

@@ -12,7 +12,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SUBNETS_PATH } from '../../paths';
+import { ORGANISATION_PATH, SUBNETS_PATH } from '../../paths';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -166,7 +166,11 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
     alert('TODO: Reorganize database when API is ready');
   }
 
-  navigateToSubnetDetail(subnet: SubnetExtendedData): void {
-    this.router.navigate([SUBNETS_PATH, subnet.range]);
+  navigateToSubnetDetail(subnetRange: string): void {
+    this.router.navigate([SUBNETS_PATH, subnetRange]);
+  }
+
+  navigateToOrgUnitDetail(orgName: string): void {
+    this.router.navigate([ORGANISATION_PATH, orgName]);
   }
 }

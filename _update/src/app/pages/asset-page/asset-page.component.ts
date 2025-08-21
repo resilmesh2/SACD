@@ -26,6 +26,7 @@ import { DateRange } from '@sentinel/common';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { MatIcon } from '@angular/material/icon';
+import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
 
 export interface Service {
   name: string;
@@ -288,16 +289,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.data.changeTag(address, tags)
   }
 
-  // onTagChange(): void {
-  //   this.dataSource.filter = this.dataSource.filter.trim().toLowerCase();
-
-  //   if (this.dataSource.paginator) {
-  //     this.dataSource.paginator.firstPage();
-  //   }
-
-  //   this.updateTotalSortedServices();
-  // }
-
   private processServices(): void {
     this.services.set(this.ips.map((ip, _) => ({
       name: ip.address,
@@ -305,7 +296,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       tag: [...(ip.tag ?? [])],
       subnet: (ip.subnets ?? []).map(item => item.range),
       severity: ip.tag,
-      last_seen: null,
+      last_seen: null, // TODO: When last_seen is available in the IP model, set it here
     })));
 
     this.dataSource.data = this.services();
@@ -342,9 +333,13 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   }
 
   navigateToNetworkNodeView(asset: Service): void {
-    this.router.navigate(['/network-nodes'], {
+    this.router.navigate([NETWORK_NODES_PATH], {
       queryParams: { ip: asset.name }
     });
+  }
+
+  navigateToSubnetDetail(subnetRange: string): void {
+      this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
   
 }
