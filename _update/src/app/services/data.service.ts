@@ -81,7 +81,7 @@ export class DataService {
    * @param parent
    * @param edgeName
    */
-  public converToGraph(data: any[], parent?: string, edgeName?: string): GraphInput {
+  public converToGraph(data: any[], parent?: string, edgeName?: string ): GraphInput {
     let nodes: Node[] = [];
     let edges: Edge[] = [];
 

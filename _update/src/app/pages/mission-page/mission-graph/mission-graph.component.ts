@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import type { SimpleChanges } from '@angular/core'
 import { Node, Edge, Layout, NgxGraphModule } from '@swimlane/ngx-graph';
-import { CustomLayout } from './custom-layout';
+import { CustomLayout } from '../../../utils/custom-graph-layout';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { MissionStructure } from '../../../models/mission-structure.model';

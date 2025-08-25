@@ -160,5 +160,31 @@ export const Attributes = {
       domain_name
       tag
   `,
+  Subnet: `
+    _id
+    range
+    note
+    parent_subnet {
+      _id
+      range
+      note
+    }
+    contacts {
+      _id
+      name
+    }
+    org_units {
+      _id
+      name
+      contacts {
+        _id
+        name
+      }
+      parent_org_unit {
+        _id
+        name
+      }
+    }
+  `
 };
 

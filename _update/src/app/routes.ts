@@ -11,6 +11,7 @@ import { IssueDetailComponent } from './pages/issue-detail/issue-detail.componen
 import { OrgUnitsComponent } from './pages/org-units-page/org-units.component';
 import { SubnetDetailComponent } from './pages/subnet-detail/subnet-detail.component';
 import { OrgUnitDetailComponent } from './pages/org-unit-detail/org-unit-detail.component';
+import { SubnetGraphPageComponent } from './pages/subnet-graph-page/subnet-graph-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -31,6 +32,11 @@ export const ROOT_ROUTES: Routes = [
     path: SUBNETS_PATH + '/:range',
     component: SubnetDetailComponent,
     data: { breadcrumb: 'Subnet Details' },
+  },
+  {
+    path: SUBNETS_PATH + '-graph',
+    component: SubnetGraphPageComponent,
+    data: { breadcrumb: 'Subnets Graph' },
   },
   {
     path: NETWORK_NODES_PATH,
