@@ -8,7 +8,8 @@ import {
   VULNERABILITY_PATH,
   SUBNETS_PATH,
   ORGANIZATION_PATH,
-  SUBNETS_GRAPH_PATH
+  SUBNETS_GRAPH_PATH,
+  ORGANIZATION_GRAPH_PATH
 } from './paths';
 
 export const agendaContainers = [
@@ -19,6 +20,7 @@ export const agendaContainers = [
   new AgendaContainer('Visualizations', [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),
     new Agenda('Subnets Graph', SUBNETS_GRAPH_PATH),
+    new Agenda('Organizations', ORGANIZATION_GRAPH_PATH),
     new Agenda('Vulnerabilities', VULNERABILITY_PATH),
     new Agenda('Missions', MISSION_PATH),    
   ]),

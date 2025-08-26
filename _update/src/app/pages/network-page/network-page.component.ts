@@ -62,9 +62,13 @@ export class NetworkPageComponent implements OnInit {
    * Loads graph data from GraphQL API
    */
   loadGraphData() {
+    if (this.ipSearch.trim() === '') {
+      return;
+    }
     this.graphLoading = true;
     this.errorMessage = '';
     this.selectedNode = { id: '', label: '' };
+    
     this.dataService.getIPNode(this.ipSearch).subscribe({
       next: (res) => {
         console.log("Graph data loaded", res);
