@@ -12,7 +12,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ORGANISATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -171,6 +171,6 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   }
 
   navigateToOrgUnitDetail(orgName: string): void {
-    this.router.navigate([ORGANISATION_PATH, orgName]);
+    this.router.navigate([ORGANIZATION_PATH, orgName]);
   }
 }

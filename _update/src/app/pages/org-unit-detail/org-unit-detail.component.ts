@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.component";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
-import { ORGANISATION_PATH, SUBNETS_PATH } from "../../paths";
+import { ORGANIZATION_PATH, SUBNETS_PATH } from "../../paths";
 import { OrgUnitData } from "../../models/org-unit.model";
 
 
@@ -138,7 +138,7 @@ export class OrgUnitDetailComponent {
     }
 
     goBack(): void {
-        this.router.navigate([ORGANISATION_PATH]);
+        this.router.navigate([ORGANIZATION_PATH]);
     }
 
 
@@ -151,7 +151,7 @@ export class OrgUnitDetailComponent {
 
     navigateToOrgUnitDetail(orgName: string): void {
         console.log('Navigating to org unit detail:', orgName);
-        this.router.navigate([ORGANISATION_PATH, orgName]).then(() => {
+        this.router.navigate([ORGANIZATION_PATH, orgName]).then(() => {
             // Reset the org unit detail and data source when navigating to a new org unit
             this.orgUnitDetail.set(null);
             this.dataSource.data = [];

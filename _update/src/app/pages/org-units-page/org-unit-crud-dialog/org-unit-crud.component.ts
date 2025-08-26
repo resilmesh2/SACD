@@ -36,7 +36,7 @@ export class OrgUnitCrudDialog implements OnInit {
 
   data = inject(MAT_DIALOG_DATA) as { allOrgUnits: OrgUnitData[], orgUnit: OrgUnitData, mode: 'insert' | 'edit' };
 
-  title = computed(() => this.data.mode === 'insert' ? 'Create Organisation Unit' : 'Edit Organisation Unit');
+  title = computed(() => this.data.mode === 'insert' ? 'Create Organization Unit' : 'Edit Organization Unit');
   
   allOrgUnits: WritableSignal<OrgUnitData[]> = model(this.data.allOrgUnits || []);
 

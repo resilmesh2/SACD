@@ -12,8 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrgUnitData } from '../../models/org-unit.model';
-import { DialogRef } from '@angular/cdk/dialog';
-import { ORGANISATION_PATH } from '../../paths';
+import { ORGANIZATION_PATH } from '../../paths';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -150,6 +149,6 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
   }
 
   navigateToOrgUnitDetail(org: OrgUnitData): void {
-    this.router.navigate([ORGANISATION_PATH, org.name]);
+    this.router.navigate([ORGANIZATION_PATH, org.name]);
   }
 }

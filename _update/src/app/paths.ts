@@ -12,7 +12,7 @@ export const SUBNETS_GRAPH_PATH = 'subnets-graph';
 
 // CRUD
 export const SUBNETS_PATH = 'subnets';
-export const ORGANISATION_PATH = 'organisation-units';
+export const ORGANIZATION_PATH = 'organization-units';
 
 // misc
 export const GROUP_PATH = 'group';

@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.component";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
-import { ORGANISATION_PATH, SUBNETS_PATH } from "../../paths";
+import { ORGANIZATION_PATH, SUBNETS_PATH } from "../../paths";
 
 
 @Component({
@@ -182,6 +182,6 @@ export class SubnetDetailComponent {
     }
 
     navigateToOrgUnitDetail(orgName: string): void {
-        this.router.navigate([ORGANISATION_PATH, orgName]);
+        this.router.navigate([ORGANIZATION_PATH, orgName]);
     }
 }

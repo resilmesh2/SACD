@@ -20,7 +20,7 @@ import { SubnetExtendedData } from '../../models/subnet.model';
 import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { ORGANISATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 
 @Component({
   selector: 'subnet-graph-page',
@@ -160,7 +160,7 @@ export class SubnetGraphPageComponent implements OnInit {
 
     navigateToOrgUnitDetail(orgName: string): void {
         if (!orgName || orgName == "---") { return; }
-        this.router.navigate([ORGANISATION_PATH, orgName]);
+        this.router.navigate([ORGANIZATION_PATH, orgName]);
     }
 
     selectNode(node: Node) {

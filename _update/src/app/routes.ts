@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANISATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH } from './paths';
+import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANIZATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
@@ -41,7 +41,7 @@ export const ROOT_ROUTES: Routes = [
   {
     path: NETWORK_NODES_PATH,
     component: NetworkPageComponent,
-    data: { breadcrumb: 'Network nodes' },
+    data: { breadcrumb: 'Network Nodes' },
   },
   {
     path: ASSETS_PATH,
@@ -69,14 +69,14 @@ export const ROOT_ROUTES: Routes = [
     data: { breadcrumb: 'Vulnerabilities' },
   },
   {
-    path: ORGANISATION_PATH,
+    path: ORGANIZATION_PATH,
     component: OrgUnitsComponent,
-    data: { breadcrumb: 'Organisation Units' },
+    data: { breadcrumb: 'Organization Units' },
   },
   {
-    path: ORGANISATION_PATH + '/:orgName',
+    path: ORGANIZATION_PATH + '/:orgName',
     component: OrgUnitDetailComponent,
-    data: { breadcrumb: 'Organisation Unit Details' },
+    data: { breadcrumb: 'Organization Unit Details' },
   },
 
   // {
