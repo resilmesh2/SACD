@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, SimpleChanges, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, SimpleChanges, WritableSignal } from '@angular/core';
 
 import { tap } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
@@ -17,8 +17,10 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
 import { SubnetExtendedData } from '../../models/subnet.model';
-import { CustomLayout } from '../../utils/custom-graph-layout';
+import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { ORGANISATION_PATH, SUBNETS_PATH } from '../../paths';
 
 @Component({
   selector: 'subnet-graph-page',
@@ -45,7 +47,7 @@ export class SubnetGraphPageComponent implements OnInit {
     selectedNode: WritableSignal<Node | null> = signal(null);
     subnets: WritableSignal<SubnetExtendedData[]> = signal([]);
 
-    customLayout: Layout = new CustomLayout();
+    customLayout: Layout = new CustomLayout(Orientation.BOTTOM_TO_TOP);
     center$ = new Subject<any>();
 
     graphLoading: boolean = false;
@@ -55,17 +57,11 @@ export class SubnetGraphPageComponent implements OnInit {
     nodes: WritableSignal<Node[]> = signal([]);
     edges: WritableSignal<Edge[]> = signal([]);
 
+    private router = inject(Router);
+
     constructor(private dataService: DataService) {}
 
     ngOnInit(): void {
-        // this.dataService.getMissionNames().subscribe({
-        //   next: (missionNames: string[]) => {
-        //     this.missionNames = missionNames;
-        //   },
-        //   error: (error) => {
-        //     this.errorMessage = error.message || 'Error fetching mission names'; // Handle errors
-        //   }
-        // });
         this.getGraphData();
     }
 
@@ -92,14 +88,36 @@ export class SubnetGraphPageComponent implements OnInit {
         
     }
 
+    isNotParent(subnetRange: string) {
+        return this.subnets().some((subnet) => subnet.parentSubnet === subnetRange);
+    }
+
+    hasNoParent(subnet: SubnetExtendedData) {
+        return subnet.parentSubnet == undefined || subnet.parentSubnet == null || subnet.parentSubnet == '';
+    }
+
+    isRoot(subnetRange: string) {
+        // TODO: extend this when needed (e.g. when IPv6 support is added)
+        return subnetRange === "0.0.0.0/0";
+    }
+
+    isPartOfConstituency() {
+        // TODO: TO BE IMPLEMENTED
+        return Math.random() < 0.5;
+    }
+
     setEdgesAndNodes(): void {
-        this.nodes.set(this.subnets().map((subnet) => {
+        this.nodes.set(this.subnets().flatMap((subnet) => {
+            if (!this.isNotParent(subnet.range) && this.hasNoParent(subnet) && !this.isRoot(subnet.range)) {
+                return []
+            }
+            let isInternal = this.isPartOfConstituency();
             return {
-                id: subnet.range,
+                id: `${subnet.range}`,
                 label: subnet.range,
                 data: {
-                    type: 'subnet',
-                    customColor: '#0f3057',
+                    type: this.isRoot(subnet.range) ? 'root' : isInternal ? 'subnet' : 'external subnet',
+                    customColor: this.isRoot(subnet.range) ? '#212951' : isInternal ? '#3a4d81' : '#307351',
                     textColor: '#fff',
                     ... subnet
                 }
@@ -135,93 +153,18 @@ export class SubnetGraphPageComponent implements OnInit {
         return this.dataService.getLabelOfGraphNode(node);
     }
 
-//     ngOnChanges(changes: SimpleChanges): void {
-//         if (changes['structure'] && !changes['structure'].firstChange) {
-//             this.updateGraph();
-//         }
-//     }
+    navigateToSubnetDetail(subnetRange: string): void {
+        if (!subnetRange || subnetRange == "---") { return; }
+        this.router.navigate([SUBNETS_PATH, subnetRange]);
+    }
 
-//   private updateGraph(): void {
-//     if (this.structure) {
-//       [this.nodes, this.edges] = this.structureToGraph(this.structure);
-//       this.center$.next(undefined);
-//     }
-//   }
+    navigateToOrgUnitDetail(orgName: string): void {
+        if (!orgName || orgName == "---") { return; }
+        this.router.navigate([ORGANISATION_PATH, orgName]);
+    }
 
-//   /**
-//    * Convert mission structure JSON to nodes and edges
-//    * @param structure
-//    */
-//   structureToGraph(structureJSON: MissionStructure): [Node[], Edge[]] {
-//     if (structureJSON) {
-//       const nodes: Node[] = [],
-//         edges: Edge[] = [];
-//       // const structureJSON: Structure = JSON.parse(str);
-
-//       /**
-//        * Nodes
-//        */
-//       let newNode: Node;
-
-//       // Missions
-//       structureJSON.nodes.missions.forEach((n) => {
-//         newNode = {
-//           id: n.id.toString(),
-//           label: n.name,
-//           data: { 
-//             type: 'mission',
-//             customColor: '#0f3057',
-//             textColor: '#fff',
-//             criticality: n.criticality,
-//             description: n.description
-//           },
-//         };
-//         nodes.push(newNode);
-//       });
-
-//       /**
-//        * Edges
-//        */
-//       let newEdge: Edge;
-
-//       structureJSON.relationships.one_way.forEach((r) => {
-//         newEdge = { source: r.from.toString(), target: r.to.toString(), label: '' };
-//         edges.push(newEdge);
-//       });
-
-//       for (let i = 0; i < 4; i++) {
-//         structureJSON.relationships.one_way.forEach((r) => {
-//           if (this.disabledNodes.includes(r.to)) {
-//             const index = nodes.findIndex((node) => node.id === r.from.toString());
-//             if (nodes[index].label !== 'OR') {
-//               nodes[index].data.disabled = true;
-//               this.disabledNodes.push(r.from);
-//             } else {
-//               let disableOr = true;
-//               structureJSON.relationships.one_way
-//                 .filter((rel) => rel.from === r.from)
-//                 .forEach((rel) => {
-//                   if (!this.disabledNodes.includes(rel.to)) {
-//                     disableOr = false;
-//                   }
-//                 });
-//               if (disableOr) {
-//                 nodes[index].data.disabled = true;
-//                 this.disabledNodes.push(r.from);
-//               }
-//             }
-//           }
-//         });
-//       }
-
-//       return [nodes, edges];
-//     } else {
-//       return [[], []];
-//     }
-//   }
-
-  selectNode(node: Node) {
-    this.selectedNode.set(node);
-  }
+    selectNode(node: Node) {
+        this.selectedNode.set(node);
+    }
 }
 

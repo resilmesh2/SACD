@@ -8,6 +8,7 @@ export const ASSETS_PATH = 'assets';
 export const MISSION_PATH = 'missions';
 export const NETWORK_NODES_PATH = 'network-nodes';
 export const VULNERABILITY_PATH = 'vulnerability';
+export const SUBNETS_GRAPH_PATH = 'subnets-graph';
 
 // CRUD
 export const SUBNETS_PATH = 'subnets';

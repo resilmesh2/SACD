@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANISATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from './paths';
+import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANISATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
@@ -34,7 +34,7 @@ export const ROOT_ROUTES: Routes = [
     data: { breadcrumb: 'Subnet Details' },
   },
   {
-    path: SUBNETS_PATH + '-graph',
+    path: SUBNETS_GRAPH_PATH,
     component: SubnetGraphPageComponent,
     data: { breadcrumb: 'Subnets Graph' },
   },

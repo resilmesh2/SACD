@@ -50,6 +50,11 @@
     text-transform: uppercase;
 }
 
+.badge.attribute {
+    cursor: pointer;
+    text-transform: none;
+}
+
 .node-detail h2 {
     margin-bottom: 0;
     word-wrap: break-word;

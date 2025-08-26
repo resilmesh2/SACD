@@ -5,7 +5,7 @@ export enum Orientation {
   LEFT_TO_RIGHT = 'LR',
   RIGHT_TO_LEFT = 'RL',
   TOP_TO_BOTTOM = 'TB',
-  BOTTOM_TO_TOM = 'BT',
+  BOTTOM_TO_TOP = 'BT',
 }
 export enum Alignment {
   CENTER = 'C',
@@ -45,6 +45,12 @@ export class CustomLayout implements Layout {
   dagreGraph: any;
   dagreNodes: any;
   dagreEdges: any;
+
+  constructor(orientation?: Orientation) {
+    if (orientation) {
+      this.settings.orientation = orientation;
+    }
+  }
 
   run(graph: Graph): Graph {
     this.createDagreGraph(graph);
