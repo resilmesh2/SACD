@@ -9,7 +9,8 @@ import {
   SUBNETS_PATH,
   ORGANIZATION_PATH,
   SUBNETS_GRAPH_PATH,
-  ORGANIZATION_GRAPH_PATH
+  ORGANIZATION_GRAPH_PATH,
+  NSE_PATH
 } from './paths';
 
 export const agendaContainers = [
@@ -28,4 +29,7 @@ export const agendaContainers = [
     new Agenda('Subnets', SUBNETS_PATH),
     new Agenda('Organization Units', ORGANIZATION_PATH),
   ]),
+  new AgendaContainer('External', [
+    new Agenda('NSE', NSE_PATH),
+  ])
 ];

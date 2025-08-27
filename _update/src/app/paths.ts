@@ -19,3 +19,6 @@ export const ORGANIZATION_PATH = 'organization-units';
 export const GROUP_PATH = 'group';
 export const USER_PATH = 'user';
 export const NOTIFICATION_PATH = 'notifications';
+
+// external
+export const NSE_PATH = 'nse';
