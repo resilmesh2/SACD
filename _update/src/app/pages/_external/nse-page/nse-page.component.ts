@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { Component } from '@angular/core';
+import { IframePortalComponent } from '../iframe-portal.component';
 
 @Component({
   selector: 'network-risk-page',
   templateUrl: './nse-page.component.html',
-  styleUrls: ['./nse-page.component.scss'],
+  styleUrls: [],
   imports: [
-    MatIconModule
+    IframePortalComponent
   ],
 })
 
-export class NetworkRiskComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
+export class NetworkRiskComponent {
+    srcUrl = "http://localhost:4201";
 }
