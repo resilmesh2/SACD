@@ -21,8 +21,8 @@ export const agendaContainers = [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),
     new Agenda('Subnets Graph', SUBNETS_GRAPH_PATH),
     new Agenda('Organizations', ORGANIZATION_GRAPH_PATH),
+    new Agenda('Missions', MISSION_PATH),
     new Agenda('Vulnerabilities', VULNERABILITY_PATH),
-    new Agenda('Missions', MISSION_PATH),    
   ]),
   new AgendaContainer('CRUD', [
     new Agenda('Subnets', SUBNETS_PATH),

@@ -1,30 +1,14 @@
 <h1>Subnets Graph</h1>
-<!-- <div class="top-bar">
-    @if (missionNames && missionNames.length > 0) {
-      <ng-container>
-        <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Mission</mat-label>
-          <mat-select [(ngModel)]="selectedMissionName">
-            <mat-option></mat-option>
-            @for (mission of missionNames; track $index) {
-              <mat-option [value]="mission">
-                {{ mission }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
-    }
-    <sentinel-button-with-icon
-      color="primary" 
-      icon="search"
-      tooltip=""
-      [disabled]="!selectedMissionName"
-      (click)="getGraphData()"
-    >
-      Search
-    </sentinel-button-with-icon>
-</div> -->
+<div class="top-bar">
+    <mat-button-toggle-group
+        [(ngModel)]="ipVersion"
+        aria-label="IP version selection"
+        (change)="onIpVersionChange()"
+    >          
+        <mat-button-toggle value="v4" checked>IPv4</mat-button-toggle>
+        <mat-button-toggle value="v6">IPv6</mat-button-toggle>
+    </mat-button-toggle-group>
+</div>
 
 <sentinel-card class="graph-card" [controls]="controls">
   <div class="content-container">

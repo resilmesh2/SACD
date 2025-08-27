@@ -21,6 +21,7 @@ import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'subnet-graph-page',
@@ -38,7 +39,8 @@ import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
     MatProgressSpinnerModule,
     NgxGraphModule,
     SentinelCardComponent,
-    MatTooltipModule
+    MatTooltipModule,
+    MatButtonToggleModule
   ]
 })
 
@@ -56,6 +58,8 @@ export class SubnetGraphPageComponent implements OnInit {
 
     nodes: WritableSignal<Node[]> = signal([]);
     edges: WritableSignal<Edge[]> = signal([]);
+
+    ipVersion = signal<'v4' | 'v6'>('v4');
 
     private router = inject(Router);
 
@@ -102,7 +106,7 @@ export class SubnetGraphPageComponent implements OnInit {
     }
 
     isPartOfConstituency() {
-        // TODO: TO BE IMPLEMENTED
+        // TODO: TO BE IMPLEMENTED (IN ISIM)
         return Math.random() < 0.5;
     }
 
@@ -138,6 +142,10 @@ export class SubnetGraphPageComponent implements OnInit {
         }));
 
         console.log("Nodes and edges set", this.nodes(), this.edges());
+    }
+
+    onIpVersionChange() {
+        // TODO: when IP versions are implemented/added in the schema
     }
 
     private getSubnets(): Observable<SubnetExtendedData[]> {
