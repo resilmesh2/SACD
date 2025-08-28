@@ -70,7 +70,9 @@ export class OrgGraphPageComponent implements OnInit {
             next: (orgUnits) => {
                 this.orgUnits.set(orgUnits);
                 console.log(this.dataService.converToGraph(this.orgUnits()));
-                this.orgUnits().sort((a, b) => (a.name > b.name) ? -1 : ((b.name > a.name) ? 1 : 0));
+                this.orgUnits().sort((a, b) => {
+                    return a.name.localeCompare(b.name)
+                });
 
                 this.setEdgesAndNodes();
                 this.graphLoading = false;

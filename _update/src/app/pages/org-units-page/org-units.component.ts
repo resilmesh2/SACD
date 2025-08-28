@@ -127,7 +127,7 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
           this.dataSource._updateChangeSubscription(); // Refresh the data source
           this.openSnackBar(`Org Unit ${orgUnit.name} updated successfully.`, 'Close');
         } else {
-          this.dataSource.data = [...this.dataSource.data, orgUnit]; // Add new org unit if it doesn't exist
+          this.dataSource.data = [orgUnit, ...this.dataSource.data]; // Add new org unit if it doesn't exist
           this.openSnackBar(`Org Unit ${orgUnit.name} added successfully.`, 'Close');
         }
     });

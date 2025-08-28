@@ -145,7 +145,7 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
           this.dataSource._updateChangeSubscription(); // Refresh the data source
           this.openSnackBar(`Subnet ${subnet.range} updated successfully.`, 'Close');
         } else {
-          this.dataSource.data = [...this.dataSource.data, subnet]; // Add new subnet if it doesn't exist
+          this.dataSource.data = [subnet, ...this.dataSource.data]; // Add new subnet if it doesn't exist
           this.openSnackBar(`Subnet ${subnet.range} [${subnet.note}] added successfully.`, 'Close');
         }
     });

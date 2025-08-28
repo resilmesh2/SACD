@@ -74,9 +74,11 @@ export class SubnetGraphPageComponent implements OnInit {
         this.getSubnets().subscribe({
             next: (subnets) => {
                 this.subnets.set(subnets);
-                console.log(this.dataService.converToGraph(this.subnets()));
-                this.subnets().sort((a, b) => (a.range > b.range) ? -1 : ((b.range > a.range) ? 1 : 0));
-                //this.subnets.set(this.subnets().filter((subnet) => subnet.parentSubnet !== undefined && subnet.parentSubnet !== null && subnet.parentSubnet !== ''));
+                this.subnets().sort((a, b) => {
+                    let cidrA = ~~a.range.split('/')[1];
+                    let cidrB = ~~b.range.split('/')[1];
+                    return cidrA - cidrB || a.range.localeCompare(b.range);
+                });
 
                 this.setEdgesAndNodes();
                 this.graphLoading = false;
