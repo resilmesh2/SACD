@@ -1,5 +1,6 @@
-import { Component, input, InputSignal, OnInit } from "@angular/core";
+import { Component, input, InputSignal, OnInit, signal, WritableSignal } from "@angular/core";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'iframe-portal',
@@ -9,14 +10,18 @@ import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 })
 
 export class IframePortalComponent implements OnInit {
-    src: InputSignal<string> = input('');
+    src: WritableSignal<string> = signal('');
     safeURL: SafeResourceUrl | null = null;
 
-    constructor(private sanitizer: DomSanitizer) {
+    constructor(private sanitizer: DomSanitizer, private route: ActivatedRoute) {
     }
 
     ngOnInit(): void {
       console.log(this.src());
+      this.route.data.subscribe(data => {
+        this.src.set(data['iframeSrc']);
+      }).unsubscribe();
+
       this.safeURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.src());
     }
 }

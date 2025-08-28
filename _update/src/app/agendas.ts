@@ -10,8 +10,8 @@ import {
   ORGANIZATION_PATH,
   SUBNETS_GRAPH_PATH,
   ORGANIZATION_GRAPH_PATH,
-  NSE_PATH
 } from './paths';
+import { EXTERNAL_AGENDAS } from './external';
 
 export const agendaContainers = [
   new AgendaContainer('Lists', [
@@ -30,6 +30,6 @@ export const agendaContainers = [
     new Agenda('Organization Units', ORGANIZATION_PATH),
   ]),
   new AgendaContainer('External', [
-    new Agenda('NSE', NSE_PATH),
+    ...EXTERNAL_AGENDAS
   ])
 ];
