@@ -131,19 +131,38 @@
               <ul class="node-attributes">
                 <li>
                   <strong>Parent org unit:</strong>
-                  <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.parentOrgUnit)">
-                     {{selectedNode()?.data?.parentOrgUnit != "" ?  selectedNode()?.data.parentOrgUnit : "---"}}
-                  </a>
-                </li>
-                <li><strong>Contacts:</strong> {{selectedNode()?.data.contacts.length > 0 ? selectedNode()?.data.contacts.join(', ') : '---'}}</li>
-                <div class="subnets-attribute">
-                  <strong>Subnets: </strong>
-                  @for (subnet of selectedNode()?.data.subnets || []; track subnet; let index = $index) {
-                    <a (click)="navigateToSubnetDetail(subnet)" class="badge attribute">
-                      {{ subnet }}
+                  @if (selectedNode()?.data.parentOrgUnit && selectedNode()?.data.parentOrgUnit !== '' && selectedNode()?.data.parentOrgUnit !== '---') {
+                    <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.parentOrgUnit)">
+                      {{selectedNode()?.data?.parentOrgUnit != "" ?  selectedNode()?.data.parentOrgUnit : "---"}}
                     </a>
+                  } @else {
+                    <span> --- </span>
                   }
-                </div>
+                </li>
+                <li>
+                  <strong>Contacts:</strong>
+                    @if(selectedNode()?.data.contacts && selectedNode()?.data.contacts.length > 0) {
+                      @for (contact of selectedNode()?.data.contacts || []; track contact; let index = $index) {
+                        <a href="mailto:{{ contact }}" class="badge attribute contact-link">
+                          {{ contact }}
+                        </a>
+                      }
+                    } @else {
+                      <span> --- </span>
+                    }
+                </li>
+                <li class="subnets-attribute">
+                  <strong>Subnets: </strong>
+                  @if(selectedNode()?.data.subnets && selectedNode()?.data.subnets.length > 0) {
+                    @for (subnet of selectedNode()?.data.subnets || []; track subnet; let index = $index) {
+                      <a (click)="navigateToSubnetDetail(subnet)" class="badge attribute">
+                        {{ subnet }}
+                      </a>
+                    }
+                  } @else {
+                    <span> --- </span>
+                  }
+                </li>
               </ul>
             } @else {
               <p class="vertical-center">No node selected.</p>

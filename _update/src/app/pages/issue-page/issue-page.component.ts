@@ -264,6 +264,16 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // When user clicks on one of the severity tags
+  useSeverityFilter(severity: string): void {
+    this.selectedSeverity.set(severity);
+    this.filterDictionary.set('severity', severity);
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));

@@ -1,8 +1,8 @@
-// Define all your externals here, routes and agendas get generated from EXTERNAL
-
 import { Agenda } from "@sentinel/layout";
 import { IframePortalComponent } from "./pages/external/iframe-portal.component";
 
+
+// Define all your externals here, routes and agendas get generated from EXTERNAL
 export const EXTERNAL = [
   {
     name: 'NSE',

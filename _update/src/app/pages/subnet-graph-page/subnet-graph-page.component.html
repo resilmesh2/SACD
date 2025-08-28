@@ -116,6 +116,16 @@
               <p class="attributes-title">Attributes:</p>
               <ul class="node-attributes">
                 <li>
+                  <strong>Name:</strong>
+                  @if (selectedNode()?.data?.note && selectedNode()?.data?.note != "" && selectedNode()?.data?.note != null && selectedNode()?.data?.note != "---") {
+                    <span class="badge attribute">
+                      {{ selectedNode()?.data.note }}
+                    </span>
+                  } @else {
+                    <span class="badge attribute">---</span>
+                  }
+                </li>
+                <li>
                   <strong>Parent subnet:</strong>
                   <a class="badge attribute" (click)="navigateToSubnetDetail(selectedNode()?.data.parentSubnet)">
                      {{selectedNode()?.data?.parentSubnet != "" ?  selectedNode()?.data.parentSubnet : "---"}}
@@ -127,7 +137,18 @@
                      {{selectedNode()?.data?.organizationUnit ?? "---"}}
                   </a>
                 </li>
-                <li><strong>Contacts:</strong> {{selectedNode()?.data.contacts}}</li>
+                <li>
+                  <strong>Contacts:</strong>
+                    @if(selectedNode()?.data.contacts && selectedNode()?.data.contacts.length > 0) {
+                      @for (contact of selectedNode()?.data.contacts || []; track contact; let index = $index) {
+                        <a href="mailto:{{ contact }}" class="badge attribute contact-link">
+                          {{ contact }}
+                        </a>
+                      }
+                    } @else {
+                      <span class="badge attribute"> --- </span>
+                    }
+                </li>
               </ul>
             } @else {
               <p class="vertical-center">No node selected.</p>
