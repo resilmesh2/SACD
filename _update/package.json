@@ -33,7 +33,7 @@
     "@apollo/client": "^3.13.9",
     "@sentinel/common": "^20.0.2",
     "@sentinel/components": "^20.0.2",
-    "@sentinel/layout": "^20.0.2",
+    "@sentinel/layout": "^20.1.1",
     "@swimlane/ngx-charts": "^23.0.0",
     "@swimlane/ngx-graph": "^11.0.0-alpha.0",
     "apollo-angular": "^11.0.0",

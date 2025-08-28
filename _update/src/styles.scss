@@ -122,6 +122,11 @@ $resilmesh-theme: mat.m2-define-light-theme((
   ));
 
   --mat-divider-color : #777680;
+
+  // Width of the custom nav
+  mat-drawer.mat-drawer {
+      width: 12em !important;
+  }
 }
 
 body {

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
 import { AgendaContainer, SentinelUser } from "@sentinel/layout";
 import { SentinelBreadcrumb, SentinelBreadcrumbBuilder } from "@sentinel/layout/breadcrumbs";
-import { SentinelLayout1Component } from "@sentinel/layout/layout1";
+import { CustomNavDirective, SentinelLayout1Component } from "@sentinel/layout/layout1";
 import { SentinelNotificationService, SentinelNotificationTypeEnum } from "@sentinel/layout/notification";
 import { filter, map, Observable } from "rxjs";
 
@@ -12,6 +12,7 @@ import { filter, map, Observable } from "rxjs";
 import { MatIconModule } from '@angular/material/icon';
 import { agendaContainers } from "./agendas";
 import { MatIconButton } from "@angular/material/button";
+import { CustomNavComponent } from "./components/custom-nav/custom-nav.component";
 
 export const user = {
   picture:
@@ -30,38 +31,8 @@ export const user = {
     SentinelLayout1Component,
     MatIconButton,
     MatIconModule,
-    // MatTableModule,
-    // MatButtonModule,
-    // MatPaginatorModule,
-    // MatSortModule,
-    // MatIconModule,
-    // MatProgressSpinnerModule,
-    // FormsModule,
-    // CommonModule, 
-    // SubnetRoutingModule,
-    // BrowserModule,
-    // MatButtonModule,
-    // MatProgressSpinnerModule,
-    // MatTabsModule,
-    // MatSnackBarModule,
-    // MatPaginatorModule,
-    // MatCardModule,
-    // MatIconModule,
-    // MatMenuModule,
-    // MatFormFieldModule,
-    // MatTableModule,
-    // MatSortModule,
-    // MatInputModule,
-    // MatCheckboxModule,
-    // FormsModule,
-    // ReactiveFormsModule,
-    // MatTooltipModule,
-    // MatSelectModule,
-    // MatDatepickerModule,
-    // MatNativeDateModule,
-    // GraphQLModule,
-    // MatDialogModule,
-    // MatChipsModule,
+    CustomNavDirective,
+    CustomNavComponent
   ],
 })
 export class AppComponent implements OnInit {

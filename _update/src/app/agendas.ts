@@ -17,19 +17,19 @@ export const agendaContainers = [
   new AgendaContainer('Lists', [
     new Agenda('Assets', ASSETS_PATH),
     new Agenda('Vulnerabilities', ISSUE_PATH)
-  ]),
+  ], 'list'),
   new AgendaContainer('Visualizations', [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),
     new Agenda('Subnets Graph', SUBNETS_GRAPH_PATH),
     new Agenda('Organizations', ORGANIZATION_GRAPH_PATH),
     new Agenda('Missions', MISSION_PATH),
     new Agenda('Vulnerabilities', VULNERABILITY_PATH),
-  ]),
+  ], 'analytics'),
   new AgendaContainer('CRUD', [
     new Agenda('Subnets', SUBNETS_PATH),
-    new Agenda('Organization Units', ORGANIZATION_PATH),
-  ]),
+    new Agenda('Organizations', ORGANIZATION_PATH),
+  ], 'edit_note'),
   new AgendaContainer('External', [
     ...EXTERNAL_AGENDAS
-  ])
+  ], 'api')
 ];
