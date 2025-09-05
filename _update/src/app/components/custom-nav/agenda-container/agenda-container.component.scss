@@ -14,7 +14,7 @@
 
 .agenda-title {
     padding: 0em;
-    margin: 0em;
+    margin-left: -0.5em;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -22,6 +22,12 @@
     font-weight: bold;
     border-radius: 4px;
     width: 100%;
+    padding: 0.25em 0.5em;
+}
+
+.agenda-title:hover {
+    background-color: #29314a;
+    cursor: pointer;
 }
 
 .toggle-agenda {
@@ -52,6 +58,7 @@
 ul {
     padding-block: 0.25rem;
     padding-inline: 0.75rem;
+    padding-bottom: 0em;
     border-left-style: solid;
     border-left-width: 1px;
     border-color: gray;

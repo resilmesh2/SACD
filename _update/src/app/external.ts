@@ -12,7 +12,7 @@ export const EXTERNAL = [
   // {
   //   name: 'Recommender',
   //   path: 'recommender',
-  //   url: 'http://localhost:3000'
+  //   url: 'http://localhost:5173'
   // }
 ]
 

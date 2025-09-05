@@ -12,7 +12,6 @@ import { Agenda, AgendaContainer } from "@sentinel/layout";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
-    SentinelButtonWithIconComponent
   ]
 })
 
@@ -24,6 +23,8 @@ export class AgendaContainerComponent {
     readonly agendaContainer: InputSignal<AgendaContainer | undefined> = input();
     readonly agendaSelected = output<Agenda>();
     agendas = computed(() => this.agendaContainer()?.children.map(agenda => agenda as Agenda) || []);
+
+    isCollapsed = signal<boolean>(false);
 
     /**
      * Emits event when agenda is selected
@@ -38,5 +39,9 @@ export class AgendaContainerComponent {
     }
 
     constructor() {
+    }
+
+    toggleCollapse(): void {
+        this.isCollapsed.set(!this.isCollapsed());
     }
 }

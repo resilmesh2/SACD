@@ -149,3 +149,7 @@ body {
 .sentinel-logo {
   width: 75%;
 }
+
+mat-drawer .mat-drawer-inner-container {
+    overflow-x: hidden;
+}

@@ -1,14 +1,16 @@
 <div class="agenda">
-  <span class="agenda-title">
+  <span class="agenda-title" (click)="toggleCollapse()">
     <mat-icon>{{ agendaContainer()?.icon ?? 'error' }}</mat-icon>
     {{ agendaContainer()?.label }}
-    <mat-icon class="toggle-agenda">expand_more</mat-icon>
+    <mat-icon class="toggle-agenda">{{ isCollapsed() ? 'chevron_right' : 'expand_more' }}</mat-icon>
   </span>
-  <ul class="agenda-list">
-    @for (agenda of agendas(); track agenda) {
-      <li class="agenda-item mat-button" (click)="navigateToAgenda(agenda.path)">
-        {{ agenda?.label }}
-      </li>
-    }
-  </ul>
+  @if (!isCollapsed()) {
+    <ul class="agenda-list">
+      @for (agenda of agendas(); track agenda) {
+        <li class="agenda-item" (click)="navigateToAgenda(agenda.path)">
+          {{ agenda?.label }}
+        </li>
+      }
+    </ul>
+  }
 </div>
