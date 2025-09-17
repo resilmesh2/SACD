@@ -17,6 +17,7 @@ import { VulnerabilityData } from '../../vulnerability-page/vulnerability.compon
 import { SubnetExtendedData } from '../../../models/subnet.model';
 import { OrgUnitData } from '../models/org-unit.model';
 import { ChildIP } from '../models/subnet.model';
+import { CSANode } from '../pages/csa-page/csa-page.component';
 
 @Injectable({
   providedIn: 'root',
@@ -1398,6 +1399,46 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
         return throwError(() => new Error('Failed to update org unit'));
       }
     });
+  }
+
+  // TODO - Remove mock data when backend is ready
+  public getCSANodes(): Observable<CSANode[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          nodeObjects {
+            topology_degree
+            topology_betweenness
+            degree_centrality
+            pagerank_centrality
+            ips {
+              address
+            }
+          }
+        }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          console.log('CSA Nodes loaded:', response.data.nodeObjects);
+          return response.data.nodeObjects.map((node: any) => {
+            const randomDegree = Math.random() * 10;
+            const randomBetweenness = Math.random() * 10;
+            const randomMissionCriticality = Math.floor(Math.random() * 10);
+            const finalCriticality = ((9 * randomDegree * randomBetweenness / 100) + 1) * randomMissionCriticality;
+
+            return {
+                address: node.ips.map((ip: any) => ip.address),
+                topology_degree_norm: node.topology_degree_norm ?? randomDegree,
+                topology_betweenness_norm: node.topology_betweenness_norm ?? randomBetweenness,
+                mission_criticality: node.mission_criticality ?? randomMissionCriticality,
+                final_criticality: finalCriticality,
+            }
+          }
+          );
+        })
+      );
   }
 }
 

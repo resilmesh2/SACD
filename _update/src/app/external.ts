@@ -9,6 +9,11 @@ export const EXTERNAL = [
     path: 'nse',
     url: 'http://localhost:4201'
   },
+  {
+    name: 'GraphQL',
+    path: 'graphql',
+    url: 'http://localhost:4001/graphql'
+  }
   // {
   //   name: 'Recommender',
   //   path: 'recommender',

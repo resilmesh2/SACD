@@ -10,13 +10,15 @@ import {
   ORGANIZATION_PATH,
   SUBNETS_GRAPH_PATH,
   ORGANIZATION_GRAPH_PATH,
+  CSA_PATH,
 } from './paths';
 import { EXTERNAL_AGENDAS } from './external';
 
 export const agendaContainers = [
   new AgendaContainer('Lists', [
     new Agenda('Assets', ASSETS_PATH),
-    new Agenda('Vulnerabilities', ISSUE_PATH)
+    new Agenda('Vulnerabilities', ISSUE_PATH),
+    new Agenda('CSA', CSA_PATH),
   ], 'list'),
   new AgendaContainer('Visualizations', [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),

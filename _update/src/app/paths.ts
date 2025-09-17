@@ -3,6 +3,7 @@ export const HOME_PATH = 'home';
 // lists
 export const ISSUE_PATH = 'issues';
 export const ASSETS_PATH = 'assets';
+export const CSA_PATH = 'csa';
 
 // visualizations
 export const MISSION_PATH = 'missions';
