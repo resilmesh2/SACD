@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, signal, Signal } from "@angular/core";
 import { MatTooltip } from "@angular/material/tooltip";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Agenda, AgendaContainer } from "@sentinel/layout";
 import { SentinelLayoutI18nService, SentinelNavI18n } from "@sentinel/layout/i18n";
 import { MatDivider } from '@angular/material/divider';
@@ -40,7 +40,6 @@ export class CustomNavComponent {
         this.agendaSelected.emit(agenda);
     }
 
-
     constructor() {
         const i18nFallback: SentinelNavI18n = {
             versionTooltip: 'Version of the application',
@@ -48,6 +47,14 @@ export class CustomNavComponent {
         this.i18n = this.i18nService?.stateSig()
             ? computed(() => this.i18nService?.stateSig().nav ?? i18nFallback)
             : signal(i18nFallback);
-
     }
+
+    router = inject(Router);
+
+    navigateToHome(): void {
+      this.router.navigateByUrl('/').then(() => {
+        window.location.reload();
+      }); 
+    }
+
 }

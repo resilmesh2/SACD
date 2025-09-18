@@ -3,7 +3,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Issue } from '../../models/issue.model';
 import { CVE } from '../../models/vulnerability.model';
 import { DataService } from '../../services/data.service';
@@ -113,7 +113,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   controls: SentinelControlItem[] = [];
   
   constructor(
-    private data: DataService, 
+    private data: DataService,
+    private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
   ) {
     this.dataSource = new MatTableDataSource<Issue>([]);
@@ -126,6 +127,15 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
         this.clearDateFilter();
       }
     })
+
+    this.route.queryParams.subscribe(params => {
+      if (params['severity']) {
+        if (params['severity'] !== 'All') {
+          this.selectedSeverity.set(params['severity'].toLowerCase());
+          this.filterDictionary.set('severity', params['severity'].toLowerCase());
+        }
+      }
+    });
   }
 
   ngOnInit(): void {

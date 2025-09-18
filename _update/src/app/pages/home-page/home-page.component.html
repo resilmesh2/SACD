@@ -1,2 +1,56 @@
 <h1>Welcome to the Resilmesh dashboard!</h1>
-<h1>Select a panel from the menu on the left to continue...</h1>
+<!-- <h1>Select a panel from the menu on the left to continue...</h1> -->
+<div class="home-page-container">
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <span class="card-header">
+                <h3>{{ipCount() ?? '?'}} IPs</h3>
+                <mat-icon class="dashboard-icon">dns</mat-icon>
+            </span>
+            <p>View your assets, manage tags, visualise connections.</p>
+            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToIPs()">
+                Go to IPs
+            </sentinel-button-with-icon>
+        </div>
+        <div class="dashboard-card">
+            <span class="card-header">
+                <h3>{{subnetCount() ?? '?'}} subnets</h3>
+                <mat-icon class="dashboard-icon">lan</mat-icon>
+            </span>
+            <p>View and manage your network subnets.</p>
+            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToSubnets()">
+                Go to Subnets
+            </sentinel-button-with-icon>
+        </div>
+        <div class="dashboard-card">
+            <span class="card-header">
+                <h3>{{orgUnitCount() ?? '?'}} organization units</h3>
+                <mat-icon class="dashboard-icon">people_alt</mat-icon>
+            </span>
+            <p>View and manage your organization units.</p>
+            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToOrgUnits()">
+                Go to Organization Units
+            </sentinel-button-with-icon>
+        </div>
+        <!-- <div class="dashboard-card"></div> -->
+    </div>
+    <div class="dashboard-grid-lower">
+        <div class="dashboard-card">
+            <span class="card-header">
+                <h3>Vulnerabilities by Severity</h3>
+                <mat-icon class="dashboard-icon">warning</mat-icon>
+            </span>
+            <div class="pie-chart-container">
+                <ngx-charts-advanced-pie-chart
+                    #pieChart
+                    [results]="vulnerabilityPieChartData()"
+                    [animations]="false"
+                    [scheme]="'picnic'"
+                    [customColors]="customColors"
+                    [label]="'Vulnerabilities'"
+                    (select)="onSelectSeverity($event)"
+                ></ngx-charts-advanced-pie-chart>
+            </div>
+        </div>
+    </div>
+</div>

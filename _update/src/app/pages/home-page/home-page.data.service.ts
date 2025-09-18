@@ -1,0 +1,109 @@
+import { Injectable } from "@angular/core";
+import { Apollo, gql } from "apollo-angular";
+import { map, Observable } from "rxjs";
+
+@Injectable({
+  providedIn: 'root',
+})
+export class HomePageDataService {
+    constructor(private apollo: Apollo) {}
+
+    public getSubnetsMinimal(): Observable<{note: string, range: string}[]> {
+        return this.apollo
+        .query<any>({
+            query: gql`
+            {
+                subnets {
+                    note,
+                    range,
+                }
+            }
+        `,
+        })
+        .pipe(
+            map((response) => {
+            return response.data.subnets;
+            })
+        );
+    }
+
+    public getOrgUnitsMinimal(): Observable<{name: string}[]> {
+        return this.apollo
+        .query<any>({
+            query: gql`
+            {
+                organizationUnits {
+                    name
+                },
+            }
+        `,
+        })
+        .pipe(
+            map((response) => {
+            return response.data.organizationUnits;
+            })
+        );
+    }
+
+    public getIPCount(): Observable<number> {
+        return this.apollo
+        .query<any>({
+            query: gql`
+            {
+                ips {
+                    _id
+                },
+            }
+        `,
+        })
+        .pipe(
+            map((response) => {
+                return response.data.ips.length;
+            })
+        );
+    }
+
+    public getVulnerabilityCounts(): Observable<{name: string, value: number}[]> {
+        return this.apollo
+        .query<any>({
+            query: gql`
+            {
+                cves {
+                    cve_id
+                    cvss_v2 {
+                        base_severity
+                    }
+                    cvss_v30 {
+                base_severity
+                }
+                cvss_v31 {
+                    base_severity
+                }
+                cvss_v40 {
+                    base_severity
+                }
+            }
+      } `,
+        })
+        .pipe(
+            map((response) => {
+                const severityCountMap: { [key: string]: number } = {};
+                const cves = response.data.cves;
+                
+                cves.forEach((cve: any) => {
+                    const severity = cve.cvss_v31?.base_severity || 'unknown';
+                    if (severityCountMap[severity]) {
+                        severityCountMap[severity]++;
+                    } else {
+                        severityCountMap[severity] = 1;
+                    }
+                });
+                
+                return Object.entries(severityCountMap).map(([severity, count]) => ({
+                    name: severity,
+                    value: count
+                }));
+            })
+        );
+    }
+}

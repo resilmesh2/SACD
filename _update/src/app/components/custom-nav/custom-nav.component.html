@@ -1,7 +1,7 @@
 <div class="nav-container">
   <div class="sentinel-logo-wrapper">
     @if (logoSrc()) {
-      <a routerLink="/">
+      <a (click)="navigateToHome()" class="logo-link">
         <img class="sentinel-logo" alt="logo" data-cy="sentinel-nav-logo" [src]="logoSrc()" />
       </a>
     }

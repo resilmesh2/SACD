@@ -15,6 +15,11 @@
   align-items: center;
 }
 
+.logo-link {
+  cursor: pointer;
+  text-decoration: none;
+}
+
 .nav-content {
   display: flex;
   flex-direction: column;
