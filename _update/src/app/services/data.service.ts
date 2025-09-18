@@ -1401,17 +1401,16 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
     });
   }
 
-  // TODO - Remove mock data when backend is ready
   public getCSANodes(): Observable<CSANode[]> {
     return this.apollo
       .query<any>({
         query: gql`
         {
           nodeObjects {
-            topology_degree
-            topology_betweenness
-            degree_centrality
-            pagerank_centrality
+            topology_degree_norm
+            topology_betweenness_norm
+            mission_criticality
+            final_criticality
             ips {
               address
             }
@@ -1421,19 +1420,13 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
       })
       .pipe(
         map((response) => {
-          console.log('CSA Nodes loaded:', response.data.nodeObjects);
           return response.data.nodeObjects.map((node: any) => {
-            const randomDegree = Math.random() * 10;
-            const randomBetweenness = Math.random() * 10;
-            const randomMissionCriticality = Math.floor(Math.random() * 10);
-            const finalCriticality = ((9 * randomDegree * randomBetweenness / 100) + 1) * randomMissionCriticality;
-
             return {
-                address: node.ips.map((ip: any) => ip.address),
-                topology_degree_norm: node.topology_degree_norm ?? randomDegree,
-                topology_betweenness_norm: node.topology_betweenness_norm ?? randomBetweenness,
-                mission_criticality: node.mission_criticality ?? randomMissionCriticality,
-                final_criticality: finalCriticality,
+                ips: node.ips.map((ip: any) => ip.address),
+                topology_degree_norm: node.topology_degree_norm ?? 0,
+                topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
+                mission_criticality: node.mission_criticality ?? 0,
+                final_criticality: node.final_criticality ?? 0,
             }
           }
           );

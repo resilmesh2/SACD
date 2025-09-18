@@ -38,19 +38,13 @@ export interface Service {
 }
 
 export interface CSANode {
-  address: string;
+  ips: string[];
   topology_degree?: number;
   topology_degree_norm: number;
   topology_betweenness?: number;
   topology_betweenness_norm: number;
   final_criticality: number;
   mission_criticality: number;
-}
-
-interface Filter {
-  name: string;
-  options: string[];
-  defaultValue: string;
 }
 
 @Component({
@@ -75,13 +69,14 @@ interface Filter {
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
-  ]
+  ],
+  standalone: true,
 })
 
 export class CSAPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<CSANode>();
 
-  displayedColumns: string[] = ['address', 'topology_degree_norm', 'topology_betweenness_norm', 'mission_criticality', 'final_criticality'];
+  displayedColumns: string[] = ['ips', 'topology_degree_norm', 'topology_betweenness_norm', 'mission_criticality', 'final_criticality'];
 
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -128,39 +123,27 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   private router = inject(Router);
 
-  getColor = ((value: number, isFinalCriticality: boolean = false) => {
+  COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
+  getCriticalityColor = ((value: number, isFinalCriticality: boolean = false) => {
     if (value === null || value === undefined) {
-      return '#cacaca';
-    } else if (value >= 9 * (isFinalCriticality ? 10 : 1)) {
-      return '#8E5FFD';
-    } else if (value >= 8 * (isFinalCriticality ? 10 : 1)) {
-      return '#ed625e';
-    } else if (value >= 6 * (isFinalCriticality ? 10 : 1)) {
-      return '#ed913b';
-    } else if (value > 4 * (isFinalCriticality ? 10 : 1)) {
-      return '#f6d55c';
+      return {bg: '#cacaca', color: '#000000'};
+    } else if (value >= this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)) {
+      return {bg: '#1C1D21', color: '#FFFFFF'};
+    } else if (value >= this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)) {
+      return {bg: '#9F85FF', color: '#000000'};
+    } else if (value >= this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)) {
+      return {bg: '#ed625e', color: '#000000'};
+    } else if (value >= this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)) {
+      return {bg: '#ed913b', color: '#000000'};
+    } else if (value > this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)) {
+      return {bg: '#f6d55c', color: '#000000'};
     } else {
-      return '#86B46A';
+      return {bg: '#86B46A', color: '#000000'};
     }
   });
 
   ngOnInit(): void {
     this.dataLoading = true;
-
-    // this.nodes.set([
-    //   { address: '10.0.0.1', topology_degree_norm: 1.63433, topology_betweenness_norm: 1.0, mission_criticality: 6, final_criticality: 1.787 },
-    // ]);
-    // this.dataSource.data = this.nodes();
-
-    // if (this.paginator && this.sort) {
-    //   this.dataSource.paginator = this.paginator;
-    //   this.dataSource.sort = this.sort;
-    // }
-    
-    // this.changeDetector.detectChanges();
-
-    // this.dataLoading = false;
-    // this.dataLoaded = true;
 
     this.data.getCSANodes().subscribe({
       next: (nodes) => {
@@ -207,7 +190,7 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
       for(let [key,value] of map){
         // Name filter (CVE ID)
         if (key === 'name') {
-          isMatch = (value === "All") || (value == '') || record.address.toLowerCase().includes(value.trim().toLowerCase());
+          isMatch = (value === "All") || (value == '') || record.ips.some(ip => ip.toLowerCase().includes(value.trim().toLowerCase()));
           if (!isMatch) return false;
         }
       }
@@ -239,36 +222,15 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
     this.data.changeTag(address, tags)
   }
 
-  // private processServices(): void {
-  //   this.services.set(this.ips.map((ip, _) => ({
-  //     name: ip.address,
-  //     id: ip._id,
-  //     tag: [...(ip.tag ?? [])],
-  //     subnet: (ip.subnets ?? []).map(item => item.range),
-  //     severity: ip.tag,
-  //     last_seen: null, // TODO: When last_seen is available in the IP model, set it here
-  //   })));
-
-  //   this.dataSource.data = this.services();
-
-    
-  //   if (this.paginator && this.sort) {
-  //     this.dataSource.paginator = this.paginator;
-  //     this.dataSource.sort = this.sort;
-  //   }
-    
-  //   this.changeDetector.detectChanges();
-  // }
-
   
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
     tags.push(event.option.viewValue)
     event.option.deselect();
   }
 
-  navigateToNetworkNodeView(node: CSANode): void {
+  navigateToNetworkNodeView(ip: string): void {
     this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: node.address }
+      queryParams: { ip: ip }
     });
   }
 

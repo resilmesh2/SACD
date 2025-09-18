@@ -29,6 +29,13 @@
     font-size: 1.2em;
 }
 
+.chips {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+
 .chip {
     display: flex;
     align-items: center;
