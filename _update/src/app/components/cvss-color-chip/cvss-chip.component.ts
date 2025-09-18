@@ -6,6 +6,7 @@ import { colorLookupTable } from "./colorLookupTable";
   templateUrl: 'cvss-chip.component.html',
   styleUrl: 'cvss-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true
 })
 
 export class CvssChipComponent {

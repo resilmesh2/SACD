@@ -17,6 +17,7 @@ import { VulnerabilityData } from '../../vulnerability-page/vulnerability.compon
 import { SubnetExtendedData } from '../../../models/subnet.model';
 import { OrgUnitData } from '../models/org-unit.model';
 import { ChildIP } from '../models/subnet.model';
+import { CSANode } from '../pages/csa-page/csa-page.component';
 
 @Injectable({
   providedIn: 'root',
@@ -1398,6 +1399,39 @@ public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
         return throwError(() => new Error('Failed to update org unit'));
       }
     });
+  }
+
+  public getCSANodes(): Observable<CSANode[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+        {
+          nodeObjects {
+            topology_degree_norm
+            topology_betweenness_norm
+            mission_criticality
+            final_criticality
+            ips {
+              address
+            }
+          }
+        }
+      `,
+      })
+      .pipe(
+        map((response) => {
+          return response.data.nodeObjects.map((node: any) => {
+            return {
+                ips: node.ips.map((ip: any) => ip.address),
+                topology_degree_norm: node.topology_degree_norm ?? 0,
+                topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
+                mission_criticality: node.mission_criticality ?? 0,
+                final_criticality: node.final_criticality ?? 0,
+            }
+          }
+          );
+        })
+      );
   }
 }
 

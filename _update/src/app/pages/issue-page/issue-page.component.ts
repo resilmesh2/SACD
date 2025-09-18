@@ -20,7 +20,6 @@ import { SentinelControlItem } from '@sentinel/components/controls';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
-import { scoreToClassCVSS } from '../../utils/utils';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatIcon } from '@angular/material/icon';
 import { ISSUE_PATH } from '../../paths';
@@ -30,7 +29,6 @@ interface Filter {
     options: string[];
     defaultValue: string;
 }
-
 
 @Component({
   selector: 'issue-page',
@@ -58,7 +56,8 @@ interface Filter {
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
-  ]
+  ],
+  standalone: true
 })
 
 export class IssuePageComponent implements OnInit, AfterViewInit {
