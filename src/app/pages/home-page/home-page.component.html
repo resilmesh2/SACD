@@ -2,14 +2,30 @@
 <!-- <h1>Select a panel from the menu on the left to continue...</h1> -->
 <div class="home-page-container">
     <div class="dashboard-grid">
+        @if (ipCount() == 0) {
+            <div class="dashboard-card">
+                <ngx-skeleton-loader count="3" appearance="line" />
+            </div>
+        } @else {
+            <div class="dashboard-card">
+                <span class="card-header">
+                    <h3>{{ipCount()}} IPs</h3>
+                    <mat-icon class="dashboard-icon">dns</mat-icon>
+                </span>
+                <p>View your assets, manage tags, visualise connections.</p>
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToIPs()">
+                    Go to IPs
+                </sentinel-button-with-icon>
+            </div>
+        }
         <div class="dashboard-card">
             <span class="card-header">
-                <h3>{{ipCount()}} IPs</h3>
-                <mat-icon class="dashboard-icon">dns</mat-icon>
+                <h3>{{nodeCount()}} nodes</h3>
+                <mat-icon class="dashboard-icon">network_node</mat-icon>
             </span>
-            <p>View your assets, manage tags, visualise connections.</p>
-            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToIPs()">
-                Go to IPs
+            <p>View nodes with topology degree, betweenness, and final criticality.</p>
+            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToCSANodes()">
+                Go to Nodes
             </sentinel-button-with-icon>
         </div>
         <div class="dashboard-card">
@@ -32,13 +48,23 @@
                 Go to Organization Units
             </sentinel-button-with-icon>
         </div>
-        <!-- <div class="dashboard-card"></div> -->
-    </div>
-    <div class="dashboard-grid-lower">
         <div class="dashboard-card">
             <span class="card-header">
+                <h3>{{missionCount()}} missions</h3>
+                <mat-icon class="dashboard-icon">strategy</mat-icon>
+            </span>
+            <p>View your missions and visualise connections.</p>
+            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToMissions()">
+                Go to Missions
+            </sentinel-button-with-icon>
+        </div>
+        <div class="dashboard-card"></div>
+    </div>
+    <div class="dashboard-grid-lower">
+        <div class="dashboard-card large">
+            <span class="card-header">
                 <h3>Vulnerabilities by Severity</h3>
-                <mat-icon class="dashboard-icon">warning</mat-icon>
+                <mat-icon class="dashboard-icon">crisis_alert</mat-icon>
             </span>
             <div class="pie-chart-container">
                 <ngx-charts-advanced-pie-chart
@@ -52,5 +78,6 @@
                 ></ngx-charts-advanced-pie-chart>
             </div>
         </div>
+        <div class="dashboard-card large"></div>
     </div>
 </div>

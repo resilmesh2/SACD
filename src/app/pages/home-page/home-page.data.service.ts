@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Apollo, gql } from "apollo-angular";
-import { map, Observable } from "rxjs";
+import { map, Observable, take } from "rxjs";
+import { CSANode } from "../csa-page/csa-page.component";
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { map, Observable } from "rxjs";
 export class HomePageDataService {
     constructor(private apollo: Apollo) {}
 
-    public getSubnetsMinimal(): Observable<{note: string, range: string}[]> {
+    public getSubnetsMinimal(): Observable<number> {
         return this.apollo
         .query<any>({
             query: gql`
@@ -22,8 +23,9 @@ export class HomePageDataService {
         })
         .pipe(
             map((response) => {
-            return response.data.subnets;
-            })
+                return response.data.subnets.length;
+            }),
+            take(1)
         );
     }
 
@@ -106,4 +108,41 @@ export class HomePageDataService {
             })
         );
     }
+
+    public getCSANodesCount(): Observable<number> {
+        return this.apollo
+            .query<any>({
+                query: gql`
+                {
+                    nodeObjects {
+                        _id
+                    }
+                }
+                `,
+                })
+                .pipe(
+                map((response) => {
+                    console.log(response);
+                    return response.data.nodeObjects.length;
+                })
+        );
+    }
+
+  public getMissionsCount(): Observable<number> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+          {
+            missions {
+              name
+            }
+          }
+        `,
+      })
+      .pipe(
+        map((data) => {
+          return data.data.missions.length;
+        })
+      );
+  }
 }

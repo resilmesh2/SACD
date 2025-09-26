@@ -109,10 +109,10 @@
         <td mat-cell *matCellDef="let row">
           <div class="actions">
             <button class="action" matIconButton (click)="openDialog('0ms', '0ms', row, 'edit')">
-              <mat-icon fontIcon="edit" aria-label="Edit subnet"></mat-icon>
+              <mat-icon fontSet="material-icons" aria-label="Edit subnet">edit</mat-icon>
             </button>
             <button class="action destructive" matIconButton (click)="deleteSubnet(row)">
-              <mat-icon fontIcon="delete" aria-label="Delete subnet"></mat-icon>  
+              <mat-icon fontSet="material-icons" aria-label="Delete subnet">delete</mat-icon>
             </button>
           </div>
         </td>

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { Router } from '@angular/router';
-import { ASSETS_PATH, ISSUE_PATH, ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ASSETS_PATH, CSA_PATH, ISSUE_PATH, MISSION_PATH, ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 import { MatIconModule } from '@angular/material/icon';
 import { HomePageDataService } from './home-page.data.service';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
   selector: 'app-home-page-component',
@@ -14,7 +15,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
   imports: [
     SentinelButtonWithIconComponent,
     MatIconModule,
-    NgxChartsModule
+    NgxChartsModule,
+    NgxSkeletonLoaderModule
   ],
   standalone: true
 })
@@ -22,26 +24,36 @@ export class HomePageComponent {
   subnetCount = signal(0);
   orgUnitCount = signal(0);
   ipCount = signal(0);
+  nodeCount = signal(0);
+  missionCount = signal(0);
 
   private router = inject(Router);
 
-  constructor(private data: HomePageDataService) {
-  }
+  constructor(private data: HomePageDataService, route: ActivatedRoute) {
+    route.params.subscribe(val => {
+      console.log('Route params changed, reloading data...', val);
+      this.data.getSubnetsMinimal().subscribe(subnetsCount => {
+        this.subnetCount.set(subnetsCount);
+      });
+      this.data.getOrgUnitsMinimal().subscribe(orgUnits => {
+        this.orgUnitCount.set(orgUnits.length);
+      });
 
-  ngOnInit(): void {
-    this.data.getSubnetsMinimal().subscribe(subnets => {
-      this.subnetCount.set(subnets.length);
-    });
-    this.data.getOrgUnitsMinimal().subscribe(orgUnits => {
-      this.orgUnitCount.set(orgUnits.length);
-    });
+      this.data.getIPCount().subscribe(ipCount => {
+        this.ipCount.set(ipCount);
+      });
 
-    this.data.getIPCount().subscribe(ipCount => {
-      this.ipCount.set(ipCount);
-    });
+      this.data.getVulnerabilityCounts().subscribe(vulnCounts => {
+        this.vulnerabilityPieChartData.set(vulnCounts);
+      });
 
-    this.data.getVulnerabilityCounts().subscribe(vulnCounts => {
-      this.vulnerabilityPieChartData.set(vulnCounts);
+      this.data.getCSANodesCount().subscribe(nodesCount => {
+        this.nodeCount.set(nodesCount);
+      });
+
+      this.data.getMissionsCount().subscribe(missionCount => {
+        this.missionCount.set(missionCount);
+      });
     });
   }
 
@@ -67,6 +79,14 @@ export class HomePageComponent {
 
   navigateToIPs(): void {
     this.router.navigate([ASSETS_PATH]);
+  }
+
+  navigateToCSANodes(): void {
+    this.router.navigate([CSA_PATH]);
+  }
+
+  navigateToMissions(): void {
+    this.router.navigate([MISSION_PATH]);
   }
 
 }

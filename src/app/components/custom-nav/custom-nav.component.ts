@@ -54,7 +54,7 @@ export class CustomNavComponent {
 
     navigateToHome(): void {
       this.router.navigateByUrl('/').then(() => {
-        window.location.reload();
+        //window.location.reload();
       }); 
     }
 

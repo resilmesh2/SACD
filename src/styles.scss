@@ -10,6 +10,7 @@
 @use '@sentinel/layout/sentinel-layout-theme' as layout;
 @use '@sentinel/layout/notification-card-mixin' as notification-card;
 @use '@sentinel/layout/sidebar-mixin' as sidebar;
+@use 'material-symbols';
 
 $resilmesh-palette: (
   50: "#e8ebee",
@@ -170,4 +171,8 @@ body {
 
 mat-drawer .mat-drawer-inner-container {
     overflow-x: hidden;
+}
+
+.mat-icon {
+    font-variation-settings: 'FILL' 1 !important;
 }

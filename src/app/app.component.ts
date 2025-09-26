@@ -9,7 +9,7 @@ import { filter, map, Observable } from "rxjs";
 /**
  * Angular Material
  */
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { agendaContainers } from "./agendas";
 import { MatIconButton } from "@angular/material/button";
 import { CustomNavComponent } from "./components/custom-nav/custom-nav.component";
@@ -45,8 +45,9 @@ export class AppComponent implements OnInit {
   user: SentinelUser;
   breadcrumbs$?: Observable<SentinelBreadcrumb[]>;
 
-  constructor() {
+  constructor(private matIconRegistry: MatIconRegistry) {
     this.user = user;
+    this.matIconRegistry.setDefaultFontSetClass('material-symbols-outlined');
   }
 
   ngOnInit(): void {
