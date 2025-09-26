@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, signal, Signal } from "@angular/core";
 import { MatTooltip } from "@angular/material/tooltip";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { Agenda, AgendaContainer } from "@sentinel/layout";
 import { SentinelLayoutI18nService, SentinelNavI18n } from "@sentinel/layout/i18n";
 import { MatDivider } from '@angular/material/divider';
@@ -14,8 +14,9 @@ import { AgendaContainerComponent } from "./agenda-container/agenda-container.co
   styleUrls: ['custom-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink, MatTooltip, MatDivider, NgClass, AgendaContainerComponent
-  ]
+    MatTooltip, MatDivider, NgClass, AgendaContainerComponent
+  ],
+  standalone: true
 })
 
 export class CustomNavComponent {

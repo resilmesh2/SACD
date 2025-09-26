@@ -12,7 +12,8 @@ import { Agenda, AgendaContainer } from "@sentinel/layout";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconModule,
-  ]
+  ],
+  standalone: true
 })
 
 export class AgendaContainerComponent {

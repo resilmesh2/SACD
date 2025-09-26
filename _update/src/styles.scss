@@ -12,16 +12,16 @@
 @use '@sentinel/layout/sidebar-mixin' as sidebar;
 
 $resilmesh-palette: (
-  50: "#e7eaf0",
-  100: "#c3cadb",
-  200: "#9da8c3",
-  300: "#7886aa",
-  400: "#5c6d99",
-  500: "#41548a",
-  600: "#3a4d81",
-  700: "#324376",
-  800: "#2b3a69",
-  900: "#212951",
+  50: "#e8ebee",
+  100: "#c5ccd8",
+  200: "#a1abbd",
+  300: "#7f8aa1",
+  400: "#64718e",
+  500: "#4a5a7e",
+  600: "#435276",
+  700: "#3b486a",
+  800: "#343f5d",
+  900: "#2a2f43",
  contrast: (
    50: rgba(black, 0.87),
    100: rgba(black, 0.87),
@@ -37,6 +37,24 @@ $resilmesh-palette: (
 );
 
 $resilmesh-palette-accent: (
+  50: "#e0f4fc",
+  100: "#b0e3f7",
+  200: "#7bd1f1",
+  300: "#44bfec",
+  400: "#01b2ea",
+  500: "#00a5e8",
+  600: "#0097da",
+  700: "#0084c7",
+  800: "#0073b3",
+  900: "#005493",
+ contrast: (
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+   400: white,
+ )
+);
+
+$resilmesh-palette-accent-test: (
   50: "#dcf0fb",
   100: "#bad7e1",
   200: "#98bac7",
@@ -110,12 +128,12 @@ $resilmesh-theme: mat.m2-define-light-theme((
 
   @include mat.snack-bar-overrides((
     button-color: #FFFFFF,
-    container-color: #324376,
+    container-color: #343F5D,
   ));
 
   @include mat.button-toggle-overrides((
     selected-state-text-color: #FFFFFF,
-    selected-state-background-color: #324376, //#3f51b5, //#44BFEC,
+    selected-state-background-color: #E4295F, //#E4295F, //#3f51b5, //#44BFEC,
     disabled-state-background-color: #CACACA,
     disabled-selected-state-background-color: red,
     label-text-weight: bold,
@@ -134,7 +152,7 @@ body {
 }
 
 .mat-toolbar.mat-primary {
-  --mat-toolbar-container-background-color: #324376; //#44BFEC;
+  --mat-toolbar-container-background-color: #E4295F; //#324376; //#44BFEC;
 }
 
 .nav-drawer.mat-drawer {

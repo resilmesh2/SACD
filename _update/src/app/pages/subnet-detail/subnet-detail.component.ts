@@ -12,6 +12,7 @@ import { Location } from '@angular/common';
 import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.component";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { ORGANIZATION_PATH, SUBNETS_PATH } from "../../paths";
+import { customOccupancyColors } from "../../config/customPieChartColors";
 
 
 @Component({
@@ -44,11 +45,7 @@ export class SubnetDetailComponent {
     subnetDetail: WritableSignal<SubnetExtendedData | null> = signal(null);
     range: string = '';
     pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
-    customColors = [
-        { name: 'Unoccupied', value: '#324376' },
-        { name: 'Occupied', value: '#98bac7' }, //749dad
-        { name: 'Affected', value: '#d54d55' }
-    ]
+    customColors = customOccupancyColors;
 
     private router = inject(Router);
 

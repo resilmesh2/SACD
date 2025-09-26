@@ -13,6 +13,7 @@ import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.co
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { ORGANIZATION_PATH, SUBNETS_PATH } from "../../paths";
 import { OrgUnitData } from "../../models/org-unit.model";
+import { customOccupancyColors } from "../../config/customPieChartColors";
 
 
 @Component({
@@ -45,11 +46,7 @@ export class OrgUnitDetailComponent {
     orgUnitDetail: WritableSignal<OrgUnitData | null> = signal(null);
     orgName: string = '';
     pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
-    customColors = [
-        { name: 'Unoccupied', value: '#324376' },
-        { name: 'Occupied', value: '#98bac7' }, //749dad
-        { name: 'Affected', value: '#d54d55' }
-    ]
+    customColors = customOccupancyColors;
 
     private router = inject(Router);
 

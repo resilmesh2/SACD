@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { DataService } from '../../services/data.service';
 import { Router } from '@angular/router';
 import { ASSETS_PATH, ISSUE_PATH, ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +15,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     SentinelButtonWithIconComponent,
     MatIconModule,
     NgxChartsModule
-  ]
+  ],
+  standalone: true
 })
 export class HomePageComponent {
   subnetCount = signal(0);
