@@ -78,6 +78,20 @@
                 ></ngx-charts-advanced-pie-chart>
             </div>
         </div>
-        <div class="dashboard-card large"></div>
+        <div class="dashboard-card large">
+            <span class="card-header">
+                <h3>Operating Systems</h3>
+                <mat-icon class="dashboard-icon">devices</mat-icon>
+            </span>
+            <div class="pie-chart-container">
+                <ngx-charts-advanced-pie-chart
+                    #pieChart
+                    [results]="osData()"
+                    [animations]="false"
+                    [scheme]="'picnic'"
+                    [label]="'Operating Systems'"
+                ></ngx-charts-advanced-pie-chart>
+            </div>
+        </div>
     </div>
 </div>

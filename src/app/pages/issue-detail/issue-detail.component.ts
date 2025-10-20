@@ -110,8 +110,6 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   }
 
   getVulnerableAssets(): void {
-    console.log('Get Vulnerable Assets');
-
     this.data.getVulnerableMachines(this.issueName)
       .pipe(
         catchError((error) => {

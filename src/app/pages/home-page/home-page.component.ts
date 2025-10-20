@@ -26,6 +26,7 @@ export class HomePageComponent {
   ipCount = signal(0);
   nodeCount = signal(0);
   missionCount = signal(0);
+  osData = signal<{ name: string; value: number }[]>([]);
 
   private router = inject(Router);
 
@@ -53,6 +54,9 @@ export class HomePageComponent {
 
       this.data.getMissionsCount().subscribe(missionCount => {
         this.missionCount.set(missionCount);
+      });
+      this.data.getOSData().subscribe(osData => {
+        this.osData.set(osData);
       });
     });
   }

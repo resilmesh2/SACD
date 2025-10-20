@@ -145,4 +145,39 @@ export class HomePageDataService {
         })
       );
   }
+
+  public getOSData(): Observable<any[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+          {
+            hosts {
+                software_versions {
+                    version
+                }
+            }
+          }
+        `,
+      })
+      .pipe(
+        map((data) => {
+            const osCountMap: { [key: string]: number } = {};
+            const hosts = data.data.hosts;
+
+            hosts.forEach((host: any) => {
+                host.software_versions.forEach((version: any) => {
+                    if (version.version.startsWith('cpe:2.3:o')) {
+                        osCountMap[version.version] = (osCountMap[version.version] || 0) + 1;
+                    }
+                });
+            });
+
+            return Object.entries(osCountMap).map(([name, value]) => ({ 
+                name: name.split('cpe:2.3:o:')[1], 
+                value 
+            })).sort((a, b) => b.value - a.value);
+        })
+      );
+  }
+
 }
