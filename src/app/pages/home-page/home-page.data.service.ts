@@ -1,97 +1,81 @@
-import { Injectable } from "@angular/core";
-import { Apollo, gql } from "apollo-angular";
-import { map, Observable, take } from "rxjs";
-import { CSANode } from "../csa-page/csa-page.component";
+import { Injectable, signal } from "@angular/core";
+import { Apollo, QueryRef } from "apollo-angular";
+import { Subscription } from "rxjs";
+import { Subnet } from "../../models/vulnerability.model";
+import { QUERIES } from "./home-page.data.queries";
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class HomePageDataService {
-    constructor(private apollo: Apollo) {}
+    queries: { [key: string]: QueryRef<any> } = {};
+    querySubscriptions: Subscription[] = [];
 
-    public getSubnetsMinimal(): Observable<number> {
-        return this.apollo
-        .query<any>({
-            query: gql`
-            {
-                subnets {
-                    note,
-                    range,
-                }
-            }
-        `,
-        })
-        .pipe(
-            map((response) => {
-                return response.data.subnets.length;
-            }),
-            take(1)
-        );
+    subnets = signal(<Subnet[]>([]));
+    orgUnits = signal(<{name: string}[]>([]));
+    ipCount = signal(0);
+    csaNodesCount = signal(0);
+    missionsCount = signal(0);
+
+    vulnerabilityChartData = signal<{name: string, value: number}[]>([]);
+    osChartData = signal<{name: string, value: number}[]>([]);
+
+    constructor(private apollo: Apollo) {
+        Object.entries(QUERIES).map(([key, queryGQL]) => {
+            const query = this.apollo.watchQuery<any>({
+                query: queryGQL,
+                pollInterval: 500,
+            });
+            this.queries[key] = query;
+        });
     }
 
-    public getOrgUnitsMinimal(): Observable<{name: string}[]> {
-        return this.apollo
-        .query<any>({
-            query: gql`
-            {
-                organizationUnits {
-                    name
-                },
-            }
-        `,
-        })
-        .pipe(
-            map((response) => {
-            return response.data.organizationUnits;
-            })
-        );
+    refreshData() {
+        Object.values(this.queries).forEach(query => query.refetch());
     }
+    
+    unscubscribeAll() {
+        this.querySubscriptions.forEach(sub => sub.unsubscribe());
+    }    
 
-    public getIPCount(): Observable<number> {
-        return this.apollo
-        .query<any>({
-            query: gql`
-            {
-                ips {
-                    _id
-                },
-            }
-        `,
-        })
-        .pipe(
-            map((response) => {
-                return response.data.ips.length;
-            })
-        );
-    }
+    fetchData() {
+        this.querySubscriptions.push(this.queries['GET_SUBNETS']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                this.subnets.set(data.subnets);
+            }));
 
-    public getVulnerabilityCounts(): Observable<{name: string, value: number}[]> {
-        return this.apollo
-        .query<any>({
-            query: gql`
-            {
-                cves {
-                    cve_id
-                    cvss_v2 {
-                        base_severity
-                    }
-                    cvss_v30 {
-                base_severity
-                }
-                cvss_v31 {
-                    base_severity
-                }
-                cvss_v40 {
-                    base_severity
-                }
-            }
-      } `,
-        })
-        .pipe(
-            map((response) => {
+        this.querySubscriptions.push(this.queries['GET_ORG_UNITS']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                this.orgUnits.set(data.organizationUnits);
+            }));
+
+        this.querySubscriptions.push(this.queries['GET_IPS']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                this.ipCount.set(data.ips.length);
+            }));
+
+        this.querySubscriptions.push(this.queries['GET_CSA_NODES']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                this.csaNodesCount.set(data.nodeObjects.length);
+            }));
+
+        this.querySubscriptions.push(this.queries['GET_MISSIONS']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                this.missionsCount.set(data.missions.length);
+            }));
+        
+        this.querySubscriptions.push(this.queries['GET_VULNERABILITIES']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
                 const severityCountMap: { [key: string]: number } = {};
-                const cves = response.data.cves;
-                
+                const cves = data.cves;
+
                 cves.forEach((cve: any) => {
                     const severity = cve.cvss_v31?.base_severity || 'unknown';
                     if (severityCountMap[severity]) {
@@ -100,84 +84,32 @@ export class HomePageDataService {
                         severityCountMap[severity] = 1;
                     }
                 });
-                
-                return Object.entries(severityCountMap).map(([severity, count]) => ({
+
+                this.vulnerabilityChartData.set(Object.entries(severityCountMap).map(([severity, count]) => ({
                     name: severity,
                     value: count
-                }));
-            })
-        );
-    }
+                })));
+            }));
 
-    public getCSANodesCount(): Observable<number> {
-        return this.apollo
-            .query<any>({
-                query: gql`
-                {
-                    nodeObjects {
-                        _id
-                    }
-                }
-                `,
-                })
-                .pipe(
-                map((response) => {
-                    console.log(response);
-                    return response.data.nodeObjects.length;
-                })
-        );
-    }
+        this.querySubscriptions.push(this.queries['GET_OS_DATA']
+            .valueChanges
+            .subscribe(({ data, loading }) => {
+                const osCountMap: { [key: string]: number } = {};
+                const hosts = data.hosts;
 
-  public getMissionsCount(): Observable<number> {
-    return this.apollo
-      .query<any>({
-        query: gql`
-          {
-            missions {
-              name
-            }
-          }
-        `,
-      })
-      .pipe(
-        map((data) => {
-          return data.data.missions.length;
-        })
-      );
-  }
-
-  public getOSData(): Observable<any[]> {
-    return this.apollo
-      .query<any>({
-        query: gql`
-          {
-            hosts {
-                software_versions {
-                    version
-                }
-            }
-          }
-        `,
-      })
-      .pipe(
-        map((data) => {
-            const osCountMap: { [key: string]: number } = {};
-            const hosts = data.data.hosts;
-
-            hosts.forEach((host: any) => {
-                host.software_versions.forEach((version: any) => {
-                    if (version.version.startsWith('cpe:2.3:o')) {
-                        osCountMap[version.version] = (osCountMap[version.version] || 0) + 1;
-                    }
+                hosts.forEach((host: any) => {
+                    host.software_versions.forEach((version: any) => {
+                        if (version.version.startsWith('cpe:2.3:o')) {
+                            osCountMap[version.version] = (osCountMap[version.version] || 0) + 1;
+                        }
+                    });
                 });
-            });
 
-            return Object.entries(osCountMap).map(([name, value]) => ({ 
-                name: name.split('cpe:2.3:o:')[1], 
-                value 
-            })).sort((a, b) => b.value - a.value);
-        })
-      );
-  }
-
+                this.osChartData.set(Object.entries(osCountMap).map(([name, value]) => ({
+                    name: name.split('cpe:2.3:o:')[1], 
+                    value 
+                })).sort((a, b) => b.value - a.value));
+            }
+        ));
+    }
 }

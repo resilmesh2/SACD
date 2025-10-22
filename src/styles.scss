@@ -115,8 +115,6 @@ $resilmesh-theme: mat.m2-define-light-theme((
 @include sidebar.sidebar-page-layout-theme($resilmesh-theme);
 @include notification-card.notification-card-theme($resilmesh-theme);
 
-
-
 // :root {
 //   --color-primary: #{map-get(map-get($resilmesh-theme, 'primary'), 700)};
 //   --color-accent: #{map-get(map-get($resilmesh-theme, 'accent'), 200)};

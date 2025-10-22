@@ -2,14 +2,14 @@
 <!-- <h1>Select a panel from the menu on the left to continue...</h1> -->
 <div class="home-page-container">
     <div class="dashboard-grid">
-        @if (ipCount() == 0) {
+        @if (this.data.ipCount() == 0) {
             <div class="dashboard-card">
                 <ngx-skeleton-loader count="3" appearance="line" />
             </div>
         } @else {
             <div class="dashboard-card">
                 <span class="card-header">
-                    <h3>{{ipCount()}} IPs</h3>
+                    <h3>{{this.data.ipCount()}} IPs</h3>
                     <mat-icon class="dashboard-icon">dns</mat-icon>
                 </span>
                 <p>View your assets, manage tags, visualise connections.</p>
@@ -18,46 +18,71 @@
                 </sentinel-button-with-icon>
             </div>
         }
-        <div class="dashboard-card">
-            <span class="card-header">
-                <h3>{{nodeCount()}} nodes</h3>
-                <mat-icon class="dashboard-icon">network_node</mat-icon>
-            </span>
-            <p>View nodes with topology degree, betweenness, and final criticality.</p>
-            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToCSANodes()">
-                Go to Nodes
-            </sentinel-button-with-icon>
-        </div>
-        <div class="dashboard-card">
-            <span class="card-header">
-                <h3>{{subnetCount()}} subnets</h3>
-                <mat-icon class="dashboard-icon">lan</mat-icon>
-            </span>
-            <p>View and manage your network subnets.</p>
-            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToSubnets()">
-                Go to Subnets
-            </sentinel-button-with-icon>
-        </div>
-        <div class="dashboard-card">
-            <span class="card-header">
-                <h3>{{orgUnitCount()}} organization units</h3>
-                <mat-icon class="dashboard-icon">people_alt</mat-icon>
-            </span>
-            <p>View and manage your organization units.</p>
-            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToOrgUnits()">
-                Go to Organization Units
-            </sentinel-button-with-icon>
-        </div>
-        <div class="dashboard-card">
-            <span class="card-header">
-                <h3>{{missionCount()}} missions</h3>
-                <mat-icon class="dashboard-icon">strategy</mat-icon>
-            </span>
-            <p>View your missions and visualise connections.</p>
-            <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToMissions()">
-                Go to Missions
-            </sentinel-button-with-icon>
-        </div>
+        @if (this.data.csaNodesCount() == 0) {
+            <div class="dashboard-card">
+                <ngx-skeleton-loader count="3" appearance="line" />
+            </div>
+        } @else {        
+            <div class="dashboard-card">
+                <span class="card-header">
+                    <h3>{{this.data.csaNodesCount()}} nodes</h3>
+                    <mat-icon class="dashboard-icon">network_node</mat-icon>
+                </span>
+                <p>View nodes with topology degree, betweenness, and final criticality.</p>
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToCSANodes()">
+                    Go to Nodes
+                </sentinel-button-with-icon>
+            </div>
+        }
+
+        @if (this.data.subnets().length == 0) {
+            <div class="dashboard-card">
+                <ngx-skeleton-loader count="3" appearance="line" />
+            </div>
+        } @else {
+            <div class="dashboard-card">
+                <span class="card-header">
+                    <h3>{{this.data.subnets().length}} subnets</h3>
+                    <mat-icon class="dashboard-icon">lan</mat-icon>
+                </span>
+                <p>View and manage your network subnets.</p>
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToSubnets()">
+                    Go to Subnets
+                </sentinel-button-with-icon>
+            </div>
+        }
+        @if (this.data.orgUnits().length == 0) {
+            <div class="dashboard-card">
+                <ngx-skeleton-loader count="3" appearance="line" />
+            </div>
+        } @else {
+            <div class="dashboard-card">
+                <span class="card-header">
+                    <h3>{{this.data.orgUnits().length}} organization units</h3>
+                    <mat-icon class="dashboard-icon">people_alt</mat-icon>
+                </span>
+                <p>View and manage your organization units.</p>
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToOrgUnits()">
+                    Go to Organization Units
+                </sentinel-button-with-icon>
+            </div>
+        }
+        @if (this.data.missionsCount() == 0) {
+            <div class="dashboard-card">
+                <ngx-skeleton-loader count="3" appearance="line" />
+            </div>
+        } @else {
+            <div class="dashboard-card">
+                <span class="card-header">
+                    <h3>{{this.data.missionsCount()}} missions</h3>
+                    <mat-icon class="dashboard-icon">strategy</mat-icon>
+                </span>
+                <p>View your missions and visualise connections.</p>
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToMissions()">
+                    Go to Missions
+                </sentinel-button-with-icon>
+            </div>
+        }
         <div class="dashboard-card"></div>
     </div>
     <div class="dashboard-grid-lower">
@@ -69,7 +94,7 @@
             <div class="pie-chart-container">
                 <ngx-charts-advanced-pie-chart
                     #pieChart
-                    [results]="vulnerabilityPieChartData()"
+                    [results]="this.data.vulnerabilityChartData()"
                     [animations]="false"
                     [scheme]="'picnic'"
                     [customColors]="customColors"
@@ -86,7 +111,7 @@
             <div class="pie-chart-container">
                 <ngx-charts-advanced-pie-chart
                     #pieChart
-                    [results]="osData()"
+                    [results]="this.data.osChartData()"
                     [animations]="false"
                     [scheme]="'picnic'"
                     [label]="'Operating Systems'"

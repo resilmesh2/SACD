@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ASSETS_PATH, CSA_PATH, ISSUE_PATH, MISSION_PATH, ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { HomePageDataService } from './home-page.data.service';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { QueryRef } from 'apollo-angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-page-component',
@@ -20,48 +22,29 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   ],
   standalone: true
 })
-export class HomePageComponent {
-  subnetCount = signal(0);
-  orgUnitCount = signal(0);
-  ipCount = signal(0);
-  nodeCount = signal(0);
-  missionCount = signal(0);
-  osData = signal<{ name: string; value: number }[]>([]);
+export class HomePageComponent implements OnInit, OnDestroy {
 
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  data = inject(HomePageDataService);
 
-  constructor(private data: HomePageDataService, route: ActivatedRoute) {
-    route.params.subscribe(val => {
-      console.log('Route params changed, reloading data...', val);
-      this.data.getSubnetsMinimal().subscribe(subnetsCount => {
-        this.subnetCount.set(subnetsCount);
-      });
-      this.data.getOrgUnitsMinimal().subscribe(orgUnits => {
-        this.orgUnitCount.set(orgUnits.length);
-      });
+  queries: QueryRef<any>[] = [];
+  querySubscriptions: Subscription[] = [];
 
-      this.data.getIPCount().subscribe(ipCount => {
-        this.ipCount.set(ipCount);
-      });
+  constructor() {}
 
-      this.data.getVulnerabilityCounts().subscribe(vulnCounts => {
-        this.vulnerabilityPieChartData.set(vulnCounts);
-      });
+  ngOnInit() {
+    this.data.fetchData();
 
-      this.data.getCSANodesCount().subscribe(nodesCount => {
-        this.nodeCount.set(nodesCount);
-      });
-
-      this.data.getMissionsCount().subscribe(missionCount => {
-        this.missionCount.set(missionCount);
-      });
-      this.data.getOSData().subscribe(osData => {
-        this.osData.set(osData);
-      });
+    this.route.queryParams.subscribe(_ => {
+      this.data.refreshData();
     });
   }
+ 
+  ngOnDestroy() {
+    this.data.unscubscribeAll();
+  }
 
-  vulnerabilityPieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
   customColors = [
       { name: 'critical', value: '#1C1D21' },
       { name: 'high', value: '#ed625e' },
