@@ -23,6 +23,7 @@ import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.co
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatIcon } from '@angular/material/icon';
 import { ISSUE_PATH } from '../../paths';
+import { StatusChipComponent } from '../../components/status-color-chip/status-color-chip.component';
 
 interface Filter {
     name: string;
@@ -51,6 +52,7 @@ interface Filter {
     DatePipe,
     SentinelCardComponent,
     CvssChipComponent,
+    StatusChipComponent,
     MatIcon,
     SentinelButtonWithIconComponent
   ],
@@ -283,6 +285,16 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // When user clicks on one of the status tags
+  useStatusFilter(status: string): void {
+    this.selectedStatus.set(status);
+    this.filterDictionary.set('status', status);
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
@@ -341,7 +353,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       ... this.cveDetails[index], // Spread CVE properties
       name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
       severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-      status: index % 2 === 0 ? 'Open' : 'Closed', //! TODO: Example status, replace with actual logic if needed
+      status: index % 2 === 0 ? 'discovered' : 'discovered', //! TODO: Example status, replace with actual logic when needed
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
       impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available',

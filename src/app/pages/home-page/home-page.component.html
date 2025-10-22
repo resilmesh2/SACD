@@ -13,7 +13,7 @@
                     <mat-icon class="dashboard-icon">dns</mat-icon>
                 </span>
                 <p>View your assets, manage tags, visualise connections.</p>
-                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToIPs()">
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToIPs()">
                     Go to IPs
                 </sentinel-button-with-icon>
             </div>
@@ -29,7 +29,7 @@
                     <mat-icon class="dashboard-icon">network_node</mat-icon>
                 </span>
                 <p>View nodes with topology degree, betweenness, and final criticality.</p>
-                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToCSANodes()">
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToCSANodes()">
                     Go to Nodes
                 </sentinel-button-with-icon>
             </div>
@@ -46,7 +46,7 @@
                     <mat-icon class="dashboard-icon">lan</mat-icon>
                 </span>
                 <p>View and manage your network subnets.</p>
-                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToSubnets()">
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToSubnets()">
                     Go to Subnets
                 </sentinel-button-with-icon>
             </div>
@@ -62,7 +62,7 @@
                     <mat-icon class="dashboard-icon">people_alt</mat-icon>
                 </span>
                 <p>View and manage your organization units.</p>
-                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToOrgUnits()">
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToOrgUnits()">
                     Go to Organization Units
                 </sentinel-button-with-icon>
             </div>
@@ -78,12 +78,11 @@
                     <mat-icon class="dashboard-icon">strategy</mat-icon>
                 </span>
                 <p>View your missions and visualise connections.</p>
-                <sentinel-button-with-icon color="primary" icon="arrow_forward" (click)="navigateToMissions()">
+                <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToMissions()">
                     Go to Missions
                 </sentinel-button-with-icon>
             </div>
         }
-        <div class="dashboard-card"></div>
     </div>
     <div class="dashboard-grid-lower">
         <div class="dashboard-card large">
@@ -119,4 +118,8 @@
             </div>
         </div>
     </div>
+    <!-- <div class="dashboard-grid-lower">
+        <div class="dashboard-card large"></div>
+        <div class="dashboard-card large"></div>
+    </div> -->
 </div>
