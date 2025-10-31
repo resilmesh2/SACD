@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { SubnetService } from '../../services/subnet.service';
 
 @Component({
   selector: 'subnet-graph-page',
@@ -63,7 +64,7 @@ export class SubnetGraphPageComponent implements OnInit {
 
     private router = inject(Router);
 
-    constructor(private dataService: DataService) {}
+    constructor(private dataService: DataService, private subnetService: SubnetService) {}
 
     ngOnInit(): void {
         this.getGraphData();
@@ -151,7 +152,7 @@ export class SubnetGraphPageComponent implements OnInit {
     }
 
     private getSubnets(): Observable<SubnetExtendedData[]> {
-        return this.dataService.getSubnets().pipe(
+        return this.subnetService.getSubnets().pipe(
             tap((subnets: SubnetExtendedData[]) => {
                 this.subnets.set(subnets);
             })

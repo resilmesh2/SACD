@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, OnInit, Output, output, OutputEmitterRef, signal, Signal, WritableSignal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, model, OnInit, output, signal, WritableSignal } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { SubnetExtendedData } from "../../../models/subnet.model";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { DataService } from "../../../services/data.service";
 import { ChipsContacts } from "../../../components/chips-contacts/chips-contacts.component";
 import { MatLabel, MatOption, MatSelectModule } from "@angular/material/select";

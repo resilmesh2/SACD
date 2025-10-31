@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { SubnetService } from '../../services/subnet.service';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
@@ -57,7 +58,7 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   //   }}
   // ));
 
-  constructor(private data: DataService, private changeDetector: ChangeDetectorRef) {
+  constructor(private data: SubnetService, private changeDetector: ChangeDetectorRef) {
     this.dataSource = new MatTableDataSource<SubnetExtendedData>([]);
     this.getAllSubnets();
   }

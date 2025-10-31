@@ -13,6 +13,7 @@ import { CvssChipComponent } from "../../components/cvss-color-chip/cvss-chip.co
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { ORGANIZATION_PATH, SUBNETS_PATH } from "../../paths";
 import { customOccupancyColors } from "../../config/customPieChartColors";
+import { SubnetService } from "../../services/subnet.service";
 
 
 @Component({
@@ -56,7 +57,7 @@ export class SubnetDetailComponent {
 
     constructor(
         private route: ActivatedRoute,
-        private data: DataService,
+        private data: SubnetService,
         private changeDetectorRefs: ChangeDetectorRef
     ) {
         this.dataSource = new MatTableDataSource<ChildIP>([]);
