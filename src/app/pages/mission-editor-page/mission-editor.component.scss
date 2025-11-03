@@ -1,0 +1,106 @@
+.mission-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1em;
+    padding: 0.5em;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(1fr, 1fr));
+    column-gap: 1em;
+}
+
+.grid-item {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1em;
+    text-align: center;
+    height: 50em;
+    overflow-y: auto;
+}
+
+.component-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 1em;
+}
+
+.component {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: calc(50% - 2em);
+    height: 40em;
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5em;
+    text-align: center;
+    overflow-y: auto;
+}
+
+.add-new {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #bbb;
+    cursor: pointer;
+}
+
+.host-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+    padding: 0.5em;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    height: 20em;
+}
+
+.host-entries {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.5em;
+    overflow-y: auto;
+}
+
+.host-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.5em;
+}
+
+.form-line {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+mat-label {
+    font-weight: bolder;
+}

@@ -1,0 +1,125 @@
+<h1>Mission Editor</h1>
+<p>Description of the mission model here?</p>
+<div class="mission-editor">
+    <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
+        <div class="content-container">
+            <div class="form-line">
+                <mat-form-field id="missionName" subscriptSizing="dynamic">
+                    <mat-label for="missionName">Mission Name:</mat-label>
+                    <input matInput required placeholder="" [(ngModel)]="missionName" />
+                </mat-form-field>
+            </div>
+            <div class="form-line">
+                <mat-form-field id="missionCriticality" subscriptSizing="dynamic">
+                    <mat-label for="missionCriticality">Criticality:</mat-label>
+                    <input matInput type="number" max="10" min="1" required placeholder="" [(ngModel)]="missionCriticality" />
+                </mat-form-field>
+            </div>
+            <div class="form-line">
+                <mat-form-field id="missionDescription">
+                    <mat-label for="missionDescription">Description:</mat-label>
+                    <textarea matInput
+                        cdkTextareaAutosize
+                        #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1"
+                        cdkAutosizeMaxRows="5"
+                        placeholder="Enter mission description"
+                        [(ngModel)]="missionDescription"
+                    ></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+    </sentinel-card>
+    <sentinel-card class="editor-card" cardTitle="Preview" titleIcon="family_history">
+        <div>
+            <pre>{{getTreeifiedMission()}}</pre>
+        </div>
+    </sentinel-card>
+    <sentinel-card class="editor-card" cardTitle="Mission Components" titleIcon="shapes">
+        <div>
+            <sentinel-button-with-icon
+                color="primary"
+                icon="add"
+                tooltip="Components in a group are alternatives"
+                (click)="addNewServiceGroup()"
+            >
+                Add New Component Group
+            </sentinel-button-with-icon>
+        </div>
+        <div class="grid-container">
+            <!-- <ul class="grid-item add-new" (click)="addNewServiceGroup()">
+                <mat-icon>add</mat-icon>
+                <div>Add new component group <br> [Components in a group are alternatives]</div>
+            </ul> -->
+            @for (componentGroup of services(); let idx = $index; track idx) {
+                <ul class="grid-item">
+                    <h3>Component Group {{idx + 1}}</h3>
+                    <sentinel-button-with-icon
+                        color="primary"
+                        icon="add"
+                        tooltip="Add Component"
+                        (click)="addComponentToGroup(idx)"
+                    >
+                        Add Component
+                    </sentinel-button-with-icon>
+                    <div class="component-group">
+                        @for (component of componentGroup; let cidx = $index; track cidx) {
+                            <div class="component">
+                                <div class="top-bar">
+                                    <h4>Component (ID: {{component.id}})</h4>
+                                    <mat-form-field subscriptSizing="dynamic">
+                                        <mat-label>Component Name</mat-label>
+                                        <input matInput [(ngModel)]="component.name" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="host-groups">
+                                    <p>Host Groups:</p>
+                                    <sentinel-button-with-icon
+                                        color="primary"
+                                        icon="add"
+                                        tooltip="Add Host Group"
+                                        (click)="addNewHostGroupToComponent(cidx, idx)"
+                                    >
+                                        Add Host Group
+                                    </sentinel-button-with-icon>
+                                    @for (hostGroup of component.hostGroups; let hidx = $index; track hidx) {
+                                        <div class="host-group">
+                                            <h5>Host Group {{hidx + 1}}</h5>
+                                            <sentinel-button-with-icon
+                                                color="accent"
+                                                icon="add"
+                                                tooltip="Add Host"
+                                                (click)="addHostToHostGroup(cidx, idx, hidx)"
+                                            >
+                                                Add Host
+                                            </sentinel-button-with-icon>
+                                            <div class="host-entries">
+                                                @for (host of hostGroup; let hostIdx = $index; track hostIdx) {
+                                                    <div class="host-entry">
+                                                        <mat-form-field subscriptSizing="dynamic">
+                                                            <mat-label>Host (ID: {{host.id}})</mat-label>
+                                                            <input matInput placeholder="Hostname" [(ngModel)]="host.hostname" />
+                                                        </mat-form-field>
+                                                    </div>
+                                                } @empty {
+                                                    <div>No hosts in this host group.</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    } @empty {
+                                        <div>No host groups in this component.</div>
+                                    }
+
+                                </div>
+                            </div>
+                        } @empty {
+                            <div>No components in this group.</div>
+                        }
+                    </div>
+                </ul>
+            } @empty {
+                <ul>There are no items.</ul>
+            }
+        </div>
+    </sentinel-card>
+</div>
