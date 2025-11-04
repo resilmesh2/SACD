@@ -1,0 +1,84 @@
+<div class="examples-toolbar">
+    <button class="f-button" (click)="printNodes()">Print Nodes</button>
+    <button class="f-button" (click)="addComponentGroup()">Add component group</button>
+    <button class="f-button" (click)="addComponentNode()">Add component node</button>
+
+    <button class="f-button" (click)="addHostGroup()">Add host group</button>
+    <button class="f-button" (click)="addHostNode()">Add host node</button>
+</div>
+
+<f-flow fDraggable (fLoaded)="onLoaded()" (fCreateConnection)="onCreateConnection($event)">
+    <!-- <f-line-alignment [fAlignThreshold]="40"></f-line-alignment> -->
+    
+    <f-background>
+      <f-circle-pattern></f-circle-pattern>
+    </f-background>
+    <f-selection-area></f-selection-area>
+    
+  <f-canvas [fZoom]="true">
+    <f-connection-for-create fBehavior="floating"></f-connection-for-create>
+
+    @for (connection of connections; track connection.to) {
+      <f-connection [fReassignDisabled]="true"
+                    [fOutputId]="connection.from" [fInputId]="connection.to"
+                    fBehavior="floating">
+      </f-connection>
+    }
+    <ng-container ngProjectAs="[fNodes]">
+        @for (node of nodes(); track node.id) {
+            @if (node.type === 'root') {
+                <div fNode fDragHandle [fNodePosition]="{ x: 0, y: 0 }" class="node--root">
+                    <div fNodeOutput fOutputId="root-output" class="bottom" [fOutputMultiple]="false"></div>
+                    {{missionName() || 'MISSION'}}
+                </div>
+            } @else if (node.type === 'and') {
+                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                        AND (ID: {{node.id}})
+                </div>
+            } @else if (node.type === 'or') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--or">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                        OR (ID: {{node.id}})
+                </div>
+            } @else if (node.type === 'component') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div class="content">
+                        SERVICE (ID: {{node.id}})
+                    </div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                </div>
+            } @else if (node.type === 'host') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div class="content">
+                        HOST (ID: {{node.id}})
+                    </div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
+                </div>
+            }
+            <!-- } @else {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" ></div>
+                    <div class="content">
+                        COMPONENT (ID: {{node.id}})
+                        <br />
+                        Name: {{node.name}}
+                    </div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
+                </div>
+            } -->
+        }
+    </ng-container>
+
+    <!-- <div fNode fDragHandle [fNodePosition]="{ x: 0, y: 100 }" class="node--and">
+        <div fNodeInput fInputId="1-input" class="top" ></div>
+        <div fNodeOutput fOutputId="1-output" class="bottom" [fOutputMultiple]="true"></div>
+        AND
+    </div> -->
+
+  </f-canvas>
+</f-flow>

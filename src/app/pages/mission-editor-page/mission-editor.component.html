@@ -1,5 +1,7 @@
 <h1>Mission Editor</h1>
 <p>Description of the mission model here?</p>
+<p>Components in a group are alternatives (OR relationship).</p>
+<p>Dependenies are between components e.g. when they talk to each other</p>
 <div class="mission-editor">
     <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
         <div class="content-container">
@@ -29,6 +31,9 @@
                 </mat-form-field>
             </div>
         </div>
+    </sentinel-card>
+    <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
+        <flow-editor [missionName]="missionName()"></flow-editor>
     </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Preview" titleIcon="family_history">
         <div>

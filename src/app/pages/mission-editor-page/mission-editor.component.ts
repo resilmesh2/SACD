@@ -6,6 +6,7 @@ import { FormsModule } from "@angular/forms";
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 //@ts-ignore
 import treeify from "treeify";
+import { FlowEditorComponent } from "./flow-editor/flow-editor.component";
 
 type MissionHost = {
     id: number;
@@ -36,6 +37,8 @@ type MissionServiceGroup = [MissionComponent[]];
     SentinelButtonWithIconComponent
     // MatButton,
     // SentinelButtonWithIconComponent
+    ,
+    FlowEditorComponent
 ]
 })
 
@@ -83,26 +86,37 @@ export class MissionEditorComponent {
     }
 
     getTreeifiedMission() {
-
         const hostGroupObject = (hostGroup: MissionHostGroup) => {
             if (hostGroup.length === 1) {
                 return { 
-                    HOST: {
-                        id: hostGroup[0].id,
+                    [`HOST (ID: ${hostGroup[0].id})`]: {
                         hostname: hostGroup[0].hostname
                     }
                 };
             }
 
             return { 
-                OR: hostGroup.map(host => {
-                    return {
-                        HOST: {
-                            id: host.id,
-                            hostname: host.hostname
-                        }
-                    };
-                })
+                OR: hostGroup.reduce((o, host) => (
+                    { ...o, [`HOST (ID: ${host.id})`]: { hostname: host.hostname } }
+                ), {})
+            };
+        }
+
+        const componentObject = (component: MissionComponent) => {
+            if (component.hostGroups.length === 1) {
+                return {
+                    [`COMPONENT (ID: ${component.id})`]: {
+                        name: component.name,
+                        ...hostGroupObject(component.hostGroups[0])
+                    }
+                };
+            }
+
+            return {
+                [`COMPONENT (ID: ${component.id})`]: {
+                    name: component.name,
+                    HOSTS: component.hostGroups.map(hg => hostGroupObject(hg))
+                }
             };
         }
 
@@ -110,17 +124,11 @@ export class MissionEditorComponent {
             name: this.missionName(),
             description: this.missionDescription(),
             criticality: this.missionCriticality(),
-            componentGroups: this.services().map(serviceGroup => {
+            COMPONENTS: this.services().map(serviceGroup => {
                 return {
-                    OR: serviceGroup.map(component => {
-                        return {
-                            [`component`]: {
-                                id: component.id,
-                                name: component.name,
-                                hostGroups: component.hostGroups.map(hg => hostGroupObject(hg))
-                            }
-                        }
-                    })
+                    OR: serviceGroup.reduce((o, component) => (
+                        { ...o, ...componentObject(component) }
+                    ), {})
                 }
             })
         };

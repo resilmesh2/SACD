@@ -1,0 +1,69 @@
+@use 'flow-common';
+
+::ng-deep f-flow {
+  @include flow-common.connection;
+    .f-background {
+    line {
+      stroke: var(--background-element-color);
+    }
+
+    circle {
+      fill: var(--background-element-color);
+    }
+  }
+}
+
+.f-flow {
+    height: 40em;
+}
+
+.f-node {
+  @include flow-common.node;
+}
+
+@include flow-common.connector;
+
+.f-connections-dragging {
+  .f-node-input {
+    &:not(.f-connector-connectable) {
+      //.f-node-input-can-be-connected-to changed to .f-connector-connectable
+      background-color: var(--disabled-color);
+    }
+  }
+}
+
+.node {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em 1em;
+    background-color: #d8d8d8;
+    border: 1px solid #aaa;
+    color: #1b1b1b;
+    border-radius: 4px;
+    
+    &--root {
+        @extend .node;
+        background-color: #343F5D; //#7fbfdf;
+        color: #fff;
+    }
+    &--and {
+        @extend .node;
+        background-color: #ccc;
+    }
+    &--or {
+        @extend .node;
+        background-color: #ccc;
+    }
+    &--component {
+        @extend .node;
+        background-color: #7fbfdf;
+    }
+    &--host {
+        @extend .node;
+        background-color: #a0d468;
+    }
+}
+
+@include flow-common.examples-toolbar;
