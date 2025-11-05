@@ -32,20 +32,32 @@
                     {{missionName() || 'MISSION'}}
                 </div>
             } @else if (node.type === 'and') {
-                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and">
+                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and" >
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
-                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                    <div 
+                        fNodeOutput 
+                        fOutputId="{{node.id}}-output" 
+                        class="bottom" 
+                        [fOutputMultiple]="true" 
+                        [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
+                    </div>
                         AND (ID: {{node.id}})
                 </div>
             } @else if (node.type === 'or') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--or">
-                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
-                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+                    <div 
+                        fNodeOutput 
+                        fOutputId="{{node.id}}-output" 
+                        class="bottom" 
+                        [fOutputMultiple]="true"
+                        [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
+                    </div>
                         OR (ID: {{node.id}})
                 </div>
             } @else if (node.type === 'component') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
-                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
                     <div class="content">
                         SERVICE (ID: {{node.id}})
                     </div>
@@ -53,32 +65,14 @@
                 </div>
             } @else if (node.type === 'host') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
-                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
                     <div class="content">
                         HOST (ID: {{node.id}})
                     </div>
-                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
                 </div>
             }
-            <!-- } @else {
-                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
-                    <div fNodeInput fInputId="{{node.id}}-input" class="top" ></div>
-                    <div class="content">
-                        COMPONENT (ID: {{node.id}})
-                        <br />
-                        Name: {{node.name}}
-                    </div>
-                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
-                </div>
-            } -->
         }
     </ng-container>
-
-    <!-- <div fNode fDragHandle [fNodePosition]="{ x: 0, y: 100 }" class="node--and">
-        <div fNodeInput fInputId="1-input" class="top" ></div>
-        <div fNodeOutput fOutputId="1-output" class="bottom" [fOutputMultiple]="true"></div>
-        AND
-    </div> -->
 
   </f-canvas>
 </f-flow>

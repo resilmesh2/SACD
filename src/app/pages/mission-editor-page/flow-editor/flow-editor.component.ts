@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, signal, ViewChild, WritableSignal } from '@angular/core';
-import { global } from '@apollo/client/utilities/globals';
-import { FCanvasComponent, FCreateConnectionEvent, FFlowModule, FZoomDirective } from '@foblex/flow';
-import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { IPoint } from '@foblex/2d';
+import { FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FZoomDirective } from '@foblex/flow';
 
 type Connection = {
     from: string;
@@ -9,7 +8,7 @@ type Connection = {
 };
 
 type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
-type AggregationLayer = 'component-group' | 'host-group';
+type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
 
 type MissionNode = {
     id: string;
@@ -17,6 +16,23 @@ type MissionNode = {
     type: MissionNodeType;
     position: { x: number; y: number };
     layer?: AggregationLayer;
+}
+
+const LAYER_Y = {
+    COMPONENT_GROUP: 200,
+    COMPONENT: 300,
+    COMPONENT_AND_AGGREGATION: 400,
+    HOST_GROUP: 500,
+    HOST: 600
+}
+
+const LAYER_RULES = {
+    'root-and': ['component-or', 'component'],
+    'component-or': ['component'],
+    'component-and': ['host-or', 'host'],
+    'host-or': ['host'],
+    'component': ['component-and'],
+    'host': []
 }
 
 @Component({
@@ -38,6 +54,9 @@ export class FlowEditorComponent {
     @ViewChild(FZoomDirective, { static: true })
     protected fZoom!: FZoomDirective;
 
+    @ViewChild(FFlowComponent, { static: true })
+    protected fFlow!: FFlowComponent;
+
     missionName = input<string | null>(null);
     globalIdIncrement = signal(1);
     centerOnAdd = true;
@@ -48,16 +67,9 @@ export class FlowEditorComponent {
 
     public nodes: WritableSignal<MissionNode[]> = signal([
         { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 } },
-        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 } },
+        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and' },
     ]);
 
-    LAYER_Y = {
-        COMPONENT_GROUP: 200,
-        COMPONENT: 300,
-        COMPONENT_AND_AGGREGATION: 400,
-        HOST_GROUP: 500,
-        HOST: 600
-    }
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef
@@ -97,6 +109,13 @@ export class FlowEditorComponent {
         this.changeDetectorRef.detectChanges();
     }
 
+    getAllowedConnections(layer?: AggregationLayer): string[] {
+        if (!layer) {
+            return [];
+        }
+        return LAYER_RULES[layer] || [];
+    }
+
     componentGroupXOffset = signal({ base: 0, step: 400, direction: 1 });
     componentGroupCount = signal(0);
 
@@ -121,8 +140,8 @@ export class FlowEditorComponent {
         const orId = this.createNode(
             'OR',
             'or',
-            { x: this.componentGroupXOffset().base, y: this.LAYER_Y.COMPONENT_GROUP },
-            'component-group'
+            { x: this.componentGroupXOffset().base, y: LAYER_Y.COMPONENT_GROUP },
+            'component-or'
         );
 
         this.createConnection('1-output', `${orId}-input`);
@@ -132,25 +151,29 @@ export class FlowEditorComponent {
         const componentAId = this.createNode(
             'A',
             'component',
-            { x: childOffsets.left, y: this.LAYER_Y.COMPONENT }
+            { x: childOffsets.left, y: LAYER_Y.COMPONENT },
+            'component'
         );
 
         const componentAAddId= this.createNode(
             'AND',
             'and',
-            { x: childOffsets.left, y: this.LAYER_Y.COMPONENT_AND_AGGREGATION }
+            { x: childOffsets.left, y: LAYER_Y.COMPONENT_AND_AGGREGATION },
+            'component-and'
         );
 
         const componentBId = this.createNode(
             'B',
             'component',
-            { x: childOffsets.right, y: this.LAYER_Y.COMPONENT }
+            { x: childOffsets.right, y: LAYER_Y.COMPONENT },
+            'component'
         );
 
         const componentBAddId = this.createNode(
             'AND',
             'and',
-            { x: childOffsets.right, y: this.LAYER_Y.COMPONENT_AND_AGGREGATION }
+            { x: childOffsets.right, y: LAYER_Y.COMPONENT_AND_AGGREGATION },
+            'component-and'
         );
 
         this.createConnection(`${orId}-output`, `${componentAId}-input`);
@@ -165,33 +188,66 @@ export class FlowEditorComponent {
         const componentId = this.createNode(
             'Component',
             'component',
-            { x: 700, y: this.LAYER_Y.COMPONENT }
+            { x: 700, y: LAYER_Y.COMPONENT },
+            'component'
         );
         const andId = this.createNode(
             'AND',
             'and',
-            { x: 700, y: this.LAYER_Y.COMPONENT_AND_AGGREGATION }
+            { x: 700, y: LAYER_Y.COMPONENT_AND_AGGREGATION },
+            'component-and'
         );
 
         this.createConnection(`${componentId}-output`, `${andId}-input`);        
+    }
+
+    getCurrentPositions(): { id: string; position: IPoint }[] {
+        const positions = this.fFlow.getState().nodes;
+        return positions.map(node => {
+            return { id: node.id.split('f-node-')[1], position: node.position };
+        });
+    }
+
+    findEmptyXPositionAtLayer(layer: AggregationLayer): number {
+        const nodesAtLayer = this.nodes().filter(node => node.layer === layer);
+        const currentPositions = this.getCurrentPositions();
+
+        console.log('Nodes at layer', currentPositions, nodesAtLayer);
+
+        const usedXPositions = nodesAtLayer.map(node => {
+            const pos = currentPositions.find(p => p.id === node.id);
+            return pos ? pos.position.x : null;
+        }).filter(x => x !== null) as number[];
+
+        const minX = Math.min(...usedXPositions);
+        const maxX = Math.max(...usedXPositions);
+
+        const closestEmptyX = Math.abs(minX) < Math.abs(maxX) ? minX : maxX;
+
+        const finalX = closestEmptyX + (closestEmptyX > 0 ? 200 : -200);                
+
+        console.log('Used X Positions at layer', layer, usedXPositions, finalX);
+        return finalX;
     }
 
     public addHostGroup(): void {
         const orId = this.createNode(
             'OR',
             'or',
-            { x: 700, y: this.LAYER_Y.HOST_GROUP },
-            'host-group'
+            { x: 300, y: LAYER_Y.HOST_GROUP },
+            'host-or'
         );
         const hostAId = this.createNode(
             'Host A',
             'host',
-            { x: 600, y: this.LAYER_Y.HOST }
+            { x: 200, y: LAYER_Y.HOST },
+            'host'
         );
         const hostBId = this.createNode(
             'Host B',
             'host',
-            { x: 800, y: this.LAYER_Y.HOST }
+            { x: 400, y: LAYER_Y.HOST },
+            'host'
         );
 
         this.createConnection(`${orId}-output`, `${hostAId}-input`);
@@ -199,14 +255,17 @@ export class FlowEditorComponent {
     }
 
     public addHostNode(): void {
+        //const emptyX = this.findEmptyXPositionAtLayer('host');
         this.createNode(
             'Host',
             'host',
-            { x: 600, y: this.LAYER_Y.HOST }
+            { x: 600, y: LAYER_Y.HOST },
+            'host'
         );
     }
 
     printNodes(): void {
+        console.log(this.fFlow.getState().nodes);
         console.log(JSON.stringify(this.nodes(), null, 2));
     }
 
