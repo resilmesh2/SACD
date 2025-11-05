@@ -1,6 +1,12 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, signal, ViewChild, WritableSignal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { IPoint } from '@foblex/2d';
-import { FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FZoomDirective } from '@foblex/flow';
+import { FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
+import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 
 type Connection = {
     from: string;
@@ -16,6 +22,11 @@ type MissionNode = {
     type: MissionNodeType;
     position: { x: number; y: number };
     layer?: AggregationLayer;
+    isEditing?: boolean;
+    data: {
+        hostname?: string;
+        ip?: string;
+    };
 }
 
 const LAYER_Y = {
@@ -43,8 +54,15 @@ const LAYER_RULES = {
   standalone: true,
   imports: [
     FFlowModule,
-    FZoomDirective
-  ]
+    FZoomDirective,
+    MatIconModule,
+    OverlayModule,
+    MatLabel,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    SentinelButtonWithIconComponent
+]
 })
 export class FlowEditorComponent {
 
@@ -61,15 +79,18 @@ export class FlowEditorComponent {
     globalIdIncrement = signal(1);
     centerOnAdd = true;
 
+    isOpen = false;
+
     public connections: Connection[] = [
         { from: 'root-output', to: '1-input' },
     ];
 
     public nodes: WritableSignal<MissionNode[]> = signal([
-        { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 } },
-        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and' },
+        { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {} },
+        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {} },
     ]);
 
+    protected selected = signal<string[]>([]);
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef
@@ -78,6 +99,39 @@ export class FlowEditorComponent {
 
     public onLoaded(): void {
         this.fCanvas.resetScaleAndCenter(false);
+    }
+
+    protected onSelectionChange(event: FSelectionChangeEvent): void {
+        this.selected.update((x) => {
+            return [
+                ...event.fNodeIds,
+                ...event.fConnectionIds
+            ];
+        });
+    }
+
+    public deleteSelected(): void {
+        if (this.selected().length === 0) {
+            return;
+        }
+
+        if (this.selected().includes('f-node-root') || this.selected().includes('f-node-1')) {
+            // Do not allow deleting root node
+            return;
+        }
+
+        this.connections = this.connections.filter(conn => {
+            const fromId = conn.from.split('-')[0];
+            const toId = conn.to.split('-')[0];
+            return !this.selected().includes(`f-node-${fromId}`) && !this.selected().includes(`f-node-${toId}`);
+        });
+
+        this.nodes.set(this.nodes().filter(node => {
+            return !this.selected().includes(`f-node-${node.id}`);
+        }));
+
+
+        this.changeDetectorRef.detectChanges();
     }
 
     public onCreateConnection(event: FCreateConnectionEvent): void {
@@ -93,7 +147,7 @@ export class FlowEditorComponent {
         const newId = this.globalIdIncrement();
 
         const currentNodes = this.nodes();
-        currentNodes.push({ id: newId.toString(), name, type, position, layer });
+        currentNodes.push({ id: newId.toString(), name, type, position, layer, data: {} });
         this.nodes.set(currentNodes);
         this.changeDetectorRef.detectChanges();
 

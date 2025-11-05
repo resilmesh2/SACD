@@ -1,13 +1,13 @@
 ::ng-deep :root {
   --background-element-color: rgba(0, 0, 0, 0.1);
-  --selection-area-color: rgba(100, 108, 255, 0.14);
+  --selection-area-color: rgba(5, 8, 50, 0.14);
 
   --disabled-color: #e2e2e2;
   --node-background-color: #ffffff;
   --node-background-color-inverse: #000000;
   --node-border-radius: 2px;
   --node-border-color: rgba(60, 60, 67, 0.36);
-  --node-selected-border-color: #3451b2;
+  --node-selected-border-color: #E4295F;
   --node-color: rgba(60, 60, 67, 0.78);
   --node-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
 
@@ -21,7 +21,7 @@
 
   --minimap-background-color: #ffffff;
   --minimap-node-color: rgba(60, 60, 67);
-  --minimap-node-selected-color: #3451b2;
+  --minimap-node-selected-color: #E4295F;
   --minimap-view-color: rgba(100, 108, 255, 0.14);
 
   &.dark {

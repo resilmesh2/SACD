@@ -1,13 +1,57 @@
 <div class="examples-toolbar">
-    <button class="f-button" (click)="printNodes()">Print Nodes</button>
-    <button class="f-button" (click)="addComponentGroup()">Add component group</button>
-    <button class="f-button" (click)="addComponentNode()">Add component node</button>
+    <sentinel-button-with-icon
+        color="accent"
+        icon="data_object"
+        (click)="printNodes()"
+    >
+        Print Nodes
+    </sentinel-button-with-icon>
+    <sentinel-button-with-icon
+        color="primary"
+        icon="call_split"
+        (click)="addComponentGroup()"
+    >
+        Add Service 'OR Group'
+    </sentinel-button-with-icon>
+    <sentinel-button-with-icon
+        color="primary"
+        icon="shapes"
+        (click)="addComponentNode()"
+    >
+        Add Service Node
+    </sentinel-button-with-icon>
 
-    <button class="f-button" (click)="addHostGroup()">Add host group</button>
-    <button class="f-button" (click)="addHostNode()">Add host node</button>
+    <sentinel-button-with-icon
+        color="primary"
+        icon="device_hub"
+        (click)="addHostGroup()"
+    >
+        Add Host Group
+    </sentinel-button-with-icon>
+
+    <sentinel-button-with-icon
+        color="primary"
+        icon="devices"
+        (click)="addHostNode()"
+    >
+        Add Host Node
+    </sentinel-button-with-icon>
+
+    <sentinel-button-with-icon
+        color="warn"
+        icon="delete"
+        (click)="deleteSelected()"
+    >
+        Delete selected
+    </sentinel-button-with-icon>
 </div>
 
-<f-flow fDraggable (fLoaded)="onLoaded()" (fCreateConnection)="onCreateConnection($event)">
+
+<!-- <div class="overlay">
+    <h2>Selected Node: {{ selected() }}</h2>
+</div> -->
+
+<f-flow fDraggable (fLoaded)="onLoaded()" (fCreateConnection)="onCreateConnection($event)" (fSelectionChange)="onSelectionChange($event)">
     <!-- <f-line-alignment [fAlignThreshold]="40"></f-line-alignment> -->
     
     <f-background>
@@ -61,14 +105,44 @@
                     <div class="content">
                         SERVICE (ID: {{node.id}})
                     </div>
-                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="true"></div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
                 </div>
             } @else if (node.type === 'host') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+
                     <div class="content">
-                        HOST (ID: {{node.id}})
+                        <div>{{node.data.hostname || 'HOST'}} (ID: {{node.id}})</div>
+                        <button class="action" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+                            <mat-icon fontSet="material-icons" aria-label="Edit subnet">edit</mat-icon>
+                        </button>
                     </div>
+
+                    <ng-template
+                        cdkConnectedOverlay
+                        [cdkConnectedOverlayOrigin]="trigger"
+                        [cdkConnectedOverlayOpen]="node.isEditing || false"
+                        (detach)="node.isEditing = false"
+                    >
+                        <div class="node-editor-overlay">
+                            <h3>Edit node - HOST (ID: {{node.id}})</h3>
+                            <mat-form-field id="hostname" subscriptSizing="dynamic">
+                                <mat-label for="hostname">Host Name:</mat-label>
+                                <input matInput required placeholder="" [(ngModel)]="node.data.hostname" />
+                            </mat-form-field>
+                            <mat-form-field id="ipAddress" subscriptSizing="dynamic">
+                                <mat-label for="ipAddress">IP Address:</mat-label>
+                                <input matInput placeholder="" [(ngModel)]="node.data.ip" />
+                            </mat-form-field>
+                            <sentinel-button-with-icon
+                                color="accent"
+                                icon="close"
+                                (click)="node.isEditing = false"
+                            >
+                                Close
+                            </sentinel-button-with-icon>
+                        </div>
+                    </ng-template>
                 </div>
             }
         }
@@ -76,3 +150,5 @@
 
   </f-canvas>
 </f-flow>
+
+
