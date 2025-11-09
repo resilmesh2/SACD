@@ -1,5 +1,5 @@
 services:
-  dashboard:
+  resilmesh_sap_sacd:
     build:
       context: .
     ports:

@@ -10,6 +10,11 @@ export const EXTERNAL = [
     url: 'http://localhost:4201'
   },
   {
+    name: 'NDR',
+    path: 'ndr',
+    url: 'http://localhost:3000'
+  },
+  {
     name: 'GraphQL',
     path: 'graphql',
     url: 'http://localhost:4001/graphql'
