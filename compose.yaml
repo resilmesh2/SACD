@@ -4,4 +4,5 @@ services:
       context: .
     ports:
       - 4200:4200
-    network_mode: host
+    networks:
+      - resilmesh_network
