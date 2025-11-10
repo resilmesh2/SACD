@@ -50,7 +50,6 @@
     "ngx-indexed-db": "^21.0.0",
     "ngx-skeleton-loader": "^11.3.0",
     "rxjs": "~7.8.0",
-    "treeify": "^1.1.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
