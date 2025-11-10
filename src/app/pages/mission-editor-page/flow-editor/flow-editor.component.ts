@@ -110,6 +110,21 @@ export class FlowEditorComponent {
         });
     }
 
+    getParentOfANDNode(): string[] {
+        // if any selected node is AND node and its parent is a service, delete the service too
+        return this.nodes().flatMap(node => {
+            if (node.type === 'and') {
+                if (this.selected().includes(`f-node-${node.id}`)) {
+                    const parentConnection = this.connections.find(conn => conn.to === `${node.id}-input`);
+                    if (parentConnection) {
+                        return parentConnection.from.split('-')[0];
+                    }
+                }
+            }
+            return undefined;
+        }).filter(x => x !== undefined);
+    }
+
     public deleteSelected(): void {
         if (this.selected().length === 0) {
             return;
@@ -120,16 +135,18 @@ export class FlowEditorComponent {
             return;
         }
 
+        const parentsOfAND = this.getParentOfANDNode();
+
         this.connections = this.connections.filter(conn => {
             const fromId = conn.from.split('-')[0];
             const toId = conn.to.split('-')[0];
-            return !this.selected().includes(`f-node-${fromId}`) && !this.selected().includes(`f-node-${toId}`);
+            return !this.selected().includes(`f-node-${fromId}`) && !this.selected().includes(`f-node-${toId}`) && !parentsOfAND.includes(fromId) && !parentsOfAND.includes(toId);
         });
 
         this.nodes.set(this.nodes().filter(node => {
-            return !this.selected().includes(`f-node-${node.id}`);
+            console.log('Checking node for deletion:', node.id, parentsOfAND.includes(node.id));
+            return !this.selected().includes(`f-node-${node.id}`) && !parentsOfAND.includes(node.id);
         }));
-
 
         this.changeDetectorRef.detectChanges();
     }

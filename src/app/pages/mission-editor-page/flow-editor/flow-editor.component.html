@@ -134,13 +134,15 @@
                                 <mat-label for="ipAddress">IP Address:</mat-label>
                                 <input matInput placeholder="" [(ngModel)]="node.data.ip" />
                             </mat-form-field>
-                            <sentinel-button-with-icon
-                                color="accent"
-                                icon="close"
-                                (click)="node.isEditing = false"
-                            >
-                                Close
-                            </sentinel-button-with-icon>
+                            <div class="node-editor-action">
+                                <sentinel-button-with-icon
+                                    color="primary"
+                                    icon="close"
+                                    (click)="node.isEditing = false"
+                                >
+                                    Close
+                                </sentinel-button-with-icon>
+                            </div>
                         </div>
                     </ng-template>
                 </div>

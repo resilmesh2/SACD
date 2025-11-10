@@ -98,13 +98,16 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  width: 20em;
   gap: 1em;
 }
 
 .node-editor-overlay h3 {
   margin-top: 0;
   margin-bottom: 0.5em;
+}
+
+.node-editor-action {
+  align-self: flex-end;
 }
 
 button.action {
