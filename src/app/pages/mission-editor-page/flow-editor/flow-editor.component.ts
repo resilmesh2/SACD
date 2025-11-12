@@ -1,5 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, signal, ViewChild, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, ModelSignal, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,16 +7,18 @@ import { MatInputModule } from '@angular/material/input';
 import { IPoint } from '@foblex/2d';
 import { FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
+import { CdkNoDataRow } from "@angular/cdk/table";
+import { NgTemplateOutlet } from '@angular/common';
 
-type Connection = {
+export type Connection = {
     from: string;
     to: string;
 };
 
-type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
-type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
+export type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
+export type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
 
-type MissionNode = {
+export type MissionNode = {
     id: string;
     name: string;
     type: MissionNodeType;
@@ -27,6 +29,10 @@ type MissionNode = {
         hostname?: string;
         ip?: string;
     };
+    validation: {
+        error: boolean;
+        reason: string;
+    }
 }
 
 const LAYER_Y = {
@@ -61,10 +67,11 @@ const LAYER_RULES = {
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    NgTemplateOutlet
 ]
 })
-export class FlowEditorComponent {
+export class FlowEditorComponent implements OnInit {
 
     @ViewChild(FCanvasComponent, { static: true })
     public fCanvas!: FCanvasComponent;
@@ -77,28 +84,60 @@ export class FlowEditorComponent {
 
     missionName = input<string | null>(null);
     globalIdIncrement = signal(1);
-    centerOnAdd = true;
 
+    centerOnAdd = true;
     isOpen = false;
 
-    public connections: Connection[] = [
-        { from: 'root-output', to: '1-input' },
-    ];
-
-    public nodes: WritableSignal<MissionNode[]> = signal([
-        { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {} },
-        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {} },
-    ]);
+    public connections: ModelSignal<Connection[]> = model([] as Connection[]);
+    public nodes: ModelSignal<MissionNode[]> = model([] as MissionNode[]);
 
     protected selected = signal<string[]>([]);
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef
-    ) {
+    ) {}
+
+    ngOnInit(): void {
+        // this.nodes.update(_ => {
+        //     return [
+        //         { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {} },
+        //         { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {} },
+        //     ];
+        // });
+        addEventListener('keydown', (event: KeyboardEvent) => {
+            // Delete selected nodes/connections on Delete or Backspace key press
+            if (event.key === 'Delete' || event.key === 'Backspace') {
+                this.deleteSelected();
+            }
+        });
     }
 
     public onLoaded(): void {
         this.fCanvas.resetScaleAndCenter(false);
+    }
+
+    public createNode(name: string, type: MissionNodeType, position: { x: number; y: number }, layer?: AggregationLayer): number {
+        this.globalIdIncrement.set(this.globalIdIncrement() + 1);
+        const newId = this.globalIdIncrement();
+
+        const currentNodes = this.nodes();
+        currentNodes?.push({ id: newId.toString(), name, type, position, layer, data: {}, validation: { error: false, reason: '' } });
+        this.nodes.set(currentNodes);
+        this.changeDetectorRef.detectChanges();
+
+        if (this.centerOnAdd) {
+            this.fCanvas.resetScaleAndCenter(false);
+        }
+
+        return newId;
+    }
+
+    public createConnection(fromId: string, toId: string): void {
+        this.connections.update((conns) => {
+            conns.push({ from: fromId, to: toId });
+            return conns;
+        });
+        this.changeDetectorRef.detectChanges();
     }
 
     protected onSelectionChange(event: FSelectionChangeEvent): void {
@@ -110,12 +149,17 @@ export class FlowEditorComponent {
         });
     }
 
+    protected selectNodes(nodes: string[]): void {
+        this.fFlow?.select(nodes, []);
+    }
+
+    // Returns array of parent services IDs of selected AND nodes
+    // Used to delete parent services when deleting AND nodes
     getParentOfANDNode(): string[] {
-        // if any selected node is AND node and its parent is a service, delete the service too
         return this.nodes().flatMap(node => {
             if (node.type === 'and') {
                 if (this.selected().includes(`f-node-${node.id}`)) {
-                    const parentConnection = this.connections.find(conn => conn.to === `${node.id}-input`);
+                    const parentConnection = this.connections().find(conn => conn.to === `${node.id}-input`);
                     if (parentConnection) {
                         return parentConnection.from.split('-')[0];
                     }
@@ -125,6 +169,9 @@ export class FlowEditorComponent {
         }).filter(x => x !== undefined);
     }
 
+    // Deletes all selected nodes and connections
+    // Also deletes parent services of selected AND nodes
+    // Does not allow deleting root node or root AND node
     public deleteSelected(): void {
         if (this.selected().length === 0) {
             return;
@@ -137,11 +184,14 @@ export class FlowEditorComponent {
 
         const parentsOfAND = this.getParentOfANDNode();
 
-        this.connections = this.connections.filter(conn => {
+        this.connections.set(this.connections().filter(conn => {
             const fromId = conn.from.split('-')[0];
             const toId = conn.to.split('-')[0];
-            return !this.selected().includes(`f-node-${fromId}`) && !this.selected().includes(`f-node-${toId}`) && !parentsOfAND.includes(fromId) && !parentsOfAND.includes(toId);
-        });
+            return !this.selected().includes(`f-node-${fromId}`) 
+                && !this.selected().includes(`f-node-${toId}`) 
+                && !parentsOfAND.includes(fromId) 
+                && !parentsOfAND.includes(toId);
+        }));
 
         this.nodes.set(this.nodes().filter(node => {
             console.log('Checking node for deletion:', node.id, parentsOfAND.includes(node.id));
@@ -155,28 +205,10 @@ export class FlowEditorComponent {
         if (!event.fInputId) {
             return;
         }
-        this.connections.push({ from: event.fOutputId, to: event.fInputId });
-        this.changeDetectorRef.detectChanges();
-    }
-
-    public createNode(name: string, type: MissionNodeType, position: { x: number; y: number }, layer?: AggregationLayer): number {
-        this.globalIdIncrement.set(this.globalIdIncrement() + 1);
-        const newId = this.globalIdIncrement();
-
-        const currentNodes = this.nodes();
-        currentNodes.push({ id: newId.toString(), name, type, position, layer, data: {} });
-        this.nodes.set(currentNodes);
-        this.changeDetectorRef.detectChanges();
-
-        if (this.centerOnAdd) {
-            this.fCanvas.resetScaleAndCenter(false);
-        }
-
-        return newId;
-    }
-
-    public createConnection(fromId: string, toId: string): void {
-        this.connections.push({ from: fromId, to: toId });
+        this.connections.update((conns) => {
+            conns.push({ from: event.fOutputId, to: event.fInputId || '' });
+            return conns;
+        });
         this.changeDetectorRef.detectChanges();
     }
 
@@ -253,6 +285,9 @@ export class FlowEditorComponent {
         this.createConnection(`${componentAId}-output`, `${componentAAddId}-input`);
         this.createConnection(`${componentBId}-output`, `${componentBAddId}-input`);
         this.updateComponentGroupXOffset();
+        this.selectNodes(
+            [`f-node-${orId}`, `f-node-${componentAId}`, `f-node-${componentBId}`, `f-node-${componentAAddId}`, `f-node-${componentBAddId}`],
+        );
     }
 
     public addComponentNode(): void {
@@ -269,7 +304,10 @@ export class FlowEditorComponent {
             'component-and'
         );
 
-        this.createConnection(`${componentId}-output`, `${andId}-input`);        
+        this.createConnection(`${componentId}-output`, `${andId}-input`);
+        this.selectNodes(
+            [`f-node-${componentId}`, `f-node-${andId}`],
+        );     
     }
 
     getCurrentPositions(): { id: string; position: IPoint }[] {
@@ -323,15 +361,21 @@ export class FlowEditorComponent {
 
         this.createConnection(`${orId}-output`, `${hostAId}-input`);
         this.createConnection(`${orId}-output`, `${hostBId}-input`);
+        this.selectNodes(
+            [`f-node-${orId}`, `f-node-${hostAId}`, `f-node-${hostBId}`],
+        );
     }
 
     public addHostNode(): void {
         //const emptyX = this.findEmptyXPositionAtLayer('host');
-        this.createNode(
+        const hostId = this.createNode(
             'Host',
             'host',
             { x: 600, y: LAYER_Y.HOST },
             'host'
+        );
+        this.selectNodes(
+            [`f-node-${hostId}`],
         );
     }
 

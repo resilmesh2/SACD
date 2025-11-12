@@ -62,7 +62,7 @@
   <f-canvas [fZoom]="true">
     <f-connection-for-create fBehavior="floating"></f-connection-for-create>
 
-    @for (connection of connections; track connection.to) {
+    @for (connection of connections(); track connection.to) {
       <f-connection [fReassignDisabled]="true"
                     [fOutputId]="connection.from" [fInputId]="connection.to"
                     fBehavior="floating">
@@ -73,7 +73,9 @@
             @if (node.type === 'root') {
                 <div fNode fDragHandle [fNodePosition]="{ x: 0, y: 0 }" class="node--root">
                     <div fNodeOutput fOutputId="root-output" class="bottom" [fOutputMultiple]="false"></div>
-                    {{missionName() || 'MISSION'}}
+                    <div class="content">
+                        {{missionName() || 'MISSION'}}
+                    </div>
                 </div>
             } @else if (node.type === 'and') {
                 <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and" >
@@ -85,7 +87,12 @@
                         [fOutputMultiple]="true" 
                         [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
                     </div>
+                    <div class="content">
                         AND (ID: {{node.id}})
+                    </div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
                 </div>
             } @else if (node.type === 'or') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--or">
@@ -97,7 +104,12 @@
                         [fOutputMultiple]="true"
                         [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
                     </div>
+                    <div class="content">
                         OR (ID: {{node.id}})
+                    </div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
                 </div>
             } @else if (node.type === 'component') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
@@ -106,6 +118,9 @@
                         SERVICE (ID: {{node.id}})
                     </div>
                     <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
                 </div>
             } @else if (node.type === 'host') {
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
@@ -117,6 +132,10 @@
                             <mat-icon fontSet="material-icons" aria-label="Edit subnet">edit</mat-icon>
                         </button>
                     </div>
+
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
 
                     <ng-template
                         cdkConnectedOverlay
@@ -154,3 +173,9 @@
 </f-flow>
 
 
+<ng-template #validationErrorTemplate let-reason="reason">
+    <div class="validation-tooltip-content">
+        <mat-icon fontSet="material-icons" class="error-icon">error</mat-icon>
+        <span>{{ reason }}</span>
+    </div>
+</ng-template>

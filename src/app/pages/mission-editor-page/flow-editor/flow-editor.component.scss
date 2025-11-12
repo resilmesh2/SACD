@@ -122,4 +122,20 @@ button.action {
     padding: 0.1em;
 }
 
+.validation-tooltip-content {
+    position: absolute;
+    top: -3em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    background-color: #ffdddd;
+    border: 1px solid #ff5c5c;
+    border-radius: 4px;
+    color: #a70000;
+    font-weight: bold;
+    width: max-content;
+    padding: 0.25em 0.5em;
+}
+
 @include flow-common.examples-toolbar;

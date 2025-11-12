@@ -19,7 +19,7 @@
                 </mat-form-field>
             </div>
             <div class="form-line">
-                <mat-form-field id="missionDescription">
+                <mat-form-field id="missionDescription" subscriptSizing="dynamic">
                     <mat-label for="missionDescription">Description:</mat-label>
                     <textarea matInput
                         cdkTextareaAutosize
@@ -31,9 +31,21 @@
                     ></textarea>
                 </mat-form-field>
             </div>
+            <div class="form-line">
+                <sentinel-button-with-icon
+                    color="primary"
+                    icon="save"
+                    (click)="saveMission()"
+                >
+                    Save Mission
+                </sentinel-button-with-icon>
+            </div>
         </div>
     </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
-        <flow-editor [missionName]="missionName()"></flow-editor>
+        <flow-editor [(nodes)]="nodes" [(connections)]="connections" [missionName]="missionName()" ></flow-editor>
+    </sentinel-card>
+    <sentinel-card class="editor-card" cardTitle="Mission JSON" titleIcon="code">
+        <pre>{{ getMissionJSON() }}</pre>
     </sentinel-card>
 </div>

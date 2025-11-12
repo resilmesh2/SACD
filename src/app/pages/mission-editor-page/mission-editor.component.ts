@@ -1,10 +1,22 @@
-import { Component, signal } from "@angular/core";
+import { Component, model, ModelSignal, signal, WritableSignal } from "@angular/core";
 import { SentinelCardComponent } from "@sentinel/components/card";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { FlowEditorComponent } from "./flow-editor/flow-editor.component";
+import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.component";
+import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
+import { MissionValidator } from "./mission-validator";
 
+export type MissionData = {
+    name: string;
+    description: string;
+    criticality: number;
+    nodes: MissionNode[];
+    connections: {
+        from: string;
+        to: string;
+    }[];
+}
 
 @Component({
   selector: 'mission-page',
@@ -16,17 +28,61 @@ import { FlowEditorComponent } from "./flow-editor/flow-editor.component";
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    // MatButton,
-    // SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
     FlowEditorComponent
-]
+  ],
+  providers: [MissionValidator]
 })
 
 export class MissionEditorComponent {
-    missionName = signal('');
+    missionName = signal('test');
     missionDescription = signal('');
-    missionCriticality = signal(0);
-    globalIdIncrement = signal(1);
+    missionCriticality = signal(1);
 
-    // if a component group has one component => direct link to root
+    public connections: WritableSignal<{ from: string; to: string }[]> = model([
+      { from: 'root-output', to: '1-input' },
+    ]);
+
+    public nodes: WritableSignal<MissionNode[]> = model([
+      { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
+      { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
+    ]);
+
+    constructor(private missionValidator: MissionValidator) {}
+
+    validateMission(): boolean {
+      if (this.missionName().trim() === '') {
+        alert('Mission name cannot be empty.');
+        return false;
+      }
+
+      const isValid = this.missionValidator.validateMission(this.nodes, this.connections);
+
+      if (!isValid) {
+        return false;
+      }
+
+      // Additional validation logic can be added here
+      return true;
+    }
+
+    saveMission() {
+        if (!this.validateMission()) {
+            return;
+        }
+
+        const missionData: MissionData = {
+            name: this.missionName(),
+            description: this.missionDescription(),
+            criticality: this.missionCriticality(),
+            nodes: this.nodes(),
+            connections: this.connections()
+        };
+
+        console.log('Saving mission:', missionData);
+    }
+
+    getMissionJSON(): string {
+      return JSON.stringify({ nodes: this.nodes(), connections: this.connections() }, null, 2);
+    }
 }
