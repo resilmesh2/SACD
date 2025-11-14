@@ -83,11 +83,12 @@ export class MissionValidator {
             return false;
         }
 
-        if (!node.data.hostname) {
-            node.validation.error = true;
-            node.validation.reason = 'Missing hostname';
-            return false;
-        }
+        // TODO: Uncomment when finalized
+        // if (!node.data.hostname) {
+        //     node.validation.error = true;
+        //     node.validation.reason = 'Missing hostname';
+        //     return false;
+        // }
 
         return true;
     }

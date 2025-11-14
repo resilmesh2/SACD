@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Add existing host node</h2>
+<mat-dialog-content>
+  <form class="example-form">
+    <mat-form-field class="example-full-width" subscriptSizing="dynamic">
+      <mat-label>IP Address</mat-label>
+      <input type="text"
+            placeholder="Hosts in database"
+            aria-label="Number"
+            matInput
+            [formControl]="existingHostControl"
+            [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (option of options; track option) {
+          <mat-option [value]="option">{{option}}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton mat-dialog-close>Okay</button>
+</mat-dialog-actions>

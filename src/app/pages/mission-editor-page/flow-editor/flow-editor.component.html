@@ -32,18 +32,29 @@
     <sentinel-button-with-icon
         color="primary"
         icon="devices"
-        (click)="addHostNode()"
+        [matMenuTriggerFor]="menu"
+        #menuTrigger
     >
         Add Host Node
     </sentinel-button-with-icon>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="addHostNode()">
+            <mat-icon>add_diamond</mat-icon>
+            <span>New host</span>
+        </button>
+        <button mat-menu-item (click)="openAddExistingHostDialog()">
+            <mat-icon>host</mat-icon>
+            <span>Existing host</span>
+        </button>
+    </mat-menu>
 
-    <sentinel-button-with-icon
+    <!-- <sentinel-button-with-icon
         color="warn"
         icon="delete"
         (click)="deleteSelected()"
     >
         Delete selected
-    </sentinel-button-with-icon>
+    </sentinel-button-with-icon> -->
 </div>
 
 
@@ -66,6 +77,9 @@
       <f-connection [fReassignDisabled]="true"
                     [fOutputId]="connection.from" [fInputId]="connection.to"
                     fBehavior="floating">
+        <svg viewBox="0 0 700 700" fMarker [type]="eMarkerType.END" [height]="5" [width]="5" [refX]="4" [refY]="2.5">
+            <path fill="#343F5D" d="M0,0L700,350L0,700L150,350z"/>
+        </svg>
       </f-connection>
     }
     <ng-container ngProjectAs="[fNodes]">

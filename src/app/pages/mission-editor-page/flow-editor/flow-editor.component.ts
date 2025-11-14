@@ -1,14 +1,17 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, ModelSignal, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, viewChild, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { IPoint } from '@foblex/2d';
-import { FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
+import { EFMarkerType, FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { CdkNoDataRow } from "@angular/cdk/table";
 import { NgTemplateOutlet } from '@angular/common';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { AddExistingHostDialog } from './add-existing-host-dialog/add-existing-host.dialog';
 
 export type Connection = {
     from: string;
@@ -18,6 +21,11 @@ export type Connection = {
 export type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
 export type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
 
+export type MissionNodeData = {
+    hostname?: string;
+    ip?: string;
+}
+
 export type MissionNode = {
     id: string;
     name: string;
@@ -25,10 +33,7 @@ export type MissionNode = {
     position: { x: number; y: number };
     layer?: AggregationLayer;
     isEditing?: boolean;
-    data: {
-        hostname?: string;
-        ip?: string;
-    };
+    data: MissionNodeData;
     validation: {
         error: boolean;
         reason: string;
@@ -68,7 +73,8 @@ const LAYER_RULES = {
     MatInputModule,
     FormsModule,
     SentinelButtonWithIconComponent,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    MatMenuModule
 ]
 })
 export class FlowEditorComponent implements OnInit {
@@ -81,6 +87,8 @@ export class FlowEditorComponent implements OnInit {
 
     @ViewChild(FFlowComponent, { static: true })
     protected fFlow!: FFlowComponent;
+
+    protected readonly eMarkerType = EFMarkerType;
 
     missionName = input<string | null>(null);
     globalIdIncrement = signal(1);
@@ -112,16 +120,27 @@ export class FlowEditorComponent implements OnInit {
         });
     }
 
+    readonly menuTrigger = viewChild.required(MatMenuTrigger);
+    readonly dialog = inject(MatDialog);
+
+    openAddExistingHostDialog() {
+        const dialogRef = this.dialog.open(AddExistingHostDialog, { restoreFocus: false });
+
+        // Manually restore focus to the menu trigger since the element that
+        // opens the dialog won't be in the DOM any more when the dialog closes.
+        dialogRef.afterClosed().subscribe(() => this.menuTrigger().focus());
+    }
+
     public onLoaded(): void {
         this.fCanvas.resetScaleAndCenter(false);
     }
 
-    public createNode(name: string, type: MissionNodeType, position: { x: number; y: number }, layer?: AggregationLayer): number {
+    public createNode(name: string, type: MissionNodeType, position: { x: number; y: number }, layer?: AggregationLayer, data: MissionNodeData = {}): number {
         this.globalIdIncrement.set(this.globalIdIncrement() + 1);
         const newId = this.globalIdIncrement();
 
         const currentNodes = this.nodes();
-        currentNodes?.push({ id: newId.toString(), name, type, position, layer, data: {}, validation: { error: false, reason: '' } });
+        currentNodes?.push({ id: newId.toString(), name, type, position, layer, data, validation: { error: false, reason: '' } });
         this.nodes.set(currentNodes);
         this.changeDetectorRef.detectChanges();
 
@@ -346,18 +365,8 @@ export class FlowEditorComponent implements OnInit {
             { x: 300, y: LAYER_Y.HOST_GROUP },
             'host-or'
         );
-        const hostAId = this.createNode(
-            'Host A',
-            'host',
-            { x: 200, y: LAYER_Y.HOST },
-            'host'
-        );
-        const hostBId = this.createNode(
-            'Host B',
-            'host',
-            { x: 400, y: LAYER_Y.HOST },
-            'host'
-        );
+        const hostAId = this.addHostNode('Host A', undefined, 200);
+        const hostBId = this.addHostNode('Host B', undefined, 400);
 
         this.createConnection(`${orId}-output`, `${hostAId}-input`);
         this.createConnection(`${orId}-output`, `${hostBId}-input`);
@@ -366,17 +375,19 @@ export class FlowEditorComponent implements OnInit {
         );
     }
 
-    public addHostNode(): void {
-        //const emptyX = this.findEmptyXPositionAtLayer('host');
+    public addHostNode(hostname?: string, ip?: string, x?: number): number {
         const hostId = this.createNode(
-            'Host',
+            hostname || 'HOST',
             'host',
-            { x: 600, y: LAYER_Y.HOST },
-            'host'
+            { x: x || 400, y: LAYER_Y.HOST },
+            'host',
+            { hostname: hostname || Math.random().toString(36).substring(2, 7) , ip }
         );
+
         this.selectNodes(
             [`f-node-${hostId}`],
         );
+        return hostId;
     }
 
     printNodes(): void {

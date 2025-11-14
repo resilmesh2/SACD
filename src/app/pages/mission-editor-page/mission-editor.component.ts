@@ -1,4 +1,4 @@
-import { Component, model, ModelSignal, signal, WritableSignal } from "@angular/core";
+import { Component, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
 import { SentinelCardComponent } from "@sentinel/components/card";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -6,6 +6,7 @@ import { FormsModule } from "@angular/forms";
 import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.component";
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
+import { MissionEditorService } from "./mission-editor.service";
 
 export type MissionData = {
     name: string;
@@ -31,7 +32,7 @@ export type MissionData = {
     SentinelButtonWithIconComponent,
     FlowEditorComponent
   ],
-  providers: [MissionValidator]
+  providers: [MissionValidator, MissionEditorService],
 })
 
 export class MissionEditorComponent {
@@ -48,7 +49,7 @@ export class MissionEditorComponent {
       { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
     ]);
 
-    constructor(private missionValidator: MissionValidator) {}
+    constructor(private missionValidator: MissionValidator, private missionEditorService: MissionEditorService) {}
 
     validateMission(): boolean {
       if (this.missionName().trim() === '') {
@@ -79,7 +80,8 @@ export class MissionEditorComponent {
             connections: this.connections()
         };
 
-        console.log('Saving mission:', missionData);
+        const payload = this.missionEditorService.createMissionPayload(missionData);
+        console.log('Mission Payload:', payload);
     }
 
     getMissionJSON(): string {
