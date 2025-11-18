@@ -112,14 +112,22 @@
 
 button.action {
     border-color: transparent;
-    background-color: #3E5F1B;
     color: #fff;
+    background-color: transparent;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    padding: 0.1em;
+    padding: 0em;
+}
+
+button.action.host-edit {
+  background-color: #3E5F1B;
+}
+
+button.action.service-edit {
+  background-color: #1B3F5F;
 }
 
 .validation-tooltip-content {

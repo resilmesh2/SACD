@@ -29,7 +29,7 @@ type MissionPayload = {
         }[],
         hosts: {
             hostname: string;
-            ip_address: string;
+            ip: string;
             id: number;
         }[],
         services: {
@@ -41,6 +41,16 @@ type MissionPayload = {
             and: number[];
         },
     }
+}
+
+type GroupedNodes = {
+    missions: MissionNode[];
+    hosts: MissionNode[];
+    services: MissionNode[];
+    aggregations: {
+        or: MissionNode[];
+        and: MissionNode[];
+    };
 }
 
 type MissionNodeWithId = MissionNode & { id: number };
@@ -59,8 +69,8 @@ export class MissionEditorService {
         });
     }
 
-    getNodesGroupedByType(missionData: MissionData): { [key: string]: any[] } {
-        const groupedNodes: { [key: string]: any } = {
+    getNodesGroupedByType(missionData: MissionData): GroupedNodes {
+        const groupedNodes: GroupedNodes = {
             missions: [],
             hosts: [],
             services: [],
@@ -75,16 +85,16 @@ export class MissionEditorService {
                 case 'root':
                     break;
                 case 'host':
-                    groupedNodes['hosts'].push(node);
+                    groupedNodes.hosts.push(node);
                     break;
                 case 'component':
-                    groupedNodes['services'].push(node);
+                    groupedNodes.services.push(node);
                     break;
                 case 'or':
-                    groupedNodes['aggregations']['or'].push(node);
+                    groupedNodes.aggregations.or.push(node);
                     break;
                 case 'and':
-                    groupedNodes['aggregations']['and'].push(node);
+                    groupedNodes.aggregations.and.push(node);
                     break;
                 default:
                     console.warn(`Unknown node type: ${node.type}`);
@@ -93,19 +103,20 @@ export class MissionEditorService {
         return groupedNodes;
     }
 
-    getHostsConnectedToService(serviceId: number, relationships: NodeRelationshipById[], groupedNodes: any): MissionNodeWithId[] {
+    getHostsConnectedToService(serviceId: number, relationships: NodeRelationshipById[], groupedNodes: GroupedNodes): MissionNodeWithId[] {
         const directIds: number[] = relationships.filter(r => r.from === serviceId).map(r => r.to);
         const indirectIds: number[] = relationships.filter(r => directIds.includes(r.from)).map(r => r.to);
         const leafHostsIds: number[] = relationships.filter(r => indirectIds.includes(r.from)).map(r => r.to);
 
         const allConnectedIds = [...new Set([...directIds, ...indirectIds, ...leafHostsIds])];
 
-        return groupedNodes['hosts'].filter((host: MissionNodeWithId) => allConnectedIds.includes(~~host.id));
+        return groupedNodes.hosts.map(host => ({ ...host, id: ~~host.id } as MissionNodeWithId))
+            .filter((host) => allConnectedIds.includes(host.id));
     }
 
-    getHasIdentityRelationships(relationships: NodeRelationshipById[], groupedNodes: any): NodeRelationshipByName[] {
+    getHasIdentityRelationships(relationships: NodeRelationshipById[], groupedNodes: GroupedNodes): NodeRelationshipByName[] {
         const hasIdentityRelationships: NodeRelationshipByName[] = [];
-        const services = groupedNodes['services'];
+        const services = groupedNodes.services;
 
         for (const service of services) {
             const connectedHosts = this.getHostsConnectedToService(~~service.id, relationships, groupedNodes);
@@ -120,17 +131,36 @@ export class MissionEditorService {
         return hasIdentityRelationships;
     }
 
+    getServicesConnectedToMission(relationships: NodeRelationshipById[], groupedNodes: GroupedNodes): MissionNodeWithId[] {
+        const directIds: number[] = relationships.filter(r => r.from === 0).map(r => r.to);
+        const indirectIds: number[] = relationships.filter(r => directIds.includes(r.from)).map(r => r.to);
+        const leafServiceIds: number[] = relationships.filter(r => indirectIds.includes(r.from)).map(r => r.to);
+
+        const allConnectedIds = [...new Set([...directIds, ...indirectIds, ...leafServiceIds])];
+
+        return groupedNodes.services.map(service => ({ ...service, id: ~~service.id } as MissionNodeWithId))
+            .filter((service) => allConnectedIds.includes(service.id));
+    }
+
+    getSupportsRelationships(relationships: NodeRelationshipById[], groupedNodes: GroupedNodes, missionName: string): NodeRelationshipByName[] {
+        const connectedServices = this.getServicesConnectedToMission(relationships, groupedNodes);
+
+        const supportsRelationships: NodeRelationshipByName[] = connectedServices.map(service => ({
+            from: missionName,
+            to: service.name,
+        }));
+        return supportsRelationships;
+    }
+
     createMissionPayload(missionData: MissionData): MissionPayload {
         const relationships = this.convertConnectionsToRelationships(missionData.connections);
         const groupedNodes = this.getNodesGroupedByType(missionData);
-
-        console.log('Grouped Nodes:', groupedNodes);
 
         const payload: MissionPayload = {
             relationships: {
                 two_way: [],
                 one_way: relationships,
-                supports: [],
+                supports: this.getSupportsRelationships(relationships, groupedNodes, missionData.name),
                 has_identity: this.getHasIdentityRelationships(relationships, groupedNodes),
                 dependencies: [],
             },
@@ -143,11 +173,18 @@ export class MissionEditorService {
                         id: 0,
                     }
                 ],
-                hosts: [],
-                services: [],
+                hosts: groupedNodes.hosts.map(host => ({
+                    hostname: host.data.hostname || '',
+                    ip: host.data.ip || '',
+                    id: ~~host.id,
+                })),
+                services: groupedNodes.services.map(service => ({
+                    name: service.name,
+                    id: ~~service.id,
+                })),
                 aggregations: {
-                    or: [],
-                    and: [],
+                    or: groupedNodes.aggregations.or.map(node => ~~node.id),
+                    and: groupedNodes.aggregations.and.map(node => ~~node.id),
                 },
             }
         };

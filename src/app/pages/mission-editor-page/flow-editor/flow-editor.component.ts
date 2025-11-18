@@ -22,6 +22,7 @@ export type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
 export type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
 
 export type MissionNodeData = {
+    name?: string;
     hostname?: string;
     ip?: string;
 }
