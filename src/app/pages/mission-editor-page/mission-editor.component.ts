@@ -7,6 +7,7 @@ import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.comp
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
 import { MissionEditorService } from "./mission-editor.service";
+import { ExistingNodeService } from "./flow-editor/existing-node.service";
 
 export type MissionData = {
     name: string;
@@ -32,11 +33,14 @@ export type MissionData = {
     SentinelButtonWithIconComponent,
     FlowEditorComponent
   ],
-  providers: [MissionValidator, MissionEditorService],
+  providers: [
+    MissionValidator, 
+    MissionEditorService,
+  ],
 })
 
 export class MissionEditorComponent {
-    missionName = signal('test');
+    missionName = signal('');
     missionDescription = signal('');
     missionCriticality = signal(1);
 
@@ -49,7 +53,10 @@ export class MissionEditorComponent {
       { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
     ]);
 
-    constructor(private missionValidator: MissionValidator, private missionEditorService: MissionEditorService) {}
+    constructor(
+      private missionValidator: MissionValidator, 
+      private missionEditorService: MissionEditorService,
+    ) {}
 
     validateMission(): boolean {
       if (this.missionName().trim() === '') {
@@ -81,7 +88,7 @@ export class MissionEditorComponent {
         };
 
         const payload = this.missionEditorService.createMissionPayload(missionData);
-        console.log('Mission Payload:', payload);
+        this.missionEditorService.uploadMissionPayload(payload);
     }
 
     getMissionJSON(): string {

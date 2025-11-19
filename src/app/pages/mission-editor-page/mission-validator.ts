@@ -72,6 +72,12 @@ export class MissionValidator {
             return false;
         }
 
+        if (!node.data.name || node.data.name.trim() === '') {
+            node.validation.error = true;
+            node.validation.reason = 'Missing service name';
+            return false;
+        }
+
         return true;
     }
 
@@ -83,12 +89,17 @@ export class MissionValidator {
             return false;
         }
 
-        // TODO: Uncomment when finalized
-        // if (!node.data.hostname) {
-        //     node.validation.error = true;
-        //     node.validation.reason = 'Missing hostname';
-        //     return false;
-        // }
+        if (!node.data.hostname || node.data.hostname.trim() === '') {
+            node.validation.error = true;
+            node.validation.reason = 'Missing hostname';
+            return false;
+        }
+
+        if (!node.data.ip || node.data.ip.trim() === '') {
+            node.validation.error = true;
+            node.validation.reason = 'Missing IP address';
+            return false;
+        }
 
         return true;
     }

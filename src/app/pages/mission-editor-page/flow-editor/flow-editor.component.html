@@ -31,22 +31,11 @@
 
     <sentinel-button-with-icon
         color="primary"
-        icon="devices"
-        [matMenuTriggerFor]="menu"
-        #menuTrigger
+        icon="host"
+        (click)="addHostNode()"
     >
         Add Host Node
     </sentinel-button-with-icon>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="addHostNode()">
-            <mat-icon>add_diamond</mat-icon>
-            <span>New host</span>
-        </button>
-        <button mat-menu-item (click)="openAddExistingHostDialog()">
-            <mat-icon>host</mat-icon>
-            <span>Existing host</span>
-        </button>
-    </mat-menu>
 
     <!-- <sentinel-button-with-icon
         color="warn"
@@ -56,11 +45,6 @@
         Delete selected
     </sentinel-button-with-icon> -->
 </div>
-
-
-<!-- <div class="overlay">
-    <h2>Selected Node: {{ selected() }}</h2>
-</div> -->
 
 <f-flow fDraggable (fLoaded)="onLoaded()" (fCreateConnection)="onCreateConnection($event)" (fSelectionChange)="onSelectionChange($event)">
     <!-- <f-line-alignment [fAlignThreshold]="40"></f-line-alignment> -->
@@ -129,9 +113,9 @@
                 <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
                     <div class="content">
-                        <div>{{node.data.name || 'SERVICE'}} (ID: {{node.id}})</div>
-                        <button class="action service-edit" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
-                            <mat-icon fontSet="material-icons" aria-label="Edit service">edit</mat-icon>
+                        <div class="title">{{node.data.name || 'SERVICE'}} (ID: {{node.id}})</div>
+                        <button class="action component-edit" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+                            <mat-icon fontSet="material-icons" aria-label="Edit component">edit</mat-icon>
                         </button>
                     </div>
                     <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
@@ -145,10 +129,21 @@
                         (detach)="node.isEditing = false"
                     >
                         <div class="node-editor-overlay">
-                            <h3>Edit node - SERVICE (ID: {{node.id}})</h3>
-                            <mat-form-field id="name" subscriptSizing="dynamic">
-                                <mat-label for="name">Service Name:</mat-label>
-                                <input matInput required placeholder="" [(ngModel)]="node.data.name" />
+                            <h3>Edit node - COMPONENT (ID: {{node.id}})</h3>
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="name">Component name</mat-label>
+                                <input type="text"
+                                        placeholder="Component name"
+                                        aria-label="component-name"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.name"
+                                        [matAutocomplete]="auto">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    @for (component of existingComponents(); track component) {
+                                        <mat-option [value]="component">{{component}}</mat-option>
+                                    }
+                                </mat-autocomplete>
                             </mat-form-field>
                             <div class="node-editor-action">
                                 <sentinel-button-with-icon
@@ -185,13 +180,36 @@
                     >
                         <div class="node-editor-overlay">
                             <h3>Edit node - HOST (ID: {{node.id}})</h3>
-                            <mat-form-field id="hostname" subscriptSizing="dynamic">
-                                <mat-label for="hostname">Host Name:</mat-label>
-                                <input matInput required placeholder="" [(ngModel)]="node.data.hostname" />
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="name">Host name</mat-label>
+                                <input type="text"
+                                        placeholder="Host name"
+                                        aria-label="host-name"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.hostname"
+                                        [matAutocomplete]="hostAutocomplete">
+                                <mat-autocomplete #hostAutocomplete="matAutocomplete">
+                                    @for (host of existingHosts(); track host) {
+                                        <mat-option [value]="host">{{host}}</mat-option>
+                                    }
+                                </mat-autocomplete>
                             </mat-form-field>
-                            <mat-form-field id="ipAddress" subscriptSizing="dynamic">
-                                <mat-label for="ipAddress">IP Address:</mat-label>
-                                <input matInput placeholder="" [(ngModel)]="node.data.ip" />
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="ip-address">IP Address:</mat-label>
+                                <input type="text"
+                                        placeholder="IP Address"
+                                        aria-label="ip-address"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.ip"
+                                        [matAutocomplete]="ipAutocomplete"
+                                    >
+                                <mat-autocomplete #ipAutocomplete="matAutocomplete">
+                                    @for (ip of existingIPs(); track ip) {
+                                        <mat-option [value]="ip.address">{{ip.address}}</mat-option>
+                                    }
+                                </mat-autocomplete>
                             </mat-form-field>
                             <div class="node-editor-action">
                                 <sentinel-button-with-icon

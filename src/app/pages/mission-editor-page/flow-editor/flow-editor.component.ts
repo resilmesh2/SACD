@@ -1,17 +1,18 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, viewChild, ViewChild, WritableSignal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, viewChild, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { IPoint } from '@foblex/2d';
 import { EFMarkerType, FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
-import { CdkNoDataRow } from "@angular/cdk/table";
 import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { AddExistingHostDialog } from './add-existing-host-dialog/add-existing-host.dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ExistingNodeService } from './existing-node.service';
+import { IP } from '../../asset-page/asset-page.component';
 
 export type Connection = {
     from: string;
@@ -75,8 +76,13 @@ const LAYER_RULES = {
     FormsModule,
     SentinelButtonWithIconComponent,
     NgTemplateOutlet,
-    MatMenuModule
-]
+    MatMenuModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+],
+    providers: [
+        ExistingNodeService
+    ]
 })
 export class FlowEditorComponent implements OnInit {
 
@@ -103,33 +109,31 @@ export class FlowEditorComponent implements OnInit {
     protected selected = signal<string[]>([]);
 
     constructor(
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        private existingNodeService: ExistingNodeService
     ) {}
 
+    existingComponents = signal<string[]>([]);
+    existingHosts = signal<string[]>([]);
+    existingIPs = signal<IP[]>([]);
+
     ngOnInit(): void {
-        // this.nodes.update(_ => {
-        //     return [
-        //         { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {} },
-        //         { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {} },
-        //     ];
-        // });
+        this.existingNodeService.getMissionComponents().subscribe(components => {
+            this.existingComponents.set(components);
+        });
+        this.existingNodeService.getHosts().subscribe(hosts => {
+            this.existingHosts.set([... new Set(hosts)]);
+        });
+        this.existingNodeService.getIPs().subscribe(ips => {
+            this.existingIPs.set(ips);
+        });
+
         addEventListener('keydown', (event: KeyboardEvent) => {
             // Delete selected nodes/connections on Delete or Backspace key press
             if (event.key === 'Delete' || event.key === 'Backspace') {
                 this.deleteSelected();
             }
         });
-    }
-
-    readonly menuTrigger = viewChild.required(MatMenuTrigger);
-    readonly dialog = inject(MatDialog);
-
-    openAddExistingHostDialog() {
-        const dialogRef = this.dialog.open(AddExistingHostDialog, { restoreFocus: false });
-
-        // Manually restore focus to the menu trigger since the element that
-        // opens the dialog won't be in the DOM any more when the dialog closes.
-        dialogRef.afterClosed().subscribe(() => this.menuTrigger().focus());
     }
 
     public onLoaded(): void {
@@ -214,7 +218,6 @@ export class FlowEditorComponent implements OnInit {
         }));
 
         this.nodes.set(this.nodes().filter(node => {
-            console.log('Checking node for deletion:', node.id, parentsOfAND.includes(node.id));
             return !this.selected().includes(`f-node-${node.id}`) && !parentsOfAND.includes(node.id);
         }));
 
@@ -341,7 +344,7 @@ export class FlowEditorComponent implements OnInit {
         const nodesAtLayer = this.nodes().filter(node => node.layer === layer);
         const currentPositions = this.getCurrentPositions();
 
-        console.log('Nodes at layer', currentPositions, nodesAtLayer);
+        // console.log('Nodes at layer', currentPositions, nodesAtLayer);
 
         const usedXPositions = nodesAtLayer.map(node => {
             const pos = currentPositions.find(p => p.id === node.id);
@@ -355,7 +358,7 @@ export class FlowEditorComponent implements OnInit {
 
         const finalX = closestEmptyX + (closestEmptyX > 0 ? 200 : -200);                
 
-        console.log('Used X Positions at layer', layer, usedXPositions, finalX);
+        //console.log('Used X Positions at layer', layer, usedXPositions, finalX);
         return finalX;
     }
 
@@ -366,8 +369,8 @@ export class FlowEditorComponent implements OnInit {
             { x: 300, y: LAYER_Y.HOST_GROUP },
             'host-or'
         );
-        const hostAId = this.addHostNode('Host A', undefined, 200);
-        const hostBId = this.addHostNode('Host B', undefined, 400);
+        const hostAId = this.addHostNode(undefined, undefined, 200);
+        const hostBId = this.addHostNode(undefined, undefined, 400);
 
         this.createConnection(`${orId}-output`, `${hostAId}-input`);
         this.createConnection(`${orId}-output`, `${hostBId}-input`);
@@ -382,7 +385,7 @@ export class FlowEditorComponent implements OnInit {
             'host',
             { x: x || 400, y: LAYER_Y.HOST },
             'host',
-            { hostname: hostname || Math.random().toString(36).substring(2, 7) , ip }
+            { hostname, ip } // for random hostname: hostname || Math.random().toString(36).substring(2, 7) 
         );
 
         this.selectNodes(

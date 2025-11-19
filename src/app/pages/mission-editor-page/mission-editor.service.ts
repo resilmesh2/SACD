@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { MissionData } from "./mission-editor.component";
 import { MissionNode } from "./flow-editor/flow-editor.component";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 type NodeRelationshipById = {
     from: number;
@@ -59,6 +60,7 @@ type MissionNodeWithId = MissionNode & { id: number };
   providedIn: 'root',
 })
 export class MissionEditorService {
+    private http = inject(HttpClient);
     constructor() {}
 
     convertConnectionsToRelationships(connections: { from: string; to: string }[]): NodeRelationshipById[] {
@@ -122,7 +124,7 @@ export class MissionEditorService {
             const connectedHosts = this.getHostsConnectedToService(~~service.id, relationships, groupedNodes);
             for (const host of connectedHosts) {
                 hasIdentityRelationships.push({
-                    from: service.name,
+                    from: service.data.name || '',
                     to: host.data.hostname || '',
                 });
             }
@@ -147,7 +149,7 @@ export class MissionEditorService {
 
         const supportsRelationships: NodeRelationshipByName[] = connectedServices.map(service => ({
             from: missionName,
-            to: service.name,
+            to: service.data.name || '',
         }));
         return supportsRelationships;
     }
@@ -179,7 +181,7 @@ export class MissionEditorService {
                     id: ~~host.id,
                 })),
                 services: groupedNodes.services.map(service => ({
-                    name: service.name,
+                    name: service.data.name || '',
                     id: ~~service.id,
                 })),
                 aggregations: {
@@ -190,4 +192,32 @@ export class MissionEditorService {
         };
         return payload;
     }
+
+    uploadMissionPayload(payload: MissionPayload): void {
+        // Implement the logic to upload the mission payload to the backend API
+        console.log('Uploading mission payload:', payload);
+        this.http.get('http://localhost:8000/missions').subscribe({
+            next: (response) => {
+                console.log('Backend connection check successful:', response);
+            },
+            error: (error) => {
+                console.error('Backend connection check failed:', error);
+            }
+        });
+
+        //console.log(JSON.stringify({ ... payload }, null, 2));
+
+
+        this.http.post('http://localhost:8000/missions', { ... payload}, {
+            headers : new HttpHeaders({ 'Content-Type': 'application/json' })
+        }).subscribe({
+            next: (response) => {
+                console.log('Mission payload uploaded successfully:', response);
+            },
+            error: (error) => {
+                console.error('Error uploading mission payload:', error);
+            }
+        });
+    }
+
 }

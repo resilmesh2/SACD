@@ -44,8 +44,11 @@
     align-items: center;
     padding: 0.5em 1em;
     background-color: #d8d8d8;
-    width: 10em;
+    width: fit-content;
+    min-width: 10em;
+    max-width: 20em;
     color: #1b1b1b;
+    
     border-radius: 4px;
     
     &--root {
@@ -77,6 +80,13 @@
     justify-content: center;
     align-items: center;
     gap: 0.5em;
+}
+
+.node .title {
+  max-width: 18em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .overlay {
@@ -126,7 +136,7 @@ button.action.host-edit {
   background-color: #3E5F1B;
 }
 
-button.action.service-edit {
+button.action.component-edit {
   background-color: #1B3F5F;
 }
 
