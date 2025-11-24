@@ -1,7 +1,8 @@
 services:
-  dashboard:
+  resilmesh_sap_sacd:
     build:
       context: .
     ports:
       - 4200:4200
-    network_mode: host
+    networks:
+      - resilmesh_network

@@ -19,8 +19,12 @@ export const agendaContainers = [
   new AgendaContainer('Lists', [
     new Agenda('Assets', ASSETS_PATH),
     new Agenda('Vulnerabilities', ISSUE_PATH),
-    new Agenda('CSA', CSA_PATH),
   ], 'list'),
+  new AgendaContainer('Edit', [
+    new Agenda('Subnets', SUBNETS_PATH),
+    new Agenda('Organizations', ORGANIZATION_PATH),
+    new Agenda('Mission Editor', MISSION_EDITOR_PATH),
+  ], 'edit_note'),
   new AgendaContainer('Visualizations', [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),
     new Agenda('Subnets Graph', SUBNETS_GRAPH_PATH),
@@ -28,12 +32,8 @@ export const agendaContainers = [
     new Agenda('Missions', MISSION_PATH),
     new Agenda('Vulnerabilities', VULNERABILITY_PATH),
   ], 'analytics'),
-  new AgendaContainer('CRUD', [
-    new Agenda('Subnets', SUBNETS_PATH),
-    new Agenda('Organizations', ORGANIZATION_PATH),
-    new Agenda('Mission Editor', MISSION_EDITOR_PATH),
-  ], 'edit_note'),
   new AgendaContainer('External', [
+    new Agenda('CSA', CSA_PATH),
     ...EXTERNAL_AGENDAS
   ], 'api')
 ];
