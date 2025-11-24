@@ -174,3 +174,11 @@ mat-drawer .mat-drawer-inner-container {
 .mat-icon {
     font-variation-settings: 'FILL' 1 !important;
 }
+
+.mat-mdc-snack-bar-container {
+    &.snackbar-error {
+        --mat-snack-bar-container-color: #D54D55 !important;
+        --mat-mdc-snack-bar-button-color: #fff !important;
+        --mdc-snackbar-supporting-text-color: #fff !important;
+    }
+}

@@ -104,3 +104,54 @@
 mat-label {
     font-weight: bolder;
 }
+
+.key-help {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.key-help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1em;
+}
+
+.key-help-container {  display: grid;
+    flex-grow: 1;
+  grid-template-columns: 0.3fr 1fr 1fr;
+  grid-template-rows: 0.5fr 1fr 1fr;
+  gap: 0.5em;
+  grid-auto-flow: row;
+  background-color: #f0f0f0;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  grid-template-areas:
+    "icon title title"
+    "description description description"
+    "description description description";
+}
+
+.key-help-container .title { grid-area: title; 
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.key-help-container .icon { grid-area: icon; 
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+}
+
+.key-help-container .description { grid-area: description; 
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-align: start;
+}

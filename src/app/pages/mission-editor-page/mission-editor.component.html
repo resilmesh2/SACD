@@ -1,8 +1,9 @@
 <h1>Mission Editor</h1>
-<p>Description of the mission model here?</p>
-<p>Components in a group are alternatives (OR relationship).</p>
+<p>For guidance on mission decomposition, see 
+    <a href="https://github.com/resilmesh2/ISIM/blob/main/docs/mission_guidelines.md">mission guidelines</a>.
+</p>
+<!-- <p>Components in a group are alternatives (OR relationship).</p> -->
 <!-- <p>Dependenies are between components e.g. when they talk to each other</p> -->
-<p style="color: red;">TODO: Add the option to add existing host node or service node from DB</p>
 <div class="mission-editor">
     <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
         <div class="content-container">
@@ -42,6 +43,59 @@
             </div>
         </div>
     </sentinel-card>
+    <sentinel-card class="editor-card" cardTitle="Structure Editor Controls" titleIcon="keyboard">
+        <div class="content-container key-help-grid">
+            <ng-container
+                [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Pan Canvas',
+                    icon: 'pan_tool',
+                    description: 'Click and drag background to pan'
+                }"
+            ></ng-container>
+            <ng-container
+                [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Zoom Canvas',
+                    icon: 'zoom_in',
+                    description: 'Use mouse wheel to zoom in and out'
+                }"
+            ></ng-container>
+            <ng-container
+                [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Node Multi-Select',
+                    icon: 'gesture_select',
+                    description: 'Hold Ctrl and click on nodes/connections'
+                }"
+            ></ng-container>
+            <ng-container
+                [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Nodes Box Select',
+                    icon: 'select_multiple',
+                    description: 'Hold Shift and click and drag on background'
+                }"
+            ></ng-container>
+            <ng-container
+                [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Delete Selected',
+                    icon: 'delete',
+                    description: 'Press Delete key to delete selected nodes & connections'
+                }"
+            ></ng-container>
+
+            <ng-container
+               [ngTemplateOutlet]="keyHelpTemplate"
+                [ngTemplateOutletContext]="{
+                    title: 'Create Connection',
+                    icon: 'call_merge',
+                    description: 'Click and drag from one node\'s output to another node\'s input'
+                }"
+            ></ng-container>
+        </div>
+    </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
         <flow-editor [(nodes)]="nodes" [(connections)]="connections" [missionName]="missionName()" ></flow-editor>
     </sentinel-card>
@@ -49,3 +103,17 @@
         <pre>{{ getMissionJSON() }}</pre>
     </sentinel-card> -->
 </div>
+
+<ng-template #keyHelpTemplate let-title="title" let-icon="icon" let-description="description">
+    <div class="key-help-container">
+        <div class="title">
+            {{ title }}
+        </div>
+        <div class="icon">
+            <mat-icon>{{ icon }}</mat-icon>
+        </div>
+        <div class="description">
+            {{ description }}
+        </div>
+    </div>
+</ng-template>

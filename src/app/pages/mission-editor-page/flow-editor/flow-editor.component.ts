@@ -1,5 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, viewChild, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,11 +8,11 @@ import { IPoint } from '@foblex/2d';
 import { EFMarkerType, FCanvasComponent, FCreateConnectionEvent, FFlowComponent, FFlowModule, FSelectionChangeEvent, FZoomDirective } from '@foblex/flow';
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { NgTemplateOutlet } from '@angular/common';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { MatDialog } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ExistingNodeService } from './existing-node.service';
 import { IP } from '../../asset-page/asset-page.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export type Connection = {
     from: string;
@@ -117,6 +117,8 @@ export class FlowEditorComponent implements OnInit {
     existingHosts = signal<string[]>([]);
     existingIPs = signal<IP[]>([]);
 
+    private _snackBar = inject(MatSnackBar);
+
     ngOnInit(): void {
         this.existingNodeService.getMissionComponents().subscribe(components => {
             this.existingComponents.set(components);
@@ -129,8 +131,8 @@ export class FlowEditorComponent implements OnInit {
         });
 
         addEventListener('keydown', (event: KeyboardEvent) => {
-            // Delete selected nodes/connections on Delete or Backspace key press
-            if (event.key === 'Delete' || event.key === 'Backspace') {
+            // Delete selected nodes/connections on Delete key press
+            if (event.key === 'Delete') { //  || event.key === 'Backspace'
                 this.deleteSelected();
             }
         });
@@ -202,7 +204,7 @@ export class FlowEditorComponent implements OnInit {
         }
 
         if (this.selected().includes('f-node-root') || this.selected().includes('f-node-1')) {
-            // Do not allow deleting root node
+            this._snackBar.open('Cannot delete root node or root AND node.', 'Close', { panelClass: ['snackbar-error'] });
             return;
         }
 
@@ -344,8 +346,6 @@ export class FlowEditorComponent implements OnInit {
         const nodesAtLayer = this.nodes().filter(node => node.layer === layer);
         const currentPositions = this.getCurrentPositions();
 
-        // console.log('Nodes at layer', currentPositions, nodesAtLayer);
-
         const usedXPositions = nodesAtLayer.map(node => {
             const pos = currentPositions.find(p => p.id === node.id);
             return pos ? pos.position.x : null;
@@ -357,8 +357,6 @@ export class FlowEditorComponent implements OnInit {
         const closestEmptyX = Math.abs(minX) < Math.abs(maxX) ? minX : maxX;
 
         const finalX = closestEmptyX + (closestEmptyX > 0 ? 200 : -200);                
-
-        //console.log('Used X Positions at layer', layer, usedXPositions, finalX);
         return finalX;
     }
 

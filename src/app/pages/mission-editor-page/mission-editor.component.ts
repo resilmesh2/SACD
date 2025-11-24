@@ -1,4 +1,4 @@
-import { Component, inject, model, ModelSignal, signal, WritableSignal } from "@angular/core";
+import { Component, inject, model, signal, WritableSignal } from "@angular/core";
 import { SentinelCardComponent } from "@sentinel/components/card";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -7,7 +7,10 @@ import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.comp
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
 import { MissionEditorService } from "./mission-editor.service";
-import { ExistingNodeService } from "./flow-editor/existing-node.service";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { MatIcon } from "@angular/material/icon";
+import { ɵEmptyOutletComponent } from "@angular/router";
+import { NgComponentOutlet, NgTemplateOutlet } from "@angular/common";
 
 export type MissionData = {
     name: string;
@@ -31,8 +34,10 @@ export type MissionData = {
     MatInputModule,
     FormsModule,
     SentinelButtonWithIconComponent,
-    FlowEditorComponent
-  ],
+    FlowEditorComponent,
+    MatIcon,
+    NgTemplateOutlet
+],
   providers: [
     MissionValidator, 
     MissionEditorService,
@@ -53,6 +58,12 @@ export class MissionEditorComponent {
       { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
     ]);
 
+    private _snackBar = inject(MatSnackBar);
+
+    openSnackBar(message: string, action: string, { error = false } = {}) {
+        this._snackBar.open(message, action, { panelClass: error ? ['snackbar-error'] : undefined });
+    }
+
     constructor(
       private missionValidator: MissionValidator, 
       private missionEditorService: MissionEditorService,
@@ -60,7 +71,6 @@ export class MissionEditorComponent {
 
     validateMission(): boolean {
       if (this.missionName().trim() === '') {
-        alert('Mission name cannot be empty.');
         return false;
       }
 
@@ -76,6 +86,8 @@ export class MissionEditorComponent {
 
     saveMission() {
         if (!this.validateMission()) {
+            let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
+            this.openSnackBar(status, 'Close', { error: true });
             return;
         }
 
@@ -88,7 +100,18 @@ export class MissionEditorComponent {
         };
 
         const payload = this.missionEditorService.createMissionPayload(missionData);
-        this.missionEditorService.uploadMissionPayload(payload);
+        let $missionUpload = this.missionEditorService.uploadMissionPayload(payload);
+
+        $missionUpload.subscribe({
+            next: (response) => {
+                console.log('Mission payload uploaded successfully:', response);
+                this.openSnackBar('Mission saved successfully.', 'Close');
+            },
+            error: (error) => {
+                console.error('Error uploading mission payload:', error);
+                this.openSnackBar(`Failed to save mission. [${error.message}]`, 'Close', { error: true });
+            }
+        })
     }
 
     getMissionJSON(): string {

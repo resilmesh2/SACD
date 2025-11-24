@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { MissionData } from "./mission-editor.component";
 import { MissionNode } from "./flow-editor/flow-editor.component";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 type NodeRelationshipById = {
     from: number;
@@ -60,6 +61,7 @@ type MissionNodeWithId = MissionNode & { id: number };
   providedIn: 'root',
 })
 export class MissionEditorService {
+    private API_URL = 'http://localhost:8000/missions';
     private http = inject(HttpClient);
     constructor() {}
 
@@ -193,30 +195,20 @@ export class MissionEditorService {
         return payload;
     }
 
-    uploadMissionPayload(payload: MissionPayload): void {
-        // Implement the logic to upload the mission payload to the backend API
+    uploadMissionPayload(payload: MissionPayload): Observable<any> {
         console.log('Uploading mission payload:', payload);
-        this.http.get('http://localhost:8000/missions').subscribe({
-            next: (response) => {
-                console.log('Backend connection check successful:', response);
-            },
-            error: (error) => {
-                console.error('Backend connection check failed:', error);
-            }
-        });
+        // Connection check (optional)
+        // this.http.get('http://localhost:8000/missions').subscribe({
+        //     next: (response) => {
+        //         console.log('Backend connection check successful:', response);
+        //     },
+        //     error: (error) => {
+        //         console.error('Backend connection check failed:', error);
+        //     }
+        // });
 
-        //console.log(JSON.stringify({ ... payload }, null, 2));
-
-
-        this.http.post('http://localhost:8000/missions', { ... payload}, {
+        return this.http.post(this.API_URL, { ... payload}, {
             headers : new HttpHeaders({ 'Content-Type': 'application/json' })
-        }).subscribe({
-            next: (response) => {
-                console.log('Mission payload uploaded successfully:', response);
-            },
-            error: (error) => {
-                console.error('Error uploading mission payload:', error);
-            }
         });
     }
 
