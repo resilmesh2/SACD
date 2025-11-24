@@ -1,0 +1,159 @@
+@use 'flow-common';
+
+::ng-deep f-flow {
+  @include flow-common.connection;
+    .f-background {
+    line {
+      stroke: var(--background-element-color);
+    }
+
+    circle {
+      fill: var(--background-element-color);
+    }
+  }
+}
+
+.f-flow {
+    height: 50em;
+}
+
+.f-node {
+  @include flow-common.node;
+  border: none;
+
+  &.f-selected {
+    border: 2px solid #E4295F;
+  }
+}
+
+@include flow-common.connector;
+
+.f-connections-dragging {
+  .f-node-input {
+    &:not(.f-connector-connectable) {
+      //.f-node-input-can-be-connected-to changed to .f-connector-connectable
+      background-color: var(--disabled-color);
+    }
+  }
+}
+
+.node {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em 1em;
+    background-color: #d8d8d8;
+    width: fit-content;
+    min-width: 10em;
+    max-width: 20em;
+    color: #1b1b1b;
+    
+    border-radius: 4px;
+    
+    &--root {
+        @extend .node;
+        background-color: #343F5D; //#7fbfdf;
+        color: #fff;
+    }
+    &--and {
+        @extend .node;
+        background-color: #ccc;
+    }
+    &--or {
+        @extend .node;
+        background-color: #ccc;
+    }
+    &--component {
+        @extend .node;
+        background-color: #7fbfdf;
+    }
+    &--host {
+        @extend .node;
+        background-color: #a0d468;
+    }
+}
+
+.node .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.node .title {
+  max-width: 18em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.overlay {
+  @include flow-common.overlay;
+  margin-top: 4em;
+  height: 20em;
+  background-color: #ccc;
+}
+
+.node-editor-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  
+  margin: 1em;
+  padding: 1em;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  gap: 1em;
+}
+
+.node-editor-overlay h3 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+.node-editor-action {
+  align-self: flex-end;
+}
+
+button.action {
+    border-color: transparent;
+    color: #fff;
+    background-color: transparent;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0em;
+}
+
+button.action.host-edit {
+  background-color: #3E5F1B;
+}
+
+button.action.component-edit {
+  background-color: #1B3F5F;
+}
+
+.validation-tooltip-content {
+    position: absolute;
+    top: -3em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    background-color: #ffdddd;
+    border: 1px solid #ff5c5c;
+    border-radius: 4px;
+    color: #a70000;
+    font-weight: bold;
+    width: max-content;
+    padding: 0.25em 0.5em;
+}
+
+@include flow-common.examples-toolbar;

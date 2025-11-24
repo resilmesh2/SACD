@@ -1,0 +1,239 @@
+<div class="examples-toolbar">
+    <!-- <sentinel-button-with-icon
+        color="accent"
+        icon="data_object"
+        (click)="printNodes()"
+    >
+        Print Nodes
+    </sentinel-button-with-icon> -->
+    <sentinel-button-with-icon
+        color="primary"
+        icon="call_split"
+        (click)="addComponentGroup()"
+    >
+        Add Service 'OR Group'
+    </sentinel-button-with-icon>
+    <sentinel-button-with-icon
+        color="primary"
+        icon="shapes"
+        (click)="addComponentNode()"
+    >
+        Add Service Node
+    </sentinel-button-with-icon>
+
+    <sentinel-button-with-icon
+        color="primary"
+        icon="device_hub"
+        (click)="addHostGroup()"
+    >
+        Add Host 'OR' Group
+    </sentinel-button-with-icon>
+
+    <sentinel-button-with-icon
+        color="primary"
+        icon="host"
+        (click)="addHostNode()"
+    >
+        Add Host Node
+    </sentinel-button-with-icon>
+
+    <!-- <sentinel-button-with-icon
+        color="warn"
+        icon="delete"
+        (click)="deleteSelected()"
+    >
+        Delete selected
+    </sentinel-button-with-icon> -->
+</div>
+
+<f-flow fDraggable (fLoaded)="onLoaded()" (fCreateConnection)="onCreateConnection($event)" (fSelectionChange)="onSelectionChange($event)">
+    <!-- <f-line-alignment [fAlignThreshold]="40"></f-line-alignment> -->
+    
+    <f-background>
+      <f-circle-pattern></f-circle-pattern>
+    </f-background>
+    <f-selection-area></f-selection-area>
+    
+  <f-canvas [fZoom]="true">
+    <f-connection-for-create fBehavior="floating"></f-connection-for-create>
+
+    @for (connection of connections(); track connection.to) {
+      <f-connection [fReassignDisabled]="true"
+                    [fOutputId]="connection.from" [fInputId]="connection.to"
+                    fBehavior="floating">
+        <svg viewBox="0 0 700 700" fMarker [type]="eMarkerType.END" [height]="5" [width]="5" [refX]="4" [refY]="2.5">
+            <path fill="#343F5D" d="M0,0L700,350L0,700L150,350z"/>
+        </svg>
+      </f-connection>
+    }
+    <ng-container ngProjectAs="[fNodes]">
+        @for (node of nodes(); track node.id) {
+            @if (node.type === 'root') {
+                <div fNode fDragHandle [fNodePosition]="{ x: 0, y: 0 }" class="node--root">
+                    <div fNodeOutput fOutputId="root-output" class="bottom" [fOutputMultiple]="false"></div>
+                    <div class="content">
+                        {{missionName() || 'MISSION'}}
+                    </div>
+                </div>
+            } @else if (node.type === 'and') {
+                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and" >
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
+                    <div 
+                        fNodeOutput 
+                        fOutputId="{{node.id}}-output" 
+                        class="bottom" 
+                        [fOutputMultiple]="true" 
+                        [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
+                    </div>
+                    <div class="content">
+                        AND (ID: {{node.id}})
+                    </div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
+                </div>
+            } @else if (node.type === 'or') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--or">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+                    <div 
+                        fNodeOutput 
+                        fOutputId="{{node.id}}-output" 
+                        class="bottom" 
+                        [fOutputMultiple]="true"
+                        [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
+                    </div>
+                    <div class="content">
+                        OR (ID: {{node.id}})
+                    </div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
+                </div>
+            } @else if (node.type === 'component') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+                    <div class="content">
+                        <div class="title">{{node.data.name || 'SERVICE'}} (ID: {{node.id}})</div>
+                        <button class="action component-edit" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+                            <mat-icon fontSet="material-icons" aria-label="Edit component">edit</mat-icon>
+                        </button>
+                    </div>
+                    <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
+                    <ng-template
+                        cdkConnectedOverlay
+                        [cdkConnectedOverlayOrigin]="trigger"
+                        [cdkConnectedOverlayOpen]="node.isEditing || false"
+                        (detach)="node.isEditing = false"
+                    >
+                        <div class="node-editor-overlay">
+                            <h3>Edit node - COMPONENT (ID: {{node.id}})</h3>
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="name">Component name</mat-label>
+                                <input type="text"
+                                        placeholder="Component name"
+                                        aria-label="component-name"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.name"
+                                        [matAutocomplete]="auto">
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    @for (component of existingComponents(); track component) {
+                                        <mat-option [value]="component">{{component}}</mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <div class="node-editor-action">
+                                <sentinel-button-with-icon
+                                    color="primary"
+                                    icon="close"
+                                    (click)="node.isEditing = false"
+                                >
+                                    Close
+                                </sentinel-button-with-icon>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            } @else if (node.type === 'host') {
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+
+                    <div class="content">
+                        <div>{{node.data.hostname || 'HOST'}} (ID: {{node.id}})</div>
+                        <button class="action host-edit" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+                            <mat-icon fontSet="material-icons" aria-label="Edit host">edit</mat-icon>
+                        </button>
+                    </div>
+
+                    @if (node.validation.error) {
+                        <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
+                    }
+
+                    <ng-template
+                        cdkConnectedOverlay
+                        [cdkConnectedOverlayOrigin]="trigger"
+                        [cdkConnectedOverlayOpen]="node.isEditing || false"
+                        (detach)="node.isEditing = false"
+                    >
+                        <div class="node-editor-overlay">
+                            <h3>Edit node - HOST (ID: {{node.id}})</h3>
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="name">Host name</mat-label>
+                                <input type="text"
+                                        placeholder="Host name"
+                                        aria-label="host-name"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.hostname"
+                                        [matAutocomplete]="hostAutocomplete">
+                                <mat-autocomplete #hostAutocomplete="matAutocomplete">
+                                    @for (host of existingHosts(); track host) {
+                                        <mat-option [value]="host">{{host}}</mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <mat-form-field class="full-width" subscriptSizing="dynamic">
+                                <mat-label for="ip-address">IP Address:</mat-label>
+                                <input type="text"
+                                        placeholder="IP Address"
+                                        aria-label="ip-address"
+                                        matInput
+                                        required
+                                        [(ngModel)]="node.data.ip"
+                                        [matAutocomplete]="ipAutocomplete"
+                                    >
+                                <mat-autocomplete #ipAutocomplete="matAutocomplete">
+                                    @for (ip of existingIPs(); track ip) {
+                                        <mat-option [value]="ip.address">{{ip.address}}</mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <div class="node-editor-action">
+                                <sentinel-button-with-icon
+                                    color="primary"
+                                    icon="close"
+                                    (click)="node.isEditing = false"
+                                >
+                                    Close
+                                </sentinel-button-with-icon>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            }
+        }
+    </ng-container>
+
+  </f-canvas>
+</f-flow>
+
+
+<ng-template #validationErrorTemplate let-reason="reason">
+    <div class="validation-tooltip-content">
+        <mat-icon fontSet="material-icons" class="error-icon">error</mat-icon>
+        <span>{{ reason }}</span>
+    </div>
+</ng-template>
