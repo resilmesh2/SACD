@@ -613,6 +613,27 @@ public getIPAddresses(): Observable<string[]> {
       );
     }
 
+    public getNetworkServices(): Observable<NetworkService[]> {
+      return this.apollo
+        .query<any>({
+          query: gql`
+          {
+            networkServices {
+              _id
+              service
+              protocol
+              port
+            }
+          }
+        `,
+        })
+        .pipe(
+          map((response) => {
+            return response.data.networkServices;
+          })
+        );
+      }
+
     public changeTag(address: string, tag: string[]): void {
       this.apollo.mutate<any>({
         mutation: gql`

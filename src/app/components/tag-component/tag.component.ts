@@ -48,8 +48,8 @@ export class TagComponent {
   ngOnInit(): void {
     this.tags.set(this.inputTags());
     this.tagsCache.set([...this.inputTags()]);
-    console.log('Tags initialized:', this.tags());
-    console.log('ID:', this.id);
+    // console.log('Tags initialized:', this.tags());
+    // console.log('ID:', this.id);
   }
 
 

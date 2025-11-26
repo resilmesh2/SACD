@@ -353,7 +353,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       ... this.cveDetails[index], // Spread CVE properties
       name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
       severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-      status: index % 2 === 0 ? 'discovered' : 'discovered', //! TODO: Example status, replace with actual logic when needed
+      status: index % 2 === 0 ? 'estimated' : 'confirmed', //! TODO: Example status, replace with actual logic when needed
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
       impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available',

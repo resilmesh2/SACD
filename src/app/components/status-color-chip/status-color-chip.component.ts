@@ -10,21 +10,40 @@ import { ChangeDetectionStrategy, Component, computed, input } from "@angular/co
 
 export class StatusChipComponent {
   label = input<string | undefined>('unknown');
+  type = input<'asset' | 'vulnerability'>('asset');
 
-  // TODO : Configure colors to be different from cvss-chip
   color = computed(() => {
+    return this.type() === 'asset' ? this.assetColorByLabel() : this.vulnerabilityColorByLabel();
+  });
+
+  assetColorByLabel = computed(() => {
     switch (this.label()?.toLowerCase()) {
-      case 'discovered':
+      case 'unknown':
+        return '#ff7d88';
+      case 'known':
+        return '#86B46A';
+      case 'rediscovered':
+        return '#f6a542';
+      default:
+        return '#cacaca';
+    }
+  });
+
+  vulnerabilityColorByLabel = computed(() => {
+    switch (this.label()?.toLowerCase()) {
+      case 'estimated':
         return '#A1D2CE';
       case 'confirmed':
-        return '#F45B69';
+        return '#ff7d88';
+      case 'unconfirmed':
+        return '#c9c5bd';
       case 'assessed':
-        return '#d26d0f';
+        return '#f6a542';
       case 'reassessed':
         return '#f1c037';
-      case 'contained':
+      case 'resolved':
         return '#86B46A';
-      case 'verified':
+      case 'closed':
         return '#4CAF50';
       default:
         return '#cacaca';
