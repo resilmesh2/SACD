@@ -11,6 +11,20 @@ import { ChangeDetectionStrategy, Component, computed, input } from "@angular/co
 export class AssetTypeChipComponent {
   label = input<string | undefined>('unknown');
 
+  displayLabel = computed(() => {
+    switch (this.label()?.toLowerCase()) {
+      case 'ip':
+        return 'IP';
+      case 'networkservice':
+        return 'Net service';
+      case 'domainname':
+        return 'Domain';
+      default:
+        return this.label() || 'Unknown';
+    }
+  });
+
+
   color = computed(() => {
     switch (this.label()?.toLowerCase()) {
       case 'ip':

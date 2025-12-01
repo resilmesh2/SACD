@@ -602,13 +602,29 @@ public getIPAddresses(): Observable<string[]> {
               range
             }
             tag
+            nodes {
+              host {
+                network_servicesAggregate {
+                  count
+                }
+              }
+            }
           }
         }
       `,
       })
       .pipe(
         map((response) => {
-          return response.data.ips;
+          return response.data.ips.map((ipNode: any) => ({
+            _id: ipNode._id,
+            type: ipNode.__typename,
+            address: ipNode.address,
+            subnets: ipNode.subnets,
+            tag: ipNode.tag,
+            networkServicesCount: ipNode.nodes.reduce((count: number, node: any) => {
+              return count + (node?.host?.network_servicesAggregate?.count || 0);
+            }, 0)
+          }));
         })
       );
     }
@@ -623,13 +639,62 @@ public getIPAddresses(): Observable<string[]> {
               service
               protocol
               port
+              hosts {
+                node {
+                  ips {
+                    address
+                  }
+                }
+              }
             }
           }
         `,
         })
         .pipe(
           map((response) => {
-            return response.data.networkServices;
+            return response.data.networkServices.flatMap((service: any) => {
+              return service.hosts.flatMap((hostNode: any) => {
+                return hostNode.node.ips.flatMap((ipNode: any) => {
+                  return {
+                    _id: service._id,
+                    type: service.__typename,
+                    service: service.service,
+                    protocol: service.protocol,
+                    port: service.port,
+                    ip_address: ipNode.address,
+                  } as NetworkService;
+                });
+              });
+            })
+          })
+        );
+      }
+
+
+    public getDomainNames(): Observable<string[]> {
+      return this.apollo
+        .query<any>({
+          query: gql`
+          {
+            domainNames {
+              domain_name
+              __typename
+              ips {
+                address
+              }
+            }
+          }
+        `,
+        })
+        .pipe(
+          map((response) => {
+            return response.data.domainNames.map((domain: any) => {
+              return {
+                domain_name: domain.domain_name,
+                type: domain.__typename,
+                ips: domain.ips.map((ip: any) => ip.address),
+              }
+            });
           })
         );
       }

@@ -29,7 +29,7 @@ import { StatusChipComponent } from '../../components/status-color-chip/status-c
 import { AssetTypeChipComponent } from './asset-type-chip/asset-type-chip';
 
 export interface Asset {
-  name: string;
+  ip: string;
   id: string;
   type: string;
   status: string;
@@ -43,7 +43,8 @@ export interface IP {
   address: string;
   tag: string[];
   subnets: Subnet[];
-  __typename: string;
+  type: string;
+  networkServicesCount: number;
 }
 
 interface Filter {
@@ -83,7 +84,7 @@ interface Filter {
 
 export class AssetPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Asset>();
-  displayedColumns: string[] = ['type', 'name', 'status', 'subnet', 'tag', 'last_seen'];
+  displayedColumns: string[] = ['type', 'ip', 'status', 'subnet', 'service', 'tag', 'last_seen'];
   
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -110,12 +111,13 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
 
   ips: IP[] = []
   networkServices: any[] = [];
+  domains: any[] = [];
 
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
 
   assets = signal<Asset[]>([]);
-  totalSortedAssets = computed(() => this.dataSource.filteredData.length);
+  totalSortedAssets = computed(() => this.assets().length);
 
   filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
   defaultValue = "All";
@@ -152,7 +154,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dataLoading = true;
 
-    console.log('Data Loading');
     this.data.getIPs().subscribe({
       next: (ips) => {
         this.ips = ips;
@@ -190,6 +191,22 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       }
     });
 
+    this.data.getDomainNames().subscribe({
+      next: (domains) => {
+        console.log('Domain Names:', domains);
+        this.domains = domains;
+
+        this.processDomains();
+
+        this.changeDetector.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error fetching domain names:', error);
+      }
+    });
+
+    // Initialize filters
+
     this.filters.push({name: 'tag', options: this.tags(), defaultValue: this.defaultValue});
     this.filters.push({name: 'subnet', options: this.subnets(), defaultValue: this.defaultValue});
     this.filters.push({name: 'status', options: this.statusOptions(), defaultValue: this.defaultValue});
@@ -210,9 +227,9 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       var map: Map<string, any> = new Map(JSON.parse(filter));
       let isMatch = false;
       for(let [key,value] of map){
-        // Name filter (CVE ID)
-        if (key === 'name') {
-          isMatch = (value === "All") || (value == '') || record.name.toLowerCase().includes(value.trim().toLowerCase());
+        // IP filter
+        if (key === 'ip') {
+          isMatch = (value === "All") || (value == '') || record.ip.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
           // If no date range is specified, match all records
@@ -260,8 +277,8 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
-  applyNameFilter(): void {
-    this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
+  applyIPFilter(): void {
+    this.filterDictionary.set('ip', this.searchTerm().trim().toLowerCase());
     this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     
     if (this.dataSource.paginator) {
@@ -309,50 +326,61 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.data.changeTag(address, tags)
   }
 
+  private detectChanges(): void {
+    this.dataSource.data = this.assets();
+    
+    if (this.paginator && this.sort) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+    
+    this.changeDetector.detectChanges();
+  }
+
   private processIPs(): void {
     this.assets.update(assets => [...assets, ...this.ips.map((ip, _) => ({
-      name: ip.address,
       id: ip._id,
-      type: ip.__typename,
+      type: ip.type,
+      ip: ip.address,
+      service: ip.networkServicesCount > 0 ? ip.networkServicesCount == 1 ? `${ip.networkServicesCount} service` : `${ip.networkServicesCount} services` : null,
       status: Math.random() > 0.5 ? 'known' : Math.random() < 0.75 ? 'unknown' : 'rediscovered', // TODO
       subnet: (ip.subnets ?? []).map(item => item.range),
       tag: [...(ip.tag ?? [])],
       last_seen: null, // TODO: When last_seen is available in the IP model, set it here
     }))]);
 
-    this.dataSource.data = this.assets();
-    
-    if (this.paginator && this.sort) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-    
-    this.changeDetector.detectChanges();
+    this.detectChanges();
   }
 
   private processNetworkServices(): void {
     this.assets.update(assets => [...assets, ...this.networkServices.map((service, _) => ({
-      name: service.service + ':' + service.port + '/' + service.protocol,
       id: service._id,
-      type: service.__typename,
+      type: service.type,
+      ip: service.ip_address,
+      service: service.service + ':' + service.port + '/' + service.protocol,
       status: 'known', // TODO
       subnet: [],
       tag: [...(service.tag ?? [])],
       last_seen: null, // TODO: When last_seen is available in the NetworkService model, set it here
     }))]);
 
-    this.dataSource.data = this.assets();
-    
-    if (this.paginator && this.sort) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-    
-    this.changeDetector.detectChanges();
+    this.detectChanges();
   }
 
   private processDomains(): void {
     // Similar processing for DomainName assets can be added here
+    this.assets.update(assets => [...assets, ...this.domains.map((domain, _) => ({
+      id: domain._id,
+      type: domain.type,
+      ip: domain.ips.length > 0 ? domain.ips[0] : 'N/A', // Assuming the first IP for display
+      service: null,
+      status: 'known', // TODO
+      subnet: [],
+      tag: [...(domain.tag ?? [])],
+      last_seen: null, // TODO: When last_seen is available in the DomainName model, set it here
+    }))]);
+
+    this.detectChanges();
   }
 
   add(event: MatChipInputEvent, tags: string[]): void {
@@ -378,12 +406,16 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   }
 
   navigateToNetworkNodeView(asset: Asset): void {
-    if (asset.type.toLowerCase() !== 'ip') {
-      return;
-    }
-    this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: asset.name }
-    });
+    this.searchTerm.set(asset.ip);
+    this.applyIPFilter();
+    
+    // if (asset.type.toLowerCase() !== 'ip') {
+
+    //   return;
+    // }
+    // this.router.navigate([NETWORK_NODES_PATH], {
+    //   queryParams: { ip: asset.ip }
+    // });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
