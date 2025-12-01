@@ -27,6 +27,8 @@ import { MatIcon } from '@angular/material/icon';
 import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
 import { StatusChipComponent } from '../../components/status-color-chip/status-color-chip.component';
 import { AssetTypeChipComponent } from './asset-type-chip/asset-type-chip';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { AssetStatusEditChipComponent } from "./asset-status-edit-chip/asset-status-edit-chip.component";
 
 export interface Asset {
   ip: string;
@@ -36,6 +38,7 @@ export interface Asset {
   tag: string[];
   subnet: string[];
   last_seen: Date | null;
+  isEditOpen?: boolean;
 }
 
 export interface IP {
@@ -48,9 +51,9 @@ export interface IP {
 }
 
 interface Filter {
-    name: string;
-    options: string[];
-    defaultValue: string;
+  name: string;
+  options: string[];
+  defaultValue: string;
 }
 
 @Component({
@@ -74,9 +77,10 @@ interface Filter {
     TagComponent,
     SentinelButtonWithIconComponent,
     MatIcon,
-    StatusChipComponent,
-    AssetTypeChipComponent
-  ],
+    AssetTypeChipComponent,
+    OverlayModule,
+    AssetStatusEditChipComponent
+],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
   ]
@@ -179,7 +183,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
 
     this.data.getNetworkServices().subscribe({
       next: (services) => {
-        console.log('Network Services:', services);
         this.networkServices = services;
 
         this.processNetworkServices();
@@ -193,7 +196,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
 
     this.data.getDomainNames().subscribe({
       next: (domains) => {
-        console.log('Domain Names:', domains);
         this.domains = domains;
 
         this.processDomains();
@@ -408,7 +410,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   navigateToNetworkNodeView(asset: Asset): void {
     this.searchTerm.set(asset.ip);
     this.applyIPFilter();
-    
+
     // if (asset.type.toLowerCase() !== 'ip') {
 
     //   return;

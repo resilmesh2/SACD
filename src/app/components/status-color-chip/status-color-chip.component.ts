@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, model } from "@angular/core";
 
 @Component({
   selector: 'status-chip',
@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from "@angular/co
 })
 
 export class StatusChipComponent {
-  label = input<string | undefined>('unknown');
+  label = model<string | undefined>('unknown');
   type = input<'asset' | 'vulnerability'>('asset');
 
   color = computed(() => {

@@ -42,7 +42,7 @@
             }
           </mat-select>
         </mat-form-field>
-        
+
         <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
           <mat-label>Filter by Status</mat-label>
           <mat-select [(value)]="selectedStatus" (selectionChange)="applySelectFilter($event, filters[2])">
@@ -117,8 +117,8 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-        <td mat-cell *matCellDef="let asset"> 
-          <status-chip [label]="asset.status" class="badge"></status-chip>
+        <td mat-cell *matCellDef="let asset">
+          <asset-status-edit-chip [(label)]="asset.status" [(isEditOpen)]="asset.isEditOpen" class="badge"></asset-status-edit-chip>
         </td>
       </ng-container>
 
