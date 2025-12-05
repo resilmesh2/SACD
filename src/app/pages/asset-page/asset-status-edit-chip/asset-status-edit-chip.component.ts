@@ -1,5 +1,6 @@
 import { OverlayModule } from "@angular/cdk/overlay";
-import { ChangeDetectionStrategy, Component, computed, model } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, input, model } from "@angular/core";
+import { DataService } from "../../../services/data.service";
 
 @Component({
   selector: 'asset-status-edit-chip',
@@ -14,7 +15,14 @@ import { ChangeDetectionStrategy, Component, computed, model } from "@angular/co
 
 export class AssetStatusEditChipComponent {
   label = model<string | undefined>('unknown');
+  type = input<string | undefined>(undefined);
+
+  address = input<string | undefined>(undefined);
+  serviceData = input<{ service: string; port: number; protocol: string } | undefined>(undefined);
+
   isEditOpen = model<boolean>(false);
+
+  constructor(private data: DataService) {}
 
   color = computed(() => {
     return this.labelColorConverter(this.label() || 'unknown');
@@ -36,4 +44,45 @@ export class AssetStatusEditChipComponent {
   labelColor = computed(() => {
     return this.label() == 'critical' ? '#ffff': '#1C1D21';
   });
+
+  updateStatus(status: string): void {
+    switch (this.type()?.toLowerCase().trim()) {
+      case 'ip':
+        this.updateIPStatus(status);
+        break;
+      case 'networkservice':
+        this.updateNetworkServiceStatus(status);
+        break;
+      default:
+        console.error(`Unsupported asset type: ${this.type()}. Cannot update status.`);
+    }
+  }
+
+  updateNetworkServiceStatus(status: string): void {
+    if (this.address() && this.serviceData()) {
+      this.label.set(status);
+      this.data.changeNetworkServiceStatus(
+        this.address() || '',
+        this.serviceData()?.protocol || '',
+        this.serviceData()?.port || 0,
+        this.serviceData()?.service || '',
+        status
+      );
+      this.isEditOpen.set(false);
+      return;
+    }
+    
+    console.error('Address, protocol, or port is undefined. Cannot update status.');
+  }
+
+  updateIPStatus(status: string): void {
+    if (this.address()) {
+      this.label.set(status);
+      this.data.changeIPStatus(this.address() || '', status);
+      this.isEditOpen.set(false);
+      return;
+    }
+
+    console.error('Address is undefined. Cannot update status.');
+  }
 }

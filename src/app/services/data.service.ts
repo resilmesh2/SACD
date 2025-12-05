@@ -598,6 +598,7 @@ public getIPAddresses(): Observable<string[]> {
           ips {
             _id
             address
+            status
             subnets {
               range
             }
@@ -619,6 +620,7 @@ public getIPAddresses(): Observable<string[]> {
             _id: ipNode._id,
             type: ipNode.__typename,
             address: ipNode.address,
+            status: ipNode.status,
             subnets: ipNode.subnets,
             tag: ipNode.tag,
             networkServicesCount: ipNode.nodes.reduce((count: number, node: any) => {
@@ -639,10 +641,17 @@ public getIPAddresses(): Observable<string[]> {
               service
               protocol
               port
-              hosts {
-                node {
-                  ips {
-                    address
+              hostsConnection { 
+                edges {
+                  properties {
+                    status
+                  }
+                  node {
+                    node {
+                      ips { 
+                        address 
+                      }
+                    }
                   }
                 }
               }
@@ -653,17 +662,18 @@ public getIPAddresses(): Observable<string[]> {
         .pipe(
           map((response) => {
             return response.data.networkServices.flatMap((service: any) => {
-              return service.hosts.flatMap((hostNode: any) => {
-                return hostNode.node.ips.flatMap((ipNode: any) => {
-                  return {
-                    _id: service._id,
-                    type: service.__typename,
-                    service: service.service,
-                    protocol: service.protocol,
-                    port: service.port,
-                    ip_address: ipNode.address,
-                  } as NetworkService;
-                });
+              return service.hostsConnection.edges.flatMap((hostEdge: any) => {
+                  return hostEdge.node.node.ips.flatMap((ipNode: any) => {
+                    return {
+                      _id: service._id,
+                      type: service.__typename,
+                      service: service.service,
+                      protocol: service.protocol,
+                      port: service.port,
+                      status: hostEdge.properties.status,
+                      ip_address: ipNode.address,
+                    } as NetworkService;
+                  });
               });
             })
           })
@@ -698,6 +708,57 @@ public getIPAddresses(): Observable<string[]> {
           })
         );
       }
+
+    public changeIPStatus(address: string, status: string): void {
+      this.apollo.mutate<any>({
+        mutation: gql`
+          mutation UpdateIPStatus($address: String!, $status: String!) {
+            updateIPStatus(address: $address, status: $status) {
+              _id
+              address
+              status
+            }
+          }
+        `,
+        variables: {
+          address: address,
+          status: status
+        },
+      }).subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        }
+      });
+    }
+
+    public changeNetworkServiceStatus(address: string, protocol: string, port: number, service: string, status: string): void {
+      this.apollo.mutate<any>({
+        mutation: gql`
+          mutation UpdateNetworkServiceStatus($address: String!, $protocol: String!, $port: Int!, $service: String!, $status: String!) {
+            updateNetworkServiceStatus(address: $address, protocol: $protocol, port: $port, service: $service, status: $status) {
+              status
+            }
+          }
+        `,
+        variables: {
+          address: address,
+          protocol: protocol,
+          port: port,
+          service: service,
+          status: status
+        },
+      }).subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        }
+      });
+    }
 
     public changeTag(address: string, tag: string[]): void {
       this.apollo.mutate<any>({

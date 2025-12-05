@@ -1,5 +1,14 @@
-.status-label {
+button {
     appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.status-label {
     border: none;
     display: flex;
     align-items: center;
@@ -12,7 +21,6 @@
     border-radius: 4px;
     background-color: #cacaca;
     color: #333333;
-    cursor: pointer;
 }
 
 .status-overlay {

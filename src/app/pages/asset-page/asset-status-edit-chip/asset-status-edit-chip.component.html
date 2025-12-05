@@ -1,34 +1,40 @@
-<button (click)="isEditOpen.set(!isEditOpen())" type="button" cdkOverlayOrigin #trigger="cdkOverlayOrigin" 
-    class="status-label" [style.background-color]="color()" [style.color]="labelColor()"
->
-    @if (!label() || label()?.trim() == '') {
-        N/A
-    } @else {
+@if(label()?.toLowerCase()?.trim() == 'rediscovered') {
+    <span class="status-label" [style.background-color]="color()" [style.color]="labelColor()">
         {{ label() }}
-    }
-</button>
-
-<!-- This template displays the overlay content and is connected to the button -->
-<ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isEditOpen()"
-    (detach)="isEditOpen.set(false)"
->
-    <div class="status-overlay">
-        <button type="button" class="status-label" (click)="label.set('known'); isEditOpen.set(false);" 
-            [style.background-color]="labelColorConverter('known')" [style.color]="labelColor()"
-        >
-            Known
-        </button>
-        <button type="button" class="status-label" (click)="label.set('unknown'); isEditOpen.set(false);" 
-        [style.background-color]="labelColorConverter('unknown')" [style.color]="labelColor()">
-            Unknown
-        </button>
-        <button type="button" class="status-label" (click)="label.set('rediscovered'); isEditOpen.set(false);"
-            [style.background-color]="labelColorConverter('rediscovered')" [style.color]="labelColor()"
-        >
-            Rediscovered
-        </button>
-    </div>
-</ng-template>
+    </span>
+} @else {
+    <button (click)="isEditOpen.set(!isEditOpen())" type="button" cdkOverlayOrigin #trigger="cdkOverlayOrigin" 
+        class="status-label" [style.background-color]="color()" [style.color]="labelColor()"
+    >
+        @if (!label() || label()?.trim() == '') {
+            N/A
+        } @else {
+            {{ label() }}
+        }
+    </button>
+    
+    <!-- This template displays the overlay content and is connected to the button -->
+    <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayOrigin]="trigger"
+        [cdkConnectedOverlayOpen]="isEditOpen()"
+        (detach)="isEditOpen.set(false)"
+    >
+        <div class="status-overlay">
+            <button type="button" class="status-label" (click)="updateStatus('known');" 
+                [style.background-color]="labelColorConverter('known')" [style.color]="labelColor()"
+            >
+                Known
+            </button>
+            <button type="button" class="status-label" (click)="updateStatus('unknown');" 
+            [style.background-color]="labelColorConverter('unknown')" [style.color]="labelColor()">
+                Unknown
+            </button>
+            <!-- <button type="button" class="status-label" (click)="label.set('rediscovered'); isEditOpen.set(false);"
+                [style.background-color]="labelColorConverter('rediscovered')" [style.color]="labelColor()"
+            >
+                Rediscovered
+            </button> -->
+        </div>
+    </ng-template>
+}

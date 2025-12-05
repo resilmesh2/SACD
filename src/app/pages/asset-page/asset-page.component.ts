@@ -37,6 +37,12 @@ export interface Asset {
   status: string;
   tag: string[];
   subnet: string[];
+  service: string | null;
+  service_data?: {
+    service: string;
+    port: number;
+    protocol: string;
+  };
   last_seen: Date | null;
   isEditOpen?: boolean;
 }
@@ -45,6 +51,7 @@ export interface IP {
   _id: string;
   address: string;
   tag: string[];
+  status: string;
   subnets: Subnet[];
   type: string;
   networkServicesCount: number;
@@ -184,6 +191,8 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.data.getNetworkServices().subscribe({
       next: (services) => {
         this.networkServices = services;
+
+        console.log('Network Services:', this.networkServices);
 
         this.processNetworkServices();
 
@@ -345,7 +354,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       type: ip.type,
       ip: ip.address,
       service: ip.networkServicesCount > 0 ? ip.networkServicesCount == 1 ? `${ip.networkServicesCount} service` : `${ip.networkServicesCount} services` : null,
-      status: Math.random() > 0.5 ? 'known' : Math.random() < 0.75 ? 'unknown' : 'rediscovered', // TODO
+      status: ip.status,
       subnet: (ip.subnets ?? []).map(item => item.range),
       tag: [...(ip.tag ?? [])],
       last_seen: null, // TODO: When last_seen is available in the IP model, set it here
@@ -360,7 +369,8 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       type: service.type,
       ip: service.ip_address,
       service: service.service + ':' + service.port + '/' + service.protocol,
-      status: 'known', // TODO
+      service_data: { service: service.service, port: service.port, protocol: service.protocol },
+      status: service.status,
       subnet: [],
       tag: [...(service.tag ?? [])],
       last_seen: null, // TODO: When last_seen is available in the NetworkService model, set it here
