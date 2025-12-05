@@ -24,6 +24,7 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { MatIcon } from '@angular/material/icon';
 import { ISSUE_PATH } from '../../paths';
 import { StatusChipComponent } from '../../components/status-color-chip/status-color-chip.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 interface Filter {
     name: string;
@@ -54,7 +55,8 @@ interface Filter {
     CvssChipComponent,
     StatusChipComponent,
     MatIcon,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
+    OverlayModule
   ],
   providers: [
     provideMomentDateAdapter(DATE_FORMAT)
@@ -65,7 +67,7 @@ interface Filter {
 export class IssuePageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Issue>();
 
-  displayedColumns: string[] = ['name', 'severity', 'status', 'description', 'last_seen'];
+  displayedColumns: string[] = ['name', 'status', 'description', 'severity', 'last_seen'];
   
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -87,7 +89,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
   private router = inject(Router);
 
-  cveDetails: CVE[] = [];
+  vulnerabilties: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
@@ -106,7 +108,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   selectedStatus: WritableSignal<string> = signal(this.defaultValue);
 
   severityOptions = computed(() => Array.from(new Set(this.issues().map(issue => issue.severity))));
-  statusOptions = computed(() => Array.from(new Set(this.issues().map(issue => issue.status))));
+  statusOptions = computed(() => Array.from(new Set(this.issues().flatMap(issue => issue.status))));
 
   startDate: WritableSignal<Date | null> = signal(null);
   endDate: WritableSignal<Date | null> = signal(null);
@@ -143,13 +145,15 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dataLoading = true;
 
-    this.data.getAllCVEDetails().subscribe({
-      next: (cveDetails) => {
-        this.cveDetails = cveDetails;
+    this.data.getVulnerabilities().subscribe({
+      next: (vulnerabilties) => {
+        this.vulnerabilties = vulnerabilties;
+
+        console.log('Fetched Vulnerabilities:', this.vulnerabilties);
 
         this.processIssues();
 
-        if (this.cveDetails.length > 0) {
+        if (this.vulnerabilties.length > 0) {
           this.dataLoaded = true;
         } else {
           this.emptyResponse = true;
@@ -220,6 +224,9 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
           isMatch = (!lastSeenDate || (lastSeenDate >= startDate && lastSeenDate <= endDate));
 
           if (!isMatch) return false;
+        } else if (key === 'status') {
+          isMatch = (value=="All") || (record[key as keyof Issue] as string[]).includes(value); 
+          if(!isMatch) return false;
         } else {
           isMatch = (value=="All") || (record[key as keyof Issue] == value); 
           if(!isMatch) return false;
@@ -348,15 +355,15 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   private processIssues(): void {
-    console.log('Processing CVE Details:', this.cveDetails);
-    this.issues.set(this.cveDetails.map((cve, index) => ({
-      ... this.cveDetails[index], // Spread CVE properties
-      name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
-      severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-      status: index % 2 === 0 ? 'estimated' : 'confirmed', //! TODO: Example status, replace with actual logic when needed
-      description: cve.description,
-      last_seen: cve.published ? new Date(cve.published) : null,
-      impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available',
+    console.log('Processing Vulnerabilities:', this.vulnerabilties);
+    this.issues.set(this.vulnerabilties.map((vuln, index) => ({
+      ... this.vulnerabilties[index], // Spread CVE properties
+      name: vuln.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
+      severity: vuln.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
+      status: vuln.status, //index % 3 === 0 ? ["confirmed", "reassessed"] : index % 7 === 0 ? ["resolved"] : index % 10 === 0 ? ["closed"] : 
+      description: vuln.description,
+      last_seen: vuln.published ? new Date(vuln.published) : null,
+      impact: vuln.result_impacts ? vuln.result_impacts.join(', ') : 'No impact data available',
     })));
 
     this.dataSource.data = this.issues();
@@ -370,5 +377,24 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
     
     this.changeDetector.detectChanges();
+  }
+
+  updateVulnerabilityStatus(issue: Issue, newStatus: string[]): void {
+    const vulnIndex = this.issues().findIndex(vuln => vuln.name === issue.name);
+    if (vulnIndex !== -1) {
+      const updatedIssues = [...this.issues()];
+      updatedIssues[vulnIndex] = {
+        ...updatedIssues[vulnIndex],
+        status: newStatus
+      };
+
+      this.issues.set(updatedIssues);
+      this.dataSource.data = this.issues();
+      issue.isEditOpen = false;
+      this.changeDetector.detectChanges();
+    }
+
+    // Change status in the DB as well
+    this.data.updateVulnerabilityStatus(issue.name, newStatus);
   }
 }

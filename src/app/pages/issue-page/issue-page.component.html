@@ -105,8 +105,40 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-        <td mat-cell *matCellDef="let issue"> 
-          <status-chip [label]="issue.status" type="vulnerability" class="badge" (click)="useStatusFilter(issue.status)"></status-chip>
+        <td mat-cell *matCellDef="let issue">
+          <div class="status-cell">
+            @if(issue.status.includes('resolved') || issue.status.includes('closed')) {
+              <span class="issue-link square-icon no-interaction">
+                <mat-icon class="issue-icon resolved">verified_user</mat-icon>
+              </span>
+            } @else {
+              <button (click)="issue.isEditOpen = !issue.isEditOpen" type="button" cdkOverlayOrigin #trigger="cdkOverlayOrigin" 
+                  class="issue-link square-icon"
+              >
+                  <mat-icon class="issue-icon unresolved">shield_question</mat-icon>
+              </button>
+              <ng-template
+                  cdkConnectedOverlay
+                  [cdkConnectedOverlayOrigin]="trigger"
+                  [cdkConnectedOverlayOpen]="issue.isEditOpen"
+                  (detach)="issue.isEditOpen = false"
+              >
+                  <div class="issue-status-overlay">
+
+                    <sentinel-button-with-icon
+                      color="primary"
+                      icon="verified_user"
+                      (click)="updateVulnerabilityStatus(issue, ['resolved']);"
+                    >
+                      Issue was resolved
+                    </sentinel-button-with-icon>
+                    </div>
+              </ng-template>
+            }
+            @for(status of issue.status; track status) {
+              <status-chip [label]="status" type="vulnerability" class="badge" (click)="useStatusFilter(status)"></status-chip>
+            }
+          </div>
         </td>
       </ng-container>
 

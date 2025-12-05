@@ -44,7 +44,7 @@ export class StatusChipComponent {
       case 'resolved':
         return '#86B46A';
       case 'closed':
-        return '#4CAF50';
+        return '#989898';
       default:
         return '#cacaca';
     }

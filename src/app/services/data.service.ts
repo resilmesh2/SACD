@@ -473,84 +473,87 @@ export class DataService {
 /**
  * Returns all CVE objects in bulk
  */
-public getAllCVEDetails(): Observable<CVE[]> {
+public getVulnerabilities(): Observable<CVE[]> {
   return this.apollo
     .query<{ CVE: CVE[] }>({
       query: gql`
       {
-        cves {
-          cve_id
-          description
-          cwe
-          cpe_type
-          ref_tags
-          published
-          last_modified
-          result_impacts
-          cvss_v2 {
-            vector_string
-            access_vector
-            access_complexity
-            authentication
-            confidentiality_impact
-            integrity_impact
-            availability_impact
-            base_score
-            base_severity
-            exploitability_score
-            impact_score
-            ac_insuf_info
-            obtain_all_privilege
-            obtain_user_privilege
-            obtain_other_privilege
-            user_interaction_required
-          }
-          cvss_v30 {
-            vector_string
-            attack_vector
-            attack_complexity
-            privileges_required
-            user_interaction
-            scope
-            confidentiality_impact
-            integrity_impact
-            availability_impact
-            base_score
-            base_severity
-            exploitability_score
-            impact_score
-          }
-          cvss_v31 {
-            vector_string
-            attack_vector
-            attack_complexity
-            privileges_required
-            user_interaction
-            scope
-            confidentiality_impact
-            integrity_impact
-            availability_impact
-            base_score
-            base_severity
-            exploitability_score
-            impact_score
-          }
-          cvss_v40 {
-            vector_string
-            attack_vector
-            attack_complexity
-            attack_requirements
-            privileges_required
-            user_interaction
-            vulnerable_system_confidentiality
-            vulnerable_system_integrity
-            vulnerable_system_availability
-            subsequent_system_confidentiality
-            subsequent_system_integrity
-            subsequent_system_availability
-            base_score
-            base_severity
-            exploit_maturity
+        vulnerabilities {
+          status
+          cve {
+            cve_id
+            description
+            cwe
+            cpe_type
+            ref_tags
+            published
+            last_modified
+            result_impacts
+            cvss_v2 {
+              vector_string
+              access_vector
+              access_complexity
+              authentication
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+              ac_insuf_info
+              obtain_all_privilege
+              obtain_user_privilege
+              obtain_other_privilege
+              user_interaction_required
+            }
+            cvss_v30 {
+              vector_string
+              attack_vector
+              attack_complexity
+              privileges_required
+              user_interaction
+              scope
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+            }
+            cvss_v31 {
+              vector_string
+              attack_vector
+              attack_complexity
+              privileges_required
+              user_interaction
+              scope
+              confidentiality_impact
+              integrity_impact
+              availability_impact
+              base_score
+              base_severity
+              exploitability_score
+              impact_score
+            }
+            cvss_v40 {
+              vector_string
+              attack_vector
+              attack_complexity
+              attack_requirements
+              privileges_required
+              user_interaction
+              vulnerable_system_confidentiality
+              vulnerable_system_integrity
+              vulnerable_system_availability
+              subsequent_system_confidentiality
+              subsequent_system_integrity
+              subsequent_system_availability
+              base_score
+              base_severity
+              exploit_maturity
+            }
           }
         }
       }
@@ -558,7 +561,10 @@ public getAllCVEDetails(): Observable<CVE[]> {
     })
     .pipe(
       map((response) => {
-        return response.data.cves;
+        return response.data.vulnerabilities.map((vuln) => ({
+          ... vuln.cve,
+          status: vuln.status
+        }));
       })
     );
   }
@@ -708,6 +714,29 @@ public getIPAddresses(): Observable<string[]> {
           })
         );
       }
+
+    public updateVulnerabilityStatus(cve: string, status: string[]): void {
+      this.apollo.mutate<any>({
+        mutation: gql`
+          mutation UpdateVulnerabilityStatus($cve: String!, $status: [String]!) {
+            updateVulnerabilityStatus(cve: $cve, status: $status) {
+              status
+            }
+          }
+        `,
+        variables: {
+          cve: cve,
+          status: status
+        },
+      }).subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        }
+      });
+    }
 
     public changeIPStatus(address: string, status: string): void {
       this.apollo.mutate<any>({
