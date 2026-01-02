@@ -7,22 +7,22 @@ export const EXTERNAL = [
   {
     name: 'NSE',
     path: 'nse',
-    url: 'http://51.92.10.245:4201'
+    url: 'http://localhost:4201'
   },
   {
     name: 'NDR',
     path: 'ndr',
-    url: 'http://51.92.10.245:3000'
+    url: 'http://localhost:3000'
   },
   {
     name: 'GraphQL',
     path: 'graphql',
-    url: 'http://51.92.10.245:4001/graphql'
+    url: 'http://localhost:4001/graphql'
   }
   // {
   //   name: 'Recommender',
   //   path: 'recommender',
-  //   url: 'http://51.92.10.245:5173'
+  //   url: 'http://localhost:5173'
   // }
 ]
 
