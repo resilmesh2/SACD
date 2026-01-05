@@ -14,7 +14,7 @@ type NodeRelationshipByName = {
     to: string;
 }
 
-type MissionPayload = {
+export type MissionPayload = {
     relationships: {
         two_way: NodeRelationshipById[];
         one_way: NodeRelationshipById[];

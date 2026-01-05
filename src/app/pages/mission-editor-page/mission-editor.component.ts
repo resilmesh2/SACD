@@ -6,7 +6,7 @@ import { FormsModule } from "@angular/forms";
 import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.component";
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
-import { MissionEditorService } from "./mission-editor.service";
+import { MissionEditorService, MissionPayload } from "./mission-editor.service";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatIcon } from "@angular/material/icon";
 import { ɵEmptyOutletComponent } from "@angular/router";
@@ -85,21 +85,10 @@ export class MissionEditorComponent {
     }
 
     saveMission() {
-        if (!this.validateMission()) {
-            let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
-            this.openSnackBar(status, 'Close', { error: true });
+        const payload = this.getMissionPayloaad();
+        if (!payload) {
             return;
         }
-
-        const missionData: MissionData = {
-            name: this.missionName(),
-            description: this.missionDescription(),
-            criticality: this.missionCriticality(),
-            nodes: this.nodes(),
-            connections: this.connections()
-        };
-
-        const payload = this.missionEditorService.createMissionPayload(missionData);
         let $missionUpload = this.missionEditorService.uploadMissionPayload(payload);
 
         $missionUpload.subscribe({
@@ -114,6 +103,49 @@ export class MissionEditorComponent {
         })
     }
 
+    // Prepares and returns the mission payload for copying or uploading to the backend REST API
+    getMissionPayloaad(): MissionPayload | null {
+        if (!this.validateMission()) {
+            let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
+            this.openSnackBar(status, 'Close', { error: true });
+            return null;
+        }
+
+        const missionData: MissionData = {
+            name: this.missionName(),
+            description: this.missionDescription(),
+            criticality: this.missionCriticality(),
+            nodes: this.nodes(),
+            connections: this.connections()
+        };
+
+        return this.missionEditorService.createMissionPayload(missionData);
+    }
+
+    // Copies the mission payload JSON to the clipboard
+    copyMissionPayload() {
+      if (!this.validateMission()) {
+          let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
+          this.openSnackBar(status, 'Close', { error: true });
+          return;
+      }
+
+      const missionPayload = this.getMissionPayloaad();
+      if (!missionPayload) {
+        this.openSnackBar('No mission data to copy.', 'Close', { error: true });
+        return;
+      }
+
+      navigator.clipboard.writeText(JSON.stringify(missionPayload, null, 2)).then(() => {
+        this.openSnackBar('Mission JSON copied to clipboard.', 'Close');
+      }).catch(err => {
+        console.error('Failed to copy mission JSON: ', err);
+        this.openSnackBar('Failed to copy mission JSON.', 'Close', { error: true });
+      });
+    }
+
+    // Returns mission data as it is used in the mission editor
+    // To be used for debugging purposes
     getMissionJSON(): string {
       return JSON.stringify({ nodes: this.nodes(), connections: this.connections() }, null, 2);
     }

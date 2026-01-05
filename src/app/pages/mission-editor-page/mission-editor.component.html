@@ -41,6 +41,15 @@
                     Save Mission
                 </sentinel-button-with-icon>
             </div>
+            <div class="form-line">
+                <sentinel-button-with-icon
+                    color="accent"
+                    icon="content_copy"
+                    (click)="copyMissionPayload()"
+                >
+                    Copy Mission JSON to Clipboard
+                </sentinel-button-with-icon>
+            </div>
         </div>
     </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Structure Editor Controls" titleIcon="keyboard">
