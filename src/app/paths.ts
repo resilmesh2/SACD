@@ -15,6 +15,7 @@ export const ORGANIZATION_GRAPH_PATH = 'organization-units-graph';
 // CRUD
 export const SUBNETS_PATH = 'subnets';
 export const ORGANIZATION_PATH = 'organization-units';
+export const MISSION_EDITOR_PATH = 'mission-editor';
 
 // misc
 export const GROUP_PATH = 'group';

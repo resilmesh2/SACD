@@ -11,6 +11,7 @@ import {
   SUBNETS_GRAPH_PATH,
   ORGANIZATION_GRAPH_PATH,
   CSA_PATH,
+  MISSION_EDITOR_PATH,
 } from './paths';
 import { EXTERNAL_AGENDAS } from './external';
 
@@ -22,6 +23,7 @@ export const agendaContainers = [
   new AgendaContainer('Edit', [
     new Agenda('Subnets', SUBNETS_PATH),
     new Agenda('Organizations', ORGANIZATION_PATH),
+    new Agenda('Mission Editor', MISSION_EDITOR_PATH),
   ], 'edit_note'),
   new AgendaContainer('Visualizations', [
     new Agenda('Network Nodes', NETWORK_NODES_PATH),

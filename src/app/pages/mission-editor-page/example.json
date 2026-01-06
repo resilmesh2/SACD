@@ -1,0 +1,729 @@
+{
+    "relationships": {
+        "two_way": [],
+        "one_way": [
+            {
+                "from": 1,
+                "to": 60
+            },
+            {
+                "from": 60,
+                "to": 11
+            },
+            {
+                "from": 60,
+                "to": 12
+            },
+            {
+                "from": 60,
+                "to": 13
+            },
+            {
+                "from": 11,
+                "to": 70
+            },
+            {
+                "from": 70,
+                "to": 30
+            },
+            {
+                "from": 12,
+                "to": 71
+            },
+            {
+                "from": 71,
+                "to": 31
+            },
+            {
+                "from": 13,
+                "to": 72
+            },
+            {
+                "from": 72,
+                "to": 32
+            },
+            {
+                "from": 2,
+                "to": 61
+            },
+            {
+                "from": 61,
+                "to": 14
+            },
+            {
+                "from": 61,
+                "to": 15
+            },
+            {
+                "from": 14,
+                "to": 73
+            },
+            {
+                "from": 15,
+                "to": 74
+            },
+            {
+                "from": 73,
+                "to": 33
+            },
+            {
+                "from": 73,
+                "to": 34
+            },
+            {
+                "from": 74,
+                "to": 35
+            },
+            {
+                "from": 74,
+                "to": 36
+            },
+            {
+                "from": 3,
+                "to": 62
+            },
+            {
+                "from": 62,
+                "to": 16
+            },
+            {
+                "from": 62,
+                "to": 17
+            },
+            {
+                "from": 16,
+                "to": 75
+            },
+            {
+                "from": 17,
+                "to": 76
+            },
+            {
+                "from": 75,
+                "to": 37
+            },
+            {
+                "from": 75,
+                "to": 38
+            },
+            {
+                "from": 76,
+                "to": 39
+            },
+            {
+                "from": 76,
+                "to": 40
+            },
+            {
+                "from": 4,
+                "to": 63
+            },
+            {
+                "from": 63,
+                "to": 18
+            },
+            {
+                "from": 63,
+                "to": 19
+            },
+            {
+                "from": 63,
+                "to": 20
+            },
+            {
+                "from": 63,
+                "to": 21
+            },
+            {
+                "from": 63,
+                "to": 22
+            },
+            {
+                "from": 63,
+                "to": 23
+            },
+            {
+                "from": 63,
+                "to": 24
+            },
+            {
+                "from": 63,
+                "to": 25
+            },
+            {
+                "from": 18,
+                "to": 77
+            },
+            {
+                "from": 19,
+                "to": 78
+            },
+            {
+                "from": 20,
+                "to": 79
+            },
+            {
+                "from": 21,
+                "to": 80
+            },
+            {
+                "from": 22,
+                "to": 81
+            },
+            {
+                "from": 23,
+                "to": 82
+            },
+            {
+                "from": 24,
+                "to": 83
+            },
+            {
+                "from": 25,
+                "to": 84
+            },
+            {
+                "from": 77,
+                "to": 41
+            },
+            {
+                "from": 78,
+                "to": 42
+            },
+            {
+                "from": 78,
+                "to": 43
+            },
+            {
+                "from": 79,
+                "to": 44
+            },
+            {
+                "from": 80,
+                "to": 45
+            },
+            {
+                "from": 81,
+                "to": 46
+            },
+            {
+                "from": 82,
+                "to": 47
+            },
+            {
+                "from": 83,
+                "to": 48
+            },
+            {
+                "from": 84,
+                "to": 49
+            },
+            {
+                "from": 84,
+                "to": 50
+            },
+            {
+                "from": 5,
+                "to": 64
+            },
+            {
+                "from": 64,
+                "to": 26
+            },
+            {
+                "from": 64,
+                "to": 22
+            },
+            {
+                "from": 26,
+                "to": 85
+            },
+            {
+                "from": 85,
+                "to": 51
+            },
+            {
+                "from": 22,
+                "to": 86
+            },
+            {
+                "from": 86,
+                "to": 46
+            }
+        ],
+        "supports": [
+            {
+                "from": "Public-Facing Services - BT5",
+                "to": "Mail - BT5"
+            },
+            {
+                "from": "Public-Facing Services - BT5",
+                "to": "DNS - BT5"
+            },
+            {
+                "from": "Public-Facing Services - BT5",
+                "to": "Web - BT5"
+            },
+            {
+                "from": "User Services - BT5",
+                "to": "Ubuntu desktop - BT5"
+            },
+            {
+                "from": "User Services - BT5",
+                "to": "Windows desktop - BT5"
+            },
+            {
+                "from": "Admin Services - BT5",
+                "to": "Windows admin - BT5"
+            },
+            {
+                "from": "Admin Services - BT5",
+                "to": "Ubuntu admin - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "DC - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "File server - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "Menu - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "Database server - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "OCS - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "UPS - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "Monitoring - BT5"
+            },
+            {
+                "from": "Custom Application - BT5",
+                "to": "Operations - BT5"
+            },
+            {
+                "from": "External Communication - BT5",
+                "to": "Application server"
+            }
+        ],
+        "has_identity": [
+            {
+                "from": "Mail - BT5",
+                "to": "mail"
+            },
+            {
+                "from": "DNS - BT5",
+                "to": "dns"
+            },
+            {
+                "from": "Web - BT5",
+                "to": "www"
+            },
+            {
+                "from": "Ubuntu desktop - BT5",
+                "to": "desktop3"
+            },
+            {
+                "from": "Ubuntu desktop - BT5",
+                "to": "desktop4"
+            },
+            {
+                "from": "Windows desktop - BT5",
+                "to": "desktop1"
+            },
+            {
+                "from": "Windows desktop - BT5",
+                "to": "desktop2"
+            },
+            {
+                "from": "Windows admin - BT5",
+                "to": "admin1"
+            },
+            {
+                "from": "Windows admin - BT5",
+                "to": "admin2"
+            },
+            {
+                "from": "Ubuntu admin - BT5",
+                "to": "admin3"
+            },
+            {
+                "from": "Ubuntu admin - BT5",
+                "to": "admin4"
+            },
+            {
+                "from": "DC - BT5",
+                "to": "dc"
+            },
+            {
+                "from": "File server - BT5",
+                "to": "files"
+            },
+            {
+                "from": "File server - BT5",
+                "to": "backup"
+            },
+            {
+                "from": "Menu - BT5",
+                "to": "menu"
+            },
+            {
+                "from": "Database server - BT5",
+                "to": "db"
+            },
+            {
+                "from": "OCS - BT5",
+                "to": "ocs"
+            },
+            {
+                "from": "UPS - BT5",
+                "to": "ups"
+            },
+            {
+                "from": "Monitoring - BT5",
+                "to": "monitoring"
+            },
+            {
+                "from": "Operations - BT5",
+                "to": "OPS-DESKTOP1"
+            },
+            {
+                "from": "Operations - BT5",
+                "to": "OPS-DESKTOP2"
+            },
+            {
+                "from": "Application server",
+                "to": "global-app"
+            }
+        ],
+        "dependencies": [
+            {
+                "from": 13,
+                "to": 21
+            },
+            {
+                "from": 15,
+                "to": 18
+            },
+            {
+                "from": 14,
+                "to": 19
+            },
+            {
+                "from": 15,
+                "to": 19
+            },
+            {
+                "from": 11,
+                "to": 12
+            },
+            {
+                "from": 13,
+                "to": 12
+            },
+            {
+                "from": 14,
+                "to": 12
+            },
+            {
+                "from": 15,
+                "to": 12
+            },
+            {
+                "from": 16,
+                "to": 12
+            },
+            {
+                "from": 17,
+                "to": 12
+            },
+            {
+                "from": 18,
+                "to": 12
+            },
+            {
+                "from": 19,
+                "to": 12
+            },
+            {
+                "from": 20,
+                "to": 12
+            },
+            {
+                "from": 21,
+                "to": 12
+            },
+            {
+                "from": 22,
+                "to": 12
+            },
+            {
+                "from": 23,
+                "to": 12
+            },
+            {
+                "from": 24,
+                "to": 12
+            },
+            {
+                "from": 25,
+                "to": 12
+            },
+            {
+                "from": 22,
+                "to": 26
+            }
+        ]
+    },
+    "nodes": {
+        "missions": [
+            {
+                "name": "Public-Facing Services - BT5",
+                "criticality": 5,
+                "description": "This mission represents services that must be available for public.",
+                "id": 1
+            },
+            {
+                "name": "User Services - BT5",
+                "criticality": 5,
+                "description": "This mission represents user desktops that must work for the white team.",
+                "id": 2
+            },
+            {
+                "name": "Admin Services - BT5",
+                "criticality": 7,
+                "description": "This mission represents admin hosts that must work to maintain the network.",
+                "id": 3
+            },
+            {
+                "name": "Custom Application - BT5",
+                "criticality": 10,
+                "description": "This mission provides dependencies for critical network application.",
+                "id": 4
+            },
+            {
+                "name": "External Communication - BT5",
+                "criticality": 10,
+                "description": "Communication with global application.",
+                "id": 5
+            }
+        ],
+        "hosts": [
+            {
+                "hostname": "mail",
+                "ip": "9.66.55.12",
+                "id": 30
+            },
+            {
+                "hostname": "dns",
+                "ip": "9.66.55.13",
+                "id": 31
+            },
+            {
+                "hostname": "www",
+                "ip": "9.66.55.14",
+                "id": 32
+            },
+            {
+                "hostname": "desktop3",
+                "ip": "10.5.4.44",
+                "id": 33
+            },
+            {
+                "hostname": "desktop4",
+                "ip": "10.5.4.45",
+                "id": 34
+            },
+            {
+                "hostname": "desktop1",
+                "ip": "10.5.4.42",
+                "id": 35
+            },
+            {
+                "hostname": "desktop2",
+                "ip": "10.5.4.43",
+                "id": 36
+            },
+            {
+                "hostname": "admin1",
+                "ip": "10.5.4.46",
+                "id": 37
+            },
+            {
+                "hostname": "admin2",
+                "ip": "10.5.4.47",
+                "id": 38
+            },
+            {
+                "hostname": "admin3",
+                "ip": "10.5.4.48",
+                "id": 39
+            },
+            {
+                "hostname": "admin4",
+                "ip": "10.5.4.49",
+                "id": 40
+            },
+            {
+                "hostname": "dc",
+                "ip": "10.5.2.22",
+                "id": 41
+            },
+            {
+                "hostname": "files",
+                "ip": "10.5.2.23",
+                "id": 42
+            },
+            {
+                "hostname": "backup",
+                "ip": "10.5.2.24",
+                "id": 43
+            },
+            {
+                "hostname": "menu",
+                "ip": "10.5.2.25",
+                "id": 44
+            },
+            {
+                "hostname": "db",
+                "ip": "10.5.2.26",
+                "id": 45
+            },
+            {
+                "hostname": "ocs",
+                "ip": "10.5.2.27",
+                "id": 46
+            },
+            {
+                "hostname": "ups",
+                "ip": "10.5.2.28",
+                "id": 47
+            },
+            {
+                "hostname": "monitoring",
+                "ip": "10.5.2.29",
+                "id": 48
+            },
+            {
+                "hostname": "OPS-DESKTOP1",
+                "ip": "10.5.3.32",
+                "id": 49
+            },
+            {
+                "hostname": "OPS-DESKTOP2",
+                "ip": "10.5.3.33",
+                "id": 50
+            },
+            {
+                "hostname": "global-app",
+                "ip": "4.122.55.7",
+                "id": 51
+            }
+        ],
+        "services": [
+            {
+                "name": "Mail - BT5",
+                "id": 11
+            },
+            {
+                "name": "DNS - BT5",
+                "id": 12
+            },
+            {
+                "name": "Web - BT5",
+                "id": 13
+            },
+            {
+                "name": "Ubuntu desktop - BT5",
+                "id": 14
+            },
+            {
+                "name": "Windows desktop - BT5",
+                "id": 15
+            },
+            {
+                "name": "Windows admin - BT5",
+                "id": 16
+            },
+            {
+                "name": "Ubuntu admin - BT5",
+                "id": 17
+            },
+            {
+                "name": "DC - BT5",
+                "id": 18
+            },
+            {
+                "name": "File server - BT5",
+                "id": 19
+            },
+            {
+                "name": "Menu - BT5",
+                "id": 20
+            },
+            {
+                "name": "Database server - BT5",
+                "id": 21
+            },
+            {
+                "name": "OCS - BT5",
+                "id": 22
+            },
+            {
+                "name": "UPS - BT5",
+                "id": 23
+            },
+            {
+                "name": "Monitoring - BT5",
+                "id": 24
+            },
+            {
+                "name": "Operations - BT5",
+                "id": 25
+            },
+            {
+                "name": "Application server",
+                "id": 26
+            }
+        ],
+        "aggregations": {
+            "or": [
+                73,
+                74,
+                75,
+                76,
+                78,
+                84
+            ],
+            "and": [
+                60,
+                61,
+                62,
+                63,
+                64,
+                70,
+                71,
+                72,
+                77,
+                79,
+                80,
+                81,
+                82,
+                83,
+                85,
+                86
+            ]
+        }
+    }
+}

@@ -1,0 +1,66 @@
+{
+  "relationships": {
+    "two_way": [],
+    "one_way": [
+      {
+        "from": 0,
+        "to": 1
+      },
+      {
+        "from": 2,
+        "to": 3
+      },
+      {
+        "from": 1,
+        "to": 2
+      },
+      {
+        "from": 3,
+        "to": 4
+      }
+    ],
+    "supports": [
+      {
+        "from": "",
+        "to": "TEST COMP"
+      }
+    ],
+    "has_identity": [
+      {
+        "from": "TEST COMP",
+        "to": "TEST HOST"
+      }
+    ],
+    "dependencies": []
+  },
+  "nodes": {
+    "missions": [
+      {
+        "name": "TEST",
+        "criticality": 1,
+        "description": "",
+        "id": 0
+      }
+    ],
+    "hosts": [
+      {
+        "hostname": "TEST HOST",
+        "ip": "10.0.0.1",
+        "id": 4
+      }
+    ],
+    "services": [
+      {
+        "name": "TEST COMP",
+        "id": 2
+      }
+    ],
+    "aggregations": {
+      "or": [],
+      "and": [
+        1,
+        3
+      ]
+    }
+  }
+}
