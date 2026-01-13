@@ -356,13 +356,12 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
 
     this.issues.set(this.cveDetails.map((cve, index) => ({
-      ...cve, // Es más limpio usar 'cve' directamente que this.cveDetails[index]
-      name: cve.cve_id ?? `unknown`,
-
+      ...cve, 
+      name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
+      severity: cve.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
+      //status: index % 2 === 0 ? 'discovered' : 'discovered', //! TODO: Example status, replace with actual logic when needed
+      status: 'discovered', 
       
-      severity: cve.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown',
-
-      status: 'discovered',
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
       impact: (cve.result_impacts && cve.result_impacts.length > 0)
