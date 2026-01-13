@@ -122,24 +122,26 @@ export class DataService {
    * Gets label of given node based on static config
    * @param node
    */
+
   public getLabel(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
-    if (typeof entities[initialLabel] === 'undefined') {
+
+    
+    if (typeof entities[initialLabel] === 'undefined' || entities[initialLabel].showProperty.length === 0) {
       return initialLabel;
     }
-    if (entities[initialLabel].showProperty.length === 0) {
-      return initialLabel;
-    }
+
+    
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
     );
 
-    if (propKey === undefined) {
-      return ""
+    
+    if (propKey === undefined || node[propKey] === null || node[propKey] === undefined) {
+      return "";
     }
-    if (typeof node[propKey] === 'undefined') {
-      return initialLabel;
-    }
+
+    
     return node[propKey].toString();
   }
 
@@ -147,26 +149,29 @@ export class DataService {
    * Gets label name of given node (eg. DomainName, IP)
    * @param node
    */
+
   public getLabelName(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
-    if (typeof entities[initialLabel] === 'undefined') {
+
+    
+    if (typeof entities[initialLabel] === 'undefined' || entities[initialLabel].showProperty.length === 0) {
       return initialLabel;
     }
-    if (entities[initialLabel].showProperty.length === 0) {
-      return initialLabel;
-    }
+
+    
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
     );
 
+    
     if (propKey === undefined) {
-      return ""
+      return "";
     }
-    if (typeof node[propKey] === 'undefined') {
-      return initialLabel;
-    }
+
+    
     return propKey;
   }
+
 
   /**
    * Return color that should be assigned to given node
@@ -278,7 +283,7 @@ export class DataService {
   public makeMissionsStructure(missions: Mission[]): MissionStructure {
     let result: MissionStructure;
     let structure: MissionStructure;
-    
+
     result = missions.reduce(
       (acc: MissionStructure, mission: Mission) => {
         structure = JSON.parse(mission.structure);
@@ -406,27 +411,29 @@ export class DataService {
    * Returns vulnerable machines (software version, ip address, domain, subnet)
    * @param cveCode CVE code of vulnerability
    */
+
   public getVulnerableMachines(cveCode: string): Observable<VulnerabilityData[] | null> {
-    return this.apollo
-      .query<CVEResponse>({
-        query: gql`
-      {
-        cves(where: {cve_id: "${cveCode}"}) {
-          vulnerability {
-            software_versions {
-              version
-              hosts {
-                _id
-                node {
+      return this.apollo
+        .query<CVEResponse>({
+          query: gql`
+        {
+          cves(where: {cve_id: "${cveCode}"}) {
+            vulnerability {
+              software_versions {
+                version
+                hosts {
                   _id
-                  ips {
+                  node {
                     _id
-                    address
-                    domain_names { 
-                      domain_name 
-                    }
-                    subnets {
-                      range
+                    ips {
+                      _id
+                      address
+                      domain_names {
+                        domain_name
+                      }
+                      subnets {
+                        range
+                      }
                     }
                   }
                 }
@@ -434,41 +441,51 @@ export class DataService {
             }
           }
         }
-      }
-      `,
-      })
-      .pipe(
-        map((response) => {
-          const responseArray: VulnerabilityData[] = [];
-          if (!response.data.cves[0]) {
-            return null;
-          }
-          let domain = '';
-          let subnet = '';
-          let software = '';
-          response.data.cves[0].vulnerability.software_versions.forEach((software_version) => {
-            software = software_version.version;
-            software_version.hosts.forEach((host) => {
-              host.node.ips.forEach((ip) => {
-                if (ip.domain_names && ip.domain_names.length > 0) {
-                  domain = ip.domain_names[0].domain_name;
-                }
-                if (ip.subnets && ip.subnets.length > 0) {
-                  subnet = ip.subnets[0].range;
-                }
-                responseArray.push({
+        `,
+        })
+        .pipe(
+          map((response) => {
+            const responseArray: VulnerabilityData[] = [];
+
+
+            if (!response.data || !response.data.cves || !response.data.cves[0]) {
+              return null;
+            }
+
+
+            response.data.cves[0].vulnerability.software_versions.forEach((sv) => {
+
+              const softwareName = sv.version || 'Unknown';
+
+
+              sv.hosts.forEach((host) => {
+                if (host.node && host.node.ips) {
+                  host.node.ips.forEach((ip) => {
+
+
+                    const domain = (ip.domain_names && ip.domain_names.length > 0)
+                                   ? ip.domain_names[0].domain_name
+                                   : 'N/A';
+
+                    const subnet = (ip.subnets && ip.subnets.length > 0)
+                                   ? ip.subnets[0].range
+                                   : 'N/A';
+
+                    responseArray.push({
                       domainName: domain,
                       subnet: subnet,
-                      ip: ip.address,
-                      software: software,
-                });
+                      ip: ip.address || '0.0.0.0',
+                      software: softwareName, 
+                    });
+                  });
+                }
               });
             });
-          });
-          return responseArray;
-        })
-      );
-  }
+
+            return responseArray;
+          })
+        );
+    }
 
 /**
  * Returns all CVE objects in bulk
@@ -577,7 +594,7 @@ public getIPAddresses(): Observable<string[]> {
     })
     .pipe(
       map((response) => {
-        const ipAddresses: string[] = [];  
+        const ipAddresses: string[] = [];
         if (response.data && response.data.ips) {
           response.data.ips.forEach((ipNode: IPNode) => {
             if (ipNode.address) {
@@ -861,7 +878,7 @@ public getIPAddresses(): Observable<string[]> {
           console.log('Org Unit deleted:', response.data.deleteOrganizationUnits.nodesDeleted);
           return response.data.deleteOrganizationUnits.nodesDeleted > 0;
         },
-        error: (error) => { 
+        error: (error) => {
           console.error('Error deleting org unit:', error);
           return throwError(() => new Error('Failed to delete org unit'));
         }
@@ -873,14 +890,14 @@ public getIPAddresses(): Observable<string[]> {
       mutation: gql`
         mutation UpdateOrgUnit($oldName: String!, $newName: String!) {
           updateOrganizationUnits(
-            where: { 
+            where: {
               name: $oldName
             }
-            update: { 
+            update: {
               name: $newName
             }
           ) {
-            organizationUnits { 
+            organizationUnits {
               name
             }
           }
@@ -994,4 +1011,3 @@ public getIPAddresses(): Observable<string[]> {
       );
   }
 }
-

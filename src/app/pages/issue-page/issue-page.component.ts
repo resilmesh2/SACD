@@ -349,26 +349,36 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
   private processIssues(): void {
     console.log('Processing CVE Details:', this.cveDetails);
+
+    if (!this.cveDetails || !Array.isArray(this.cveDetails)) {
+      console.warn('cveDetails is not an array or is null');
+      return;
+    }
+
     this.issues.set(this.cveDetails.map((cve, index) => ({
-      ... this.cveDetails[index], // Spread CVE properties
-      name: cve.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
-      severity: cve.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-      status: index % 2 === 0 ? 'discovered' : 'discovered', //! TODO: Example status, replace with actual logic when needed
+      ...cve, // Es más limpio usar 'cve' directamente que this.cveDetails[index]
+      name: cve.cve_id ?? `unknown`,
+
+      
+      severity: cve.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown',
+
+      status: 'discovered',
       description: cve.description,
       last_seen: cve.published ? new Date(cve.published) : null,
-      impact: cve.result_impacts ? cve.result_impacts.join(', ') : 'No impact data available',
+      impact: (cve.result_impacts && cve.result_impacts.length > 0)
+              ? cve.result_impacts.join(', ')
+              : 'No impact data available',
     })));
 
     this.dataSource.data = this.issues();
 
-    console.log('Processed Issues:', this.issues, this.dataSource.data);
+    console.log('Processed Issues:', this.issues(), this.dataSource.data);
 
-    
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    
+
     this.changeDetector.detectChanges();
   }
 }
