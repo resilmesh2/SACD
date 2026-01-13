@@ -1,5 +1,6 @@
 services:
   resilmesh_sap_sacd:
+    container_name: resilmesh_sap_sacd
     build:
       context: .
     ports:
