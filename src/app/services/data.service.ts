@@ -455,7 +455,7 @@ export class DataService {
 
             response.data.cves[0].vulnerability.software_versions.forEach((sv) => {
 
-              const softwareName = sv.version || 'Unknown';
+              const softwareName = sv.version || 'N/A';
 
 
               sv.hosts.forEach((host) => {
@@ -474,7 +474,7 @@ export class DataService {
                     responseArray.push({
                       domainName: domain,
                       subnet: subnet,
-                      ip: ip.address || '0.0.0.0',
+                      ip: ip.address || 'N/A',
                       software: softwareName, 
                     });
                   });
