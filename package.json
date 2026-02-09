@@ -44,6 +44,8 @@
     "apollo-angular": "^11.0.0",
     "dagre": "^0.8.5",
     "graphql": "^16.11.0",
+    "highcharts": "^12.5.0",
+    "highcharts-angular": "^5.4.0",
     "lodash": "^4.17.21",
     "material-symbols": "^0.36.1",
     "moment": "^2.30.1",
