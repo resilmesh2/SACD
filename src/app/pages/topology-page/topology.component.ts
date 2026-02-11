@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
 import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
 import { DataService } from '../../services/data.service';
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { Router } from '@angular/router';
+import { SUBNETS_PATH } from '../../paths';
 
 @Component({
   templateUrl: './topology.component.html',
   styleUrls: ['./topology.component.scss'],
-  imports: [HighchartsChartDirective],
+  imports: [HighchartsChartDirective, SentinelButtonWithIconComponent],
   providers: [
     providePartialHighcharts({
       modules: () => {
         return [
           import('highcharts/esm/highcharts-more'),
-          import('highcharts/esm/modules/drilldown'),
+          import('highcharts/modules/boost'),
         ];
       },
       timeout: 900,
@@ -20,10 +23,11 @@ import { DataService } from '../../services/data.service';
 })
 export class TopologyComponent {
   chartOptions: Highcharts.Options = this.buildChartOptions([]);
+  drilledInto: string | null = null;
   private chartRef: Highcharts.Chart | null = null;
   private allSeries: { name: string; data: { name: string; value: number }[] }[] = [];
 
-  constructor(private data: DataService) {
+  constructor(private data: DataService, private router: Router) {
     this.data.getOrgUnits().subscribe(units => {
       this.allSeries = units.map(unit => ({
         name: unit.name,
@@ -40,6 +44,30 @@ export class TopologyComponent {
     this.chartRef = chart;
   }
 
+  drillBack(): void {
+    if (!this.chartRef) return;
+    this.drilledInto = null;
+    this.chartRef.series.forEach(s => s.setVisible(true, false));
+    this.chartRef.redraw();
+  }
+
+  drillInto(seriesName: string): void {
+    if (!this.chartRef) return;
+    this.drilledInto = seriesName;
+    this.chartRef.series.forEach(s => {
+      if (s.name === seriesName) {
+        s.setVisible(true, false);
+      } else {
+        s.setVisible(false, false);
+      }
+    });
+    this.chartRef.redraw();
+  }
+
+  navigateToSubnetDetail(subnetRange: string): void {
+      this.router.navigate([SUBNETS_PATH, subnetRange]);
+  }
+
   private buildChartOptions(
     series: { name: string; data: { name: string; value: number }[] }[]
   ): Highcharts.Options {
@@ -48,36 +76,23 @@ export class TopologyComponent {
         type: 'packedbubble',
         height: '900px',
         animation: true,
-        events: {
-          drilldown: (e: any) => {
-            if (e.seriesOptions) return;
-            if (!this.chartRef) return;
-
-            const orgUnit = this.allSeries.find(
-              s => s.name === e.point.series.name
-            );
-            if (!orgUnit) return;
-
-            this.chartRef.addSeriesAsDrilldown(e.point, {
-                name: orgUnit.name,
-                type: 'packedbubble',
-                data: orgUnit.data.map(d => ({ name: d.name, value: d.value })),
-            } as any);
-            (this.chartRef as any).applyDrilldown();
-          },
-        },
+      },
+      boost: {
+        useGPUTranslations: true,
+        // Chart-level boost when there are more than 5 series in the chart
+        seriesThreshold: 5
       },
       title: {
         text: 'Network Topology',
-        align: 'left',
+        align: 'center',
       },
       tooltip: {
         pointFormat: '<b>{point.name}</b>',
       },
       plotOptions: {
         packedbubble: {
-          minSize: '45%',
-          maxSize: '100%',
+          minSize: '55%',
+          maxSize: '80%',
           layoutAlgorithm: {
             enableSimulation: false,
             gravitationalConstant: 0.05,
@@ -87,27 +102,28 @@ export class TopologyComponent {
             parentNodeLimit: true,
           },
           cursor: 'pointer',
+          point: {
+            events: {
+              click: (e: any) => {
+                if (!this.drilledInto) {
+                  this.drillInto(e.point.series.name);
+                }
+                if (e.point.value > 1) {
+                  this.navigateToSubnetDetail(e.point.name);
+                  console.log(`Clicked on ${e.point.name} with value ${e.point.value}`);
+                }
+              },
+            },
+          },
           dataLabels: {
             enabled: true,
             format: '{point.name}',
-            filter: {
-              property: 'y',
-              operator: '>',
-              value: 250,
-            },
             style: {
               color: 'black',
               textOutline: 'none',
               fontWeight: 'normal',
+              fontSize: '10px',
             },
-          },
-        },
-      },
-      drilldown: {
-        series: [] as any,
-        breadcrumbs: {
-          position: {
-            align: 'right',
           },
         },
       },
@@ -116,7 +132,6 @@ export class TopologyComponent {
         data: s.data.map(d => ({
           name: d.name,
           value: d.value,
-          drilldown: s.name,
         })),
       })) as any,
     };
