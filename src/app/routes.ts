@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANIZATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH, ORGANIZATION_GRAPH_PATH, CSA_PATH, MISSION_EDITOR_PATH, TOPOLOGY_PATH } from './paths';
+import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANIZATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH, ORGANIZATION_GRAPH_PATH, CSA_PATH, MISSION_EDITOR_PATH, TOPOLOGY_PATH, TREEMAP_PATH } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
@@ -18,6 +18,7 @@ import { EXTERNAL_ROUTES } from './external';
 import { CSAPageComponent } from './pages/csa-page/csa-page.component';
 import { MissionEditorComponent } from './pages/mission-editor-page/mission-editor.component';
 import { TopologyComponent } from './pages/topology-page/topology.component';
+import { TreemapComponent } from './pages/treemap-page/treemap.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -103,6 +104,11 @@ export const ROOT_ROUTES: Routes = [
     path: TOPOLOGY_PATH,
     component: TopologyComponent,
     data: { breadcrumb: 'Topology' },
+  },
+  {
+    path: TREEMAP_PATH,
+    component: TreemapComponent,
+    data: { breadcrumb: 'Treemap' },
   },
 
   // generated in external.ts

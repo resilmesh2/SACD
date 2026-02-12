@@ -12,6 +12,7 @@ export const VULNERABILITY_PATH = 'vulnerability';
 export const SUBNETS_GRAPH_PATH = 'subnets-graph';
 export const ORGANIZATION_GRAPH_PATH = 'organization-units-graph';
 export const TOPOLOGY_PATH = 'topology';
+export const TREEMAP_PATH = 'treemap';
 
 // CRUD
 export const SUBNETS_PATH = 'subnets';

@@ -13,6 +13,7 @@ import {
   CSA_PATH,
   MISSION_EDITOR_PATH,
   TOPOLOGY_PATH,
+  TREEMAP_PATH,
 } from './paths';
 import { EXTERNAL_AGENDAS } from './external';
 
@@ -32,7 +33,8 @@ export const agendaContainers = [
     new Agenda('Organizations', ORGANIZATION_GRAPH_PATH),
     new Agenda('Missions', MISSION_PATH),
     new Agenda('Vulnerabilities', VULNERABILITY_PATH),
-    new Agenda('Topology', TOPOLOGY_PATH)
+    new Agenda('Topology', TOPOLOGY_PATH),
+    new Agenda('Treemap', TREEMAP_PATH)
   ], 'analytics'),
   new AgendaContainer('External', [
     new Agenda('CSA', CSA_PATH),

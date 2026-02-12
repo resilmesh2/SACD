@@ -31,9 +31,9 @@ export class TopologyComponent {
     this.data.getOrgUnits().subscribe(units => {
       this.allSeries = units.map(unit => ({
         name: unit.name,
-        data: unit.subnets.map((subnet: string) => ({
-          name: subnet,
-          value: 32 - parseInt(subnet.split('/')[1]) || 1,
+        data: unit.subnets.map((subnet: { range: string}) => ({
+          name: subnet.range,
+          value: 32 - parseInt(subnet.range.split('/')[1]) || 1,
         })),
       }));
       this.chartOptions = this.buildChartOptions(this.allSeries);
