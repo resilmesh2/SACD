@@ -5,6 +5,16 @@
 <!-- <p>Components in a group are alternatives (OR relationship).</p> -->
 <!-- <p>Dependenies are between components e.g. when they talk to each other</p> -->
 <div class="mission-editor">
+    <div class="form-line">
+        <mat-form-field subscriptSizing="dynamic">
+            <mat-label>Edit Existing Mission</mat-label>
+            <mat-select (selectionChange)="loadMission($event)">
+                @for (mission of missions(); track mission) {
+                    <mat-option [value]="mission">{{mission}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
     <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
         <div class="content-container">
             <div class="form-line">

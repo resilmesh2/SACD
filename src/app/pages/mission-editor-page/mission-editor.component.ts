@@ -11,6 +11,8 @@ import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatIcon } from "@angular/material/icon";
 import { ɵEmptyOutletComponent } from "@angular/router";
 import { NgComponentOutlet, NgTemplateOutlet } from "@angular/common";
+import { MatSelectModule } from "@angular/material/select";
+import { DataService } from "../../services/data.service";
 
 export type MissionData = {
     name: string;
@@ -36,7 +38,8 @@ export type MissionData = {
     SentinelButtonWithIconComponent,
     FlowEditorComponent,
     MatIcon,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    MatSelectModule
 ],
   providers: [
     MissionValidator, 
@@ -48,6 +51,7 @@ export class MissionEditorComponent {
     missionName = signal('');
     missionDescription = signal('');
     missionCriticality = signal(1);
+    missions = signal([]);
 
     public connections: WritableSignal<{ from: string; to: string }[]> = model([
       { from: 'root-output', to: '1-input' },
@@ -67,7 +71,38 @@ export class MissionEditorComponent {
     constructor(
       private missionValidator: MissionValidator, 
       private missionEditorService: MissionEditorService,
-    ) {}
+      private dataService: DataService
+    ) {
+      this.getMissionNames();
+    }
+
+    getMissionNames() {
+      this.dataService.getMissionNames().subscribe({
+        next: (missions: any) => {
+          this.missions.set(missions);
+        }
+      })
+    }
+
+    loadMission(event: { value: string }) {
+      this.dataService.getMission(event.value ?? "").subscribe({
+        next: (response) => {
+          console.log(response);
+          const mission = response[0];
+          console.log(mission);
+          this.missionName.set(mission.name);
+          this.missionCriticality.set(mission.criticality);
+          this.missionDescription.set(mission.description);
+
+          // TODO: convert mission structure to internal nodes/relationships
+
+        }
+      })
+    }
+
+    convertPayloadToNodesConnections() {
+
+    }
 
     validateMission(): boolean {
       if (this.missionName().trim() === '') {
