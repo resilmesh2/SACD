@@ -71,7 +71,7 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
         this.dataSource = new MatTableDataSource<OrgUnitData>(orgUnits.map(orgUnit => ({
           name: orgUnit.name, // Can't be null or undefined, so no need for a fallback,
           parentOrgUnit: orgUnit.parentOrgUnit ?? "---",
-          subnets: orgUnit.subnets.length == 0 ? ["---"] : orgUnit.subnets,
+          subnets: orgUnit.subnets.length == 0 ? [{range: "---"}] : orgUnit.subnets,
           contacts: orgUnit.contacts.length == 0 ? [] : orgUnit.contacts,
         })));
 
