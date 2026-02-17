@@ -1,5 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, ModelSignal, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ExistingNodeService } from './existing-node.service';
 import { IP } from '../../asset-page/asset-page.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MissionMetadata } from '../mission-editor.component';
 
 export type Connection = {
     from: string;
@@ -20,7 +21,7 @@ export type Connection = {
 };
 
 export type MissionNodeType = 'root' | 'and' | 'or' | 'component' | 'host';
-export type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and';
+export type AggregationLayer = 'component-or' | 'host-or' | 'component' | 'host' | 'component-and' | 'root-and' | 'root';
 
 export type MissionNodeData = {
     name?: string;
@@ -51,6 +52,7 @@ const LAYER_Y = {
 }
 
 const LAYER_RULES = {
+    'root': ['root-and'],
     'root-and': ['component-or', 'component'],
     'component-or': ['component'],
     'component-and': ['host-or', 'host'],
@@ -98,10 +100,15 @@ export class FlowEditorComponent implements OnInit {
     protected readonly eMarkerType = EFMarkerType;
 
     missionName = input<string | null>(null);
+    
     globalIdIncrement = signal(1);
 
     centerOnAdd = true;
     isOpen = false;
+
+    //missions = model<{name: string, description: string, criticality: number}[]>([]);
+
+    missionsMap: ModelSignal<Record<string, MissionMetadata>> = model({});
 
     public connections: ModelSignal<Connection[]> = model([] as Connection[]);
     public nodes: ModelSignal<MissionNode[]> = model([] as MissionNode[]);
@@ -203,7 +210,7 @@ export class FlowEditorComponent implements OnInit {
             return;
         }
 
-        if (this.selected().includes('f-node-root') || this.selected().includes('f-node-1')) {
+        if (this.selected().includes('f-node-0') || this.selected().includes('f-node-1')) {
             this._snackBar.open('Cannot delete root node or root AND node.', 'Close', { panelClass: ['snackbar-error'] });
             return;
         }
@@ -264,6 +271,35 @@ export class FlowEditorComponent implements OnInit {
         return { left, right };
     }
 
+    addNewMissionRoot() {
+        const newRootId = this.createNode(
+            'NEW MISSION',
+            'root',
+            { x: 500, y: 0 },
+            'root',
+        )
+
+        const newRootAndId = this.createNode(
+            'AND',
+            'and',
+            { x: 500, y: 100 },
+            'root-and'
+        )
+
+        this.createConnection(`${newRootId}-output`, `${newRootAndId}-input`);
+
+        // this.missionsMap.update(map => {
+        //     return Object.assign(map, newRootId, {
+        //     name: "NEW",
+        //     description: "",
+        //     criticality: 1
+        // })
+        // })
+
+      //{ id: '0', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
+      //{ id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
+    }
+
     public addComponentGroup(): void {
         const orId = this.createNode(
             'OR',
@@ -272,7 +308,7 @@ export class FlowEditorComponent implements OnInit {
             'component-or'
         );
 
-        this.createConnection('1-output', `${orId}-input`);
+        //this.createConnection('1-output', `${orId}-input`);
 
         const childOffsets = this.getChildOffsets(this.componentGroupXOffset());
 

@@ -67,7 +67,7 @@ export class MissionEditorService {
 
     convertConnectionsToRelationships(connections: { from: string; to: string }[]): NodeRelationshipById[] {
         return connections.map(conn => {
-            const fromId = conn.from.split('-')[0] == 'root' ? 0 : parseInt(conn.from.split('-')[0], 10);
+            const fromId = parseInt(conn.from.split('-')[0], 10);
             const toId = parseInt(conn.to.split('-')[0], 10);
             return { from: fromId, to: toId };
         });

@@ -1,4 +1,4 @@
-import { Component, inject, model, signal, WritableSignal } from "@angular/core";
+import { Component, computed, inject, model, signal, WritableSignal } from "@angular/core";
 import { SentinelCardComponent } from "@sentinel/components/card";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -7,10 +7,9 @@ import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.comp
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
 import { MissionEditorService, MissionPayload } from "./mission-editor.service";
-import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatIcon } from "@angular/material/icon";
-import { ɵEmptyOutletComponent } from "@angular/router";
-import { NgComponentOutlet, NgTemplateOutlet } from "@angular/common";
+import { NgTemplateOutlet } from "@angular/common";
 import { MatSelectModule } from "@angular/material/select";
 import { DataService } from "../../services/data.service";
 
@@ -23,6 +22,12 @@ export type MissionData = {
         from: string;
         to: string;
     }[];
+}
+
+export type MissionMetadata = {
+  name: string;
+  description: string;
+  criticality: number;
 }
 
 @Component({
@@ -51,14 +56,34 @@ export class MissionEditorComponent {
     missionName = signal('');
     missionDescription = signal('');
     missionCriticality = signal(1);
-    missions = signal([]);
+
+    // missions: WritableSignal<{name: string, description: string, criticality: number}[]> = model([
+    //   {
+    //     id: "0",
+    //     name: "",
+    //     description: "",
+    //     criticality: 1
+    //   }
+    // ])
+
+    missionsMap = model({
+      "0": {
+        name: "test",
+        description: "",
+        criticality: 1
+      }
+    })
+
+    missionIds = computed(() => Object.keys(this.missionsMap()));
+
+    existingMissionNames = signal([]);
 
     public connections: WritableSignal<{ from: string; to: string }[]> = model([
-      { from: 'root-output', to: '1-input' },
+      { from: '0-output', to: '1-input' },
     ]);
 
     public nodes: WritableSignal<MissionNode[]> = model([
-      { id: 'root', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
+      { id: '0', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
       { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
     ]);
 
@@ -79,7 +104,7 @@ export class MissionEditorComponent {
     getMissionNames() {
       this.dataService.getMissionNames().subscribe({
         next: (missions: any) => {
-          this.missions.set(missions);
+          this.existingMissionNames.set(missions);
         }
       })
     }

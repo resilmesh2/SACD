@@ -12,6 +12,25 @@
     padding: 0.5em;
 }
 
+.missions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.mission-control-bar {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    justify-content: start;
+}
+
+.single-mission-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(1fr, 1fr));

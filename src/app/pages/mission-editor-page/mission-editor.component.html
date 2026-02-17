@@ -9,7 +9,7 @@
         <mat-form-field subscriptSizing="dynamic">
             <mat-label>Edit Existing Mission</mat-label>
             <mat-select (selectionChange)="loadMission($event)">
-                @for (mission of missions(); track mission) {
+                @for (mission of existingMissionNames(); track mission) {
                     <mat-option [value]="mission">{{mission}}</mat-option>
                 }
             </mat-select>
@@ -17,48 +17,57 @@
     </div>
     <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
         <div class="content-container">
-            <div class="form-line">
-                <mat-form-field id="missionName" subscriptSizing="dynamic">
-                    <mat-label for="missionName">Mission Name:</mat-label>
-                    <input matInput required placeholder="" [(ngModel)]="missionName" />
-                </mat-form-field>
-            </div>
-            <div class="form-line">
-                <mat-form-field id="missionCriticality" subscriptSizing="dynamic">
-                    <mat-label for="missionCriticality">Criticality:</mat-label>
-                    <input matInput type="number" max="10" min="1" required placeholder="" [(ngModel)]="missionCriticality" />
-                </mat-form-field>
-            </div>
-            <div class="form-line">
-                <mat-form-field id="missionDescription" subscriptSizing="dynamic">
-                    <mat-label for="missionDescription">Description:</mat-label>
-                    <textarea matInput
-                        cdkTextareaAutosize
-                        #autosize="cdkTextareaAutosize"
-                        cdkAutosizeMinRows="1"
-                        cdkAutosizeMaxRows="5"
-                        placeholder="Enter mission description"
-                        [(ngModel)]="missionDescription"
-                    ></textarea>
-                </mat-form-field>
-            </div>
-            <div class="form-line">
-                <sentinel-button-with-icon
-                    color="primary"
-                    icon="save"
-                    (click)="saveMission()"
-                >
-                    Save Mission
-                </sentinel-button-with-icon>
-            </div>
-            <div class="form-line">
-                <sentinel-button-with-icon
-                    color="accent"
-                    icon="content_copy"
-                    (click)="copyMissionPayload()"
-                >
-                    Copy Mission JSON to Clipboard
-                </sentinel-button-with-icon>
+            <div class="missions-container">
+                <div class="mission-control-bar">
+                    <div class="form-line">
+                        <sentinel-button-with-icon
+                            color="primary"
+                            icon="save"
+                            (click)="saveMission()"
+                        >
+                            Save Mission
+                        </sentinel-button-with-icon>
+                    </div>
+                    <div class="form-line">
+                        <sentinel-button-with-icon
+                            color="accent"
+                            icon="content_copy"
+                            (click)="copyMissionPayload()"
+                        >
+                            Copy Mission JSON to Clipboard
+                        </sentinel-button-with-icon>
+                    </div>
+                </div>
+                @for (missionId of missionIds(); track missionId) {
+                    <div class="single-mission-container">
+                        <div class="form-line">
+                            <mat-form-field id="missionName" subscriptSizing="dynamic">
+                                <mat-label for="missionName">Mission Name:</mat-label>
+                                <!-- missionsMap()[missionId] -->
+                                <input matInput required placeholder="" [(ngModel)]="missionName" />
+                            </mat-form-field>
+                        </div>
+                        <div class="form-line">
+                            <mat-form-field id="missionCriticality" subscriptSizing="dynamic">
+                                <mat-label for="missionCriticality">Criticality:</mat-label>
+                                <input matInput type="number" max="10" min="1" required placeholder="" [(ngModel)]="missionCriticality" />
+                            </mat-form-field>
+                        </div>
+                        <div class="form-line">
+                            <mat-form-field id="missionDescription" subscriptSizing="dynamic">
+                                <mat-label for="missionDescription">Description:</mat-label>
+                                <textarea matInput
+                                    cdkTextareaAutosize
+                                    #autosize="cdkTextareaAutosize"
+                                    cdkAutosizeMinRows="1"
+                                    cdkAutosizeMaxRows="5"
+                                    placeholder="Enter mission description"
+                                    [(ngModel)]="missionDescription"
+                                ></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </sentinel-card>
@@ -116,7 +125,7 @@
         </div>
     </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
-        <flow-editor [(nodes)]="nodes" [(connections)]="connections" [missionName]="missionName()" ></flow-editor>
+        <flow-editor [(missionsMap)]="missionsMap" [(nodes)]="nodes" [(connections)]="connections" [missionName]="missionName()" ></flow-editor>
     </sentinel-card>
     <!-- <sentinel-card class="editor-card" cardTitle="Mission JSON" titleIcon="code">
         <pre>{{ getMissionJSON() }}</pre>
