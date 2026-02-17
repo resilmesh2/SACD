@@ -89,6 +89,10 @@ export class TopologyComponent {
       tooltip: {
         pointFormat: '<b>{point.name}</b>',
       },
+      //colors: ["#E4295F", "#324376", "#44BFEC", "#6d77b1"],
+      credits: {
+        enabled: false
+      },
       plotOptions: {
         packedbubble: {
           minSize: '55%',

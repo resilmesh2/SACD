@@ -92,6 +92,9 @@ export class TreemapComponent {
         chart: {
           height: "900px"
         },
+        credits: {
+          enabled: false
+        },
         series: [{
             type: 'treemap',
             name: 'All Units',
