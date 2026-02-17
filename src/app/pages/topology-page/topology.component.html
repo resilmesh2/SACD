@@ -1,0 +1,11 @@
+@if (drilledInto) {
+    <sentinel-button-with-icon
+        color="primary" 
+        icon="arrow_back"
+        tooltip=""
+        (click)="drillBack()"
+    >
+        Back to Overview
+    </sentinel-button-with-icon>
+}
+<div highchartsChart [options]="chartOptions" (chartInstance)="onChartInstance($event)" class="chart"></div>

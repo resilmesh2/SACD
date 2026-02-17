@@ -694,6 +694,9 @@ public getIPAddresses(): Observable<string[]> {
             name,
             subnets {
               range
+              parent_subnet {
+                range
+              }
             },
             contacts {
               name
@@ -709,7 +712,12 @@ public getIPAddresses(): Observable<string[]> {
         map((response) => {
           const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
             name: orgUnit.name,
-            subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+            subnets: orgUnit.subnets.map(subnet => {
+              return { 
+                range: subnet.range, 
+                parent: subnet.parent_subnet[0]?.range
+              }
+            }),
             contacts: orgUnit.contacts.map((contact: any) => contact.name),
             parentOrgUnit: orgUnit.parent_org_unit[0]?.name || "---",
           }));
@@ -728,6 +736,9 @@ public getIPAddresses(): Observable<string[]> {
             name,
             subnets {
               range
+              parent_subnet {
+                range
+              }
             },
             contacts {
               name
@@ -743,7 +754,12 @@ public getIPAddresses(): Observable<string[]> {
         map((response) => {
           const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
             name: orgUnit.name,
-            subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+            subnets: orgUnit.subnets.map(subnet => {
+              return { 
+                range: subnet.range, 
+                parent: subnet.parent_subnet[0]?.range
+              }
+            }),
             contacts: orgUnit.contacts.map((contact: any) => contact.name),
             parentOrgUnit: orgUnit.parent_org_unit[0]?.name || "---",
           }));
