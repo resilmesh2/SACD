@@ -98,8 +98,6 @@ export class FlowEditorComponent implements OnInit {
     protected fFlow!: FFlowComponent;
 
     protected readonly eMarkerType = EFMarkerType;
-
-    missionName = input<string | null>(null);
     
     globalIdIncrement = signal(1);
 

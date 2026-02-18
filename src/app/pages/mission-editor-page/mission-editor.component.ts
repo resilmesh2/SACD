@@ -53,10 +53,6 @@ export type MissionMetadata = {
 })
 
 export class MissionEditorComponent {
-    missionName = signal('');
-    missionDescription = signal('');
-    missionCriticality = signal(1);
-
     missionsMap = model<Record<string, MissionMetadata>>({
       "0": {
         name: "test",
@@ -92,6 +88,13 @@ export class MissionEditorComponent {
       this.getMissionNames();
     }
 
+    updateMissionField(missionId: string, field: keyof MissionMetadata, value: any) {
+        this.missionsMap.update(map => ({
+            ...map, 
+            [missionId]: { ...map[missionId], [field]: value }
+        }));
+    }
+
     getMissionNames() {
       this.dataService.getMissionNames().subscribe({
         next: (missions: any) => {
@@ -104,23 +107,16 @@ export class MissionEditorComponent {
       this.dataService.getMission(event.value ?? "").subscribe({
         next: (response) => {
           console.log(response);
-          const mission = response[0];
-          console.log(mission);
-          this.missionName.set(mission.name);
-          this.missionCriticality.set(mission.criticality);
-          this.missionDescription.set(mission.description);
+          const payload = response[0]?.structure;
+          if (!payload) {
+            alert("no structure for mission!");
+          }
 
-          // TODO: convert mission structure to internal nodes/relationships
+          const parsedPayload = JSON.parse(payload);
 
+          this.convertPayloadToNodesConnections(parsedPayload);
         }
       })
-    }
-
-    updateMissionField(missionId: string, field: keyof MissionMetadata, value: any) {
-        this.missionsMap.update(map => ({
-            ...map,
-            [missionId]: { ...map[missionId], [field]: value }
-        }));
     }
 
     logMissionsMap() {
@@ -128,14 +124,34 @@ export class MissionEditorComponent {
       console.log(this.missionIds());
     }
 
-    convertPayloadToNodesConnections() {
+    convertPayloadToNodesConnections(payload: MissionPayload) {
+      // reset the map when editing existing mission structure
+      this.missionsMap.set({});
 
+      payload.nodes.missions.forEach(mission => {
+        this.missionsMap.update(map => {
+          return { ...map, [mission.id]: { 
+              name: mission.name, 
+              description: mission.description, 
+              criticality: mission.criticality 
+            }}
+        })
+      })
+
+      // TODO: convert mission structure to internal nodes/relationships
+    }
+
+    validateMissionsMetadata() {
+      for (var key in this.missionsMap()) {
+        if (this.missionsMap()[key].name.trim() === '') {
+          return false;
+        }
+      }
+      return true;
     }
 
     validateMission(): boolean {
-      if (this.missionName().trim() === '') {
-        return false;
-      }
+      this.validateMissionsMetadata()
 
       const isValid = this.missionValidator.validateMission(this.nodes, this.connections);
 
@@ -148,7 +164,7 @@ export class MissionEditorComponent {
     }
 
     saveMission() {
-        const payload = this.getMissionPayloaad();
+        const payload = this.getMissionPayload();
         if (!payload) {
             return;
         }
@@ -167,17 +183,17 @@ export class MissionEditorComponent {
     }
 
     // Prepares and returns the mission payload for copying or uploading to the backend REST API
-    getMissionPayloaad(): MissionPayload | null {
+    getMissionPayload(): MissionPayload | null {
         if (!this.validateMission()) {
-            let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
+            let status = `Mission validation failed. See highlighted issues.`;
             this.openSnackBar(status, 'Close', { error: true });
             return null;
         }
 
         const missionData: MissionData = {
-            name: this.missionName(),
-            description: this.missionDescription(),
-            criticality: this.missionCriticality(),
+            name: "TODO", //this.missionName(),
+            description: "TODO",
+            criticality: 42,
             nodes: this.nodes(),
             connections: this.connections()
         };
@@ -188,12 +204,12 @@ export class MissionEditorComponent {
     // Copies the mission payload JSON to the clipboard
     copyMissionPayload() {
       if (!this.validateMission()) {
-          let status = `Mission validation failed. ${this.missionName().trim() === '' ? '[Empty mission name]' : 'See highlighted issues.'}`;
+          let status = `Mission validation failed. See highlighted issues.`;
           this.openSnackBar(status, 'Close', { error: true });
           return;
       }
 
-      const missionPayload = this.getMissionPayloaad();
+      const missionPayload = this.getMissionPayload();
       if (!missionPayload) {
         this.openSnackBar('No mission data to copy.', 'Close', { error: true });
         return;

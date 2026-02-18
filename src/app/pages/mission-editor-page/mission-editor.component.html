@@ -2,8 +2,6 @@
 <p>For guidance on mission decomposition, see 
     <a href="https://github.com/resilmesh2/ISIM/blob/main/docs/mission_guidelines.md">mission guidelines</a>.
 </p>
-<!-- <p>Components in a group are alternatives (OR relationship).</p> -->
-<!-- <p>Dependenies are between components e.g. when they talk to each other</p> -->
 <div class="mission-editor">
     <div class="form-line">
         <mat-form-field subscriptSizing="dynamic">
@@ -148,7 +146,7 @@
         </div>
     </sentinel-card>
     <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
-        <flow-editor [(missionsMap)]="missionsMap" [(nodes)]="nodes" [(connections)]="connections" [missionName]="missionName()" ></flow-editor>
+        <flow-editor [(missionsMap)]="missionsMap" [(nodes)]="nodes" [(connections)]="connections" ></flow-editor>
     </sentinel-card>
     <!-- <sentinel-card class="editor-card" cardTitle="Mission JSON" titleIcon="code">
         <pre>{{ getMissionJSON() }}</pre>
