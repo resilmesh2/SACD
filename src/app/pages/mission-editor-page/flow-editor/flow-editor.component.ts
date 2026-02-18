@@ -272,29 +272,27 @@ export class FlowEditorComponent implements OnInit {
     }
 
     addNewMissionRoot() {
+        let newRootXCoord = Object.keys(this.missionsMap()).length * 300;
+
         const newRootId = this.createNode(
-            'NEW MISSION',
+            '',
             'root',
-            { x: 500, y: 0 },
+            { x: newRootXCoord, y: 0 },
             'root',
         )
 
         const newRootAndId = this.createNode(
             'AND',
             'and',
-            { x: 500, y: 100 },
+            { x: newRootXCoord, y: 100 },
             'root-and'
         )
 
         this.createConnection(`${newRootId}-output`, `${newRootAndId}-input`);
 
-        // this.missionsMap.update(map => {
-        //     return Object.assign(map, newRootId, {
-        //     name: "NEW",
-        //     description: "",
-        //     criticality: 1
-        // })
-        // })
+        this.missionsMap.update(map => {
+            return { ...map, [newRootId]: { name: '', description: '', criticality: 1 } }
+        })
 
       //{ id: '0', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
       //{ id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },

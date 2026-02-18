@@ -57,16 +57,7 @@ export class MissionEditorComponent {
     missionDescription = signal('');
     missionCriticality = signal(1);
 
-    // missions: WritableSignal<{name: string, description: string, criticality: number}[]> = model([
-    //   {
-    //     id: "0",
-    //     name: "",
-    //     description: "",
-    //     criticality: 1
-    //   }
-    // ])
-
-    missionsMap = model({
+    missionsMap = model<Record<string, MissionMetadata>>({
       "0": {
         name: "test",
         description: "",
@@ -123,6 +114,18 @@ export class MissionEditorComponent {
 
         }
       })
+    }
+
+    updateMissionField(missionId: string, field: keyof MissionMetadata, value: any) {
+        this.missionsMap.update(map => ({
+            ...map,
+            [missionId]: { ...map[missionId], [field]: value }
+        }));
+    }
+
+    logMissionsMap() {
+      console.log(this.missionsMap());
+      console.log(this.missionIds());
     }
 
     convertPayloadToNodesConnections() {

@@ -79,8 +79,7 @@
                 <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--root">
                     <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
                     <div class="content">
-                        {{ missionsMap()[node.id].name || 'MISSION' }}
-                        <!-- {{missions().find(m => m.id === node.id).name || 'MISSION'}} -->
+                        {{ missionsMap()[node.id] && missionsMap()[node.id].name != "" ? missionsMap()[node.id].name : 'MISSION' }}
                     </div>
                 </div>
             } @else if (node.type === 'and') {

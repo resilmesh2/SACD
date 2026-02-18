@@ -37,6 +37,15 @@
                             Copy Mission JSON to Clipboard
                         </sentinel-button-with-icon>
                     </div>
+                    <div class="form-line">
+                        <sentinel-button-with-icon
+                            color="accent"
+                            icon="frame_bug"
+                            (click)="logMissionsMap()"
+                        >
+                            Log missions map
+                        </sentinel-button-with-icon>
+                    </div>
                 </div>
                 @for (missionId of missionIds(); track missionId) {
                     <div class="single-mission-container">
@@ -44,13 +53,26 @@
                             <mat-form-field id="missionName" subscriptSizing="dynamic">
                                 <mat-label for="missionName">Mission Name:</mat-label>
                                 <!-- missionsMap()[missionId] -->
-                                <input matInput required placeholder="" [(ngModel)]="missionName" />
+                                <input matInput 
+                                    required 
+                                    placeholder="" 
+                                    [ngModel]="missionsMap()[missionId].name" 
+                                    (ngModelChange)="updateMissionField(missionId, 'name', $event)"  
+                                />
                             </mat-form-field>
                         </div>
                         <div class="form-line">
                             <mat-form-field id="missionCriticality" subscriptSizing="dynamic">
                                 <mat-label for="missionCriticality">Criticality:</mat-label>
-                                <input matInput type="number" max="10" min="1" required placeholder="" [(ngModel)]="missionCriticality" />
+                                <input matInput 
+                                    type="number" 
+                                    max="10" 
+                                    min="1" 
+                                    required 
+                                    placeholder="" 
+                                    [ngModel]="missionsMap()[missionId].criticality" 
+                                    (ngModelChange)="updateMissionField(missionId, 'criticality', $event)" 
+                                />
                             </mat-form-field>
                         </div>
                         <div class="form-line">
@@ -62,7 +84,8 @@
                                     cdkAutosizeMinRows="1"
                                     cdkAutosizeMaxRows="5"
                                     placeholder="Enter mission description"
-                                    [(ngModel)]="missionDescription"
+                                    [ngModel]="missionsMap()[missionId].description" 
+                                    (ngModelChange)="updateMissionField(missionId, 'description', $event)"
                                 ></textarea>
                             </mat-form-field>
                         </div>
