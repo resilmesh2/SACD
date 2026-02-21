@@ -99,7 +99,11 @@ export class FlowEditorComponent implements OnInit {
 
     protected readonly eMarkerType = EFMarkerType;
     
-    globalIdIncrement = signal(1);
+    private globalIdIncrement = signal(1);
+    
+    setGlobalIncrement(value: number): void {
+        this.globalIdIncrement.set(value);
+    }
 
     centerOnAdd = true;
     isOpen = false;
@@ -291,9 +295,6 @@ export class FlowEditorComponent implements OnInit {
         this.missionsMap.update(map => {
             return { ...map, [newRootId]: { name: '', description: '', criticality: 1 } }
         })
-
-      //{ id: '0', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
-      //{ id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
     }
 
     public addComponentGroup(): void {

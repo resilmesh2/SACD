@@ -1,9 +1,9 @@
-import { Component, computed, inject, model, signal, WritableSignal } from "@angular/core";
+import { Component, computed, inject, model, signal, ViewChild, WritableSignal } from "@angular/core";
 import { SentinelCardComponent } from "@sentinel/components/card";
 import { MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
-import { FlowEditorComponent, MissionNode } from "./flow-editor/flow-editor.component";
+import { AggregationLayer, FlowEditorComponent, MissionNode, MissionNodeData, MissionNodeType } from "./flow-editor/flow-editor.component";
 import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 import { MissionValidator } from "./mission-validator";
 import { MissionEditorService, MissionPayload } from "./mission-editor.service";
@@ -12,11 +12,10 @@ import { MatIcon } from "@angular/material/icon";
 import { NgTemplateOutlet } from "@angular/common";
 import { MatSelectModule } from "@angular/material/select";
 import { DataService } from "../../services/data.service";
+import * as dagre from 'dagre';
 
 export type MissionData = {
-    name: string;
-    description: string;
-    criticality: number;
+    missions: MissionsMap;
     nodes: MissionNode[];
     connections: {
         from: string;
@@ -24,11 +23,21 @@ export type MissionData = {
     }[];
 }
 
+export type MissionsMap = Record<string, MissionMetadata>;
+
 export type MissionMetadata = {
   name: string;
   description: string;
   criticality: number;
 }
+
+type NodeInfo = {
+    id: number;
+    type: MissionNodeType;
+    layer: AggregationLayer | undefined;
+    name: string;
+    data: MissionNodeData;
+};
 
 @Component({
   selector: 'mission-page',
@@ -53,7 +62,8 @@ export type MissionMetadata = {
 })
 
 export class MissionEditorComponent {
-    missionsMap = model<Record<string, MissionMetadata>>({
+
+    missionsMap = model<MissionsMap>({
       "0": {
         name: "test",
         description: "",
@@ -75,6 +85,9 @@ export class MissionEditorComponent {
     ]);
 
     private _snackBar = inject(MatSnackBar);
+
+    @ViewChild(FlowEditorComponent)
+    private flowEditor!: FlowEditorComponent;
 
     openSnackBar(message: string, action: string, { error = false } = {}) {
         this._snackBar.open(message, action, { panelClass: error ? ['snackbar-error'] : undefined });
@@ -125,8 +138,10 @@ export class MissionEditorComponent {
     }
 
     convertPayloadToNodesConnections(payload: MissionPayload) {
-      // reset the map when editing existing mission structure
+      // TODO: Warn user that loading existing mission resets the editor
       this.missionsMap.set({});
+      this.nodes.set([]);
+      this.connections.set([]);
 
       payload.nodes.missions.forEach(mission => {
         this.missionsMap.update(map => {
@@ -138,7 +153,88 @@ export class MissionEditorComponent {
         })
       })
 
-      // TODO: convert mission structure to internal nodes/relationships
+      // To avoid ID collisions when updating existing missions
+      this.setNewGlobalIncrementId(payload);
+
+      this.nodes.set(this.buildNodesWithLayout(payload));
+      this.connections.set(payload.relationships.one_way.map(rel => ({
+          from: `${rel.from}-output`,
+          to: `${rel.to}-input`,
+      })));
+
+      this.flowEditor.fCanvas.resetScaleAndCenter(false);
+    }
+    
+
+    buildNodesWithLayout(payload: MissionPayload): MissionNode[] {
+      // Build node info map
+      const nodeInfoMap = new Map<number, NodeInfo>();
+      payload.nodes.missions.forEach(m =>
+          nodeInfoMap.set(m.id, { id: m.id, type: 'root', layer: 'root', name: m.name, data: {} }));
+      payload.nodes.services.forEach(s =>
+          nodeInfoMap.set(s.id, { id: s.id, type: 'component', layer: 'component', name: s.name, data: { name: s.name } }));
+      payload.nodes.hosts.forEach(h =>
+          nodeInfoMap.set(h.id, { id: h.id, type: 'host', layer: 'host', name: h.hostname, data: { hostname: h.hostname, ip: h.ip } }));
+      payload.nodes.aggregations.and.forEach(id =>
+          nodeInfoMap.set(id, { id, type: 'and', layer: undefined, name: 'AND', data: {} }));
+      payload.nodes.aggregations.or.forEach(id =>
+          nodeInfoMap.set(id, { id, type: 'or', layer: undefined, name: 'OR', data: {} }));
+
+      // Build parent map to infer AND/OR layers
+      const parentOf = new Map<number, number[]>();
+      payload.relationships.one_way.forEach(({ from, to }) => {
+          if (!parentOf.has(to)) parentOf.set(to, []);
+          parentOf.get(to)!.push(from);
+      });
+
+      for (const info of nodeInfoMap.values()) {
+          const parents = (parentOf.get(info.id) ?? []).map(p => nodeInfoMap.get(p));
+          if (info.type === 'and') {
+              info.layer = parents.some(p => p?.type === 'root') ? 'root-and' : 'component-and';
+          } else if (info.type === 'or') {
+              const parentLayers = parents.map(p => p?.layer);
+              info.layer = parentLayers.includes('root-and') ? 'component-or' : 'host-or';
+          }
+      }
+
+      // Run dagre layout
+      const g = new dagre.graphlib.Graph();
+      g.setGraph({ rankdir: 'TB', nodesep: 60, ranksep: 90 });
+      g.setDefaultEdgeLabel(() => ({}));
+
+      for (const info of nodeInfoMap.values()) {
+          g.setNode(`${info.id}`, { width: 200, height: 50 });
+      }
+      payload.relationships.one_way.forEach(rel =>
+          g.setEdge(`${rel.from}`, `${rel.to}`));
+
+      dagre.layout(g);
+
+      return Array.from(nodeInfoMap.values()).map(info => {
+          const { x, y } = g.node(`${info.id}`);
+          return {
+              id: info.id.toString(),
+              name: info.name,
+              type: info.type,
+              layer: info.layer,
+              position: { x: x - 100, y: y - 25 },
+              data: info.data,
+              validation: { error: false, reason: '' },
+          };
+      });
+    }
+    
+    setNewGlobalIncrementId(payload: MissionPayload) {
+      const allNodeIds = [
+        payload.nodes.aggregations.or, 
+        payload.nodes.aggregations.and,
+        payload.nodes.hosts.map(host => host.id),
+        payload.nodes.missions.map(mission => mission.id),
+        payload.nodes.services.map(service => service.id),
+      ].flat();
+
+      const maxId = Math.max(...allNodeIds);
+      this.flowEditor.setGlobalIncrement(maxId + 1);
     }
 
     validateMissionsMetadata() {
@@ -191,9 +287,7 @@ export class MissionEditorComponent {
         }
 
         const missionData: MissionData = {
-            name: "TODO", //this.missionName(),
-            description: "TODO",
-            criticality: 42,
+            missions: this.missionsMap(),
             nodes: this.nodes(),
             connections: this.connections()
         };
