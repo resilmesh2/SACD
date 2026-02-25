@@ -74,6 +74,31 @@
     }
 }
 
+.mark {
+    position: absolute;
+    width: 1.5em;
+    height: 100%;
+    top: 0em;
+    left: 0em;
+    border-radius: 4px 0 0 4px;
+
+    &--component-and, &--host-or {
+        @extend .mark;
+        background-color: #a0d468;
+    }
+
+    &--root-and {
+        @extend .mark;
+        background-color: #343F5D;
+    }
+
+    &--component-or {
+        @extend .mark;
+        background-color: #7fbfdf;
+    }
+
+}
+
 .node .content {
     display: flex;
     flex-direction: row;

@@ -65,15 +65,16 @@ export class MissionEditorComponent {
 
     missionsMap = model<MissionsMap>({
       "0": {
-        name: "test",
+        name: "",
         description: "",
         criticality: 1
       }
     })
 
     missionIds = computed(() => Object.keys(this.missionsMap()));
-
     existingMissionNames = signal([]);
+    uploadMode = signal<'create' | 'update'>('create');
+    selectedMission = signal('');
 
     public connections: WritableSignal<{ from: string; to: string }[]> = model([
       { from: '0-output', to: '1-input' },
@@ -117,9 +118,10 @@ export class MissionEditorComponent {
     }
 
     loadMission(event: { value: string }) {
+      // TODO: Warn user that loading existing mission resets the editor
+      
       this.dataService.getMission(event.value ?? "").subscribe({
         next: (response) => {
-          console.log(response);
           const payload = response[0]?.structure;
           if (!payload) {
             alert("no structure for mission!");
@@ -128,17 +130,33 @@ export class MissionEditorComponent {
           const parsedPayload = JSON.parse(payload);
 
           this.convertPayloadToNodesConnections(parsedPayload);
+          
         }
       })
     }
 
-    logMissionsMap() {
-      console.log(this.missionsMap());
-      console.log(this.missionIds());
+    resetEditor() {
+      this.missionsMap.set({
+        "0": {
+          name: "",
+          description: "",
+          criticality: 1
+        }
+      });
+      this.nodes.set([
+        { id: '0', name: 'Mission', type: 'root', position: { x: 0, y: 0 }, data: {}, validation: { error: false, reason: '' } },
+        { id: '1', name: 'AND', type: 'and', position: { x: 0, y: 100 }, layer: 'root-and', data: {}, validation: { error: false, reason: '' } },
+      ]);
+      this.connections.set([
+        { from: '0-output', to: '1-input' },
+      ]);
+      this.flowEditor.fCanvas.resetScaleAndCenter(false);
+      this.uploadMode.set('create');
+      this.selectedMission.set('');
+      this.openSnackBar('Mission editor reset to default state.', 'OK');
     }
 
     convertPayloadToNodesConnections(payload: MissionPayload) {
-      // TODO: Warn user that loading existing mission resets the editor
       this.missionsMap.set({});
       this.nodes.set([]);
       this.connections.set([]);
@@ -163,6 +181,10 @@ export class MissionEditorComponent {
       })));
 
       this.flowEditor.fCanvas.resetScaleAndCenter(false);
+      this.uploadMode.set('update');
+
+      console.log('Loaded mission payload:', this.missionsMap(), this.nodes(), this.connections());
+      this.openSnackBar(`Successfully loaded existing mission (${payload.nodes.missions.length} connected mission(s) total)`, "OK");
     }
     
 
@@ -217,7 +239,7 @@ export class MissionEditorComponent {
               name: info.name,
               type: info.type,
               layer: info.layer,
-              position: { x: x - 100, y: y - 25 },
+              position: { x: x - 100, y: y - 25 }, // Center the node on its position
               data: info.data,
               validation: { error: false, reason: '' },
           };
@@ -247,6 +269,10 @@ export class MissionEditorComponent {
     }
 
     validateMission(): boolean {
+      if (Object.keys(this.missionsMap()).length === 0) {
+        return false;
+      }
+
       this.validateMissionsMetadata()
 
       const isValid = this.missionValidator.validateMission(this.nodes, this.connections);
@@ -264,7 +290,7 @@ export class MissionEditorComponent {
         if (!payload) {
             return;
         }
-        let $missionUpload = this.missionEditorService.uploadMissionPayload(payload);
+        let $missionUpload = this.missionEditorService.uploadMissionPayload(payload, this.uploadMode());
 
         $missionUpload.subscribe({
             next: (response) => {
@@ -281,7 +307,9 @@ export class MissionEditorComponent {
     // Prepares and returns the mission payload for copying or uploading to the backend REST API
     getMissionPayload(): MissionPayload | null {
         if (!this.validateMission()) {
-            let status = `Mission validation failed. See highlighted issues.`;
+            let status = Object.keys(this.missionsMap()).length === 0 
+              ? "Mission is empty. Please add at least one mission." 
+              : "Mission validation failed. See highlighted issues.";
             this.openSnackBar(status, 'Close', { error: true });
             return null;
         }

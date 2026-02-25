@@ -6,12 +6,13 @@
     <div class="form-line">
         <mat-form-field subscriptSizing="dynamic">
             <mat-label>Edit Existing Mission</mat-label>
-            <mat-select (selectionChange)="loadMission($event)">
+            <mat-select (selectionChange)="loadMission($event)" [value]="selectedMission">
                 @for (mission of existingMissionNames(); track mission) {
                     <mat-option [value]="mission">{{mission}}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
+        <p class="disclaimer">Editing existing mission resets the editor!</p>
     </div>
     <sentinel-card class="editor-card" cardTitle="Mission" titleIcon="strategy">
         <div class="content-container">
@@ -37,11 +38,11 @@
                     </div>
                     <div class="form-line">
                         <sentinel-button-with-icon
-                            color="accent"
-                            icon="frame_bug"
-                            (click)="logMissionsMap()"
+                            color="warn"
+                            icon="restart_alt"
+                            (click)="resetEditor()"
                         >
-                            Log missions map
+                            Reset Mission Editor
                         </sentinel-button-with-icon>
                     </div>
                 </div>

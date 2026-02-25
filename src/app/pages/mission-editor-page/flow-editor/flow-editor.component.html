@@ -76,31 +76,32 @@
     <ng-container ngProjectAs="[fNodes]">
         @for (node of nodes(); track node.id) {
             @if (node.type === 'root') {
-                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--root">
+                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--root" [fNodeId]="node.id">
                     <div fNodeOutput fOutputId="{{node.id}}-output" class="bottom" [fOutputMultiple]="false"></div>
                     <div class="content">
                         {{ missionsMap()[node.id] && missionsMap()[node.id].name != "" ? missionsMap()[node.id].name : 'MISSION' }}
                     </div>
                 </div>
             } @else if (node.type === 'and') {
-                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and" >
+                <div fNode fDragHandle [fNodePosition]="(node.position)" class="node--and" [fNodeId]="node.id">
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false"></div>
                     <div 
                         fNodeOutput 
                         fOutputId="{{node.id}}-output" 
                         class="bottom" 
-                        [fOutputMultiple]="true" 
+                        [fOutputMultiple]="true"
                         [fCanBeConnectedInputs]="getAllowedConnections(node.layer)">
                     </div>
                     <div class="content">
                         AND (ID: {{node.id}})
                     </div>
+                    <div class="mark--{{node.layer}}"></div>
                     @if (node.validation.error) {
                         <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
                     }
                 </div>
             } @else if (node.type === 'or') {
-                <div fNode fDragHandle [fNodePosition]="node.position" class="node--or">
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--or" [fNodeId]="node.id">
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
                     <div 
                         fNodeOutput 
@@ -112,13 +113,14 @@
                     <div class="content">
                         OR (ID: {{node.id}})
                     </div>
+                    <div class="mark--{{node.layer}}"></div>
                     @if (node.validation.error) {
                         <ng-container *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"></ng-container>
                     }
                 </div>
             } @else if (node.type === 'component') {
-                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component">
-                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--component" [fNodeId]="node.id">
+                    <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="true" fInputCategory="{{node.layer}}"></div>
                     <div class="content">
                         <div class="title">{{node.data.name || 'SERVICE'}} (ID: {{node.id}})</div>
                         <button class="action component-edit" matIconButton (click)="node.isEditing = !node.isEditing" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
@@ -165,7 +167,7 @@
                     </ng-template>
                 </div>
             } @else if (node.type === 'host') {
-                <div fNode fDragHandle [fNodePosition]="node.position" class="node--host">
+                <div fNode fDragHandle [fNodePosition]="node.position" class="node--host" [fNodeId]="node.id">
                     <div fNodeInput fInputId="{{node.id}}-input" class="top" [fInputMultiple]="false" fInputCategory="{{node.layer}}"></div>
 
                     <div class="content">

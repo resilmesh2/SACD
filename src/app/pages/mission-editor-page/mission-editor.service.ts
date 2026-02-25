@@ -61,7 +61,7 @@ type MissionNodeWithId = MissionNode & { id: number };
   providedIn: 'root',
 })
 export class MissionEditorService {
-    private API_URL = 'http://localhost:8008/missions';
+    private API_URL = 'http://localhost:8000/missions';
     private http = inject(HttpClient);
     constructor() {}
 
@@ -207,7 +207,7 @@ export class MissionEditorService {
         return payload;
     }
 
-    uploadMissionPayload(payload: MissionPayload): Observable<any> {
+    uploadMissionPayload(payload: MissionPayload, uploadMode: 'create' | 'update' = 'create'): Observable<any> {
         console.log('Uploading mission payload:', payload);
         // Connection check (optional)
         // this.http.get('http://localhost:8000/missions').subscribe({
@@ -219,9 +219,15 @@ export class MissionEditorService {
         //     }
         // });
 
-        return this.http.post(this.API_URL, { ... payload}, {
-            headers : new HttpHeaders({ 'Content-Type': 'application/json' })
-        });
+        if (uploadMode === 'update') {
+            return this.http.put(this.API_URL, { ... payload}, {
+                headers : new HttpHeaders({ 'Content-Type': 'application/json' })
+            });
+        } else {
+            return this.http.post(this.API_URL, { ... payload}, {
+                headers : new HttpHeaders({ 'Content-Type': 'application/json' })
+            });
+        }
     }
 
 }
