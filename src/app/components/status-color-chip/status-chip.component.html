@@ -1,7 +1,11 @@
-<span class="status-label" [style.background-color]="color()" [style.color]="labelColor()">
-    @if (!label() || label()?.trim() == '') {
-        N/A
-    } @else {
-        {{ label() }}
-    }
+<span
+  class="status-label"
+  [style.background-color]="color()"
+  [style.color]="labelColor()"
+>
+  @if (!label() || label()?.trim() == "") {
+    N/A
+  } @else {
+    {{ label() }}
+  }
 </span>

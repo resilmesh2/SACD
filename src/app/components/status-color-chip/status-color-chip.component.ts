@@ -1,19 +1,26 @@
-import { ChangeDetectionStrategy, Component, computed, input, model } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  model,
+} from '@angular/core';
 
 @Component({
   selector: 'status-chip',
   templateUrl: 'status-chip.component.html',
   styleUrl: 'status-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  standalone: true,
 })
-
 export class StatusChipComponent {
   label = model<string | undefined>('unknown');
   type = input<'asset' | 'vulnerability'>('asset');
 
   color = computed(() => {
-    return this.type() === 'asset' ? this.assetColorByLabel() : this.vulnerabilityColorByLabel();
+    return this.type() === 'asset'
+      ? this.assetColorByLabel()
+      : this.vulnerabilityColorByLabel();
   });
 
   assetColorByLabel = computed(() => {
@@ -51,6 +58,6 @@ export class StatusChipComponent {
   });
 
   labelColor = computed(() => {
-    return this.label() == 'critical' ? '#ffff': '#1C1D21';
+    return this.label() == 'critical' ? '#ffff' : '#1C1D21';
   });
 }

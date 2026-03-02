@@ -63,7 +63,7 @@ export class CustomLayout implements Layout {
         const dagreNode = this.dagreGraph._nodes[dagreNodeId];
         const node = graph.nodes.find((n) => n.id === dagreNode.id);
         if (node === undefined) {
-          return graph
+          return graph;
         }
         node.position = {
           x: dagreNode.x,
@@ -83,11 +83,13 @@ export class CustomLayout implements Layout {
     const sourceNode = graph.nodes.find((n) => n.id === edge.source);
     const targetNode = graph.nodes.find((n) => n.id === edge.target);
 
-    if (sourceNode?.position === undefined
-      || sourceNode?.dimension?.height === undefined
-      || targetNode?.position === undefined
-      || targetNode?.dimension?.height === undefined) {
-      return graph
+    if (
+      sourceNode?.position === undefined ||
+      sourceNode?.dimension?.height === undefined ||
+      targetNode?.position === undefined ||
+      targetNode?.dimension?.height === undefined
+    ) {
+      return graph;
     }
 
     // determine new arrow position
@@ -108,7 +110,10 @@ export class CustomLayout implements Layout {
 
   createDagreGraph(graph: Graph): any {
     const settings = Object.assign({}, this.defaultSettings, this.settings);
-    this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+    this.dagreGraph = new dagre.graphlib.Graph({
+      compound: settings.compound,
+      multigraph: settings.multigraph,
+    });
 
     this.dagreGraph.setGraph({
       rankdir: settings.orientation,

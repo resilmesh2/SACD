@@ -1,4 +1,15 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, signal, computed, WritableSignal, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  ChangeDetectorRef,
+  signal,
+  computed,
+  WritableSignal,
+  inject,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -65,18 +76,21 @@ export interface CSANode {
     MatTableModule,
     SentinelCardComponent,
     SentinelButtonWithIconComponent,
-    MatIcon
+    MatIcon,
   ],
-  providers: [
-    provideMomentDateAdapter(DATE_FORMAT)
-  ],
+  providers: [provideMomentDateAdapter(DATE_FORMAT)],
   standalone: true,
 })
-
 export class CSAPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<CSANode>();
 
-  displayedColumns: string[] = ['ips', 'topology_degree_norm', 'topology_betweenness_norm', 'mission_criticality', 'final_criticality'];
+  displayedColumns: string[] = [
+    'ips',
+    'topology_degree_norm',
+    'topology_betweenness_norm',
+    'mission_criticality',
+    'final_criticality',
+  ];
 
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -107,7 +121,7 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
   nodes = signal<CSANode[]>([]);
   totalSortedServices = computed(() => this.dataSource.filteredData.length);
 
-  defaultValue = "All";
+  defaultValue = 'All';
   filterDictionary = new Map<string, string>();
 
   searchTerm: WritableSignal<string> = signal('');
@@ -124,23 +138,41 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
 
   COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
-  getCriticalityColor = ((value: number, isFinalCriticality: boolean = false) => {
+  getCriticalityColor = (
+    value: number,
+    isFinalCriticality: boolean = false,
+  ) => {
     if (value === null || value === undefined) {
-      return {bg: '#cacaca', color: '#000000'};
-    } else if (value >= this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)) {
-      return {bg: '#1C1D21', color: '#FFFFFF'};
-    } else if (value >= this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)) {
-      return {bg: '#9F85FF', color: '#000000'};
-    } else if (value >= this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)) {
-      return {bg: '#ed625e', color: '#000000'};
-    } else if (value >= this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)) {
-      return {bg: '#ed913b', color: '#000000'};
-    } else if (value > this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)) {
-      return {bg: '#f6d55c', color: '#000000'};
+      return { bg: '#cacaca', color: '#000000' };
+    } else if (
+      value >=
+      this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)
+    ) {
+      return { bg: '#1C1D21', color: '#FFFFFF' };
+    } else if (
+      value >=
+      this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)
+    ) {
+      return { bg: '#9F85FF', color: '#000000' };
+    } else if (
+      value >=
+      this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)
+    ) {
+      return { bg: '#ed625e', color: '#000000' };
+    } else if (
+      value >=
+      this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)
+    ) {
+      return { bg: '#ed913b', color: '#000000' };
+    } else if (
+      value >
+      this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)
+    ) {
+      return { bg: '#f6d55c', color: '#000000' };
     } else {
-      return {bg: '#86B46A', color: '#000000'};
+      return { bg: '#86B46A', color: '#000000' };
     }
-  });
+  };
 
   ngOnInit(): void {
     this.dataLoading = true;
@@ -170,27 +202,31 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
         this.errorResponse = error;
         this.dataLoading = false;
         this.changeDetector.detectChanges();
-      }
+      },
     });
   }
 
   ngAfterViewInit() {
-
     if (this.dataLoaded && this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    
+
     /**
      * Custom filter predicate for the data source.
      */
     this.dataSource.filterPredicate = function (record, filter) {
       var map: Map<string, any> = new Map(JSON.parse(filter));
       let isMatch = false;
-      for(let [key,value] of map){
+      for (let [key, value] of map) {
         // Name filter (CVE ID)
         if (key === 'name') {
-          isMatch = (value === "All") || (value == '') || record.ips.some(ip => ip.toLowerCase().includes(value.trim().toLowerCase()));
+          isMatch =
+            value === 'All' ||
+            value == '' ||
+            record.ips.some((ip) =>
+              ip.toLowerCase().includes(value.trim().toLowerCase()),
+            );
           if (!isMatch) return false;
         }
       }
@@ -201,8 +237,10 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   applyNameFilter(): void {
     this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
-    
+    this.dataSource.filter = JSON.stringify(
+      Array.from(this.filterDictionary.entries()),
+    );
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -219,23 +257,21 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
   }
 
   saveData(address: string, tags: string[]): void {
-    this.data.changeTag(address, tags)
+    this.data.changeTag(address, tags);
   }
 
-  
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
-    tags.push(event.option.viewValue)
+    tags.push(event.option.viewValue);
     event.option.deselect();
   }
 
   navigateToNetworkNodeView(ip: string): void {
     this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: ip }
+      queryParams: { ip: ip },
     });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-      this.router.navigate([SUBNETS_PATH, subnetRange]);
+    this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
-  
 }

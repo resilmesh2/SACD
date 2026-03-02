@@ -1,13 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 
 @Component({
   selector: 'asset-type-chip',
   templateUrl: 'asset-type-chip.component.html',
   styleUrl: 'asset-type-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  standalone: true,
 })
-
 export class AssetTypeChipComponent {
   label = input<string | undefined>('unknown');
 
@@ -24,7 +28,6 @@ export class AssetTypeChipComponent {
     }
   });
 
-
   color = computed(() => {
     switch (this.label()?.toLowerCase()) {
       case 'ip':
@@ -39,6 +42,6 @@ export class AssetTypeChipComponent {
   });
 
   labelColor = computed(() => {
-    return this.label()?.toLowerCase() == 'critical' ? '#ffff': '#1C1D21';
+    return this.label()?.toLowerCase() == 'critical' ? '#ffff' : '#1C1D21';
   });
 }

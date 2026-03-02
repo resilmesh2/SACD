@@ -1,7 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ASSETS_PATH, CSA_PATH, ISSUE_PATH, MISSION_PATH, ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import {
+  ASSETS_PATH,
+  CSA_PATH,
+  ISSUE_PATH,
+  MISSION_PATH,
+  ORGANIZATION_PATH,
+  SUBNETS_PATH,
+} from '../../paths';
 import { MatIconModule } from '@angular/material/icon';
 import { HomePageDataService } from './home-page.data.service';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -18,12 +31,11 @@ import { Subscription } from 'rxjs';
     SentinelButtonWithIconComponent,
     MatIconModule,
     NgxChartsModule,
-    NgxSkeletonLoaderModule
+    NgxSkeletonLoaderModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class HomePageComponent implements OnInit, OnDestroy {
-
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   data = inject(HomePageDataService);
@@ -36,32 +48,34 @@ export class HomePageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.data.fetchData();
 
-    this.route.queryParams.subscribe(_ => {
+    this.route.queryParams.subscribe((_) => {
       this.data.refreshData();
     });
   }
- 
+
   ngOnDestroy() {
     this.data.unscubscribeAll();
   }
 
   customColors = [
-      { name: 'critical', value: '#1C1D21' },
-      { name: 'high', value: '#ed625e' },
-      { name: 'medium', value: '#ed913b' },
-      { name: 'low', value: '#f6d55c' }
-  ]
+    { name: 'critical', value: '#1C1D21' },
+    { name: 'high', value: '#ed625e' },
+    { name: 'medium', value: '#ed913b' },
+    { name: 'low', value: '#f6d55c' },
+  ];
 
   onSelectSeverity(event: any) {
-    this.router.navigate([ISSUE_PATH], { queryParams: { severity: event.name } });
+    this.router.navigate([ISSUE_PATH], {
+      queryParams: { severity: event.name },
+    });
   }
 
   navigateToSubnets(): void {
-   this.router.navigate([SUBNETS_PATH]);
+    this.router.navigate([SUBNETS_PATH]);
   }
 
   navigateToOrgUnits(): void {
-   this.router.navigate([ORGANIZATION_PATH]);
+    this.router.navigate([ORGANIZATION_PATH]);
   }
 
   navigateToIPs(): void {
@@ -75,5 +89,4 @@ export class HomePageComponent implements OnInit, OnDestroy {
   navigateToMissions(): void {
     this.router.navigate([MISSION_PATH]);
   }
-
 }

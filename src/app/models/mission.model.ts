@@ -13,7 +13,12 @@ export interface Structure {
   support: { from: string; to: string }[];
   has_identity: { from: string; to: string }[];
   nodes: {
-    missions: { name: string; criticality: number; description: string; id: number }[];
+    missions: {
+      name: string;
+      criticality: number;
+      description: string;
+      id: number;
+    }[];
     hosts: { hostname: string; ip: string; id: number }[];
     services: { name: string; id: number }[];
     aggregations: { or: number[]; and: number[] };

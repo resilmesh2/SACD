@@ -1,18 +1,32 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
-import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
-import { AgendaContainer, SentinelUser } from "@sentinel/layout";
-import { SentinelBreadcrumb, SentinelBreadcrumbBuilder } from "@sentinel/layout/breadcrumbs";
-import { CustomNavDirective, SentinelLayout1Component } from "@sentinel/layout/layout1";
-import { SentinelNotificationService, SentinelNotificationTypeEnum } from "@sentinel/layout/notification";
-import { filter, map, Observable } from "rxjs";
+import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+} from '@angular/router';
+import { AgendaContainer, SentinelUser } from '@sentinel/layout';
+import {
+  SentinelBreadcrumb,
+  SentinelBreadcrumbBuilder,
+} from '@sentinel/layout/breadcrumbs';
+import {
+  CustomNavDirective,
+  SentinelLayout1Component,
+} from '@sentinel/layout/layout1';
+import {
+  SentinelNotificationService,
+  SentinelNotificationTypeEnum,
+} from '@sentinel/layout/notification';
+import { filter, map, Observable } from 'rxjs';
 
 /**
  * Angular Material
  */
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { agendaContainers } from "./agendas";
-import { MatIconButton } from "@angular/material/button";
-import { CustomNavComponent } from "./components/custom-nav/custom-nav.component";
+import { agendaContainers } from './agendas';
+import { MatIconButton } from '@angular/material/button';
+import { CustomNavComponent } from './components/custom-nav/custom-nav.component';
 
 export const user = {
   picture:
@@ -27,18 +41,20 @@ export const user = {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   imports: [
-    RouterOutlet, 
+    RouterOutlet,
     SentinelLayout1Component,
     MatIconButton,
     MatIconModule,
     CustomNavDirective,
-    CustomNavComponent
+    CustomNavComponent,
   ],
 })
 export class AppComponent implements OnInit {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
-  private notificationService = inject(SentinelNotificationService, { optional: true });
+  private notificationService = inject(SentinelNotificationService, {
+    optional: true,
+  });
 
   protected readonly title = signal('SACD');
   agendaContainers: AgendaContainer[] = agendaContainers;
@@ -51,8 +67,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const navigationEndEvent$ = this.router.events.pipe(filter((event) => event instanceof NavigationEnd));
-    this.breadcrumbs$ = navigationEndEvent$.pipe(map(() => SentinelBreadcrumbBuilder.build(this.activeRoute.snapshot)));
+    const navigationEndEvent$ = this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+    );
+    this.breadcrumbs$ = navigationEndEvent$.pipe(
+      map(() => SentinelBreadcrumbBuilder.build(this.activeRoute.snapshot)),
+    );
   }
 
   addNotification(): void {

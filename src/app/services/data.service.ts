@@ -8,7 +8,10 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../../../models/graph.model';
-import { entities, EntityStructure } from '../pages/network-page/entities.config';
+import {
+  entities,
+  EntityStructure,
+} from '../pages/network-page/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';
@@ -44,7 +47,7 @@ export class DataService {
         map((data) => {
           const { nodes, edges } = this.converToGraph(data.data.ips);
           return { nodes, edges };
-        })
+        }),
       );
   }
 
@@ -66,9 +69,11 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(data.data[node.data.type]);
+          const { nodes, edges } = this.converToGraph(
+            data.data[node.data.type],
+          );
           return { nodes, edges };
-        })
+        }),
       );
   }
 
@@ -82,7 +87,11 @@ export class DataService {
    * @param parent
    * @param edgeName
    */
-  public converToGraph(data: any[], parent?: string, edgeName?: string ): GraphInput {
+  public converToGraph(
+    data: any[],
+    parent?: string,
+    edgeName?: string,
+  ): GraphInput {
     let nodes: Node[] = [];
     let edges: Edge[] = [];
 
@@ -106,17 +115,28 @@ export class DataService {
       }
 
       Object.keys(item).forEach((key) => {
-        if (Array.isArray(item[key]) && item[key].length > 0 && item[key][0].__typename) {
-          const { nodes: newNodes, edges: newEdges } = this.converToGraph(item[key], item._id, key);
+        if (
+          Array.isArray(item[key]) &&
+          item[key].length > 0 &&
+          item[key][0].__typename
+        ) {
+          const { nodes: newNodes, edges: newEdges } = this.converToGraph(
+            item[key],
+            item._id,
+            key,
+          );
           nodes = _.unionBy(nodes, newNodes, (n) => n.id);
-          edges = _.unionBy(edges, newEdges, (e) => [e.source, e.target, e.label]);
+          edges = _.unionBy(edges, newEdges, (e) => [
+            e.source,
+            e.target,
+            e.label,
+          ]);
         }
       });
     });
 
     return { nodes, edges };
   }
-
 
   /**
    * Gets label of given node based on static config
@@ -131,11 +151,11 @@ export class DataService {
       return initialLabel;
     }
     const propKey = entities[initialLabel].showProperty.find(
-      (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
+      (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null,
     );
 
     if (propKey === undefined) {
-      return ""
+      return '';
     }
     if (typeof node[propKey] === 'undefined') {
       return initialLabel;
@@ -156,11 +176,11 @@ export class DataService {
       return initialLabel;
     }
     const propKey = entities[initialLabel].showProperty.find(
-      (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null
+      (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null,
     );
 
     if (propKey === undefined) {
-      return ""
+      return '';
     }
     if (typeof node[propKey] === 'undefined') {
       return initialLabel;
@@ -210,11 +230,11 @@ export class DataService {
       return initialLabel;
     }
     const propKey = entities[initialLabel].showProperty.find(
-      (pk) => typeof node.data[pk] !== 'undefined' && node.data[pk] !== null
+      (pk) => typeof node.data[pk] !== 'undefined' && node.data[pk] !== null,
     );
 
     if (propKey === undefined) {
-      return ""
+      return '';
     }
     if (typeof node.data[propKey] === 'undefined') {
       return initialLabel;
@@ -238,9 +258,11 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const missions = data.data.missions.map((mission: any) => mission.name);
+          const missions = data.data.missions.map(
+            (mission: any) => mission.name,
+          );
           return missions;
-        })
+        }),
       );
   }
 
@@ -250,8 +272,8 @@ export class DataService {
    */
   public getMission(name: String): Observable<Mission[]> {
     return this.apollo // Assuming 'this' has an Apollo instance
-    .query<any>({
-      query: gql`
+      .query<any>({
+        query: gql`
         {
           missions(where: {name: "${name}"}) {
             criticality,
@@ -261,13 +283,13 @@ export class DataService {
           }
         }
       `,
-    })
-    .pipe(
-      map((response) => {
-        const missions: Mission[] = response.data.missions
-        return missions;
       })
-    );
+      .pipe(
+        map((response) => {
+          const missions: Mission[] = response.data.missions;
+          return missions;
+        }),
+      );
   }
 
   /**
@@ -278,7 +300,7 @@ export class DataService {
   public makeMissionsStructure(missions: Mission[]): MissionStructure {
     let result: MissionStructure;
     let structure: MissionStructure;
-    
+
     result = missions.reduce(
       (acc: MissionStructure, mission: Mission) => {
         structure = JSON.parse(mission.structure);
@@ -288,22 +310,50 @@ export class DataService {
             hosts: [...acc.nodes.hosts, ...structure.nodes.hosts],
             services: [...acc.nodes.services, ...structure.nodes.services],
             aggregations: {
-              or: [...acc.nodes.aggregations.or, ...structure.nodes.aggregations.or],
-              and: [...acc.nodes.aggregations.and, ...structure.nodes.aggregations.and],
+              or: [
+                ...acc.nodes.aggregations.or,
+                ...structure.nodes.aggregations.or,
+              ],
+              and: [
+                ...acc.nodes.aggregations.and,
+                ...structure.nodes.aggregations.and,
+              ],
             },
           },
           relationships: {
-            two_way: [...acc.relationships.two_way, ...structure.relationships.two_way],
-            one_way: [...acc.relationships.one_way, ...structure.relationships.one_way],
-            supports: [...acc.relationships.supports, ...structure.relationships.supports],
-            has_identity: [...acc.relationships.has_identity, ...structure.relationships.has_identity],
+            two_way: [
+              ...acc.relationships.two_way,
+              ...structure.relationships.two_way,
+            ],
+            one_way: [
+              ...acc.relationships.one_way,
+              ...structure.relationships.one_way,
+            ],
+            supports: [
+              ...acc.relationships.supports,
+              ...structure.relationships.supports,
+            ],
+            has_identity: [
+              ...acc.relationships.has_identity,
+              ...structure.relationships.has_identity,
+            ],
           },
         };
       },
       {
-        nodes: { missions: [], hosts: [], aggregations: { and: [], or: [] }, services: [] },
-        relationships: { two_way: [], one_way: [], supports: [], has_identity: [] },
-      }
+        nodes: {
+          missions: [],
+          hosts: [],
+          aggregations: { and: [], or: [] },
+          services: [],
+        },
+        relationships: {
+          two_way: [],
+          one_way: [],
+          supports: [],
+          has_identity: [],
+        },
+      },
     );
 
     return result;
@@ -312,10 +362,10 @@ export class DataService {
   /**
    * Returns the description of vulnerability
    */
-    public getCVEDetails(cveCode: string): Observable<CVE> {
-      return this.apollo
-        .query<{ CVE: CVE[] }>({
-          query: gql`
+  public getCVEDetails(cveCode: string): Observable<CVE> {
+    return this.apollo
+      .query<{ CVE: CVE[] }>({
+        query: gql`
         {
           cves(where: {cve_id: "${cveCode}"}) {
             description
@@ -393,20 +443,22 @@ export class DataService {
           }
         }
         `,
-        })
-        .pipe(
-          map((response) => {
-            console.log('CVE Details loaded:', response.data.cves[0]);
-            return response.data.cves[0];
-          })
-        );
-    }
+      })
+      .pipe(
+        map((response) => {
+          console.log('CVE Details loaded:', response.data.cves[0]);
+          return response.data.cves[0];
+        }),
+      );
+  }
 
   /**
    * Returns vulnerable machines (software version, ip address, domain, subnet)
    * @param cveCode CVE code of vulnerability
    */
-  public getVulnerableMachines(cveCode: string): Observable<VulnerabilityData[] | null> {
+  public getVulnerableMachines(
+    cveCode: string,
+  ): Observable<VulnerabilityData[] | null> {
     return this.apollo
       .query<CVEResponse>({
         query: gql`
@@ -446,179 +498,181 @@ export class DataService {
           let domain = '';
           let subnet = '';
           let software = '';
-          response.data.cves[0].vulnerability.software_versions.forEach((software_version) => {
-            software = software_version.version;
-            software_version.hosts.forEach((host) => {
-              host.node.ips.forEach((ip) => {
-                if (ip.domain_names && ip.domain_names.length > 0) {
-                  domain = ip.domain_names[0].domain_name;
-                }
-                if (ip.subnets && ip.subnets.length > 0) {
-                  subnet = ip.subnets[0].range;
-                }
-                responseArray.push({
-                      domainName: domain,
-                      subnet: subnet,
-                      ip: ip.address,
-                      software: software,
+          response.data.cves[0].vulnerability.software_versions.forEach(
+            (software_version) => {
+              software = software_version.version;
+              software_version.hosts.forEach((host) => {
+                host.node.ips.forEach((ip) => {
+                  if (ip.domain_names && ip.domain_names.length > 0) {
+                    domain = ip.domain_names[0].domain_name;
+                  }
+                  if (ip.subnets && ip.subnets.length > 0) {
+                    subnet = ip.subnets[0].range;
+                  }
+                  responseArray.push({
+                    domainName: domain,
+                    subnet: subnet,
+                    ip: ip.address,
+                    software: software,
+                  });
                 });
               });
-            });
-          });
+            },
+          );
           return responseArray;
-        })
+        }),
       );
   }
 
-/**
- * Returns all CVE objects in bulk
- */
-public getVulnerabilities(): Observable<CVE[]> {
-  return this.apollo
-    .query<{ CVE: CVE[] }>({
-      query: gql`
-      {
-        vulnerabilities {
-          status
-          cve {
-            cve_id
-            description
-            cwe
-            cpe_type
-            ref_tags
-            published
-            last_modified
-            result_impacts
-            cvss_v2 {
-              vector_string
-              access_vector
-              access_complexity
-              authentication
-              confidentiality_impact
-              integrity_impact
-              availability_impact
-              base_score
-              base_severity
-              exploitability_score
-              impact_score
-              ac_insuf_info
-              obtain_all_privilege
-              obtain_user_privilege
-              obtain_other_privilege
-              user_interaction_required
-            }
-            cvss_v30 {
-              vector_string
-              attack_vector
-              attack_complexity
-              privileges_required
-              user_interaction
-              scope
-              confidentiality_impact
-              integrity_impact
-              availability_impact
-              base_score
-              base_severity
-              exploitability_score
-              impact_score
-            }
-            cvss_v31 {
-              vector_string
-              attack_vector
-              attack_complexity
-              privileges_required
-              user_interaction
-              scope
-              confidentiality_impact
-              integrity_impact
-              availability_impact
-              base_score
-              base_severity
-              exploitability_score
-              impact_score
-            }
-            cvss_v40 {
-              vector_string
-              attack_vector
-              attack_complexity
-              attack_requirements
-              privileges_required
-              user_interaction
-              vulnerable_system_confidentiality
-              vulnerable_system_integrity
-              vulnerable_system_availability
-              subsequent_system_confidentiality
-              subsequent_system_integrity
-              subsequent_system_availability
-              base_score
-              base_severity
-              exploit_maturity
+  /**
+   * Returns all CVE objects in bulk
+   */
+  public getVulnerabilities(): Observable<CVE[]> {
+    return this.apollo
+      .query<{ CVE: CVE[] }>({
+        query: gql`
+          {
+            vulnerabilities {
+              status
+              cve {
+                cve_id
+                description
+                cwe
+                cpe_type
+                ref_tags
+                published
+                last_modified
+                result_impacts
+                cvss_v2 {
+                  vector_string
+                  access_vector
+                  access_complexity
+                  authentication
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                  ac_insuf_info
+                  obtain_all_privilege
+                  obtain_user_privilege
+                  obtain_other_privilege
+                  user_interaction_required
+                }
+                cvss_v30 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  privileges_required
+                  user_interaction
+                  scope
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                }
+                cvss_v31 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  privileges_required
+                  user_interaction
+                  scope
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                }
+                cvss_v40 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  attack_requirements
+                  privileges_required
+                  user_interaction
+                  vulnerable_system_confidentiality
+                  vulnerable_system_integrity
+                  vulnerable_system_availability
+                  subsequent_system_confidentiality
+                  subsequent_system_integrity
+                  subsequent_system_availability
+                  base_score
+                  base_severity
+                  exploit_maturity
+                }
+              }
             }
           }
-        }
-      }
-      `,
-    })
-    .pipe(
-      map((response) => {
-        return response.data.vulnerabilities.map((vuln) => ({
-          ... vuln.cve,
-          status: vuln.status
-        }));
+        `,
       })
-    );
+      .pipe(
+        map((response) => {
+          return response.data.vulnerabilities.map((vuln) => ({
+            ...vuln.cve,
+            status: vuln.status,
+          }));
+        }),
+      );
   }
 
-public getIPAddresses(): Observable<string[]> {
-  return this.apollo
-    .query<any>({
-      query: gql`
-      {
-        ips {
-          _id
-          address
-        }
-      }
-    `,
-    })
-    .pipe(
-      map((response) => {
-        const ipAddresses: string[] = [];  
-        if (response.data && response.data.ips) {
-          response.data.ips.forEach((ipNode: IPNode) => {
-            if (ipNode.address) {
-              ipAddresses.push(ipNode.address);
+  public getIPAddresses(): Observable<string[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+          {
+            ips {
+              _id
+              address
             }
-          });
-        }
-        return ipAddresses;
+          }
+        `,
       })
-    );
+      .pipe(
+        map((response) => {
+          const ipAddresses: string[] = [];
+          if (response.data && response.data.ips) {
+            response.data.ips.forEach((ipNode: IPNode) => {
+              if (ipNode.address) {
+                ipAddresses.push(ipNode.address);
+              }
+            });
+          }
+          return ipAddresses;
+        }),
+      );
   }
 
   public getIPs(): Observable<IP[]> {
     return this.apollo
       .query<any>({
         query: gql`
-        {
-          ips {
-            _id
-            address
-            status
-            subnets {
-              range
-            }
-            tag
-            nodes {
-              host {
-                network_servicesAggregate {
-                  count
+          {
+            ips {
+              _id
+              address
+              status
+              subnets {
+                range
+              }
+              tag
+              nodes {
+                host {
+                  network_servicesAggregate {
+                    count
+                  }
                 }
               }
             }
           }
-        }
-      `,
+        `,
       })
       .pipe(
         map((response) => {
@@ -629,33 +683,38 @@ public getIPAddresses(): Observable<string[]> {
             status: ipNode.status,
             subnets: ipNode.subnets,
             tag: ipNode.tag,
-            networkServicesCount: ipNode.nodes.reduce((count: number, node: any) => {
-              return count + (node?.host?.network_servicesAggregate?.count || 0);
-            }, 0)
+            networkServicesCount: ipNode.nodes.reduce(
+              (count: number, node: any) => {
+                return (
+                  count + (node?.host?.network_servicesAggregate?.count || 0)
+                );
+              },
+              0,
+            ),
           }));
-        })
+        }),
       );
-    }
+  }
 
-    public getNetworkServices(): Observable<NetworkService[]> {
-      return this.apollo
-        .query<any>({
-          query: gql`
+  public getNetworkServices(): Observable<NetworkService[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
           {
             networkServices {
               _id
               service
               protocol
               port
-              hostsConnection { 
+              hostsConnection {
                 edges {
                   properties {
                     status
                   }
                   node {
                     node {
-                      ips { 
-                        address 
+                      ips {
+                        address
                       }
                     }
                   }
@@ -664,33 +723,32 @@ public getIPAddresses(): Observable<string[]> {
             }
           }
         `,
-        })
-        .pipe(
-          map((response) => {
-            return response.data.networkServices.flatMap((service: any) => {
-              return service.hostsConnection.edges.flatMap((hostEdge: any) => {
-                  return hostEdge.node.node.ips.flatMap((ipNode: any) => {
-                    return {
-                      _id: service._id,
-                      type: service.__typename,
-                      service: service.service,
-                      protocol: service.protocol,
-                      port: service.port,
-                      status: hostEdge.properties.status,
-                      ip_address: ipNode.address,
-                    } as NetworkService;
-                  });
+      })
+      .pipe(
+        map((response) => {
+          return response.data.networkServices.flatMap((service: any) => {
+            return service.hostsConnection.edges.flatMap((hostEdge: any) => {
+              return hostEdge.node.node.ips.flatMap((ipNode: any) => {
+                return {
+                  _id: service._id,
+                  type: service.__typename,
+                  service: service.service,
+                  protocol: service.protocol,
+                  port: service.port,
+                  status: hostEdge.properties.status,
+                  ip_address: ipNode.address,
+                } as NetworkService;
               });
-            })
-          })
-        );
-      }
+            });
+          });
+        }),
+      );
+  }
 
-
-    public getDomainNames(): Observable<string[]> {
-      return this.apollo
-        .query<any>({
-          query: gql`
+  public getDomainNames(): Observable<string[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
           {
             domainNames {
               domain_name
@@ -701,24 +759,28 @@ public getIPAddresses(): Observable<string[]> {
             }
           }
         `,
-        })
-        .pipe(
-          map((response) => {
-            return response.data.domainNames.map((domain: any) => {
-              return {
-                domain_name: domain.domain_name,
-                type: domain.__typename,
-                ips: domain.ips.map((ip: any) => ip.address),
-              }
-            });
-          })
-        );
-      }
+      })
+      .pipe(
+        map((response) => {
+          return response.data.domainNames.map((domain: any) => {
+            return {
+              domain_name: domain.domain_name,
+              type: domain.__typename,
+              ips: domain.ips.map((ip: any) => ip.address),
+            };
+          });
+        }),
+      );
+  }
 
-    public updateVulnerabilityStatus(cve: string, status: string[]): void {
-      this.apollo.mutate<any>({
+  public updateVulnerabilityStatus(cve: string, status: string[]): void {
+    this.apollo
+      .mutate<any>({
         mutation: gql`
-          mutation UpdateVulnerabilityStatus($cve: String!, $status: [String]!) {
+          mutation UpdateVulnerabilityStatus(
+            $cve: String!
+            $status: [String]!
+          ) {
             updateVulnerabilityStatus(cve: $cve, status: $status) {
               status
             }
@@ -726,20 +788,22 @@ public getIPAddresses(): Observable<string[]> {
         `,
         variables: {
           cve: cve,
-          status: status
+          status: status,
         },
-      }).subscribe({
+      })
+      .subscribe({
         error: (error) => {
           console.error('Error running mutation', error);
         },
         complete: () => {
           console.log('Mutation completed');
-        }
+        },
       });
-    }
+  }
 
-    public changeIPStatus(address: string, status: string): void {
-      this.apollo.mutate<any>({
+  public changeIPStatus(address: string, status: string): void {
+    this.apollo
+      .mutate<any>({
         mutation: gql`
           mutation UpdateIPStatus($address: String!, $status: String!) {
             updateIPStatus(address: $address, status: $status) {
@@ -751,23 +815,43 @@ public getIPAddresses(): Observable<string[]> {
         `,
         variables: {
           address: address,
-          status: status
+          status: status,
         },
-      }).subscribe({
+      })
+      .subscribe({
         error: (error) => {
           console.error('Error running mutation', error);
         },
         complete: () => {
           console.log('Mutation completed');
-        }
+        },
       });
-    }
+  }
 
-    public changeNetworkServiceStatus(address: string, protocol: string, port: number, service: string, status: string): void {
-      this.apollo.mutate<any>({
+  public changeNetworkServiceStatus(
+    address: string,
+    protocol: string,
+    port: number,
+    service: string,
+    status: string,
+  ): void {
+    this.apollo
+      .mutate<any>({
         mutation: gql`
-          mutation UpdateNetworkServiceStatus($address: String!, $protocol: String!, $port: Int!, $service: String!, $status: String!) {
-            updateNetworkServiceStatus(address: $address, protocol: $protocol, port: $port, service: $service, status: $status) {
+          mutation UpdateNetworkServiceStatus(
+            $address: String!
+            $protocol: String!
+            $port: Int!
+            $service: String!
+            $status: String!
+          ) {
+            updateNetworkServiceStatus(
+              address: $address
+              protocol: $protocol
+              port: $port
+              service: $service
+              status: $status
+            ) {
               status
             }
           }
@@ -777,20 +861,22 @@ public getIPAddresses(): Observable<string[]> {
           protocol: protocol,
           port: port,
           service: service,
-          status: status
+          status: status,
         },
-      }).subscribe({
+      })
+      .subscribe({
         error: (error) => {
           console.error('Error running mutation', error);
         },
         complete: () => {
           console.log('Mutation completed');
-        }
+        },
       });
-    }
+  }
 
-    public changeTag(address: string, tag: string[]): void {
-      this.apollo.mutate<any>({
+  public changeTag(address: string, tag: string[]): void {
+    this.apollo
+      .mutate<any>({
         mutation: gql`
           mutation UpdateIPTag($address: String!, $tag: [String!]!) {
             updateIPTag(address: $address, tag: $tag) {
@@ -802,79 +888,80 @@ public getIPAddresses(): Observable<string[]> {
         `,
         variables: {
           address: address,
-          tag: tag
+          tag: tag,
         },
-      }).subscribe({
+      })
+      .subscribe({
         error: (error) => {
           console.error('Error running mutation', error);
         },
         complete: () => {
           console.log('Mutation completed');
-        }
+        },
       });
-    }
+  }
 
-    public getAllTags(): Observable<string[]> {
-      return this.apollo
-        .query<any>({
-          query: gql`
+  public getAllTags(): Observable<string[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
           {
             ips {
               tag
             }
           }
         `,
-        })
-        .pipe(
-          map((response) => {
-            const allTags: String[] = [];
-            response.data.ips.forEach((ip) => {
-              if (ip.tag) {
-                ip.tag.forEach((tag) => {
-                  if (! allTags.includes(tag)) {
-                    allTags.push(tag);
-                  }
-                });
-              }
-            });
-            return allTags;
-          })
-        );
-      }
-
-
+      })
+      .pipe(
+        map((response) => {
+          const allTags: String[] = [];
+          response.data.ips.forEach((ip) => {
+            if (ip.tag) {
+              ip.tag.forEach((tag) => {
+                if (!allTags.includes(tag)) {
+                  allTags.push(tag);
+                }
+              });
+            }
+          });
+          return allTags;
+        }),
+      );
+  }
 
   public getOrgUnits(): Observable<OrgUnit[]> {
     return this.apollo
       .query<any>({
         query: gql`
-        {
-          organizationUnits {
-            name,
-            subnets {
-              range
-            },
-            contacts {
+          {
+            organizationUnits {
               name
-            },
-            parent_org_unit {
-              name
+              subnets {
+                range
+              }
+              contacts {
+                name
+              }
+              parent_org_unit {
+                name
+              }
             }
           }
-        }
-      `,
+        `,
       })
       .pipe(
         map((response) => {
-          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
-            name: orgUnit.name,
-            subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
-            contacts: orgUnit.contacts.map((contact: any) => contact.name),
-            parentOrgUnit: orgUnit.parent_org_unit[0]?.name || "---",
-          }));
+          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
+            (orgUnit: any) => ({
+              name: orgUnit.name,
+              subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+              contacts: orgUnit.contacts.map((contact: any) => contact.name),
+              parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+            }),
+          );
           console.log('Org Units loaded:', orgUnits);
           return orgUnits;
-        })
+        }),
       );
   }
 
@@ -900,78 +987,104 @@ public getIPAddresses(): Observable<string[]> {
       })
       .pipe(
         map((response) => {
-          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
-            name: orgUnit.name,
-            subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
-            contacts: orgUnit.contacts.map((contact: any) => contact.name),
-            parentOrgUnit: orgUnit.parent_org_unit[0]?.name || "---",
-          }));
+          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
+            (orgUnit: any) => ({
+              name: orgUnit.name,
+              subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+              contacts: orgUnit.contacts.map((contact: any) => contact.name),
+              parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+            }),
+          );
           console.log('Org Units loaded:', orgUnits);
           return orgUnits[0] || null;
-        })
+        }),
       );
   }
-
 
   //? ORGANIZATION UNITS QUERIES AND MUTATIONS
 
   public createOrgUnit(name: string): Observable<OrgUnitData> {
-    return this.apollo.mutate<any>({
-      mutation: gql`
-        mutation CreateOrgUnit($name: String!) {
-            createOrganizationUnits(input: [
-                {
-                    name: $name
-                }
-            ]) {
-                organizationUnits {
-                    name
-                }
+    return this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation CreateOrgUnit($name: String!) {
+            createOrganizationUnits(input: [{ name: $name }]) {
+              organizationUnits {
+                name
+              }
             }
-        }
-      `,
-      variables: {
-        name: name,
-      },
-    }).pipe(
-      map((response) => {
-        const orgUnit: OrgUnitData = response.data.createOrganizationUnits.organizationUnits[0];
-        console.log('Org Unit created:', orgUnit);
-        return orgUnit;
-      }
-    ));
+          }
+        `,
+        variables: {
+          name: name,
+        },
+      })
+      .pipe(
+        map((response) => {
+          const orgUnit: OrgUnitData =
+            response.data.createOrganizationUnits.organizationUnits[0];
+          console.log('Org Unit created:', orgUnit);
+          return orgUnit;
+        }),
+      );
   }
 
-  public linkOrgUnitToParent(orgUnitName: string, parentOrgUnitName: string): void {
-    return this.apollo.mutate<any>({
+  public linkOrgUnitToParent(
+    orgUnitName: string,
+    parentOrgUnitName: string,
+  ): void {
+    return this.apollo
+      .mutate<any>({
         mutation: gql`
-          mutation LinkOrgUnitToParent($orgUnitName: String!, $parentOrgUnitName: String!) {
-            linkOrgUnitToParentOrg(orgUnitName: $orgUnitName, parentOrgUnitName: $parentOrgUnitName) {
+          mutation LinkOrgUnitToParent(
+            $orgUnitName: String!
+            $parentOrgUnitName: String!
+          ) {
+            linkOrgUnitToParentOrg(
+              orgUnitName: $orgUnitName
+              parentOrgUnitName: $parentOrgUnitName
+            ) {
               name
             }
           }
         `,
         variables: {
           orgUnitName: orgUnitName,
-          parentOrgUnitName: parentOrgUnitName
-        }
-      }).subscribe({
+          parentOrgUnitName: parentOrgUnitName,
+        },
+      })
+      .subscribe({
         next: (response) => {
-          console.log('Org unit linked to parent org unit:', response.data.linkOrgUnitToParent);
+          console.log(
+            'Org unit linked to parent org unit:',
+            response.data.linkOrgUnitToParent,
+          );
           return response.data.linkOrgUnitToParent;
         },
         error: (error) => {
           console.error('Error linking org unit to parent org unit:', error);
-          return throwError(() => new Error('Failed to link org unit to parent org unit'));
-        }
+          return throwError(
+            () => new Error('Failed to link org unit to parent org unit'),
+          );
+        },
       });
   }
 
-  public mergeOrgUnitWithContacts(orgUnitName: string, contactNames: string[]): void {
-    return this.apollo.mutate<any>({
-      mutation: gql`
-          mutation MergeOrgUnitWithContacts($orgUnitName: String!, $contactNames: [String!]!) {
-            mergeOrgUnitWithContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
+  public mergeOrgUnitWithContacts(
+    orgUnitName: string,
+    contactNames: string[],
+  ): void {
+    return this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation MergeOrgUnitWithContacts(
+            $orgUnitName: String!
+            $contactNames: [String!]!
+          ) {
+            mergeOrgUnitWithContacts(
+              orgUnitName: $orgUnitName
+              contactNames: $contactNames
+            ) {
               name
               contacts {
                 name
@@ -981,18 +1094,24 @@ public getIPAddresses(): Observable<string[]> {
         `,
         variables: {
           orgUnitName: orgUnitName,
-          contactNames: contactNames
-        }
-      }).subscribe({
+          contactNames: contactNames,
+        },
+      })
+      .subscribe({
         next: (response) => {
-          console.log('Org Unit merged with contacts:', response.data.mergeOrgUnitWithContacts);
+          console.log(
+            'Org Unit merged with contacts:',
+            response.data.mergeOrgUnitWithContacts,
+          );
           return response.data.mergeOrgUnitWithContacts;
         },
         error: (error) => {
           console.error('Error merging org unit with contacts:', error);
-          return throwError(() => new Error('Failed to merge org unit with contacts'));
-        }
-    });
+          return throwError(
+            () => new Error('Failed to merge org unit with contacts'),
+          );
+        },
+      });
   }
 
   public insertOrgUnit(orgUnit: OrgUnitData): void {
@@ -1012,51 +1131,54 @@ public getIPAddresses(): Observable<string[]> {
       error: (error) => {
         console.error('Error creating org unit:', error);
         return throwError(() => new Error('Failed to create org unit'));
-      }
+      },
     });
   }
 
   public deleteOrgUnit(name: string): boolean {
     console.log('Deleting org unit with name:', name);
-    return this.apollo.mutate<any>({
-      mutation: gql`
-        mutation DeleteOrgUnit($name: String!) {
-            deleteOrganizationUnits(where: {
-                name: $name
-            }) {
-                nodesDeleted
-                relationshipsDeleted
+    return this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation DeleteOrgUnit($name: String!) {
+            deleteOrganizationUnits(where: { name: $name }) {
+              nodesDeleted
+              relationshipsDeleted
             }
-        }
-      `,
-      variables: {
-        name: name,
-      },
-    }).pipe(take(1)).subscribe({
+          }
+        `,
+        variables: {
+          name: name,
+        },
+      })
+      .pipe(take(1))
+      .subscribe({
         next: (response) => {
-          console.log('Org Unit deleted:', response.data.deleteOrganizationUnits.nodesDeleted);
+          console.log(
+            'Org Unit deleted:',
+            response.data.deleteOrganizationUnits.nodesDeleted,
+          );
           return response.data.deleteOrganizationUnits.nodesDeleted > 0;
         },
-        error: (error) => { 
+        error: (error) => {
           console.error('Error deleting org unit:', error);
           return throwError(() => new Error('Failed to delete org unit'));
-        }
-    });
+        },
+      });
   }
 
-  public updateOrgUnit(oldName: string, newName: string): Observable<OrgUnitData> {
+  public updateOrgUnit(
+    oldName: string,
+    newName: string,
+  ): Observable<OrgUnitData> {
     return this.apollo.mutate<any>({
       mutation: gql`
         mutation UpdateOrgUnit($oldName: String!, $newName: String!) {
           updateOrganizationUnits(
-            where: { 
-              name: $oldName
-            }
-            update: { 
-              name: $newName
-            }
+            where: { name: $oldName }
+            update: { name: $newName }
           ) {
-            organizationUnits { 
+            organizationUnits {
               name
             }
           }
@@ -1079,24 +1201,33 @@ public getIPAddresses(): Observable<string[]> {
         }
       `,
       variables: {
-        orgUnitName: orgUnitName
-      }
+        orgUnitName: orgUnitName,
+      },
     });
   }
 
-  public unlinkOrgUnitFromContacts(orgUnitName: string, contactNames: string[]): void {
+  public unlinkOrgUnitFromContacts(
+    orgUnitName: string,
+    contactNames: string[],
+  ): void {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UnlinkOrgUnitFromContacts($orgUnitName: String!, $contactNames: [String!]!) {
-          unlinkOrgUnitFromContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
+        mutation UnlinkOrgUnitFromContacts(
+          $orgUnitName: String!
+          $contactNames: [String!]!
+        ) {
+          unlinkOrgUnitFromContacts(
+            orgUnitName: $orgUnitName
+            contactNames: $contactNames
+          ) {
             name
           }
         }
       `,
       variables: {
         orgUnitName: orgUnitName,
-        contactNames: contactNames
-      }
+        contactNames: contactNames,
+      },
     });
   }
 
@@ -1108,32 +1239,50 @@ public getIPAddresses(): Observable<string[]> {
 
         this.unlinkOrgUnitFromParents(oldOrgUnit.name).subscribe({
           next: () => {
-            if (newOrgUnit.parentOrgUnit && newOrgUnit.name !== newOrgUnit.parentOrgUnit) {
-              this.linkOrgUnitToParent(newOrgUnit.name, newOrgUnit.parentOrgUnit);
+            if (
+              newOrgUnit.parentOrgUnit &&
+              newOrgUnit.name !== newOrgUnit.parentOrgUnit
+            ) {
+              this.linkOrgUnitToParent(
+                newOrgUnit.name,
+                newOrgUnit.parentOrgUnit,
+              );
             }
           },
           error: (error) => {
             console.error('Error unlinking org unit from parent:', error);
-          }
+          },
         });
 
-        this.unlinkOrgUnitFromContacts(oldOrgUnit.name, oldOrgUnit.contacts).subscribe({
+        this.unlinkOrgUnitFromContacts(
+          oldOrgUnit.name,
+          oldOrgUnit.contacts,
+        ).subscribe({
           next: () => {
-            console.log('Org Unit unlinked from contacts:', oldOrgUnit.contacts);
+            console.log(
+              'Org Unit unlinked from contacts:',
+              oldOrgUnit.contacts,
+            );
             if (newOrgUnit.contacts && newOrgUnit.contacts.length > 0) {
-              console.log('Merging org unit with contacts:', newOrgUnit.contacts);
-              this.mergeOrgUnitWithContacts(newOrgUnit.name, newOrgUnit.contacts);
+              console.log(
+                'Merging org unit with contacts:',
+                newOrgUnit.contacts,
+              );
+              this.mergeOrgUnitWithContacts(
+                newOrgUnit.name,
+                newOrgUnit.contacts,
+              );
             }
           },
           error: (error) => {
             console.error('Error unlinking org unit from contacts:', error);
-          }
+          },
         });
       },
       error: (error) => {
         console.error('Error updating org unit:', error);
         return throwError(() => new Error('Failed to update org unit'));
-      }
+      },
     });
   }
 
@@ -1141,33 +1290,31 @@ public getIPAddresses(): Observable<string[]> {
     return this.apollo
       .query<any>({
         query: gql`
-        {
-          nodeObjects {
-            topology_degree_norm
-            topology_betweenness_norm
-            mission_criticality
-            final_criticality
-            ips {
-              address
+          {
+            nodeObjects {
+              topology_degree_norm
+              topology_betweenness_norm
+              mission_criticality
+              final_criticality
+              ips {
+                address
+              }
             }
           }
-        }
-      `,
+        `,
       })
       .pipe(
         map((response) => {
           return response.data.nodeObjects.map((node: any) => {
             return {
-                ips: node.ips.map((ip: any) => ip.address),
-                topology_degree_norm: node.topology_degree_norm ?? 0,
-                topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
-                mission_criticality: node.mission_criticality ?? 0,
-                final_criticality: node.final_criticality ?? 0,
-            }
-          }
-          );
-        })
+              ips: node.ips.map((ip: any) => ip.address),
+              topology_degree_norm: node.topology_degree_norm ?? 0,
+              topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
+              mission_criticality: node.mission_criticality ?? 0,
+              final_criticality: node.final_criticality ?? 0,
+            };
+          });
+        }),
       );
   }
 }
-
