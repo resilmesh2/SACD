@@ -3,7 +3,6 @@ import {
   OnInit,
   ViewChild,
   AfterViewInit,
-  ElementRef,
   ChangeDetectorRef,
   inject,
 } from '@angular/core';
@@ -25,8 +24,6 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrgUnitData } from '../../models/org-unit.model';
 import { ORGANIZATION_PATH } from '../../paths';
-//import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
-//import { defer, Observable, of, take } from 'rxjs';
 
 @Component({
   selector: 'org-units-page',
@@ -91,9 +88,12 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
       next: (orgUnits: OrgUnitData[]) => {
         this.dataSource = new MatTableDataSource<OrgUnitData>(
           orgUnits.map((orgUnit) => ({
-            name: orgUnit.name, // Can't be null or undefined, so no need for a fallback,
+            name: orgUnit.name ?? '???', // Can't be undefined, fallback just in case
             parentOrgUnit: orgUnit.parentOrgUnit ?? '---',
-            subnets: orgUnit.subnets.length == 0 ? ['---'] : orgUnit.subnets,
+            subnets:
+              orgUnit.subnets.length == 0
+                ? [{ range: '---' }]
+                : orgUnit.subnets,
             contacts: orgUnit.contacts.length == 0 ? [] : orgUnit.contacts,
           })),
         );

@@ -11,10 +11,13 @@ export const NETWORK_NODES_PATH = 'network-nodes';
 export const VULNERABILITY_PATH = 'vulnerability';
 export const SUBNETS_GRAPH_PATH = 'subnets-graph';
 export const ORGANIZATION_GRAPH_PATH = 'organization-units-graph';
+export const TOPOLOGY_PATH = 'topology';
+export const TREEMAP_PATH = 'treemap';
 
 // CRUD
 export const SUBNETS_PATH = 'subnets';
 export const ORGANIZATION_PATH = 'organization-units';
+export const MISSION_EDITOR_PATH = 'mission-editor';
 
 // misc
 export const GROUP_PATH = 'group';

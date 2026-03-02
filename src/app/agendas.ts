@@ -11,6 +11,9 @@ import {
   SUBNETS_GRAPH_PATH,
   ORGANIZATION_GRAPH_PATH,
   CSA_PATH,
+  MISSION_EDITOR_PATH,
+  TOPOLOGY_PATH,
+  TREEMAP_PATH,
 } from './paths';
 import { EXTERNAL_AGENDAS } from './external';
 
@@ -28,6 +31,7 @@ export const agendaContainers = [
     [
       new Agenda('Subnets', SUBNETS_PATH),
       new Agenda('Organizations', ORGANIZATION_PATH),
+      new Agenda('Mission Editor', MISSION_EDITOR_PATH),
     ],
     'edit_note',
   ),
@@ -39,6 +43,8 @@ export const agendaContainers = [
       new Agenda('Organizations', ORGANIZATION_GRAPH_PATH),
       new Agenda('Missions', MISSION_PATH),
       new Agenda('Vulnerabilities', VULNERABILITY_PATH),
+      new Agenda('Topology', TOPOLOGY_PATH),
+      new Agenda('Treemap', TREEMAP_PATH),
     ],
     'analytics',
   ),

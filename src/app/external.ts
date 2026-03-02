@@ -18,11 +18,6 @@ export const EXTERNAL = [
     path: 'graphql',
     url: 'http://localhost:4001/graphql',
   },
-  // {
-  //   name: 'Recommender',
-  //   path: 'recommender',
-  //   url: 'http://localhost:5173'
-  // }
 ];
 
 export const EXTERNAL_ROUTES = EXTERNAL.map((ext) => ({

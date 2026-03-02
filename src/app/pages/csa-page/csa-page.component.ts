@@ -3,37 +3,30 @@ import {
   OnInit,
   ViewChild,
   AfterViewInit,
-  ElementRef,
   ChangeDetectorRef,
   signal,
   computed,
   WritableSignal,
   inject,
 } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
-import { Observable, zip } from 'rxjs';
 
 import { ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Subnet } from '../../models/vulnerability.model';
 import { DataService } from '../../services/data.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { DatePipe } from '@angular/common';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
-import { TagComponent } from '../../components/tag-component/tag.component';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { DateRange } from '@sentinel/common';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { MatIcon } from '@angular/material/icon';

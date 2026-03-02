@@ -61,8 +61,8 @@ button.action.destructive:hover {
 }
 
 .success-snackbar {
-  background-color: #4caf50; /* Green background for success messages */
-  color: white; /* White text for better contrast */
+  background-color: #4caf50;
+  color: white;
 }
 
 .org-unit-detail-link {
@@ -75,4 +75,11 @@ button.action.destructive:hover {
   border-radius: 4px;
   background-color: #e3e3e3;
   cursor: pointer;
+}
+
+.org-unit-subnets {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25em;
+  flex-wrap: wrap;
 }

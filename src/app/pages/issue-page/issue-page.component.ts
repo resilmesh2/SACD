@@ -439,7 +439,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
     this.dataSource.data = this.issues();
 
-    console.log('Processed Issues:', this.issues, this.dataSource.data);
+    console.log('Processed Issues:', this.issues(), this.dataSource.data);
 
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;

@@ -142,24 +142,29 @@ export class DataService {
    * Gets label of given node based on static config
    * @param node
    */
+
   public getLabel(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
-    if (typeof entities[initialLabel] === 'undefined') {
+
+    if (
+      typeof entities[initialLabel] === 'undefined' ||
+      entities[initialLabel].showProperty.length === 0
+    ) {
       return initialLabel;
     }
-    if (entities[initialLabel].showProperty.length === 0) {
-      return initialLabel;
-    }
+
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null,
     );
 
-    if (propKey === undefined) {
+    if (
+      propKey === undefined ||
+      node[propKey] === null ||
+      node[propKey] === undefined
+    ) {
       return '';
     }
-    if (typeof node[propKey] === 'undefined') {
-      return initialLabel;
-    }
+
     return node[propKey].toString();
   }
 
@@ -167,14 +172,17 @@ export class DataService {
    * Gets label name of given node (eg. DomainName, IP)
    * @param node
    */
+
   public getLabelName(node: any): string {
     const initialLabel: keyof EntityStructure = node.__typename;
-    if (typeof entities[initialLabel] === 'undefined') {
+
+    if (
+      typeof entities[initialLabel] === 'undefined' ||
+      entities[initialLabel].showProperty.length === 0
+    ) {
       return initialLabel;
     }
-    if (entities[initialLabel].showProperty.length === 0) {
-      return initialLabel;
-    }
+
     const propKey = entities[initialLabel].showProperty.find(
       (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null,
     );
@@ -182,9 +190,7 @@ export class DataService {
     if (propKey === undefined) {
       return '';
     }
-    if (typeof node[propKey] === 'undefined') {
-      return initialLabel;
-    }
+
     return propKey;
   }
 
@@ -462,23 +468,24 @@ export class DataService {
     return this.apollo
       .query<CVEResponse>({
         query: gql`
-      {
-        cves(where: {cve_id: "${cveCode}"}) {
-          vulnerability {
-            software_versions {
-              version
-              hosts {
-                _id
-                node {
+        {
+          cves(where: {cve_id: "${cveCode}"}) {
+            vulnerability {
+              software_versions {
+                version
+                hosts {
                   _id
-                  ips {
+                  node {
                     _id
-                    address
-                    domain_names { 
-                      domain_name 
-                    }
-                    subnets {
-                      range
+                    ips {
+                      _id
+                      address
+                      domain_names {
+                        domain_name
+                      }
+                      subnets {
+                        range
+                      }
                     }
                   }
                 }
@@ -486,39 +493,45 @@ export class DataService {
             }
           }
         }
-      }
-      `,
+        `,
       })
       .pipe(
         map((response) => {
           const responseArray: VulnerabilityData[] = [];
-          if (!response.data.cves[0]) {
+
+          if (!response.data || !response.data.cves || !response.data.cves[0]) {
             return null;
           }
-          let domain = '';
-          let subnet = '';
-          let software = '';
+
           response.data.cves[0].vulnerability.software_versions.forEach(
-            (software_version) => {
-              software = software_version.version;
-              software_version.hosts.forEach((host) => {
-                host.node.ips.forEach((ip) => {
-                  if (ip.domain_names && ip.domain_names.length > 0) {
-                    domain = ip.domain_names[0].domain_name;
-                  }
-                  if (ip.subnets && ip.subnets.length > 0) {
-                    subnet = ip.subnets[0].range;
-                  }
-                  responseArray.push({
-                    domainName: domain,
-                    subnet: subnet,
-                    ip: ip.address,
-                    software: software,
+            (sv) => {
+              const softwareName = sv.version || 'N/A';
+
+              sv.hosts.forEach((host) => {
+                if (host.node && host.node.ips) {
+                  host.node.ips.forEach((ip) => {
+                    const domain =
+                      ip.domain_names && ip.domain_names.length > 0
+                        ? ip.domain_names[0].domain_name
+                        : 'N/A';
+
+                    const subnet =
+                      ip.subnets && ip.subnets.length > 0
+                        ? ip.subnets[0].range
+                        : 'N/A';
+
+                    responseArray.push({
+                      domainName: domain,
+                      subnet: subnet,
+                      ip: ip.address || 'N/A',
+                      software: softwareName,
+                    });
                   });
-                });
+                }
               });
             },
           );
+
           return responseArray;
         }),
       );
@@ -938,6 +951,9 @@ export class DataService {
               name
               subnets {
                 range
+                parent_subnet {
+                  range
+                }
               }
               contacts {
                 name
@@ -954,7 +970,12 @@ export class DataService {
           const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
             (orgUnit: any) => ({
               name: orgUnit.name,
-              subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+              subnets: orgUnit.subnets.map((subnet) => {
+                return {
+                  range: subnet.range,
+                  parent: subnet.parent_subnet[0]?.range,
+                };
+              }),
               contacts: orgUnit.contacts.map((contact: any) => contact.name),
               parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
             }),
@@ -974,6 +995,9 @@ export class DataService {
             name,
             subnets {
               range
+              parent_subnet {
+                range
+              }
             },
             contacts {
               name
@@ -990,7 +1014,12 @@ export class DataService {
           const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
             (orgUnit: any) => ({
               name: orgUnit.name,
-              subnets: orgUnit.subnets.map((subnet: any) => subnet.range),
+              subnets: orgUnit.subnets.map((subnet) => {
+                return {
+                  range: subnet.range,
+                  parent: subnet.parent_subnet[0]?.range,
+                };
+              }),
               contacts: orgUnit.contacts.map((contact: any) => contact.name),
               parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
             }),

@@ -102,7 +102,7 @@ export class OrgUnitDetailComponent {
 
   getChildIPs(): void {
     this.orgUnitDetail()?.subnets.map((subnet) => {
-      this.subnetService.getChildIPs(subnet).subscribe({
+      this.subnetService.getChildIPs(subnet.range).subscribe({
         next: (childIPs: ChildIP[]) => {
           this.dataSource.data = this.dataSource.data.concat(childIPs);
           this.pieChartData.set(this.calculateOccupancyData());
@@ -135,7 +135,7 @@ export class OrgUnitDetailComponent {
   calculateOccupancyData(): { name: string; value: number }[] {
     const total =
       this.orgUnitDetail()?.subnets.reduce(
-        (acc, subnet) => acc + this.calcSubnetSize(subnet),
+        (acc, subnet) => acc + this.calcSubnetSize(subnet.range),
         0,
       ) || 0;
     const occupied = this.dataSource.data.length;

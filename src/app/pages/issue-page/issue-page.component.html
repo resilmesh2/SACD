@@ -135,8 +135,8 @@
           <td mat-cell *matCellDef="let issue">
             <div class="status-cell">
               @if (
-                issue.status.includes("resolved") ||
-                issue.status.includes("closed")
+                issue?.status?.includes("resolved") ||
+                issue?.status?.includes("closed")
               ) {
                 <span class="issue-link square-icon no-interaction">
                   <mat-icon class="issue-icon resolved">verified_user</mat-icon>

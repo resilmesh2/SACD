@@ -11,6 +11,9 @@ import {
   SUBNETS_GRAPH_PATH,
   ORGANIZATION_GRAPH_PATH,
   CSA_PATH,
+  MISSION_EDITOR_PATH,
+  TOPOLOGY_PATH,
+  TREEMAP_PATH,
 } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
@@ -25,9 +28,11 @@ import { SubnetDetailComponent } from './pages/subnet-detail/subnet-detail.compo
 import { OrgUnitDetailComponent } from './pages/org-unit-detail/org-unit-detail.component';
 import { SubnetGraphPageComponent } from './pages/subnet-graph-page/subnet-graph-page.component';
 import { OrgGraphPageComponent } from './pages/org-graph-page/org-graph-page.component';
-import { IframePortalComponent } from './pages/external/iframe-portal.component';
 import { EXTERNAL_ROUTES } from './external';
 import { CSAPageComponent } from './pages/csa-page/csa-page.component';
+import { MissionEditorComponent } from './pages/mission-editor-page/mission-editor.component';
+import { TopologyComponent } from './pages/topology-page/topology.component';
+import { TreemapComponent } from './pages/treemap-page/treemap.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -103,6 +108,21 @@ export const ROOT_ROUTES: Routes = [
     path: CSA_PATH,
     component: CSAPageComponent,
     data: { breadcrumb: 'CSA' },
+  },
+  {
+    path: MISSION_EDITOR_PATH,
+    component: MissionEditorComponent,
+    data: { breadcrumb: 'Mission Editor' },
+  },
+  {
+    path: TOPOLOGY_PATH,
+    component: TopologyComponent,
+    data: { breadcrumb: 'Topology' },
+  },
+  {
+    path: TREEMAP_PATH,
+    component: TreemapComponent,
+    data: { breadcrumb: 'Treemap' },
   },
 
   // generated in external.ts

@@ -21,7 +21,10 @@
       track subnet;
       let index = $index
     ) {
-      <a (click)="navigateToSubnetDetail(subnet)" class="org-unit-detail-link">
+      <a
+        (click)="navigateToSubnetDetail(subnet.range)"
+        class="org-unit-detail-link"
+      >
         {{ subnet }}
       </a>
     }
