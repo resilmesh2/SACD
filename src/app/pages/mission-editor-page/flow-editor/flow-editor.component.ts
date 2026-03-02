@@ -108,8 +108,6 @@ export class FlowEditorComponent implements OnInit {
     centerOnAdd = true;
     isOpen = false;
 
-    //missions = model<{name: string, description: string, criticality: number}[]>([]);
-
     missionsMap: ModelSignal<Record<string, MissionMetadata>> = model({});
 
     public connections: ModelSignal<Connection[]> = model([] as Connection[]);
@@ -204,43 +202,6 @@ export class FlowEditorComponent implements OnInit {
         }).filter(x => x !== undefined);
     }
 
-    // Deletes all selected nodes and connections
-    // Also deletes parent services of selected AND nodes
-    // Does not allow deleting root node or root AND node
-    // public deleteSelected(): void {
-    //     console.log('Deleting selected nodes/connections:', this.selected());
-    //     if (this.selected().length === 0) {
-    //         return;
-    //     }
-
-    //     // if (this.selected().includes('f-node-0') || this.selected().includes('f-node-1')) {
-    //     //     this._snackBar.open('Cannot delete root node or root AND node.', 'Close', { panelClass: ['snackbar-error'] });
-    //     //     return;
-    //     // }
-
-    //     // convert to actual node IDs
-    //     const convertedSelectedNodeIds = this.selected().map(id => id.split('f-node-')[1]).map(id => this.nodes()[~~id - 1].id);
-
-    //     console.log(this.selected());
-
-    //     //const parentsOfAND = this.getParentOfANDNode();
-
-    //     // this.connections.set(this.connections().filter(conn => {
-    //     //     const fromId = conn.from.split('-')[0];
-    //     //     const toId = conn.to.split('-')[0];
-    //     //     return !this.selected().includes(`f-node-${fromId}`) 
-    //     //         && !this.selected().includes(`f-node-${toId}`) 
-    //     //         && !parentsOfAND.includes(fromId) 
-    //     //         && !parentsOfAND.includes(toId);
-    //     // }));
-
-    //     this.nodes.set(this.nodes().filter(node => {
-    //         return !convertedSelectedNodeIds.includes(node.id); //&& !parentsOfAND.includes(node.id);
-    //     }));
-
-    //     this.changeDetectorRef.detectChanges();
-    // }
-
     public deleteSelected(): void {
         console.log('Deleting selected nodes/connections:', this.selected());
         if (this.selected().length === 0) {
@@ -281,10 +242,11 @@ export class FlowEditorComponent implements OnInit {
         const alreadyConnected = this.connections().some(conn => conn.to === event.fInputId);
         const nodeType = this.nodes().find(node => node.id === event.fInputId?.split('-')[0])?.type;
 
-        // TODO: disallow duplicate connections between two same nodes
-
+        // disallow duplicate connections between two same nodes
+        const alreadyConnectedFromSameNode = this.connections().some(conn => conn.to === event.fInputId && conn.from.split('-')[0] === event.fOutputId.split('-')[0]);
+        
         // should allow multiple connections to component nodes
-        if (alreadyConnected && nodeType !== 'component') {
+        if ((alreadyConnected && nodeType !== 'component') || alreadyConnectedFromSameNode) {
             return;
         }
 

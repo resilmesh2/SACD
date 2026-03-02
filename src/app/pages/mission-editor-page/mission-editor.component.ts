@@ -117,9 +117,7 @@ export class MissionEditorComponent {
       })
     }
 
-    loadMission(event: { value: string }) {
-      // TODO: Warn user that loading existing mission resets the editor
-      
+    loadMission(event: { value: string }) {      
       this.dataService.getMission(event.value ?? "").subscribe({
         next: (response) => {
           const payload = response[0]?.structure;
@@ -130,7 +128,6 @@ export class MissionEditorComponent {
           const parsedPayload = JSON.parse(payload);
 
           this.convertPayloadToNodesConnections(parsedPayload);
-          
         }
       })
     }
