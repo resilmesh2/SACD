@@ -1,8 +1,8 @@
-@use 'flow-common';
+@use "flow-common";
 
 ::ng-deep f-flow {
   @include flow-common.connection;
-    .f-background {
+  .f-background {
     line {
       stroke: var(--background-element-color);
     }
@@ -14,7 +14,7 @@
 }
 
 .f-flow {
-    height: 50em;
+  height: 50em;
 }
 
 .f-node {
@@ -22,7 +22,7 @@
   border: none;
 
   &.f-selected {
-    border: 2px solid #E4295F;
+    border: 2px solid #e4295f;
   }
 }
 
@@ -38,48 +38,73 @@
 }
 
 .node {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5em 1em;
-    background-color: #d8d8d8;
-    width: fit-content;
-    min-width: 10em;
-    max-width: 20em;
-    color: #1b1b1b;
-    
-    border-radius: 4px;
-    
-    &--root {
-        @extend .node;
-        background-color: #343F5D; //#7fbfdf;
-        color: #fff;
-    }
-    &--and {
-        @extend .node;
-        background-color: #ccc;
-    }
-    &--or {
-        @extend .node;
-        background-color: #ccc;
-    }
-    &--component {
-        @extend .node;
-        background-color: #7fbfdf;
-    }
-    &--host {
-        @extend .node;
-        background-color: #a0d468;
-    }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em 1em;
+  background-color: #d8d8d8;
+  width: fit-content;
+  min-width: 10em;
+  max-width: 20em;
+  color: #1b1b1b;
+
+  border-radius: 4px;
+
+  &--root {
+    @extend .node;
+    background-color: #343f5d; //#7fbfdf;
+    color: #fff;
+  }
+  &--and {
+    @extend .node;
+    background-color: #ccc;
+  }
+  &--or {
+    @extend .node;
+    background-color: #ccc;
+  }
+  &--component {
+    @extend .node;
+    background-color: #7fbfdf;
+  }
+  &--host {
+    @extend .node;
+    background-color: #a0d468;
+  }
+}
+
+.mark {
+  position: absolute;
+  width: 1.5em;
+  height: 100%;
+  top: 0em;
+  left: 0em;
+  border-radius: 4px 0 0 4px;
+
+  &--component-and,
+  &--host-or {
+    @extend .mark;
+    background-color: #a0d468;
+  }
+
+  &--root-and {
+    @extend .mark;
+    background-color: #343f5d;
+  }
+
+  &--component-or {
+    @extend .mark;
+    background-color: #7fbfdf;
+  }
 }
 
 .node .content {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .node .title {
@@ -101,7 +126,7 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  
+
   margin: 1em;
   padding: 1em;
   background-color: #fff;
@@ -121,39 +146,39 @@
 }
 
 button.action {
-    border-color: transparent;
-    color: #fff;
-    background-color: transparent;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0em;
+  border-color: transparent;
+  color: #fff;
+  background-color: transparent;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0em;
 }
 
 button.action.host-edit {
-  background-color: #3E5F1B;
+  background-color: #3e5f1b;
 }
 
 button.action.component-edit {
-  background-color: #1B3F5F;
+  background-color: #1b3f5f;
 }
 
 .validation-tooltip-content {
-    position: absolute;
-    top: -3em;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5em;
-    background-color: #ffdddd;
-    border: 1px solid #ff5c5c;
-    border-radius: 4px;
-    color: #a70000;
-    font-weight: bold;
-    width: max-content;
-    padding: 0.25em 0.5em;
+  position: absolute;
+  top: -3em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+  background-color: #ffdddd;
+  border: 1px solid #ff5c5c;
+  border-radius: 4px;
+  color: #a70000;
+  font-weight: bold;
+  width: max-content;
+  padding: 0.25em 0.5em;
 }
 
 @include flow-common.examples-toolbar;

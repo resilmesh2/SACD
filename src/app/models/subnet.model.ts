@@ -8,8 +8,8 @@ export interface SubnetExtendedData {
 }
 
 export interface ChildIP {
-    address: string;
-    version?: string;
-    affectedBy?: string[];
-    softwareVersion?: string[];
+  address: string;
+  version?: string;
+  affectedBy?: string[];
+  softwareVersion?: string[];
 }

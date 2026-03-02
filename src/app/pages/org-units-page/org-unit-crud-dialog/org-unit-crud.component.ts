@@ -1,14 +1,28 @@
-import { ChangeDetectionStrategy, Component, computed, inject, model, OnInit, output, signal, WritableSignal } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { DataService } from "../../../services/data.service";
-import { ChipsContacts } from "../../../components/chips-contacts/chips-contacts.component";
-import { MatLabel, MatOption, MatSelectModule } from "@angular/material/select";
-import { FormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatButton } from "@angular/material/button";
-import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
-import { OrgUnitData } from "../../../models/org-unit.model";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  model,
+  OnInit,
+  output,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { DataService } from '../../../services/data.service';
+import { ChipsContacts } from '../../../components/chips-contacts/chips-contacts.component';
+import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { OrgUnitData } from '../../../models/org-unit.model';
 
 @Component({
   selector: 'org-unit-crud-dialog',
@@ -25,18 +39,27 @@ import { OrgUnitData } from "../../../models/org-unit.model";
     MatInputModule,
     FormsModule,
     MatButton,
-    SentinelButtonWithIconComponent
+    SentinelButtonWithIconComponent,
   ],
 })
-
 export class OrgUnitCrudDialog implements OnInit {
   readonly dialogRef = inject(MatDialogRef<OrgUnitCrudDialog>);
 
-  data = inject(MAT_DIALOG_DATA) as { allOrgUnits: OrgUnitData[], orgUnit: OrgUnitData, mode: 'insert' | 'edit' };
+  data = inject(MAT_DIALOG_DATA) as {
+    allOrgUnits: OrgUnitData[];
+    orgUnit: OrgUnitData;
+    mode: 'insert' | 'edit';
+  };
 
-  title = computed(() => this.data.mode === 'insert' ? 'Create Organization Unit' : 'Edit Organization Unit');
-  
-  allOrgUnits: WritableSignal<OrgUnitData[]> = model(this.data.allOrgUnits || []);
+  title = computed(() =>
+    this.data.mode === 'insert'
+      ? 'Create Organization Unit'
+      : 'Edit Organization Unit',
+  );
+
+  allOrgUnits: WritableSignal<OrgUnitData[]> = model(
+    this.data.allOrgUnits || [],
+  );
 
   updateOrgUnitDataSource = output<{ oldName: string; orgUnit: OrgUnitData }>();
   remove = output<string>();
@@ -67,20 +90,21 @@ export class OrgUnitCrudDialog implements OnInit {
 
     this.updateOrgUnitDataSource.emit({
       oldName: this.data.orgUnit.name,
-      orgUnit: this.updatedOrgUnit()
+      orgUnit: this.updatedOrgUnit(),
     });
 
     this.dialogRef.close();
   }
 
   editOrgUnit() {
-    console.log(`Updating organization unit ${this.data.orgUnit.name} -> ${this.name()} | ${this.data.orgUnit.parentOrgUnit}`);
+    console.log(
+      `Updating organization unit ${this.data.orgUnit.name} -> ${this.name()} | ${this.data.orgUnit.parentOrgUnit}`,
+    );
     this.dataService.editOrgUnit(this.data.orgUnit, this.updatedOrgUnit());
 
     this.updateOrgUnitDataSource.emit({
       oldName: this.data.orgUnit.name,
-      orgUnit: this.updatedOrgUnit()
+      orgUnit: this.updatedOrgUnit(),
     });
   }
-  
 }

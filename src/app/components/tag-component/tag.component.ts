@@ -1,9 +1,22 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ENTER } from '@angular/cdk/keycodes';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, Input, InputSignal, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  Input,
+  InputSignal,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,16 +28,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: 'tag-component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, 
-    MatFormFieldModule, 
-    MatChipsModule, 
-    MatIconModule, 
-    MatAutocompleteModule, 
-    FormsModule, 
-    MatTooltipModule
-  ]
+    CommonModule,
+    MatFormFieldModule,
+    MatChipsModule,
+    MatIconModule,
+    MatAutocompleteModule,
+    FormsModule,
+    MatTooltipModule,
+  ],
 })
-
 export class TagComponent {
   readonly separatorKeysCodes: number[] = [ENTER];
   readonly currentTag = model('');
@@ -34,14 +46,14 @@ export class TagComponent {
   readonly filteredTags = computed(() => {
     const currentTag = this.currentTag().toLowerCase();
     return currentTag
-      ? this.allTags.filter(tag => tag.toLowerCase().includes(currentTag))
+      ? this.allTags.filter((tag) => tag.toLowerCase().includes(currentTag))
       : this.allTags.slice();
   });
 
   inputTags: InputSignal<string[]> = input<string[]>([]);
   @Input() allTags: string[] = [];
   @Input() onSubmit: (id: string, tags: string[]) => void = () => null;
-  @Input() id: string = "";
+  @Input() id: string = '';
 
   readonly announcer = inject(LiveAnnouncer);
 
@@ -52,12 +64,11 @@ export class TagComponent {
     console.log('ID:', this.id);
   }
 
-
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     if (value && !this.tags().includes(value)) {
-      this.tags.update(tags => [...tags, value]);
+      this.tags.update((tags) => [...tags, value]);
     }
 
     event.chipInput!.clear();
@@ -65,7 +76,7 @@ export class TagComponent {
   }
 
   remove(tag: string): void {
-    this.tags.update(tags => {
+    this.tags.update((tags) => {
       const index = tags.indexOf(tag);
       if (index < 0) {
         return tags;
@@ -79,7 +90,7 @@ export class TagComponent {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     if (!this.tags().includes(event.option.viewValue)) {
-      this.tags.update(tags => [...tags, event.option.viewValue]);
+      this.tags.update((tags) => [...tags, event.option.viewValue]);
     }
     this.currentTag.set('');
     event.option.deselect();
@@ -89,14 +100,14 @@ export class TagComponent {
     if (this.editOn()) {
       this.tagsCache.set([...this.tags()]);
     }
-    this.editOn.update(editStatus => !editStatus)
+    this.editOn.update((editStatus) => !editStatus);
   }
 
   saveChanges(): void {
     this.changeEditStatus();
-    this.onSubmit(this.id, this.tags())
+    this.onSubmit(this.id, this.tags());
   }
-  
+
   discardChanges(): void {
     this.tags.set(this.tagsCache());
     this.changeEditStatus();

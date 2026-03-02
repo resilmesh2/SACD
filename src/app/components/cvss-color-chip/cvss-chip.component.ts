@@ -1,14 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
-import { colorLookupTable } from "./colorLookupTable";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
+import { colorLookupTable } from './colorLookupTable';
 
 @Component({
   selector: 'cvss-chip',
   templateUrl: 'cvss-chip.component.html',
   styleUrl: 'cvss-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  standalone: true,
 })
-
 export class CvssChipComponent {
   score = input<number | null>(null);
   type = input<2 | 3 | 4>(3); // 2 for CVSS v2, 3 for CVSS v3, 4 for CVSS v4
@@ -21,14 +25,26 @@ export class CvssChipComponent {
 
   propertySeverity = computed(() => {
     if (!this.label()) return 'unknown';
-    const propertyTable = colorLookupTable[this.version()]?.[this.property().toLowerCase()] || colorLookupTable['default'][this.property().toLowerCase()] || {};
+    const propertyTable =
+      colorLookupTable[this.version()]?.[this.property().toLowerCase()] ||
+      colorLookupTable['default'][this.property().toLowerCase()] ||
+      {};
     return propertyTable[this.label()?.toLowerCase() ?? 'unknown'] || 'unknown';
   });
 
   color = computed(() => {
-    console.log('Computing color for:', this.label(), this.property(), this.version());
+    console.log(
+      'Computing color for:',
+      this.label(),
+      this.property(),
+      this.version(),
+    );
 
-    switch (this.property() != 'base_severity' ? this.propertySeverity() : this.label()?.toLowerCase()) {
+    switch (
+      this.property() != 'base_severity'
+        ? this.propertySeverity()
+        : this.label()?.toLowerCase()
+    ) {
       case 'none':
         return '#86B46A';
       case 'low':
@@ -45,6 +61,6 @@ export class CvssChipComponent {
   });
 
   labelColor = computed(() => {
-    return this.label() == 'critical' ? '#ffff': '#1C1D21';
+    return this.label() == 'critical' ? '#ffff' : '#1C1D21';
   });
 }

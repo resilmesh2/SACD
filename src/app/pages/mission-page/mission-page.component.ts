@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import { Mission, MissionStructure } from '../../models/mission-structure.model';
+import {
+  Mission,
+  MissionStructure,
+} from '../../models/mission-structure.model';
 import { DataService } from '../../services/data.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -36,25 +39,23 @@ import { SentinelControlItem } from '@sentinel/components/controls';
     MissionGraphComponent,
     SentinelButtonWithIconComponent,
     SentinelCardComponent,
-  ]
+  ],
 })
-
 export class MissionPageComponent implements OnInit {
   errorMessage = '';
-  missionNames: string[] = [""];
-  selectedMissionName = "";
+  missionNames: string[] = [''];
+  selectedMissionName = '';
   selectedNode: Node | null = null;
   setSelectedNode = (node: Node) => {
-    this.selectedNode = node
-  }
+    this.selectedNode = node;
+  };
   missions: Mission[] = [];
   missionsStructure: MissionStructure | null = null;
   graphLoading: boolean = false;
 
   controls: SentinelControlItem[] = [];
 
-  constructor(private dataService: DataService) {
-  }
+  constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
     this.dataService.getMissionNames().subscribe({
@@ -63,28 +64,29 @@ export class MissionPageComponent implements OnInit {
       },
       error: (error) => {
         this.errorMessage = error.message || 'Error fetching mission names'; // Handle errors
-      }
+      },
     });
     this.getGraphData();
   }
 
   public getGraphData(): void {
-    this.graphLoading = true
+    this.graphLoading = true;
     this.getMissions().subscribe({
       next: (missions) => {
         this.missions = missions;
-        this.missionsStructure = this.dataService.makeMissionsStructure(missions);
+        this.missionsStructure =
+          this.dataService.makeMissionsStructure(missions);
         this.graphLoading = false;
-        this.errorMessage = "";
+        this.errorMessage = '';
       },
       error: (error) => {
         this.missions = [];
         this.missionsStructure = null;
         this.graphLoading = false;
         this.errorMessage = error.message;
-      }
+      },
     });
-    this.selectedNode = null
+    this.selectedNode = null;
   }
 
   /**
@@ -94,15 +96,15 @@ export class MissionPageComponent implements OnInit {
     return this.dataService.getMission(this.selectedMissionName).pipe(
       tap((missions: Mission[]) => {
         if (!this.missionsStructure) {
-          this.missionsStructure = this.dataService.makeMissionsStructure(missions);
+          this.missionsStructure =
+            this.dataService.makeMissionsStructure(missions);
         }
-      })
+      }),
     );
   }
 
   public getLabel(node: Node) {
-    console.log("Getting label for node", node);
+    console.log('Getting label for node', node);
     return this.dataService.getLabelOfGraphNode(node);
   }
 }
-

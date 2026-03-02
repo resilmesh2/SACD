@@ -1,4 +1,20 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, inject, ChangeDetectionStrategy, Signal, computed, signal, WritableSignal, output, input, model } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  ChangeDetectorRef,
+  inject,
+  ChangeDetectionStrategy,
+  Signal,
+  computed,
+  signal,
+  WritableSignal,
+  output,
+  input,
+  model,
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -17,7 +33,6 @@ import { SubnetService } from '../../services/subnet.service';
 //import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
 //import { defer, Observable, of, take } from 'rxjs';
 
-
 @Component({
   selector: 'subnet-page',
   templateUrl: './subnet-page.component.html',
@@ -34,17 +49,23 @@ import { SubnetService } from '../../services/subnet.service';
   ],
 })
 export class SubnetPageComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
+  displayedColumns: string[] = [
+    'note',
+    'range',
+    'org_units',
+    'contacts',
+    'parent_subnet',
+    'actions',
+  ];
   dataSource: MatTableDataSource<SubnetExtendedData>;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null =
+    null;
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
-  
-  
+
   dataLoaded = false;
   dataLoading = true;
   emptyResponse = false;
   errorResponse = '';
-  
 
   // constructor(id: string, label: string | Signal<string>, isSortColumn: boolean, sortName?: string, headerStyle?: NgStyleArg)
 
@@ -52,13 +73,16 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
   //   // constructor(element: T, actions?: RowAction[] | RowActionSignal[], clickable?: boolean, rowStyles?: NgStyleArg, cellStyles?: Map<string, NgStyleArg>, selectionDisabled?: Signal<boolean>)
   //   new Row("145"),
   // ], ["test", "ip"].map(col => {
-  //   return { id: col, label: col.replace('_', ' ').toUpperCase(), isSortColumn: col === 'range', 
+  //   return { id: col, label: col.replace('_', ' ').toUpperCase(), isSortColumn: col === 'range',
   //     labelSig: computed(() => col.replace('_', ' ').toUpperCase()),
   //     sortName: col
   //   }}
   // ));
 
-  constructor(private data: SubnetService, private changeDetector: ChangeDetectorRef) {
+  constructor(
+    private data: SubnetService,
+    private changeDetector: ChangeDetectorRef,
+  ) {
     this.dataSource = new MatTableDataSource<SubnetExtendedData>([]);
     this.getAllSubnets();
   }
@@ -81,14 +105,16 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
 
     this.data.getSubnets().subscribe({
       next: (subnets: SubnetExtendedData[]) => {
-        this.dataSource = new MatTableDataSource<SubnetExtendedData>(subnets.map(subnet => ({
-          _id: subnet._id,
-          range: subnet.range, // Can't be null or undefined, so no need for a fallback
-          note: subnet.note ?? "---",
-          organizationUnit: subnet.organizationUnit ?? "---",
-          parentSubnet: subnet.parentSubnet ?? "---",
-          contacts: subnet.contacts.length == 0 ? [] : subnet.contacts,
-        })));
+        this.dataSource = new MatTableDataSource<SubnetExtendedData>(
+          subnets.map((subnet) => ({
+            _id: subnet._id,
+            range: subnet.range, // Can't be null or undefined, so no need for a fallback
+            note: subnet.note ?? '---',
+            organizationUnit: subnet.organizationUnit ?? '---',
+            parentSubnet: subnet.parentSubnet ?? '---',
+            contacts: subnet.contacts.length == 0 ? [] : subnet.contacts,
+          })),
+        );
 
         this.dataLoading = false;
         this.dataLoaded = true;
@@ -110,7 +136,12 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
 
   readonly dialog = inject(MatDialog);
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, subnet: Partial<SubnetExtendedData>, mode: 'insert' | 'edit'): void {
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string,
+    subnet: Partial<SubnetExtendedData>,
+    mode: 'insert' | 'edit',
+  ): void {
     let dialogRef = this.dialog.open(InsertSubnetDialog, {
       width: '24em',
       enterAnimationDuration,
@@ -124,39 +155,54 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
           parentSubnet: subnet.parentSubnet,
           contacts: subnet.contacts,
         },
-        mode: mode 
+        mode: mode,
       },
     });
 
     // Listen for subnet updates from the dialog (e.g., after insert or edit)
-    dialogRef.componentInstance.updateSubnetDataSource.subscribe(({ oldRange, subnet }) => {
-      // Refreshes the data source with the updated subnet
-      // Either updates the existing subnet or adds a new one if it doesn't exist
-      const index = this.dataSource.data.findIndex(item => item.range === oldRange);
+    dialogRef.componentInstance.updateSubnetDataSource.subscribe(
+      ({ oldRange, subnet }) => {
+        // Refreshes the data source with the updated subnet
+        // Either updates the existing subnet or adds a new one if it doesn't exist
+        const index = this.dataSource.data.findIndex(
+          (item) => item.range === oldRange,
+        );
         if (index !== -1) {
           this.dataSource.data[index] = subnet;
 
           // Update parent subnet references
-          this.dataSource.data.forEach(item => {
+          this.dataSource.data.forEach((item) => {
             if (item.parentSubnet === oldRange) {
-              item.parentSubnet = subnet.range; 
+              item.parentSubnet = subnet.range;
             }
           });
 
           this.dataSource._updateChangeSubscription(); // Refresh the data source
-          this.openSnackBar(`Subnet ${subnet.range} updated successfully.`, 'Close');
+          this.openSnackBar(
+            `Subnet ${subnet.range} updated successfully.`,
+            'Close',
+          );
         } else {
           this.dataSource.data = [subnet, ...this.dataSource.data]; // Add new subnet if it doesn't exist
-          this.openSnackBar(`Subnet ${subnet.range} [${subnet.note}] added successfully.`, 'Close');
+          this.openSnackBar(
+            `Subnet ${subnet.range} [${subnet.note}] added successfully.`,
+            'Close',
+          );
         }
-    });
+      },
+    );
   }
 
   deleteSubnet(subnet: SubnetExtendedData): void {
     if (this.data.deleteSubnet(subnet.range)) {
       // Handle successful deletion (e.g., show a message, refresh the list)
-      this.dataSource.data = this.dataSource.data.filter(item => item.range !== subnet.range);
-      this.openSnackBar(`Subnet ${subnet.range} deleted successfully.`, 'Close');
+      this.dataSource.data = this.dataSource.data.filter(
+        (item) => item.range !== subnet.range,
+      );
+      this.openSnackBar(
+        `Subnet ${subnet.range} deleted successfully.`,
+        'Close',
+      );
     } else {
       // Handle deletion failure (e.g., show an error message)
       this.openSnackBar(`Failed to delete subnet ${subnet.range}.`, 'Close');

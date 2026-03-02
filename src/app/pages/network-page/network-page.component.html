@@ -6,12 +6,12 @@
     <mat-hint>Only search by IP address is supported</mat-hint>
   </mat-form-field>
   <sentinel-button-with-icon
-    color="primary" 
+    color="primary"
     icon="search"
     tooltip="Only search by IP address is supported"
     [disabled]="!ipSearch"
     (click)="loadGraphData()"
-    style="margin-bottom: 20px;"
+    style="margin-bottom: 20px"
   >
     Search
   </sentinel-button-with-icon>
@@ -27,9 +27,22 @@
           </div>
         </ng-container>
       } @else if (!graphLoading && nodes && nodes.length > 0) {
-        <ngx-graph class="chart-container" [links]="edges" [nodes]="nodes" layout="dagre">
+        <ngx-graph
+          class="chart-container"
+          [links]="edges"
+          [nodes]="nodes"
+          layout="dagre"
+        >
           <ng-template #defsTemplate>
-            <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+            <svg:marker
+              id="arrow"
+              viewBox="0 -5 10 10"
+              refX="8"
+              refY="0"
+              markerWidth="4"
+              markerHeight="4"
+              orient="auto"
+            >
               <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
             </svg:marker>
           </ng-template>
@@ -62,12 +75,23 @@
               <svg:rect
                 [attr.width]="node.dimension.width"
                 [attr.height]="node.dimension.height"
-                [attr.fill]="node.id === selectedNode.id ? '#fff' : node.data.customColor"
-                [attr.stroke]="node.id === selectedNode.id ? node.data.customColor : 'transparent'"
+                [attr.fill]="
+                  node.id === selectedNode.id ? '#fff' : node.data.customColor
+                "
+                [attr.stroke]="
+                  node.id === selectedNode.id
+                    ? node.data.customColor
+                    : 'transparent'
+                "
                 [attr.rx]="4"
                 [attr.ry]="4"
               />
-              <svg:text dominant-baseline="middle" text-anchor="middle" [attr.x]="node.dimension.width / 2" [attr.y]="node.dimension.height / 2">
+              <svg:text
+                dominant-baseline="middle"
+                text-anchor="middle"
+                [attr.x]="node.dimension.width / 2"
+                [attr.y]="node.dimension.height / 2"
+              >
                 {{ node.label }}
               </svg:text>
             </svg:g>
@@ -75,8 +99,16 @@
 
           <ng-template #linkTemplate let-link>
             <svg:g class="edge">
-              <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
-              <svg:text class="edge-label" [style.font-style]="'Inter'" text-anchor="middle">
+              <svg:path
+                class="line"
+                stroke-width="2"
+                marker-end="url(#arrow)"
+              ></svg:path>
+              <svg:text
+                class="edge-label"
+                [style.font-style]="'Inter'"
+                text-anchor="middle"
+              >
                 <textPath
                   class="text-path"
                   [attr.href]="'#' + link.id"
@@ -96,27 +128,31 @@
       }
     </div>
     <div class="node-wrapper">
-        <ng-container>
-          <div class="node-detail">
-            @if (selectedNode.id !== '') {
-              <div class="badge" [style.background-color]="selectedNode.data.customColor" [style.color]="selectedNode.data.textColor">
-                <span>{{ selectedNode.data.type }}</span>
-              </div>
-              <h2>{{ getLabel(selectedNode) }}</h2>
-              <hr />
-              <p class="attributes-title">Attributes:</p>
-              <ul class="node-attributes">
-                <li><strong>ID:</strong> {{ selectedNode.id }}</li>
-                @for (item of getNodeAttributes(selectedNode); track item[0]) {
-                  <li>
-                    <strong>{{ item[0] }}:</strong>
-                    <div class="badge">
-                      {{ item[1] }}
-                    </div>
-                  </li>
-                }
-              </ul>
-              <!-- <div class="node-detail-link-bar">
+      <ng-container>
+        <div class="node-detail">
+          @if (selectedNode.id !== "") {
+            <div
+              class="badge"
+              [style.background-color]="selectedNode.data.customColor"
+              [style.color]="selectedNode.data.textColor"
+            >
+              <span>{{ selectedNode.data.type }}</span>
+            </div>
+            <h2>{{ getLabel(selectedNode) }}</h2>
+            <hr />
+            <p class="attributes-title">Attributes:</p>
+            <ul class="node-attributes">
+              <li><strong>ID:</strong> {{ selectedNode.id }}</li>
+              @for (item of getNodeAttributes(selectedNode); track item[0]) {
+                <li>
+                  <strong>{{ item[0] }}:</strong>
+                  <div class="badge">
+                    {{ item[1] }}
+                  </div>
+                </li>
+              }
+            </ul>
+            <!-- <div class="node-detail-link-bar">
                 <sentinel-button-with-icon
                   color="primary"
                   icon="arrow_right"
@@ -126,11 +162,11 @@
                   See asset detail
                 </sentinel-button-with-icon>
               </div> -->
-            } @else {
-              <p class="vertical-center">No node selected.</p>
-            }
-          </div>
-        </ng-container>
+          } @else {
+            <p class="vertical-center">No node selected.</p>
+          }
+        </div>
+      </ng-container>
     </div>
   </div>
 </sentinel-card>

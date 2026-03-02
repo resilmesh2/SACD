@@ -1,19 +1,19 @@
 type EntityKey = {
-  bgColor: string,
-  textColor?: string,
-  showProperty: string[]
-}
+  bgColor: string;
+  textColor?: string;
+  showProperty: string[];
+};
 
 export type EntityStructure = {
-  IP: EntityKey,
-  DomainName: EntityKey,
-  Subnet: EntityKey,
-  Node: EntityKey,
-  SecurityEvent: EntityKey,
-  CVE: EntityKey,
-  Vulnerability: EntityKey,
-  SoftwareVersion: EntityKey
-}
+  IP: EntityKey;
+  DomainName: EntityKey;
+  Subnet: EntityKey;
+  Node: EntityKey;
+  SecurityEvent: EntityKey;
+  CVE: EntityKey;
+  Vulnerability: EntityKey;
+  SoftwareVersion: EntityKey;
+};
 
 export const entities: EntityStructure = {
   IP: {

@@ -1,4 +1,9 @@
-import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { ROOT_ROUTES } from './routes';
@@ -20,7 +25,7 @@ export const APP_CONFIG: ApplicationConfig = {
     provideHttpClient(),
     provideApollo(() => {
       const httpLink = inject(HttpLink);
- 
+
       return {
         link: httpLink.create({ uri: graphqlApi }),
         cache: new InMemoryCache(),
@@ -29,5 +34,5 @@ export const APP_CONFIG: ApplicationConfig = {
     }),
     provideAnimations(),
     provideHighcharts(),
-  ]
+  ],
 };
