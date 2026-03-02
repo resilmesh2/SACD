@@ -76,3 +76,10 @@ button.action.destructive:hover {
     background-color: #e3e3e3;
     cursor: pointer;
 }
+
+.org-unit-subnets {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25em;
+    flex-wrap: wrap;
+}

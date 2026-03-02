@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -13,8 +13,6 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { OrgUnitData } from '../../models/org-unit.model';
 import { ORGANIZATION_PATH } from '../../paths';
-//import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
-//import { defer, Observable, of, take } from 'rxjs';
 
 
 @Component({
@@ -69,7 +67,7 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
     this.data.getOrgUnits().subscribe({
       next: (orgUnits: OrgUnitData[]) => {
         this.dataSource = new MatTableDataSource<OrgUnitData>(orgUnits.map(orgUnit => ({
-          name: orgUnit.name, // Can't be null or undefined, so no need for a fallback,
+          name: orgUnit.name ?? "???", // Can't be undefined, fallback just in case
           parentOrgUnit: orgUnit.parentOrgUnit ?? "---",
           subnets: orgUnit.subnets.length == 0 ? [{range: "---"}] : orgUnit.subnets,
           contacts: orgUnit.contacts.length == 0 ? [] : orgUnit.contacts,
@@ -151,4 +149,6 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
   navigateToOrgUnitDetail(org: OrgUnitData): void {
     this.router.navigate([ORGANIZATION_PATH, org.name]);
   }
+
+
 }

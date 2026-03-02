@@ -55,7 +55,11 @@
       <ng-container matColumnDef="subnets">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Subnets</th>
         <td mat-cell *matCellDef="let row">
-          <span class="subnet-range">{{ row.subnets.join(', ') }}</span>
+          <div class="org-unit-subnets">
+            @for (subnet of row.subnets; track subnet) {
+              <span class="subnet-range">{{ subnet.range }}{{$index == row.subnets.length - 1 ? '' : ', '}}</span>
+            }
+          </div>
         </td>
       </ng-container>
 
