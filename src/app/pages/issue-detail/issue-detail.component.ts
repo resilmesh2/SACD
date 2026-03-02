@@ -1,4 +1,12 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -37,15 +45,18 @@ export interface VulnerabilityData {
     MatIconModule,
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
-    CvssChipComponent
-  ]
+    CvssChipComponent,
+  ],
 })
-
 export class IssueDetailComponent implements OnInit, AfterViewInit {
-
   dataSource = new MatTableDataSource<IssueDetail>();
 
-  displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
+  displayedColumns: string[] = [
+    'affectedAsset',
+    'description',
+    'software',
+    'vulnerabilityCount',
+  ];
 
   paginator: MatPaginator | null = null;
 
@@ -57,7 +68,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   setDataSourceAttributes() {
     this.dataSource.paginator = this.paginator;
   }
-  
+
   issueName = '';
   issueSeverity = '';
   issueStatus = '';
@@ -78,30 +89,27 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
     private location: Location,
     private data: DataService,
   ) {
-      this.dataSource = new MatTableDataSource<IssueDetail>([]);
-    }
+    this.dataSource = new MatTableDataSource<IssueDetail>([]);
+  }
 
   ngOnInit(): void {
-
-    this.dataLoading = true;    
+    this.dataLoading = true;
     this.getRouteParameters();
-    this.getVulnerableAssets();  
+    this.getVulnerableAssets();
   }
 
   ngAfterViewInit(): void {
-
     if (this.dataSource && this.paginator && this.dataLoaded) {
       this.dataSource.paginator = this.paginator;
     }
   }
 
   getRouteParameters(): void {
-    
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       this.issueName = params.get('name') || '';
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.issueSeverity = params['severity'] || '';
       this.issueStatus = params['status'] || '';
       this.issueDescription = params['description'] || '';
@@ -110,7 +118,8 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   }
 
   getVulnerableAssets(): void {
-    this.data.getVulnerableMachines(this.issueName)
+    this.data
+      .getVulnerableMachines(this.issueName)
       .pipe(
         catchError((error) => {
           this.errorResponse = `Error fetching data: ${error}`;
@@ -118,40 +127,38 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
           this.emptyResponse = true;
           console.error(this.errorResponse);
           return of([]);
-        })
+        }),
       )
-      .subscribe(
-        (vulnerables: VulnerabilityData[] | null) => {
-          if (vulnerables && vulnerables.length > 0) {
-            // Filter and map valid rows
-            this.issueDetails = vulnerables
-              .filter(row => row.ip && row.subnet && row.software)
-              .map(row => ({
-                affectedAsset: row.ip,
-                description: this.issueDescription,
-                software: row.software,
-                vulnerabilityCount: 1
-              }));
+      .subscribe((vulnerables: VulnerabilityData[] | null) => {
+        if (vulnerables && vulnerables.length > 0) {
+          // Filter and map valid rows
+          this.issueDetails = vulnerables
+            .filter((row) => row.ip && row.subnet && row.software)
+            .map((row) => ({
+              affectedAsset: row.ip,
+              description: this.issueDescription,
+              software: row.software,
+              vulnerabilityCount: 1,
+            }));
 
-            this.totalOccurrences = this.issueDetails.length;
+          this.totalOccurrences = this.issueDetails.length;
 
-            // Set the dataSource with the fetched issueDetails
-            this.setDataSource();
-          } else {
-            this.emptyResponse = true;
-          }
-
-          this.dataLoading = false;
-          this.dataLoaded = true;
+          // Set the dataSource with the fetched issueDetails
+          this.setDataSource();
+        } else {
+          this.emptyResponse = true;
         }
-      );
+
+        this.dataLoading = false;
+        this.dataLoaded = true;
+      });
   }
 
   navigateToVulnDetail(issueName: string): void {
     this.router.navigate(['/vulnerability'], {
       queryParams: {
         cve: issueName,
-      }
+      },
     });
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import type { SimpleChanges } from '@angular/core'
+import type { SimpleChanges } from '@angular/core';
 import { Node, Edge, Layout, NgxGraphModule } from '@swimlane/ngx-graph';
 import { CustomLayout } from '../../../utils/custom-graph-layout';
 import { Subject } from 'rxjs';
@@ -11,10 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'mission-graph',
   templateUrl: './mission-graph.component.html',
   styleUrls: ['./mission-graph.component.scss'],
-  imports: [
-    NgxGraphModule,
-    MatTooltipModule
-  ]
+  imports: [NgxGraphModule, MatTooltipModule],
 })
 export class MissionGraphComponent implements OnInit, OnChanges {
   edges: Edge[] = [];
@@ -72,12 +69,12 @@ export class MissionGraphComponent implements OnInit, OnChanges {
         newNode = {
           id: n.id.toString(),
           label: n.name,
-          data: { 
+          data: {
             type: 'mission',
             customColor: '#0f3057',
             textColor: '#fff',
             criticality: n.criticality,
-            description: n.description
+            description: n.description,
           },
         };
         nodes.push(newNode);
@@ -111,7 +108,13 @@ export class MissionGraphComponent implements OnInit, OnChanges {
         newNode = {
           id: h.id.toString(),
           label: h.hostname,
-          data: { ip: h.ip, type: 'host', customColor: '#008891', textColor: '#fff', disabled },
+          data: {
+            ip: h.ip,
+            type: 'host',
+            customColor: '#008891',
+            textColor: '#fff',
+            disabled,
+          },
         };
         nodes.push(newNode);
       });
@@ -128,7 +131,11 @@ export class MissionGraphComponent implements OnInit, OnChanges {
 
       // Ors
       structureJSON.nodes.aggregations.or.forEach((o) => {
-        newNode = { id: o.toString(), label: 'OR', data: { type: 'or', customColor: '#e7e7de', textColor: '#0f3057' } };
+        newNode = {
+          id: o.toString(),
+          label: 'OR',
+          data: { type: 'or', customColor: '#e7e7de', textColor: '#0f3057' },
+        };
         nodes.push(newNode);
       });
 
@@ -138,14 +145,20 @@ export class MissionGraphComponent implements OnInit, OnChanges {
       let newEdge: Edge;
 
       structureJSON.relationships.one_way.forEach((r) => {
-        newEdge = { source: r.from.toString(), target: r.to.toString(), label: '' };
+        newEdge = {
+          source: r.from.toString(),
+          target: r.to.toString(),
+          label: '',
+        };
         edges.push(newEdge);
       });
 
       for (let i = 0; i < 4; i++) {
         structureJSON.relationships.one_way.forEach((r) => {
           if (this.disabledNodes.includes(r.to)) {
-            const index = nodes.findIndex((node) => node.id === r.from.toString());
+            const index = nodes.findIndex(
+              (node) => node.id === r.from.toString(),
+            );
             if (nodes[index].label !== 'OR') {
               nodes[index].data.disabled = true;
               this.disabledNodes.push(r.from);
@@ -174,8 +187,11 @@ export class MissionGraphComponent implements OnInit, OnChanges {
   }
 
   selectNode(node: Node) {
-    if (this.setSelectedNode && (node.data.type === 'mission' || node.data.type === 'host')) {
-      this.setSelectedNode(node)
+    if (
+      this.setSelectedNode &&
+      (node.data.type === 'mission' || node.data.type === 'host')
+    ) {
+      this.setSelectedNode(node);
     }
   }
 }

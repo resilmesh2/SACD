@@ -1,5 +1,20 @@
 import { Routes } from '@angular/router';
-import { HOME_PATH, ISSUE_PATH, MISSION_PATH, NETWORK_NODES_PATH, ORGANIZATION_PATH, ASSETS_PATH, SUBNETS_PATH, VULNERABILITY_PATH, SUBNETS_GRAPH_PATH, ORGANIZATION_GRAPH_PATH, CSA_PATH, MISSION_EDITOR_PATH, TOPOLOGY_PATH, TREEMAP_PATH } from './paths';
+import {
+  HOME_PATH,
+  ISSUE_PATH,
+  MISSION_PATH,
+  NETWORK_NODES_PATH,
+  ORGANIZATION_PATH,
+  ASSETS_PATH,
+  SUBNETS_PATH,
+  VULNERABILITY_PATH,
+  SUBNETS_GRAPH_PATH,
+  ORGANIZATION_GRAPH_PATH,
+  CSA_PATH,
+  MISSION_EDITOR_PATH,
+  TOPOLOGY_PATH,
+  TREEMAP_PATH,
+} from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
 import { SubnetPageComponent } from './pages/subnet-page/subnet-page.component';
@@ -112,7 +127,7 @@ export const ROOT_ROUTES: Routes = [
   },
 
   // generated in external.ts
-  ... EXTERNAL_ROUTES,
+  ...EXTERNAL_ROUTES,
 
   // {
   //   path: USER_PATH,
@@ -131,5 +146,4 @@ export const ROOT_ROUTES: Routes = [
   //     },
   //   ],
   // },
-
 ];

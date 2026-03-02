@@ -1,4 +1,15 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, signal, computed, WritableSignal, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ElementRef,
+  ChangeDetectorRef,
+  signal,
+  computed,
+  WritableSignal,
+  inject,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -46,9 +57,9 @@ export interface IP {
 }
 
 interface Filter {
-    name: string;
-    options: string[];
-    defaultValue: string;
+  name: string;
+  options: string[];
+  defaultValue: string;
 }
 
 @Component({
@@ -71,18 +82,15 @@ interface Filter {
     SentinelCardComponent,
     TagComponent,
     SentinelButtonWithIconComponent,
-    MatIcon
+    MatIcon,
   ],
-  providers: [
-    provideMomentDateAdapter(DATE_FORMAT)
-  ]
+  providers: [provideMomentDateAdapter(DATE_FORMAT)],
 })
-
 export class AssetPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Service>();
 
   displayedColumns: string[] = ['name', 'tag', 'subnet', 'last_seen'];
-  
+
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
 
@@ -106,8 +114,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   emptyResponse = false;
   errorResponse = '';
 
-  //services: Service[] = [];
-  ips: IP[] = []
+  ips: IP[] = [];
 
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
@@ -116,7 +123,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   totalSortedServices = computed(() => this.dataSource.filteredData.length);
 
   filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
-  defaultValue = "All";
+  defaultValue = 'All';
   filterDictionary = new Map<string, string>();
 
   searchTerm: WritableSignal<string> = signal('');
@@ -124,12 +131,18 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   selectedTag: WritableSignal<string> = signal(this.defaultValue);
   selectedSubnet: WritableSignal<string> = signal(this.defaultValue);
 
-  tags = computed(() => Array.from(new Set(this.services().flatMap(service => service.tag))));
-  subnets = computed(() => Array.from(new Set(this.services().flatMap(service => service.subnet))));
+  tags = computed(() =>
+    Array.from(new Set(this.services().flatMap((service) => service.tag))),
+  );
+  subnets = computed(() =>
+    Array.from(new Set(this.services().flatMap((service) => service.subnet))),
+  );
 
   startDate: WritableSignal<Date | null> = signal(null);
   endDate: WritableSignal<Date | null> = signal(null);
-  isDateRangeValid = computed(() => this.startDate() !== null && this.endDate() !== null);
+  isDateRangeValid = computed(
+    () => this.startDate() !== null && this.endDate() !== null,
+  );
 
   controls: SentinelControlItem[] = [];
 
@@ -145,16 +158,11 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dataLoading = true;
 
-    console.log('Data Loading');
     this.data.getIPs().subscribe({
       next: (ips) => {
         this.ips = ips;
 
-        console.log('Combined Data Loaded:', this.ips, this.tags());
-
         this.processServices();
-
-        console.log('Processed Services:', this.services());
 
         if (this.ips.length > 0) {
           this.dataLoaded = true;
@@ -170,29 +178,39 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
         this.errorResponse = error;
         this.dataLoading = false;
         this.changeDetector.detectChanges();
-      }
+      },
     });
-    this.filters.push({name: 'tag', options: this.tags(), defaultValue: this.defaultValue});
-    this.filters.push({name: 'subnet', options: this.subnets(), defaultValue: this.defaultValue});
+    this.filters.push({
+      name: 'tag',
+      options: this.tags(),
+      defaultValue: this.defaultValue,
+    });
+    this.filters.push({
+      name: 'subnet',
+      options: this.subnets(),
+      defaultValue: this.defaultValue,
+    });
   }
 
   ngAfterViewInit() {
-
     if (this.dataLoaded && this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    
+
     /**
      * Custom filter predicate for the data source.
      */
     this.dataSource.filterPredicate = function (record, filter) {
       var map: Map<string, any> = new Map(JSON.parse(filter));
       let isMatch = false;
-      for(let [key,value] of map){
+      for (let [key, value] of map) {
         // Name filter (CVE ID)
         if (key === 'name') {
-          isMatch = (value === "All") || (value == '') || record.name.toLowerCase().includes(value.trim().toLowerCase());
+          isMatch =
+            value === 'All' ||
+            value == '' ||
+            record.name.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
           // If no date range is specified, match all records
@@ -204,17 +222,24 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
           const dateRange = JSON.parse(value);
           const startDate = new Date(dateRange.start);
           const endDate = new Date(dateRange.end);
-          const lastSeenDate = record.last_seen ? new Date(record.last_seen) : null;
-          isMatch = (!lastSeenDate || (lastSeenDate >= startDate && lastSeenDate <= endDate));
+          const lastSeenDate = record.last_seen
+            ? new Date(record.last_seen)
+            : null;
+          isMatch =
+            !lastSeenDate ||
+            (lastSeenDate >= startDate && lastSeenDate <= endDate);
 
           if (!isMatch) return false;
         } else if (key === 'tag') {
-          isMatch = (value === "All") || (value == '') || record.tag.includes(value.trim().toLowerCase());
+          isMatch =
+            value === 'All' ||
+            value == '' ||
+            record.tag.includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else {
           // For any other filters, check if the value matches the record's property
-          isMatch = (value=="All") || (record[key as keyof Service] == value); 
-          if(!isMatch) return false;
+          isMatch = value == 'All' || record[key as keyof Service] == value;
+          if (!isMatch) return false;
         }
       }
 
@@ -229,21 +254,23 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   applySelectFilter(event: MatSelectChange, filter: Filter) {
     this.filterDictionary.set(filter.name, event.value);
 
-    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
-    
+    var jsonString = JSON.stringify(
+      Array.from(this.filterDictionary.entries()),
+    );
+
     this.dataSource.filter = jsonString;
-    
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-
-    console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
   applyNameFilter(): void {
     this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
-    
+    this.dataSource.filter = JSON.stringify(
+      Array.from(this.filterDictionary.entries()),
+    );
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -252,11 +279,16 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   applyDateFilter(): void {
     console.log('Applying date filter:', this.startDate(), this.endDate());
     if (this.isDateRangeValid()) {
-      this.filterDictionary.set('dateRange', JSON.stringify({
-        start: this.startDate()?.toISOString(),
-        end: this.endDate()?.toISOString()
-      }));
-      this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+      this.filterDictionary.set(
+        'dateRange',
+        JSON.stringify({
+          start: this.startDate()?.toISOString(),
+          end: this.endDate()?.toISOString(),
+        }),
+      );
+      this.dataSource.filter = JSON.stringify(
+        Array.from(this.filterDictionary.entries()),
+      );
     }
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -265,7 +297,9 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
 
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
-    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
+    this.dataSource.filter = JSON.stringify(
+      Array.from(this.filterDictionary.entries()),
+    );
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -286,27 +320,28 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   }
 
   saveData(address: string, tags: string[]): void {
-    this.data.changeTag(address, tags)
+    this.data.changeTag(address, tags);
   }
 
   private processServices(): void {
-    this.services.set(this.ips.map((ip, _) => ({
-      name: ip.address,
-      id: ip._id,
-      tag: [...(ip.tag ?? [])],
-      subnet: (ip.subnets ?? []).map(item => item.range),
-      severity: ip.tag,
-      last_seen: null, // TODO: When last_seen is available in the IP model, set it here
-    })));
+    this.services.set(
+      this.ips.map((ip, _) => ({
+        name: ip.address,
+        id: ip._id,
+        tag: [...(ip.tag ?? [])],
+        subnet: (ip.subnets ?? []).map((item) => item.range),
+        severity: ip.tag,
+        last_seen: null, // TODO: When last_seen is available in the IP model, set it here
+      })),
+    );
 
     this.dataSource.data = this.services();
 
-    
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    
+
     this.changeDetector.detectChanges();
   }
 
@@ -314,32 +349,31 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     const value = event.value;
 
     if (value) {
-      tags.push(value)
+      tags.push(value);
     }
 
     event.chipInput!.clear();
   }
 
   remove(tag: string, tags: string[]): void {
-      const index = tags.indexOf(tag);
-      if (index >= 0) {
-        tags.splice(index, 1);
-      }
+    const index = tags.indexOf(tag);
+    if (index >= 0) {
+      tags.splice(index, 1);
+    }
   }
 
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
-    tags.push(event.option.viewValue)
+    tags.push(event.option.viewValue);
     event.option.deselect();
   }
 
   navigateToNetworkNodeView(asset: Service): void {
     this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: asset.name }
+      queryParams: { ip: asset.name },
     });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-      this.router.navigate([SUBNETS_PATH, subnetRange]);
+    this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
-  
 }

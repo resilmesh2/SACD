@@ -1,8 +1,10 @@
 <div class="agenda">
   <span class="agenda-title" (click)="toggleCollapse()">
-    <mat-icon>{{ agendaContainer()?.icon ?? 'error' }}</mat-icon>
+    <mat-icon>{{ agendaContainer()?.icon ?? "error" }}</mat-icon>
     {{ agendaContainer()?.label }}
-    <mat-icon class="toggle-agenda">{{ isCollapsed() ? 'chevron_right' : 'expand_more' }}</mat-icon>
+    <mat-icon class="toggle-agenda">{{
+      isCollapsed() ? "chevron_right" : "expand_more"
+    }}</mat-icon>
   </span>
   @if (!isCollapsed()) {
     <ul class="agenda-list">

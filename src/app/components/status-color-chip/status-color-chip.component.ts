@@ -1,13 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 
 @Component({
   selector: 'status-chip',
   templateUrl: 'status-chip.component.html',
   styleUrl: 'status-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true
+  standalone: true,
 })
-
 export class StatusChipComponent {
   label = input<string | undefined>('unknown');
 
@@ -32,6 +36,6 @@ export class StatusChipComponent {
   });
 
   labelColor = computed(() => {
-    return this.label() == 'critical' ? '#ffff': '#1C1D21';
+    return this.label() == 'critical' ? '#ffff' : '#1C1D21';
   });
 }

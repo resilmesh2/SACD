@@ -185,6 +185,5 @@ export const Attributes = {
         name
       }
     }
-  `
+  `,
 };
-

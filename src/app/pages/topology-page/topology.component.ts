@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
+import {
+  HighchartsChartDirective,
+  providePartialHighcharts,
+} from 'highcharts-angular';
 import { DataService } from '../../services/data.service';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { Router } from '@angular/router';
@@ -25,13 +28,19 @@ export class TopologyComponent {
   chartOptions: Highcharts.Options = this.buildChartOptions([]);
   drilledInto: string | null = null;
   private chartRef: Highcharts.Chart | null = null;
-  private allSeries: { name: string; data: { name: string; value: number }[] }[] = [];
+  private allSeries: {
+    name: string;
+    data: { name: string; value: number }[];
+  }[] = [];
 
-  constructor(private data: DataService, private router: Router) {
-    this.data.getOrgUnits().subscribe(units => {
-      this.allSeries = units.map(unit => ({
+  constructor(
+    private data: DataService,
+    private router: Router,
+  ) {
+    this.data.getOrgUnits().subscribe((units) => {
+      this.allSeries = units.map((unit) => ({
         name: unit.name,
-        data: unit.subnets.map((subnet: { range: string}) => ({
+        data: unit.subnets.map((subnet: { range: string }) => ({
           name: subnet.range,
           value: 32 - parseInt(subnet.range.split('/')[1]) || 1,
         })),
@@ -47,14 +56,14 @@ export class TopologyComponent {
   drillBack(): void {
     if (!this.chartRef) return;
     this.drilledInto = null;
-    this.chartRef.series.forEach(s => s.setVisible(true, false));
+    this.chartRef.series.forEach((s) => s.setVisible(true, false));
     this.chartRef.redraw();
   }
 
   drillInto(seriesName: string): void {
     if (!this.chartRef) return;
     this.drilledInto = seriesName;
-    this.chartRef.series.forEach(s => {
+    this.chartRef.series.forEach((s) => {
       if (s.name === seriesName) {
         s.setVisible(true, false);
       } else {
@@ -65,11 +74,11 @@ export class TopologyComponent {
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-      this.router.navigate([SUBNETS_PATH, subnetRange]);
+    this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
 
   private buildChartOptions(
-    series: { name: string; data: { name: string; value: number }[] }[]
+    series: { name: string; data: { name: string; value: number }[] }[],
   ): Highcharts.Options {
     return {
       chart: {
@@ -80,7 +89,7 @@ export class TopologyComponent {
       boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
-        seriesThreshold: 5
+        seriesThreshold: 5,
       },
       title: {
         text: 'Network Topology',
@@ -91,7 +100,7 @@ export class TopologyComponent {
       },
       //colors: ["#E4295F", "#324376", "#44BFEC", "#6d77b1"],
       credits: {
-        enabled: false
+        enabled: false,
       },
       plotOptions: {
         packedbubble: {
@@ -114,7 +123,9 @@ export class TopologyComponent {
                 }
                 if (e.point.value > 1) {
                   this.navigateToSubnetDetail(e.point.name);
-                  console.log(`Clicked on ${e.point.name} with value ${e.point.value}`);
+                  console.log(
+                    `Clicked on ${e.point.name} with value ${e.point.value}`,
+                  );
                 }
               },
             },
@@ -131,9 +142,9 @@ export class TopologyComponent {
           },
         },
       },
-      series: series.map(s => ({
+      series: series.map((s) => ({
         name: s.name,
-        data: s.data.map(d => ({
+        data: s.data.map((d) => ({
           name: d.name,
           value: d.value,
         })),
