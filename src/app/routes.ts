@@ -14,6 +14,7 @@ import {
   MISSION_EDITOR_PATH,
   TOPOLOGY_PATH,
   TREEMAP_PATH,
+  VULN_AI_PATH,
 } from './paths';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { MissionPageComponent } from './pages/mission-page/mission-page.component';
@@ -34,6 +35,7 @@ import { CSAPageComponent } from './pages/csa-page/csa-page.component';
 import { MissionEditorComponent } from './pages/mission-editor-page/mission-editor.component';
 import { TopologyComponent } from './pages/topology-page/topology.component';
 import { TreemapComponent } from './pages/treemap-page/treemap.component';
+import { VulnAIPageComponent } from './pages/vuln-ai-page/vuln-ai-page.component';
 
 export const ROOT_ROUTES: Routes = [
   {
@@ -124,6 +126,12 @@ export const ROOT_ROUTES: Routes = [
     path: TREEMAP_PATH,
     component: TreemapComponent,
     data: { breadcrumb: 'Treemap' },
+  },
+
+  {
+    path: VULN_AI_PATH,
+    component: VulnAIPageComponent,
+    data: { breadcrumb: 'Vuln AI' },
   },
 
   // generated in external.ts

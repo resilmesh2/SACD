@@ -49,6 +49,13 @@ export const agendaContainers = [
     'analytics',
   ),
   new AgendaContainer(
+    'AI Stuff',
+    [
+      new Agenda('Vuln AI', '/vuln-ai'),
+    ],
+    'robot', // smart_toy
+  ),
+  new AgendaContainer(
     'External',
     [new Agenda('CSA', CSA_PATH), ...EXTERNAL_AGENDAS],
     'api',

@@ -14,10 +14,12 @@ export const ORGANIZATION_GRAPH_PATH = 'organization-units-graph';
 export const TOPOLOGY_PATH = 'topology';
 export const TREEMAP_PATH = 'treemap';
 
-// CRUD
+// edit
 export const SUBNETS_PATH = 'subnets';
 export const ORGANIZATION_PATH = 'organization-units';
 export const MISSION_EDITOR_PATH = 'mission-editor';
+
+export const VULN_AI_PATH = 'vuln-ai';
 
 // misc
 export const GROUP_PATH = 'group';
