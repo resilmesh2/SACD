@@ -425,7 +425,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
               ? `${ip.networkServicesCount} service`
               : `${ip.networkServicesCount} services`
             : null,
-        status: ip.status,
+        status: ip.status || 'unknown',
         subnet: (ip.subnets ?? []).map((item) => item.range),
         tag: [...(ip.tag ?? [])],
         last_seen: null, // TODO: When last_seen is available in the IP model, set it here
@@ -448,7 +448,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
           port: service.port,
           protocol: service.protocol,
         },
-        status: service.status,
+        status: service.status || 'unknown',
         subnet: [],
         tag: [...(service.tag ?? [])],
         last_seen: null, // TODO: When last_seen is available in the NetworkService model, set it here

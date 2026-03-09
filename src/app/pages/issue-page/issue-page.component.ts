@@ -3,7 +3,6 @@ import {
   OnInit,
   ViewChild,
   AfterViewInit,
-  ElementRef,
   ChangeDetectorRef,
   computed,
   effect,
@@ -11,11 +10,11 @@ import {
   signal,
   inject,
 } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Issue } from '../../models/issue.model';
 import { CVE } from '../../models/vulnerability.model';
 import { DataService } from '../../services/data.service';
@@ -428,7 +427,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
         ...this.vulnerabilties[index], // Spread CVE properties
         name: vuln.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
         severity: vuln.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-        status: vuln.status, //index % 3 === 0 ? ["confirmed", "reassessed"] : index % 7 === 0 ? ["resolved"] : index % 10 === 0 ? ["closed"] :
+        status: vuln.status ?? ['estimated'], //index % 3 === 0 ? ["confirmed", "reassessed"] : index % 7 === 0 ? ["resolved"] : index % 10 === 0 ? ["closed"] :
         description: vuln.description,
         last_seen: vuln.published ? new Date(vuln.published) : null,
         impact: vuln.result_impacts
