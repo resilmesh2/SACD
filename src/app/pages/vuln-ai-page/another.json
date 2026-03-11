@@ -1,0 +1,114 @@
+{
+  "data": {
+    "fields": ["m", "edges", "vertices"],
+    "values": [
+      [
+        {
+          "$type": "Node",
+          "_value": {
+            "_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:335",
+            "_labels": ["Mission"],
+            "_properties": {
+              "name": {
+                "$type": "String",
+                "_value": "User Services - BT4"
+              },
+              "criticality": {
+                "$type": "Integer",
+                "_value": "5"
+              },
+              "description": {
+                "$type": "String",
+                "_value": "This mission represents user desktops that must work for the white team."
+              },
+              "structure": {
+                "$type": "String",
+                "_value": "{\"relationships\":{\"two_way\":[],\"one_way\":[{\"from\":1,\"to\":60},{\"from\":60,\"to\":11},{\"from\":60,\"to\":12},{\"from\":60,\"to\":13},{\"from\":11,\"to\":70},{\"from\":70,\"to\":30},{\"from\":12,\"to\":71},{\"from\":71,\"to\":31},{\"from\":13,\"to\":72},{\"from\":72,\"to\":32},{\"from\":2,\"to\":61},{\"from\":61,\"to\":14},{\"from\":61,\"to\":15},{\"from\":14,\"to\":73},{\"from\":15,\"to\":74},{\"from\":73,\"to\":33},{\"from\":73,\"to\":34},{\"from\":74,\"to\":35},{\"from\":74,\"to\":36},{\"from\":3,\"to\":62},{\"from\":62,\"to\":16},{\"from\":62,\"to\":17},{\"from\":16,\"to\":75},{\"from\":17,\"to\":76},{\"from\":75,\"to\":37},{\"from\":75,\"to\":38},{\"from\":76,\"to\":39},{\"from\":76,\"to\":40},{\"from\":4,\"to\":63},{\"from\":63,\"to\":18},{\"from\":63,\"to\":19},{\"from\":63,\"to\":20},{\"from\":63,\"to\":21},{\"from\":63,\"to\":22},{\"from\":63,\"to\":23},{\"from\":63,\"to\":24},{\"from\":63,\"to\":25},{\"from\":18,\"to\":77},{\"from\":19,\"to\":78},{\"from\":20,\"to\":79},{\"from\":21,\"to\":80},{\"from\":22,\"to\":81},{\"from\":23,\"to\":82},{\"from\":24,\"to\":83},{\"from\":25,\"to\":84},{\"from\":77,\"to\":41},{\"from\":78,\"to\":42},{\"from\":78,\"to\":43},{\"from\":79,\"to\":44},{\"from\":80,\"to\":45},{\"from\":81,\"to\":46},{\"from\":82,\"to\":47},{\"from\":83,\"to\":48},{\"from\":84,\"to\":49},{\"from\":84,\"to\":50},{\"from\":5,\"to\":64},{\"from\":64,\"to\":26},{\"from\":64,\"to\":22},{\"from\":26,\"to\":85},{\"from\":85,\"to\":51},{\"from\":22,\"to\":86},{\"from\":86,\"to\":46}],\"supports\":[{\"from\":\"Public-Facing Services - BT4\",\"to\":\"Mail - BT4\"},{\"from\":\"Public-Facing Services - BT4\",\"to\":\"DNS - BT4\"},{\"from\":\"Public-Facing Services - BT4\",\"to\":\"Web - BT4\"},{\"from\":\"User Services - BT4\",\"to\":\"Ubuntu desktop - BT4\"},{\"from\":\"User Services - BT4\",\"to\":\"Windows desktop - BT4\"},{\"from\":\"Admin Services - BT4\",\"to\":\"Windows admin - BT4\"},{\"from\":\"Admin Services - BT4\",\"to\":\"Ubuntu admin - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"DC - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"File server - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"Menu - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"Database server - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"OCS - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"UPS - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"Monitoring - BT4\"},{\"from\":\"Custom Application - BT4\",\"to\":\"Operations - BT4\"},{\"from\":\"External Communication - BT4\",\"to\":\"Application server\"}],\"has_identity\":[{\"from\":\"Mail - BT4\",\"to\":\"mail\"},{\"from\":\"DNS - BT4\",\"to\":\"dns\"},{\"from\":\"Web - BT4\",\"to\":\"www\"},{\"from\":\"Ubuntu desktop - BT4\",\"to\":\"desktop3\"},{\"from\":\"Ubuntu desktop - BT4\",\"to\":\"desktop4\"},{\"from\":\"Windows desktop - BT4\",\"to\":\"desktop1\"},{\"from\":\"Windows desktop - BT4\",\"to\":\"desktop2\"},{\"from\":\"Windows admin - BT4\",\"to\":\"admin1\"},{\"from\":\"Windows admin - BT4\",\"to\":\"admin2\"},{\"from\":\"Ubuntu admin - BT4\",\"to\":\"admin3\"},{\"from\":\"Ubuntu admin - BT4\",\"to\":\"admin4\"},{\"from\":\"DC - BT4\",\"to\":\"dc\"},{\"from\":\"File server - BT4\",\"to\":\"files\"},{\"from\":\"File server - BT4\",\"to\":\"backup\"},{\"from\":\"Menu - BT4\",\"to\":\"menu\"},{\"from\":\"Database server - BT4\",\"to\":\"db\"},{\"from\":\"OCS - BT4\",\"to\":\"ocs\"},{\"from\":\"UPS - BT4\",\"to\":\"ups\"},{\"from\":\"Monitoring - BT4\",\"to\":\"monitoring\"},{\"from\":\"Operations - BT4\",\"to\":\"OPS-DESKTOP1\"},{\"from\":\"Operations - BT4\",\"to\":\"OPS-DESKTOP2\"},{\"from\":\"Application server\",\"to\":\"global-app\"}],\"dependencies\":[{\"from\":13,\"to\":21},{\"from\":15,\"to\":18},{\"from\":14,\"to\":19},{\"from\":15,\"to\":19},{\"from\":11,\"to\":12},{\"from\":13,\"to\":12},{\"from\":14,\"to\":12},{\"from\":15,\"to\":12},{\"from\":16,\"to\":12},{\"from\":17,\"to\":12},{\"from\":18,\"to\":12},{\"from\":19,\"to\":12},{\"from\":20,\"to\":12},{\"from\":21,\"to\":12},{\"from\":22,\"to\":12},{\"from\":23,\"to\":12},{\"from\":24,\"to\":12},{\"from\":25,\"to\":12},{\"from\":22,\"to\":26}]},\"nodes\":{\"missions\":[{\"name\":\"Public-Facing Services - BT4\",\"criticality\":5,\"description\":\"This mission represents services that must be available for public.\",\"id\":1},{\"name\":\"User Services - BT4\",\"criticality\":5,\"description\":\"This mission represents user desktops that must work for the white team.\",\"id\":2},{\"name\":\"Admin Services - BT4\",\"criticality\":7,\"description\":\"This mission represents admin hosts that must work to maintain the network.\",\"id\":3},{\"name\":\"Custom Application - BT4\",\"criticality\":10,\"description\":\"This mission provides dependencies for critical network application.\",\"id\":4},{\"name\":\"External Communication - BT4\",\"criticality\":10,\"description\":\"Communication with global application.\",\"id\":5}],\"hosts\":[{\"hostname\":\"mail\",\"ip\":\"9.66.44.12\",\"id\":30},{\"hostname\":\"dns\",\"ip\":\"9.66.44.13\",\"id\":31},{\"hostname\":\"www\",\"ip\":\"9.66.44.14\",\"id\":32},{\"hostname\":\"desktop3\",\"ip\":\"10.4.4.44\",\"id\":33},{\"hostname\":\"desktop4\",\"ip\":\"10.4.4.45\",\"id\":34},{\"hostname\":\"desktop1\",\"ip\":\"10.4.4.42\",\"id\":35},{\"hostname\":\"desktop2\",\"ip\":\"10.4.4.43\",\"id\":36},{\"hostname\":\"admin1\",\"ip\":\"10.4.4.46\",\"id\":37},{\"hostname\":\"admin2\",\"ip\":\"10.4.4.47\",\"id\":38},{\"hostname\":\"admin3\",\"ip\":\"10.4.4.48\",\"id\":39},{\"hostname\":\"admin4\",\"ip\":\"10.4.4.49\",\"id\":40},{\"hostname\":\"dc\",\"ip\":\"10.4.2.22\",\"id\":41},{\"hostname\":\"files\",\"ip\":\"10.4.2.23\",\"id\":42},{\"hostname\":\"backup\",\"ip\":\"10.4.2.24\",\"id\":43},{\"hostname\":\"menu\",\"ip\":\"10.4.2.25\",\"id\":44},{\"hostname\":\"db\",\"ip\":\"10.4.2.26\",\"id\":45},{\"hostname\":\"ocs\",\"ip\":\"10.4.2.27\",\"id\":46},{\"hostname\":\"ups\",\"ip\":\"10.4.2.28\",\"id\":47},{\"hostname\":\"monitoring\",\"ip\":\"10.4.2.29\",\"id\":48},{\"hostname\":\"OPS-DESKTOP1\",\"ip\":\"10.4.3.32\",\"id\":49},{\"hostname\":\"OPS-DESKTOP2\",\"ip\":\"10.4.3.33\",\"id\":50},{\"hostname\":\"global-app\",\"ip\":\"4.122.55.7\",\"id\":51}],\"services\":[{\"name\":\"Mail - BT4\",\"id\":11},{\"name\":\"DNS - BT4\",\"id\":12},{\"name\":\"Web - BT4\",\"id\":13},{\"name\":\"Ubuntu desktop - BT4\",\"id\":14},{\"name\":\"Windows desktop - BT4\",\"id\":15},{\"name\":\"Windows admin - BT4\",\"id\":16},{\"name\":\"Ubuntu admin - BT4\",\"id\":17},{\"name\":\"DC - BT4\",\"id\":18},{\"name\":\"File server - BT4\",\"id\":19},{\"name\":\"Menu - BT4\",\"id\":20},{\"name\":\"Database server - BT4\",\"id\":21},{\"name\":\"OCS - BT4\",\"id\":22},{\"name\":\"UPS - BT4\",\"id\":23},{\"name\":\"Monitoring - BT4\",\"id\":24},{\"name\":\"Operations - BT4\",\"id\":25},{\"name\":\"Application server\",\"id\":26}],\"aggregations\":{\"or\":[73,74,75,76,78,84],\"and\":[60,61,62,63,64,70,71,72,77,79,80,81,82,83,85,86]}}}"
+              }
+            }
+          }
+        },
+        {
+          "$type": "List",
+          "_value": [
+            {
+              "$type": "Relationship",
+              "_value": {
+                "_element_id": "5:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:308717",
+                "_start_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:335",
+                "_end_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:444",
+                "_type": "FOR",
+                "_properties": {}
+              }
+            },
+            {
+              "$type": "Relationship",
+              "_value": {
+                "_element_id": "5:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:313599",
+                "_start_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:343",
+                "_end_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:335",
+                "_type": "SUPPORTS",
+                "_properties": {}
+              }
+            },
+            {
+              "$type": "Relationship",
+              "_value": {
+                "_element_id": "5:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:313598",
+                "_start_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:342",
+                "_end_node_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:335",
+                "_type": "SUPPORTS",
+                "_properties": {}
+              }
+            }
+          ]
+        },
+        {
+          "$type": "List",
+          "_value": [
+            {
+              "$type": "Node",
+              "_value": {
+                "_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:444",
+                "_labels": ["OrganizationUnit"],
+                "_properties": {
+                  "name": {
+                    "$type": "String",
+                    "_value": "Fictitious Organization 4"
+                  }
+                }
+              }
+            },
+            {
+              "$type": "Node",
+              "_value": {
+                "_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:343",
+                "_labels": ["Component"],
+                "_properties": {
+                  "name": {
+                    "$type": "String",
+                    "_value": "Windows desktop - BT4"
+                  }
+                }
+              }
+            },
+            {
+              "$type": "Node",
+              "_value": {
+                "_element_id": "4:db140b1a-6f67-4d42-85f9-f4aa4baec5e1:342",
+                "_labels": ["Component"],
+                "_properties": {
+                  "name": {
+                    "$type": "String",
+                    "_value": "Ubuntu desktop - BT4"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "bookmarks": ["FB:kcwQ2xQLGm9nTUKF+fSqS67F4coABoGNkA=="]
+}

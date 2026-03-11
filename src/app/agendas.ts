@@ -50,9 +50,7 @@ export const agendaContainers = [
   ),
   new AgendaContainer(
     'AI Stuff',
-    [
-      new Agenda('Vuln AI', '/vuln-ai'),
-    ],
+    [new Agenda('Vuln AI', '/vuln-ai')],
     'robot', // smart_toy
   ),
   new AgendaContainer(

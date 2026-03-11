@@ -1,35 +1,97 @@
 <h1>Vuln AI</h1>
-<p>WIP: This page will allow users to ask questions about vulnerabilities and get AI-generated answers.</p>
+<p>
+  WIP: This page will allow users to ask questions about vulnerabilities and get
+  AI-generated answers.
+</p>
 <div class="ai-prompter">
-    <sentinel-card class="editor-card" cardTitle="AI Prompt" titleIcon="smart_toy">
-        <div class="content-container">
-            <form (ngSubmit)="askQuestion()">
-                <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Question</mat-label>
-                    <input matInput placeholder="Ask away" [(ngModel)]="question" name="question">
-                    <mat-hint align="start"><strong>E.g. what hosts have communicated with 10.0.0.2?</strong> </mat-hint>
-                </mat-form-field>
-            </form>
-                <!-- <sentinel-button-with-icon
+  <sentinel-card
+    class="editor-card"
+    cardTitle="AI Prompt"
+    titleIcon="smart_toy"
+  >
+    <div class="content-container">
+      <form (ngSubmit)="askQuestion()">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Question</mat-label>
+          <input
+            matInput
+            placeholder="Ask away"
+            [(ngModel)]="question"
+            name="question"
+          />
+          <mat-hint align="start"
+            ><strong>E.g. what hosts have communicated with 10.0.0.2?</strong>
+          </mat-hint>
+        </mat-form-field>
+      </form>
+      <!-- <sentinel-button-with-icon
                     mat-flat-button
                     color="primary"
                     icon="send"
                     label="Ask Vuln AI"
                 ></sentinel-button-with-icon> -->
-        </div>
-    </sentinel-card>
-    <sentinel-card class="editor-card" cardTitle="Human Answer" titleIcon="man">
-        <div [innerHTML]="cleanHumanMarkdownResult() || 'No human answer available.'">
-        </div>
-    </sentinel-card>
-    <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
-        <div class="content-container">
-            <p>{{ response()?.query?.trim() || "No query available." }}</p>
-        </div>
-    </sentinel-card>
-    <sentinel-card class="editor-card" cardTitle="AI Answer" titleIcon="smart_toy">
-        <div class="content-container">
-            <p>{{ response()?.result?.trim() || "No AI answer available." }}</p>
-        </div>
-    </sentinel-card>
+    </div>
+  </sentinel-card>
+  <sentinel-card class="editor-card" cardTitle="Human Answer" titleIcon="man">
+    <div
+      [innerHTML]="cleanHumanMarkdownResult() || 'No human answer available.'"
+    ></div>
+  </sentinel-card>
+  <sentinel-card
+    class="editor-card"
+    cardTitle="Graph"
+    titleIcon="graph_5"
+  >
+    <div class="content-container">
+        @if (graphData()) {
+            <force-directed-graph
+                [nodes]="graphData()?.nodes || []"
+                [edges]="graphData()?.edges || []"
+            ></force-directed-graph>
+        }
+    </div>
+  </sentinel-card>
+  <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
+    <div class="content-container">
+      <p>{{ response()?.query?.trim() || "No query available." }}</p>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="executeQuery(this.response()!.query)"
+    >
+      Execute Query
+    </button>
+  </sentinel-card>
+  <sentinel-card
+    class="editor-card"
+    cardTitle="Visualization Query"
+    titleIcon="search"
+  >
+    <div class="content-container">
+      <p>
+        {{
+          response()?.visualization_query?.trim() ||
+            "No visualization query available."
+        }}
+      </p>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="executeQuery(this.response()!.visualization_query)"
+    >
+      Execute Visualization Query
+    </button>
+  </sentinel-card>
+
+  <sentinel-card
+    class="editor-card"
+    cardTitle="Raw Answer"
+    titleIcon="smart_toy"
+  >
+    <div class="content-container">
+      <p>{{ response()?.result?.trim() || "No raw answer available." }}</p>
+    </div>
+  </sentinel-card>
 </div>
