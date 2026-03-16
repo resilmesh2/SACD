@@ -26,8 +26,19 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
 
   private readonly width = 1600;
   private readonly height = 800;
-  private readonly color = d3.scaleOrdinal(d3.schemeObservable10);
-  private readonly nodeRadius = 20;
+  private readonly color = d3.scaleOrdinal(d3.schemePastel2);
+  //   '#E4295F',
+  //   '#8091ce',
+  //   '#44BFEC',
+  //   '#cf8585',
+  //   '#DDEDAA',
+  //   '#F6E27F',
+  //   '#ae6fd0',
+  //   '#e5b952',
+  //   '#5980eb',
+  //   '#7ed19c',
+  // ]);
+  private readonly nodeRadius = 25;
 
   ngOnChanges(): void {
     this.render();
@@ -54,9 +65,9 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .forceSimulation(nodes as d3.SimulationNodeDatum[])
       .force(
         'link',
-        d3.forceLink(links).id((d: any) => d.id).distance(120),
+        d3.forceLink(links).id((d: any) => d.id).distance(125),
       )
-      .force('charge', d3.forceManyBody().strength(-250))
+      .force('charge', d3.forceManyBody().strength(-500))
       .force('x', d3.forceX())
       .force('y', d3.forceY());
 
@@ -79,6 +90,17 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .on('zoom', (event) => everything.attr('transform', event.transform));
 
     (svg as d3.Selection<SVGSVGElement, unknown, any, any>).call(zoom);
+
+    const displayPropertyLookupTable = (node: any) => {
+      const type = node.labels[0] as string;
+      return {
+        'Vulnerability': (node.properties['description']?.toString() || '')?.split('ID')[1],
+        'Host': node.properties['hostname'],
+        'IP': node.properties['address'],
+        'SoftwareVersion': node.properties['version'],
+        'Mission': node.properties['name'],
+      }[type] as string || node.labels[0] || node.id;
+    };
 
     const link = everything
       .append('g')
@@ -106,7 +128,7 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .selectAll('text')
       .data(nodes)
       .join('text')
-      .text((d) => (d.labels[0] ?? d.id))
+      .text((d) => displayPropertyLookupTable(d))
       .attr('text-anchor', 'middle')
       .attr('dy', '0.35em')
       .attr('font-size', 11)
