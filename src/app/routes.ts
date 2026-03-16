@@ -28,7 +28,6 @@ import { SubnetDetailComponent } from './pages/subnet-detail/subnet-detail.compo
 import { OrgUnitDetailComponent } from './pages/org-unit-detail/org-unit-detail.component';
 import { SubnetGraphPageComponent } from './pages/subnet-graph-page/subnet-graph-page.component';
 import { OrgGraphPageComponent } from './pages/org-graph-page/org-graph-page.component';
-import { IframePortalComponent } from './pages/external/iframe-portal.component';
 import { EXTERNAL_ROUTES } from './external';
 import { CSAPageComponent } from './pages/csa-page/csa-page.component';
 import { MissionEditorComponent } from './pages/mission-editor-page/mission-editor.component';

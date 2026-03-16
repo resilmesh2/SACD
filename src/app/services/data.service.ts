@@ -462,7 +462,6 @@ export class DataService {
    * Returns vulnerable machines (software version, ip address, domain, subnet)
    * @param cveCode CVE code of vulnerability
    */
-
   public getVulnerableMachines(
     cveCode: string,
   ): Observable<VulnerabilityData[] | null> {
@@ -541,84 +540,87 @@ export class DataService {
   /**
    * Returns all CVE objects in bulk
    */
-  public getAllCVEDetails(): Observable<CVE[]> {
+  public getVulnerabilities(): Observable<CVE[]> {
     return this.apollo
       .query<{ CVE: CVE[] }>({
         query: gql`
           {
-            cves {
-              cve_id
-              description
-              cwe
-              cpe_type
-              ref_tags
-              published
-              last_modified
-              result_impacts
-              cvss_v2 {
-                vector_string
-                access_vector
-                access_complexity
-                authentication
-                confidentiality_impact
-                integrity_impact
-                availability_impact
-                base_score
-                base_severity
-                exploitability_score
-                impact_score
-                ac_insuf_info
-                obtain_all_privilege
-                obtain_user_privilege
-                obtain_other_privilege
-                user_interaction_required
-              }
-              cvss_v30 {
-                vector_string
-                attack_vector
-                attack_complexity
-                privileges_required
-                user_interaction
-                scope
-                confidentiality_impact
-                integrity_impact
-                availability_impact
-                base_score
-                base_severity
-                exploitability_score
-                impact_score
-              }
-              cvss_v31 {
-                vector_string
-                attack_vector
-                attack_complexity
-                privileges_required
-                user_interaction
-                scope
-                confidentiality_impact
-                integrity_impact
-                availability_impact
-                base_score
-                base_severity
-                exploitability_score
-                impact_score
-              }
-              cvss_v40 {
-                vector_string
-                attack_vector
-                attack_complexity
-                attack_requirements
-                privileges_required
-                user_interaction
-                vulnerable_system_confidentiality
-                vulnerable_system_integrity
-                vulnerable_system_availability
-                subsequent_system_confidentiality
-                subsequent_system_integrity
-                subsequent_system_availability
-                base_score
-                base_severity
-                exploit_maturity
+            vulnerabilities {
+              status
+              cve {
+                cve_id
+                description
+                cwe
+                cpe_type
+                ref_tags
+                published
+                last_modified
+                result_impacts
+                cvss_v2 {
+                  vector_string
+                  access_vector
+                  access_complexity
+                  authentication
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                  ac_insuf_info
+                  obtain_all_privilege
+                  obtain_user_privilege
+                  obtain_other_privilege
+                  user_interaction_required
+                }
+                cvss_v30 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  privileges_required
+                  user_interaction
+                  scope
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                }
+                cvss_v31 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  privileges_required
+                  user_interaction
+                  scope
+                  confidentiality_impact
+                  integrity_impact
+                  availability_impact
+                  base_score
+                  base_severity
+                  exploitability_score
+                  impact_score
+                }
+                cvss_v40 {
+                  vector_string
+                  attack_vector
+                  attack_complexity
+                  attack_requirements
+                  privileges_required
+                  user_interaction
+                  vulnerable_system_confidentiality
+                  vulnerable_system_integrity
+                  vulnerable_system_availability
+                  subsequent_system_confidentiality
+                  subsequent_system_integrity
+                  subsequent_system_availability
+                  base_score
+                  base_severity
+                  exploit_maturity
+                }
               }
             }
           }
@@ -626,7 +628,10 @@ export class DataService {
       })
       .pipe(
         map((response) => {
-          return response.data.cves;
+          return response.data.vulnerabilities.map((vuln) => ({
+            ...vuln.cve,
+            status: vuln.status,
+          }));
         }),
       );
   }
@@ -666,19 +671,220 @@ export class DataService {
             ips {
               _id
               address
+              status
               subnets {
                 range
               }
               tag
+              nodes {
+                host {
+                  network_servicesAggregate {
+                    count
+                  }
+                }
+              }
             }
           }
         `,
       })
       .pipe(
         map((response) => {
-          return response.data.ips;
+          return response.data.ips.map((ipNode: any) => ({
+            _id: ipNode._id,
+            type: ipNode.__typename,
+            address: ipNode.address,
+            status: ipNode.status,
+            subnets: ipNode.subnets,
+            tag: ipNode.tag,
+            networkServicesCount: ipNode.nodes.reduce(
+              (count: number, node: any) => {
+                return (
+                  count + (node?.host?.network_servicesAggregate?.count || 0)
+                );
+              },
+              0,
+            ),
+          }));
         }),
       );
+  }
+
+  public getNetworkServices(): Observable<NetworkService[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+          {
+            networkServices {
+              _id
+              service
+              protocol
+              port
+              hostsConnection {
+                edges {
+                  properties {
+                    status
+                  }
+                  node {
+                    node {
+                      ips {
+                        address
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+      })
+      .pipe(
+        map((response) => {
+          return response.data.networkServices.flatMap((service: any) => {
+            return service.hostsConnection.edges.flatMap((hostEdge: any) => {
+              return hostEdge.node.node.ips.flatMap((ipNode: any) => {
+                return {
+                  _id: service._id,
+                  type: service.__typename,
+                  service: service.service,
+                  protocol: service.protocol,
+                  port: service.port,
+                  status: hostEdge.properties.status,
+                  ip_address: ipNode.address,
+                } as NetworkService;
+              });
+            });
+          });
+        }),
+      );
+  }
+
+  public getDomainNames(): Observable<string[]> {
+    return this.apollo
+      .query<any>({
+        query: gql`
+          {
+            domainNames {
+              domain_name
+              __typename
+              ips {
+                address
+              }
+            }
+          }
+        `,
+      })
+      .pipe(
+        map((response) => {
+          return response.data.domainNames.map((domain: any) => {
+            return {
+              domain_name: domain.domain_name,
+              type: domain.__typename,
+              ips: domain.ips.map((ip: any) => ip.address),
+            };
+          });
+        }),
+      );
+  }
+
+  public updateVulnerabilityStatus(cve: string, status: string[]): void {
+    this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation UpdateVulnerabilityStatus(
+            $cve: String!
+            $status: [String]!
+          ) {
+            updateVulnerabilityStatus(cve: $cve, status: $status) {
+              status
+            }
+          }
+        `,
+        variables: {
+          cve: cve,
+          status: status,
+        },
+      })
+      .subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        },
+      });
+  }
+
+  public changeIPStatus(address: string, status: string): void {
+    this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation UpdateIPStatus($address: String!, $status: String!) {
+            updateIPStatus(address: $address, status: $status) {
+              _id
+              address
+              status
+            }
+          }
+        `,
+        variables: {
+          address: address,
+          status: status,
+        },
+      })
+      .subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        },
+      });
+  }
+
+  public changeNetworkServiceStatus(
+    address: string,
+    protocol: string,
+    port: number,
+    service: string,
+    status: string,
+  ): void {
+    this.apollo
+      .mutate<any>({
+        mutation: gql`
+          mutation UpdateNetworkServiceStatus(
+            $address: String!
+            $protocol: String!
+            $port: Int!
+            $service: String!
+            $status: String!
+          ) {
+            updateNetworkServiceStatus(
+              address: $address
+              protocol: $protocol
+              port: $port
+              service: $service
+              status: $status
+            ) {
+              status
+            }
+          }
+        `,
+        variables: {
+          address: address,
+          protocol: protocol,
+          port: port,
+          service: service,
+          status: status,
+        },
+      })
+      .subscribe({
+        error: (error) => {
+          console.error('Error running mutation', error);
+        },
+        complete: () => {
+          console.log('Mutation completed');
+        },
+      });
   }
 
   public changeTag(address: string, tag: string[]): void {

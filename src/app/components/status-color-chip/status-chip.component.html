@@ -1,7 +1,11 @@
 <span
-  class="severity-label"
+  class="status-label"
   [style.background-color]="color()"
   [style.color]="labelColor()"
 >
-  {{ label() }}
+  @if (!label() || label()?.trim() == "") {
+    N/A
+  } @else {
+    {{ label() }}
+  }
 </span>
