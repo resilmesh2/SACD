@@ -2,10 +2,11 @@ import {
   Component,
   ElementRef,
   input,
-  Input,
   OnChanges,
   OnDestroy,
+  signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import * as d3 from 'd3';
 import { GraphEdge, GraphNode } from './neo4j-graph.service';
@@ -39,6 +40,7 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
   //   '#7ed19c',
   // ]);
   private readonly nodeRadius = 25;
+  selectedId: WritableSignal<string | null> = signal(null);
 
   ngOnChanges(): void {
     this.render();
@@ -56,6 +58,7 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
     const links = this.edges()?.map((e) => ({
       source: e.source,
       target: e.target,
+      type: e.type,
     }));
 
     console.log('Rendering graph with nodes:', nodes);
@@ -65,9 +68,9 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .forceSimulation(nodes as d3.SimulationNodeDatum[])
       .force(
         'link',
-        d3.forceLink(links).id((d: any) => d.id).distance(125),
+        d3.forceLink(links).id((d: any) => d.id).distance(200),
       )
-      .force('charge', d3.forceManyBody().strength(-500))
+      .force('charge', d3.forceManyBody().strength(-750))
       .force('x', d3.forceX())
       .force('y', d3.forceY());
 
@@ -83,11 +86,32 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       ])
       .attr('style', 'max-width: 100%; height: auto;');
 
+    svg
+      .append('defs')
+      .append('marker')
+      .attr('id', 'arrowhead')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 10)
+      .attr('refY', 0)
+      .attr('markerWidth', 6)
+      .attr('markerHeight', 6)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-5L10,0L0,5')
+      .attr('fill', '#999');
+
     const everything = svg.append('g');
+
+    const labelVisibilityThreshold = 1;
 
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.1, 4])
-      .on('zoom', (event) => everything.attr('transform', event.transform));
+      .on('zoom', (event) => {
+        everything.attr('transform', event.transform);
+        const visible = event.transform.k >= labelVisibilityThreshold ? null : 'none';
+        label.attr('display', visible);
+        linkLabel.attr('display', visible);
+      });
 
     (svg as d3.Selection<SVGSVGElement, unknown, any, any>).call(zoom);
 
@@ -99,6 +123,7 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
         'IP': node.properties['address'],
         'SoftwareVersion': node.properties['version'],
         'Mission': node.properties['name'],
+        'CVE': node.properties['cve_id'],
       }[type] as string || node.labels[0] || node.id;
     };
 
@@ -109,12 +134,24 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .selectAll('line')
       .data(links)
       .join('line')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 1.5)
+      .attr('marker-end', 'url(#arrowhead)');
+
+    const selectionRing = everything
+      .append('g')
+      .attr('fill', 'none')
+      .attr('stroke', '#8fe3e8')
+      .attr('stroke-width', 3)
+      .selectAll('circle')
+      .data(nodes)
+      .join('circle')
+      .attr('r', this.nodeRadius + 2)
+      .attr('display', 'none');
 
     const node = everything
       .append('g')
       .attr('stroke', '#fff')
-      .attr('stroke-width', 1.5)
+      .attr('stroke-width', 3)
       .selectAll('circle')
       .data(nodes)
       .join('circle')
@@ -133,7 +170,39 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .attr('dy', '0.35em')
       .attr('font-size', 11)
       .attr('fill', '#333')
-      .attr('pointer-events', 'none');
+      .attr('pointer-events', 'none')
+      .attr('display', 'none');
+
+    const linkLabel = everything
+      .append('g')
+      .selectAll('text')
+      .data(links)
+      .join('text')
+      .text((d: any) => d.type ?? '')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '-0.35em')
+      .attr('font-size', 10)
+      .attr('fill', '#666')
+      .attr('pointer-events', 'none')
+      .attr('display', 'none');
+
+    
+
+    const updateSelection = () => {
+      selectionRing.attr('display', (d: any) => d.id === this.selectedId() ? null : 'none');
+      label.attr('font-weight', (d: any) => d.id === this.selectedId() ? 'bold' : null);
+    };
+
+    (node as d3.Selection<SVGCircleElement, any, any, any>).on('click', (event, d: any) => {
+      this.selectedId.set(this.selectedId() === d.id ? null : d.id);
+      updateSelection();
+      event.stopPropagation();
+    });
+
+    (svg as d3.Selection<SVGSVGElement, unknown, any, any>).on('click', () => {
+      this.selectedId.set(null);
+      updateSelection();
+    });
 
     (node as d3.Selection<SVGCircleElement, any, any, any>).call(
       d3
@@ -156,13 +225,37 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
 
     this.simulation.on('tick', () => {
       link
-        .attr('x1', (d: any) => d.source.x)
-        .attr('y1', (d: any) => d.source.y)
-        .attr('x2', (d: any) => d.target.x)
-        .attr('y2', (d: any) => d.target.y);
+        .attr('x1', (d: any) => {
+          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.source.x + (dx / dist) * this.nodeRadius;
+        })
+        .attr('y1', (d: any) => {
+          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.source.y + (dy / dist) * this.nodeRadius;
+        })
+        .attr('x2', (d: any) => {
+          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.target.x - (dx / dist) * this.nodeRadius;
+        })
+        .attr('y2', (d: any) => {
+          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.target.y - (dy / dist) * this.nodeRadius;
+        });
 
       node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
+      selectionRing.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
       label.attr('x', (d: any) => d.x).attr('y', (d: any) => d.y);
+      linkLabel.attr('transform', (d: any) => {
+        const mx = (d.source.x + d.target.x) / 2;
+        const my = (d.source.y + d.target.y) / 2;
+        let angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x) * 180 / Math.PI;
+        if (angle > 90 || angle < -90) angle += 180;
+        return `translate(${mx},${my}) rotate(${angle})`;
+      });
     });
 
     this.container.nativeElement.appendChild(svg.node()!);

@@ -37,20 +37,30 @@
       [innerHTML]="cleanHumanMarkdownResult() || 'No human answer available.'"
     ></div>
   </sentinel-card>
-  <sentinel-card
-    class="editor-card"
-    cardTitle="Graph"
-    titleIcon="graph_5"
-  >
-    <div class="content-container">
-        @if (graphData()) {
-            <force-directed-graph
-                [nodes]="graphData()?.nodes || []"
-                [edges]="graphData()?.edges || []"
-            ></force-directed-graph>
-        }
-    </div>
-  </sentinel-card>
+  <div class="graph-and-details">
+    <sentinel-card
+      class="editor-card graph"
+      cardTitle="Graph"
+      titleIcon="graph_5"
+    >
+      <div class="content-container">
+          @if (graphData()) {
+              <force-directed-graph
+                  [nodes]="graphData()?.nodes || []"
+                  [edges]="graphData()?.edges || []"
+              ></force-directed-graph>
+          }
+      </div>
+    </sentinel-card>
+    <sentinel-card
+      class="editor-card node-details"
+      cardTitle="Details"
+      titleIcon="info"
+    >
+    test info here
+    </sentinel-card>
+  </div>
+
   <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
     <div class="content-container">
       <p>{{ response()?.query?.trim() || "No query available." }}</p>
