@@ -54,9 +54,9 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .forceSimulation(nodes as d3.SimulationNodeDatum[])
       .force(
         'link',
-        d3.forceLink(links).id((d: any) => d.id).distance(200),
+        d3.forceLink(links).id((d: any) => d.id).distance(120),
       )
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('charge', d3.forceManyBody().strength(-250))
       .force('x', d3.forceX())
       .force('y', d3.forceY());
 
