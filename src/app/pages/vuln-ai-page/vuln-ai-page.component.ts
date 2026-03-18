@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   OnInit,
+  Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
@@ -14,7 +15,8 @@ import { VulnAIPageService } from './vuln-ai-page.service';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { parseNeo4jGraphResponse } from './neo4j-graph.service';
-import { ForceDirectedGraphComponent } from "./force-directed-graph.component";
+import { ForceDirectedGraphComponent } from './force-directed-graph.component';
+import { A11yModule } from '@angular/cdk/a11y';
 
 type VulnAIResponse = {
   human_result: string;
@@ -34,14 +36,26 @@ type VulnAIResponse = {
     MatFormFieldModule,
     MatInputModule,
     SentinelCardComponent,
-    ForceDirectedGraphComponent
-],
+    ForceDirectedGraphComponent,
+    A11yModule,
+  ],
 })
 export class VulnAIPageComponent implements OnInit {
   question: WritableSignal<string> = signal('');
   response: WritableSignal<VulnAIResponse | null> = signal(null);
   humanMarkdownResult = signal('');
   graphData = signal<{ nodes: any[]; edges: any[] } | null>(null);
+  selectedNode = signal<any | undefined>(undefined);
+
+  nodeProperties = computed(() => {
+    const node = this.selectedNode();
+    if (!node) return [];
+
+    return Object.entries(node.properties || {}).map(([key, value]) => ({
+      key,
+      value: JSON.stringify(value, null, 2),
+    }));
+  });
 
   constructor(
     private route: ActivatedRoute,
@@ -79,7 +93,7 @@ export class VulnAIPageComponent implements OnInit {
       // Here you can process the response and update the UI accordingly
       const graph = parseNeo4jGraphResponse(response);
       console.log(graph.nodes, graph.edges);
-        this.graphData.set(graph);
+      this.graphData.set(graph);
     });
   }
 }

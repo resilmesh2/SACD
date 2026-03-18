@@ -17,12 +17,17 @@
   width: 100%;
 }
 
+.graph {
+  width: 100%;
+  height: 100%;
+}
+
 .graph-and-details {
   display: flex;
   flex-direction: row;
   gap: 1em;
   height: 100%;
-  width: 100%; 
+  width: 100%;
 }
 
 .node-details {
@@ -31,4 +36,14 @@
   flex-direction: column;
   gap: 0.5em;
   min-width: 20em;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.selected-title {
+  margin: 0;
 }

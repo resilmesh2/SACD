@@ -24,19 +24,9 @@
           </mat-hint>
         </mat-form-field>
       </form>
-      <!-- <sentinel-button-with-icon
-                    mat-flat-button
-                    color="primary"
-                    icon="send"
-                    label="Ask Vuln AI"
-                ></sentinel-button-with-icon> -->
     </div>
   </sentinel-card>
-  <sentinel-card class="editor-card" cardTitle="Human Answer" titleIcon="man">
-    <div
-      [innerHTML]="cleanHumanMarkdownResult() || 'No human answer available.'"
-    ></div>
-  </sentinel-card>
+
   <div class="graph-and-details">
     <sentinel-card
       class="editor-card graph"
@@ -44,34 +34,59 @@
       titleIcon="graph_5"
     >
       <div class="content-container">
-          @if (graphData()) {
-              <force-directed-graph
-                  [nodes]="graphData()?.nodes || []"
-                  [edges]="graphData()?.edges || []"
-              ></force-directed-graph>
-          }
+        @if (graphData()) {
+          <force-directed-graph
+            [nodes]="graphData()?.nodes || []"
+            [edges]="graphData()?.edges || []"
+            [(selectedNode)]="selectedNode"
+          ></force-directed-graph>
+        } @else {
+          <p>No graph data available.</p>
+        }
       </div>
     </sentinel-card>
     <sentinel-card
       class="editor-card node-details"
       cardTitle="Details"
-      titleIcon="info"
+      titleIcon="text_snippet"
     >
-    test info here
+      <div class="details-container">
+        @if (!selectedNode()) {
+          <p>Select a node to see details.</p>
+        } @else {
+          <h3 class="selected-title">
+            {{ selectedNode()?.labels[0] || selectedNode()?.id }}
+          </h3>
+          <div>
+            <p><strong>id:</strong> {{ selectedNode()?.id }}</p>
+            @for (property of nodeProperties(); track property.key) {
+              <p>
+                <strong>{{ property.key }}:</strong> {{ property.value }}
+              </p>
+            }
+          </div>
+        }
+      </div>
     </sentinel-card>
   </div>
+
+  <sentinel-card class="editor-card" cardTitle="Human Answer" titleIcon="man">
+    <div
+      [innerHTML]="cleanHumanMarkdownResult() || 'No human answer available.'"
+    ></div>
+  </sentinel-card>
 
   <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
     <div class="content-container">
       <p>{{ response()?.query?.trim() || "No query available." }}</p>
     </div>
-    <button
+    <!-- <button
       mat-flat-button
       color="primary"
       (click)="executeQuery(this.response()!.query)"
     >
       Execute Query
-    </button>
+    </button> -->
   </sentinel-card>
   <sentinel-card
     class="editor-card"

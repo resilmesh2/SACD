@@ -2,11 +2,11 @@ import {
   Component,
   ElementRef,
   input,
-  OnChanges,
+  model,
+  ModelSignal,
   OnDestroy,
-  signal,
+  SimpleChanges,
   ViewChild,
-  WritableSignal,
 } from '@angular/core';
 import * as d3 from 'd3';
 import { GraphEdge, GraphNode } from './neo4j-graph.service';
@@ -15,7 +15,7 @@ import { GraphEdge, GraphNode } from './neo4j-graph.service';
   selector: 'force-directed-graph',
   template: `<div #container></div>`,
 })
-export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
+export class ForceDirectedGraphComponent implements OnDestroy {
   nodes = input<GraphNode[]>([]);
   edges = input<GraphEdge[]>([]);
 
@@ -26,24 +26,17 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
     null;
 
   private readonly width = 1600;
-  private readonly height = 800;
+  private readonly height = 900;
   private readonly color = d3.scaleOrdinal(d3.schemePastel2);
-  //   '#E4295F',
-  //   '#8091ce',
-  //   '#44BFEC',
-  //   '#cf8585',
-  //   '#DDEDAA',
-  //   '#F6E27F',
-  //   '#ae6fd0',
-  //   '#e5b952',
-  //   '#5980eb',
-  //   '#7ed19c',
-  // ]);
   private readonly nodeRadius = 25;
-  selectedId: WritableSignal<string | null> = signal(null);
+  private readonly selectionRingRadius = 27;
+  selectedNode: ModelSignal<any | undefined> = model();
 
-  ngOnChanges(): void {
-    this.render();
+  ngOnChanges(changes: SimpleChanges): void {
+    // Don't re-render if only the selected node changed
+    if (changes['nodes'] || changes['edges']) {
+      this.render();
+    }
   }
 
   ngOnDestroy(): void {
@@ -68,7 +61,10 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .forceSimulation(nodes as d3.SimulationNodeDatum[])
       .force(
         'link',
-        d3.forceLink(links).id((d: any) => d.id).distance(200),
+        d3
+          .forceLink(links)
+          .id((d: any) => d.id)
+          .distance(200),
       )
       .force('charge', d3.forceManyBody().strength(-750))
       .force('x', d3.forceX())
@@ -102,13 +98,15 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
 
     const everything = svg.append('g');
 
-    const labelVisibilityThreshold = 1;
+    const labelVisibilityThreshold = 0.75; // The lower, the sooner labels will appear when zooming in
 
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
+    const zoom = d3
+      .zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.1, 4])
       .on('zoom', (event) => {
         everything.attr('transform', event.transform);
-        const visible = event.transform.k >= labelVisibilityThreshold ? null : 'none';
+        const visible =
+          event.transform.k >= labelVisibilityThreshold ? null : 'none';
         label.attr('display', visible);
         linkLabel.attr('display', visible);
       });
@@ -117,14 +115,20 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
 
     const displayPropertyLookupTable = (node: any) => {
       const type = node.labels[0] as string;
-      return {
-        'Vulnerability': (node.properties['description']?.toString() || '')?.split('ID')[1],
-        'Host': node.properties['hostname'],
-        'IP': node.properties['address'],
-        'SoftwareVersion': node.properties['version'],
-        'Mission': node.properties['name'],
-        'CVE': node.properties['cve_id'],
-      }[type] as string || node.labels[0] || node.id;
+      return (
+        ({
+          Vulnerability: (
+            node.properties['description']?.toString() || ''
+          )?.split('ID')[1],
+          Host: node.properties['hostname'],
+          IP: node.properties['address'],
+          SoftwareVersion: node.properties['version'],
+          Mission: node.properties['name'],
+          CVE: node.properties['cve_id'],
+        }[type] as string) ||
+        node.labels[0] ||
+        node.id
+      );
     };
 
     const link = everything
@@ -145,7 +149,7 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .selectAll('circle')
       .data(nodes)
       .join('circle')
-      .attr('r', this.nodeRadius + 2)
+      .attr('r', this.selectionRingRadius)
       .attr('display', 'none');
 
     const node = everything
@@ -186,21 +190,26 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       .attr('pointer-events', 'none')
       .attr('display', 'none');
 
-    
-
     const updateSelection = () => {
-      selectionRing.attr('display', (d: any) => d.id === this.selectedId() ? null : 'none');
-      label.attr('font-weight', (d: any) => d.id === this.selectedId() ? 'bold' : null);
+      selectionRing.attr('display', (d: any) =>
+        d.id === this.selectedNode()?.id ? null : 'none',
+      );
+      label.attr('font-weight', (d: any) =>
+        d.id === this.selectedNode()?.id ? 'bold' : null,
+      );
     };
 
-    (node as d3.Selection<SVGCircleElement, any, any, any>).on('click', (event, d: any) => {
-      this.selectedId.set(this.selectedId() === d.id ? null : d.id);
-      updateSelection();
-      event.stopPropagation();
-    });
+    (node as d3.Selection<SVGCircleElement, any, any, any>).on(
+      'click',
+      (event, d: any) => {
+        this.selectedNode.set(this.selectedNode()?.id === d.id ? null : d);
+        updateSelection();
+        event.stopPropagation();
+      },
+    );
 
     (svg as d3.Selection<SVGSVGElement, unknown, any, any>).on('click', () => {
-      this.selectedId.set(null);
+      this.selectedNode.set(undefined);
       updateSelection();
     });
 
@@ -226,22 +235,26 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
     this.simulation.on('tick', () => {
       link
         .attr('x1', (d: any) => {
-          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           return d.source.x + (dx / dist) * this.nodeRadius;
         })
         .attr('y1', (d: any) => {
-          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           return d.source.y + (dy / dist) * this.nodeRadius;
         })
         .attr('x2', (d: any) => {
-          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           return d.target.x - (dx / dist) * this.nodeRadius;
         })
         .attr('y2', (d: any) => {
-          const dx = d.target.x - d.source.x, dy = d.target.y - d.source.y;
+          const dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           return d.target.y - (dy / dist) * this.nodeRadius;
         });
@@ -252,7 +265,9 @@ export class ForceDirectedGraphComponent implements OnChanges, OnDestroy {
       linkLabel.attr('transform', (d: any) => {
         const mx = (d.source.x + d.target.x) / 2;
         const my = (d.source.y + d.target.y) / 2;
-        let angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x) * 180 / Math.PI;
+        let angle =
+          (Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x) * 180) /
+          Math.PI;
         if (angle > 90 || angle < -90) angle += 180;
         return `translate(${mx},${my}) rotate(${angle})`;
       });

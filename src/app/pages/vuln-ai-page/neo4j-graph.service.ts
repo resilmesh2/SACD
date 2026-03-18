@@ -57,7 +57,7 @@ function visit(
       const id = v['_element_id'] as string;
       if (!nodesMap.has(id)) {
         nodesMap.set(id, {
-          id: convertId(id),
+          id: id,
           labels: (v['_labels'] as string[]) ?? [],
           properties: unwrapProperties(
             (v['_properties'] as Record<string, unknown>) ?? {},
@@ -71,10 +71,10 @@ function visit(
       const id = v['_element_id'] as string;
       if (!edgesMap.has(id)) {
         edgesMap.set(id, {
-          id: convertId(id),
+          id: id,
           type: v['_type'] as string,
-          source: convertId(v['_start_node_element_id'] as string),
-          target: convertId(v['_end_node_element_id'] as string),
+          source: v['_start_node_element_id'] as string,
+          target: v['_end_node_element_id'] as string,
           properties: unwrapProperties(
             (v['_properties'] as Record<string, unknown>) ?? {},
           ),
@@ -83,8 +83,15 @@ function visit(
       break;
     }
     case 'List': {
-      for (const item of (t._value as unknown[]) ?? [])
+      for (const item of (t._value as unknown[]) ?? []) {
         visit(item, nodesMap, edgesMap);
+      }
+      break;
+    }
+    case 'Path': {
+      for (const item of (t._value as unknown[]) ?? []) {
+        visit(item, nodesMap, edgesMap);
+      }
       break;
     }
   }
