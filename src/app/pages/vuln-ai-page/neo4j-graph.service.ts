@@ -19,6 +19,7 @@ export interface GraphResult {
 
 type TypedValue = { $type: string; _value: unknown };
 
+// To process the Neo4j typed JSON response
 function unwrapTypedValue(typed: unknown): unknown {
   const t = typed as TypedValue;
   switch (t.$type) {
@@ -43,6 +44,8 @@ function unwrapProperties(
   );
 }
 
+// Neo4j can return nodes and relationships in variously nested structures
+// Hence we need to recursively visit the response and extract all nodes and edges
 function visit(
   val: unknown,
   nodesMap: Map<string, GraphNode>,
@@ -97,6 +100,7 @@ function visit(
   }
 }
 
+// If there is a need to convert internal id to something more readable
 function convertId(id: string): string {
   const parts = id.split(':');
   return parts[parts.length - 1] || id;

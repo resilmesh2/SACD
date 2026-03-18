@@ -1,8 +1,4 @@
 <h1>Vuln AI</h1>
-<p>
-  WIP: This page will allow users to ask questions about vulnerabilities and get
-  AI-generated answers.
-</p>
 <div class="ai-prompter">
   <sentinel-card
     class="editor-card"
@@ -79,7 +75,6 @@
   <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
     <div class="content-container">
       <div class="query-container">
-
         <p>{{ response()?.query?.trim() || "No query available." }}</p>
         <sentinel-button-with-icon
           color="primary"
@@ -90,7 +85,6 @@
           Copy Query
         </sentinel-button-with-icon>
       </div>
-      
     </div>
   </sentinel-card>
   <sentinel-card
@@ -105,14 +99,13 @@
             "No visualization query available."
         }}
       </p>
-
     </div>
     <div class="button-row">
       <sentinel-button-with-icon
-          color="primary"
-          icon="content_copy"
-          aria-label="Copy Query"
-          (click)="copyQuery(this.response()?.visualization_query || '')"
+        color="primary"
+        icon="content_copy"
+        aria-label="Copy Query"
+        (click)="copyQuery(this.response()?.visualization_query || '')"
       >
         Copy Query
       </sentinel-button-with-icon>

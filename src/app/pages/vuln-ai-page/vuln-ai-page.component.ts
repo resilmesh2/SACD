@@ -17,7 +17,7 @@ import { marked } from 'marked';
 import { parseNeo4jGraphResponse } from './neo4j-graph.service';
 import { ForceDirectedGraphComponent } from './force-directed-graph.component';
 import { A11yModule } from '@angular/cdk/a11y';
-import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
+import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 
 type VulnAIResponse = {
   human_result: string;
@@ -39,8 +39,8 @@ type VulnAIResponse = {
     SentinelCardComponent,
     ForceDirectedGraphComponent,
     A11yModule,
-    SentinelButtonWithIconComponent
-],
+    SentinelButtonWithIconComponent,
+  ],
 })
 export class VulnAIPageComponent implements OnInit {
   question: WritableSignal<string> = signal('');
@@ -92,7 +92,6 @@ export class VulnAIPageComponent implements OnInit {
     }
     this.vulnAIService.sendCypherQuery(query).subscribe((response) => {
       console.log('Cypher Query Response:', response);
-      // Here you can process the response and update the UI accordingly
       const graph = parseNeo4jGraphResponse(response);
       console.log(graph.nodes, graph.edges);
       this.graphData.set(graph);
