@@ -78,15 +78,20 @@
 
   <sentinel-card class="editor-card" cardTitle="Query" titleIcon="search">
     <div class="content-container">
-      <p>{{ response()?.query?.trim() || "No query available." }}</p>
+      <div class="query-container">
+
+        <p>{{ response()?.query?.trim() || "No query available." }}</p>
+        <sentinel-button-with-icon
+          color="primary"
+          icon="content_copy"
+          aria-label="Copy Query"
+          (click)="copyQuery(this.response()?.query || '')"
+        >
+          Copy Query
+        </sentinel-button-with-icon>
+      </div>
+      
     </div>
-    <!-- <button
-      mat-flat-button
-      color="primary"
-      (click)="executeQuery(this.response()!.query)"
-    >
-      Execute Query
-    </button> -->
   </sentinel-card>
   <sentinel-card
     class="editor-card"
@@ -100,14 +105,26 @@
             "No visualization query available."
         }}
       </p>
+
     </div>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="executeQuery(this.response()!.visualization_query)"
-    >
-      Execute Visualization Query
-    </button>
+    <div class="button-row">
+      <sentinel-button-with-icon
+          color="primary"
+          icon="content_copy"
+          aria-label="Copy Query"
+          (click)="copyQuery(this.response()?.visualization_query || '')"
+      >
+        Copy Query
+      </sentinel-button-with-icon>
+      <sentinel-button-with-icon
+        color="primary"
+        icon="play_arrow"
+        aria-label="Execute Visualization Query"
+        (click)="executeQuery(this.response()!.visualization_query)"
+      >
+        Execute Visualization Query
+      </sentinel-button-with-icon>
+    </div>
   </sentinel-card>
 
   <sentinel-card

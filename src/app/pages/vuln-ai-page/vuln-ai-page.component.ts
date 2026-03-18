@@ -17,6 +17,7 @@ import { marked } from 'marked';
 import { parseNeo4jGraphResponse } from './neo4j-graph.service';
 import { ForceDirectedGraphComponent } from './force-directed-graph.component';
 import { A11yModule } from '@angular/cdk/a11y';
+import { SentinelButtonWithIconComponent } from "@sentinel/components/button-with-icon";
 
 type VulnAIResponse = {
   human_result: string;
@@ -38,7 +39,8 @@ type VulnAIResponse = {
     SentinelCardComponent,
     ForceDirectedGraphComponent,
     A11yModule,
-  ],
+    SentinelButtonWithIconComponent
+],
 })
 export class VulnAIPageComponent implements OnInit {
   question: WritableSignal<string> = signal('');
@@ -95,5 +97,20 @@ export class VulnAIPageComponent implements OnInit {
       console.log(graph.nodes, graph.edges);
       this.graphData.set(graph);
     });
+  }
+
+  copyQuery(query: string) {
+    if (!query || query.trim() === '') {
+      console.error('No query to copy');
+      return;
+    }
+    navigator.clipboard.writeText(query).then(
+      () => {
+        console.log('Query copied to clipboard');
+      },
+      (err) => {
+        console.error('Could not copy query: ', err);
+      },
+    );
   }
 }

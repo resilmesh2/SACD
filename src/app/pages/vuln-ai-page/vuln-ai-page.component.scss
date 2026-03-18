@@ -13,6 +13,13 @@
   width: 100%;
 }
 
+.query-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 0.5em;
+}
+
 .example-full-width {
   width: 100%;
 }
@@ -46,4 +53,10 @@
 
 .selected-title {
   margin: 0;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
 }
