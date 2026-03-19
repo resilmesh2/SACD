@@ -135,7 +135,6 @@ export const Attributes = {
         }
         software_versions {
           _id
-          tag
           version
           vulnerabilities {
             description
