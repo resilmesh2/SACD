@@ -4,11 +4,13 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectorRef,
+  DestroyRef,
   signal,
   computed,
   WritableSignal,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -17,29 +19,15 @@ import { Router } from '@angular/router';
 
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { DataService } from '../../services/data.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
 import { SentinelCardComponent } from '@sentinel/components/card';
-import { SentinelControlItem } from '@sentinel/components/controls';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import { DATE_FORMAT } from '../../config/dateFormat';
 import { MatIcon } from '@angular/material/icon';
 import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
-
-export interface Service {
-  name: string;
-  id: string;
-  tag: string[];
-  subnet: string[];
-  severity: string[];
-  last_seen: Date | null;
-}
+import { CsaPageGetNodeObjectsQueryService } from './graphql/csa-page.operation.generated';
 
 export interface CSANode {
   ips: string[];
@@ -59,8 +47,6 @@ export interface CSANode {
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
@@ -71,7 +57,6 @@ export interface CSANode {
     SentinelButtonWithIconComponent,
     MatIcon,
   ],
-  providers: [provideMomentDateAdapter(DATE_FORMAT)],
   standalone: true,
 })
 export class CSAPageComponent implements OnInit, AfterViewInit {
@@ -119,15 +104,14 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   searchTerm: WritableSignal<string> = signal('');
 
-  controls: SentinelControlItem[] = [];
-
   constructor(
-    private data: DataService,
+    private getNodeObjects: CsaPageGetNodeObjectsQueryService,
     private changeDetector: ChangeDetectorRef,
   ) {
     this.dataSource = new MatTableDataSource<CSANode>([]);
   }
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
   COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
@@ -169,34 +153,43 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.dataLoading = true;
+    this.nodes.set([]);
 
-    this.data.getCSANodes().subscribe({
-      next: (nodes) => {
-        this.nodes.set(nodes);
+    this.getNodeObjects
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ data }) => {
+          this.nodes.set(
+            data.nodeObjects.map((node) => ({
+              ips: node.ips.map((ip) => ip.address),
+              topology_degree_norm: node.topology_degree_norm ?? 0,
+              topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
+              mission_criticality: node.mission_criticality ?? 0,
+              final_criticality: node.final_criticality ?? 0,
+            })),
+          );
 
-        this.dataSource.data = this.nodes();
+          this.dataSource.data = this.nodes();
 
-        if (this.paginator && this.sort) {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        }
+          if (this.paginator && this.sort) {
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          }
 
-        if (this.nodes().length > 0) {
-          this.dataLoaded = true;
-        } else {
-          this.emptyResponse = true;
-        }
-        this.dataLoading = false;
+          this.dataLoaded = this.nodes().length > 0;
+          this.emptyResponse = this.nodes().length === 0;
+          this.dataLoading = false;
 
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.errorResponse = error;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
-    });
+          this.changeDetector.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.errorResponse = error;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+      });
   }
 
   ngAfterViewInit() {
@@ -205,14 +198,10 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
       this.dataSource.sort = this.sort;
     }
 
-    /**
-     * Custom filter predicate for the data source.
-     */
     this.dataSource.filterPredicate = function (record, filter) {
       var map: Map<string, any> = new Map(JSON.parse(filter));
       let isMatch = false;
       for (let [key, value] of map) {
-        // Name filter (CVE ID)
         if (key === 'name') {
           isMatch =
             value === 'All' ||
@@ -249,8 +238,8 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  saveData(address: string, tags: string[]): void {
-    this.data.changeTag(address, tags);
+  saveData(_address: string, _tags: string[]): void {
+    // TODO: implement via mutation service when tag mutation is added to csa-page.operation.graphql
   }
 
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {

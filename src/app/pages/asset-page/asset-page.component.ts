@@ -4,11 +4,14 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectorRef,
+  DestroyRef,
   signal,
   computed,
   WritableSignal,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -182,50 +185,41 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.dataSource = new MatTableDataSource<Asset>([]);
   }
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
   ngOnInit(): void {
     this.dataLoading = true;
+    this.assets.set([]);
 
-    this.getIPsService.fetch().subscribe({
-      next: ({ data }) => {
-        this.ips = data.ips;
-        this.processIPs();
+    combineLatest([
+      this.getIPsService.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getNetworkServicesService.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getDomainNamesService.fetch({}, { fetchPolicy: 'network-only' }),
+    ])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ([ipsResult, servicesResult, domainsResult]) => {
+          this.ips = ipsResult.data.ips;
+          this.networkServices = servicesResult.data.networkServices;
+          this.domains = domainsResult.data.domainNames;
 
-        this.dataLoaded = this.ips.length > 0;
-        this.emptyResponse = this.ips.length === 0;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.errorResponse = error;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
-    });
+          this.processIPs();
+          this.processNetworkServices();
+          this.processDomains();
 
-    this.getNetworkServicesService.fetch().subscribe({
-      next: ({ data }) => {
-        this.networkServices = data.networkServices;
-        this.processNetworkServices();
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error fetching network services:', error);
-      },
-    });
-
-    this.getDomainNamesService.fetch().subscribe({
-      next: ({ data }) => {
-        this.domains = data.domainNames;
-        this.processDomains();
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error fetching domain names:', error);
-      },
-    });
+          this.dataLoaded = this.assets().length > 0;
+          this.emptyResponse = this.assets().length === 0;
+          this.dataLoading = false;
+          this.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.errorResponse = error;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+      });
 
     // Initialize filters
     this.filters.push({
@@ -425,8 +419,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
         };
       }),
     ]);
-
-    this.detectChanges();
   }
 
   private processNetworkServices(): void {
@@ -448,8 +440,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
         last_seen: null,
       })),
     ]);
-
-    this.detectChanges();
   }
 
   private processDomains(): void {
@@ -466,8 +456,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
         last_seen: null,
       })),
     ]);
-
-    this.detectChanges();
   }
 
   add(event: MatChipInputEvent, tags: string[]): void {
