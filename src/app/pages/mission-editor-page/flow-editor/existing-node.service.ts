@@ -13,7 +13,7 @@ export class ExistingNodeService {
     return this.apollo
       .query<any>({
         query: gql`
-          {
+          query MissionEditorGetHosts {
             hosts {
               hostname
             }
@@ -37,7 +37,7 @@ export class ExistingNodeService {
     return this.apollo
       .query<any>({
         query: gql`
-          {
+          query MissionEditorGetIPs {
             ips {
               address
             }
@@ -67,7 +67,7 @@ export class ExistingNodeService {
     return this.apollo
       .query<any>({
         query: gql`
-          {
+          query MissionEditorGetComponents {
             components(where: { missionsAggregate: { count_GT: 0 } }) {
               name
             }

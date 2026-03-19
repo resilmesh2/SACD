@@ -1,0 +1,17 @@
+query AssetPageGetIPs {
+  ips {
+    ...AssetPageIP
+  }
+}
+
+query AssetPageGetNetworkServices {
+  networkServices {
+    ...AssetPageNetworkService
+  }
+}
+
+query AssetPageGetDomainNames {
+  domainNames {
+    ...AssetPageDomainName
+  }
+}

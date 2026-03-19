@@ -1,0 +1,23 @@
+query SubnetPageGetSubnets {
+  subnets {
+    ...SubnetPageSubnet
+  }
+}
+
+query SubnetPageGetSubnet($range: String!) {
+  subnets(where: { range: $range }) {
+    ...SubnetPageSubnet
+  }
+}
+
+query SubnetPageGetChildIPs($range: String!) {
+  ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
+    ...SubnetPageChildIP
+  }
+}
+
+query SubnetPageGetChildSubnets($range: String!) {
+  subnets(where: { parent_subnet_SOME: { range: $range } }) {
+    range
+  }
+}

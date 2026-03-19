@@ -1,0 +1,44 @@
+fragment AssetPageIP on IP {
+  _id
+  address
+  status
+  tag
+  subnets {
+    range
+  }
+  nodes {
+    host {
+      network_servicesAggregate {
+        count
+      }
+    }
+  }
+}
+
+fragment AssetPageNetworkService on NetworkService {
+  _id
+  service
+  protocol
+  port
+  hostsConnection {
+    edges {
+      properties {
+        status
+      }
+      node {
+        node {
+          ips {
+            address
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment AssetPageDomainName on DomainName {
+  domain_name
+  ips {
+    address
+  }
+}

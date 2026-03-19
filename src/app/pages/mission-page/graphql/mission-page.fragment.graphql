@@ -1,0 +1,6 @@
+fragment MissionPageMission on Mission {
+  name
+  criticality
+  description
+  structure
+}

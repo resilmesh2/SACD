@@ -1,0 +1,36 @@
+fragment SubnetPageSubnet on Subnet {
+  _id
+  note
+  range
+  org_units {
+    name
+  }
+  contacts {
+    name
+  }
+  parent_subnet {
+    _id
+    note
+    range
+  }
+}
+
+fragment SubnetPageChildIP on IP {
+  address
+  version
+  subnets {
+    range
+  }
+  nodes {
+    host {
+      software_versions {
+        version
+        vulnerabilities {
+          cve {
+            cve_id
+          }
+        }
+      }
+    }
+  }
+}

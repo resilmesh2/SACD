@@ -32,7 +32,7 @@ export class SubnetService {
     return this.apollo
       .query<any>({
         query: gql`
-          {
+          query GetSubnetList {
             subnets {
               _id
               note
@@ -480,25 +480,26 @@ export class SubnetService {
     return this.apollo // Assuming 'this' has an Apollo instance
       .query<any>({
         query: gql`
-        {
-          subnets(where: { range: "${range}" }) {
-            _id
-            note
-            range
-            org_units {
-              name
-            }
-            contacts {
-              name
-            }
-            parent_subnet {
+          query GetSubnet($range: String!) {
+            subnets(where: { range: $range }) {
               _id
               note
               range
+              org_units {
+                name
+              }
+              contacts {
+                name
+              }
+              parent_subnet {
+                _id
+                note
+                range
+              }
             }
           }
-        }
-      `,
+        `,
+        variables: { range },
       })
       .pipe(
         map((response) => {
@@ -527,28 +528,29 @@ export class SubnetService {
     return this.apollo
       .query<any>({
         query: gql`
-        {
-          ips(where: { subnetsConnection_SINGLE: { node: { range: "${range}" } } }) {
-            address
-            version
-            subnets {
-              range
-            }
-            nodes {
-              host {
-                software_versions {
-                  vulnerabilities {
-                    cve {
-                      cve_id
+          query GetChildIPs($range: String!) {
+            ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
+              address
+              version
+              subnets {
+                range
+              }
+              nodes {
+                host {
+                  software_versions {
+                    vulnerabilities {
+                      cve {
+                        cve_id
+                      }
                     }
+                    version
                   }
-                  version
                 }
               }
             }
           }
-        }
-      `,
+        `,
+        variables: { range },
       })
       .pipe(
         map((response) => {
@@ -578,12 +580,13 @@ export class SubnetService {
     return this.apollo
       .query<any>({
         query: gql`
-        {
-          subnets(where: { parent_subnet: { range: "${range}" } }) {
-            range
+          query GetChildSubnets($range: String!) {
+            subnets(where: { parent_subnet_SOME: { range: $range } }) {
+              range
+            }
           }
-        }
-      `,
+        `,
+        variables: { range },
       })
       .pipe(
         map((response) => {

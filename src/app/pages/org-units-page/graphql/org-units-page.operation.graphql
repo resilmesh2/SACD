@@ -1,0 +1,11 @@
+query OrgUnitsPageGetAll {
+  organizationUnits {
+    ...OrgUnitsPageOrgUnit
+  }
+}
+
+query OrgUnitsPageGetOne($name: String!) {
+  organizationUnits(where: { name: $name }) {
+    ...OrgUnitsPageOrgUnit
+  }
+}

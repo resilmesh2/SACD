@@ -1,0 +1,15 @@
+fragment OrgUnitsPageOrgUnit on OrganizationUnit {
+  name
+  contacts {
+    name
+  }
+  subnets {
+    range
+    parent_subnet {
+      range
+    }
+  }
+  parent_org_unit {
+    name
+  }
+}
