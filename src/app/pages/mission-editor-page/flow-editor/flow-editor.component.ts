@@ -29,9 +29,10 @@ import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ExistingNodeService } from './existing-node.service';
-import { IP } from '../../asset-page/asset-page.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MissionMetadata } from '../mission-editor.component';
+import { Ip } from '../../../../generated/base-types';
+import { Subnet } from '../../../models/vulnerability.model';
 
 export type Connection = {
   from: string;
@@ -67,6 +68,16 @@ export type MissionNode = {
     reason: string;
   };
 };
+
+export interface IP {
+  _id: string;
+  address: string;
+  tag: string[];
+  status: string;
+  subnets: Subnet[];
+  type: string;
+  networkServicesCount: number;
+}
 
 const LAYER_Y = {
   COMPONENT_GROUP: 200,

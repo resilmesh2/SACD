@@ -1,6 +1,10 @@
-"""Exposes a URL that specifies the behavior of this scalar."""
+"""
+Exposes a URL that specifies the behavior of this scalar.
+"""
 directive @specifiedBy(
-  """The URL that specifies the behavior of this scalar."""
+  """
+  The URL that specifies the behavior of this scalar.
+  """
   url: String!
 ) on SCALAR
 
@@ -12,9 +16,22 @@ directive @oneOf on INPUT_OBJECT
 type Application {
   _id: ID!
   name: String!
-  devicesAggregate(where: DeviceWhere, directed: Boolean = true): ApplicationDeviceDevicesAggregationSelection
-  devices(where: DeviceWhere, options: DeviceOptions, directed: Boolean = true): [Device!]!
-  devicesConnection(where: ApplicationDevicesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ApplicationDevicesConnectionSort!]): ApplicationDevicesConnection!
+  devicesAggregate(
+    where: DeviceWhere
+    directed: Boolean = true
+  ): ApplicationDeviceDevicesAggregationSelection
+  devices(
+    where: DeviceWhere
+    options: DeviceOptions
+    directed: Boolean = true
+  ): [Device!]!
+  devicesConnection(
+    where: ApplicationDevicesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ApplicationDevicesConnectionSort!]
+  ): ApplicationDevicesConnection!
 }
 
 type ApplicationAggregateSelection {
@@ -236,7 +253,9 @@ input ApplicationWhere {
   AND: [ApplicationWhere!]
   NOT: ApplicationWhere
 
-  """Return Applications where all of the related Devices match this filter"""
+  """
+  Return Applications where all of the related Devices match this filter
+  """
   devices_ALL: DeviceWhere
 
   """
@@ -244,7 +263,9 @@ input ApplicationWhere {
   """
   devices_NONE: DeviceWhere
 
-  """Return Applications where one of the related Devices match this filter"""
+  """
+  Return Applications where one of the related Devices match this filter
+  """
   devices_SINGLE: DeviceWhere
 
   """
@@ -277,18 +298,70 @@ input ApplicationWhere {
 type Component {
   _id: ID!
   name: String!
-  missionsAggregate(where: MissionWhere, directed: Boolean = true): ComponentMissionMissionsAggregationSelection
-  missions(where: MissionWhere, options: MissionOptions, directed: Boolean = true): [Mission!]!
-  missionsConnection(where: ComponentMissionsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ComponentMissionsConnectionSort!]): ComponentMissionsConnection!
-  hostsAggregate(where: HostWhere, directed: Boolean = true): ComponentHostHostsAggregationSelection
-  hosts(where: HostWhere, options: HostOptions, directed: Boolean = true): [Host!]!
-  hostsConnection(where: ComponentHostsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ComponentHostsConnectionSort!]): ComponentHostsConnection!
-  from_mission_dependenciesAggregate(where: MissionDependencyWhere, directed: Boolean = true): ComponentMissionDependencyFrom_mission_dependenciesAggregationSelection
-  from_mission_dependencies(where: MissionDependencyWhere, options: MissionDependencyOptions, directed: Boolean = true): [MissionDependency!]!
-  from_mission_dependenciesConnection(where: ComponentFrom_mission_dependenciesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ComponentFrom_mission_dependenciesConnectionSort!]): ComponentFrom_mission_dependenciesConnection!
-  to_mission_dependenciesAggregate(where: MissionDependencyWhere, directed: Boolean = true): ComponentMissionDependencyTo_mission_dependenciesAggregationSelection
-  to_mission_dependencies(where: MissionDependencyWhere, options: MissionDependencyOptions, directed: Boolean = true): [MissionDependency!]!
-  to_mission_dependenciesConnection(where: ComponentTo_mission_dependenciesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ComponentTo_mission_dependenciesConnectionSort!]): ComponentTo_mission_dependenciesConnection!
+  missionsAggregate(
+    where: MissionWhere
+    directed: Boolean = true
+  ): ComponentMissionMissionsAggregationSelection
+  missions(
+    where: MissionWhere
+    options: MissionOptions
+    directed: Boolean = true
+  ): [Mission!]!
+  missionsConnection(
+    where: ComponentMissionsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ComponentMissionsConnectionSort!]
+  ): ComponentMissionsConnection!
+  hostsAggregate(
+    where: HostWhere
+    directed: Boolean = true
+  ): ComponentHostHostsAggregationSelection
+  hosts(
+    where: HostWhere
+    options: HostOptions
+    directed: Boolean = true
+  ): [Host!]!
+  hostsConnection(
+    where: ComponentHostsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ComponentHostsConnectionSort!]
+  ): ComponentHostsConnection!
+  from_mission_dependenciesAggregate(
+    where: MissionDependencyWhere
+    directed: Boolean = true
+  ): ComponentMissionDependencyFrom_mission_dependenciesAggregationSelection
+  from_mission_dependencies(
+    where: MissionDependencyWhere
+    options: MissionDependencyOptions
+    directed: Boolean = true
+  ): [MissionDependency!]!
+  from_mission_dependenciesConnection(
+    where: ComponentFrom_mission_dependenciesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ComponentFrom_mission_dependenciesConnectionSort!]
+  ): ComponentFrom_mission_dependenciesConnection!
+  to_mission_dependenciesAggregate(
+    where: MissionDependencyWhere
+    directed: Boolean = true
+  ): ComponentMissionDependencyTo_mission_dependenciesAggregationSelection
+  to_mission_dependencies(
+    where: MissionDependencyWhere
+    options: MissionDependencyOptions
+    directed: Boolean = true
+  ): [MissionDependency!]!
+  to_mission_dependenciesConnection(
+    where: ComponentTo_mission_dependenciesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ComponentTo_mission_dependenciesConnectionSort!]
+  ): ComponentTo_mission_dependenciesConnection!
 }
 
 type ComponentAggregateSelection {
@@ -876,16 +949,24 @@ input ComponentWhere {
   AND: [ComponentWhere!]
   NOT: ComponentWhere
 
-  """Return Components where all of the related Missions match this filter"""
+  """
+  Return Components where all of the related Missions match this filter
+  """
   missions_ALL: MissionWhere
 
-  """Return Components where none of the related Missions match this filter"""
+  """
+  Return Components where none of the related Missions match this filter
+  """
   missions_NONE: MissionWhere
 
-  """Return Components where one of the related Missions match this filter"""
+  """
+  Return Components where one of the related Missions match this filter
+  """
   missions_SINGLE: MissionWhere
 
-  """Return Components where some of the related Missions match this filter"""
+  """
+  Return Components where some of the related Missions match this filter
+  """
   missions_SOME: MissionWhere
 
   """
@@ -909,16 +990,24 @@ input ComponentWhere {
   missionsConnection_SOME: ComponentMissionsConnectionWhere
   missionsAggregate: ComponentMissionsAggregateInput
 
-  """Return Components where all of the related Hosts match this filter"""
+  """
+  Return Components where all of the related Hosts match this filter
+  """
   hosts_ALL: HostWhere
 
-  """Return Components where none of the related Hosts match this filter"""
+  """
+  Return Components where none of the related Hosts match this filter
+  """
   hosts_NONE: HostWhere
 
-  """Return Components where one of the related Hosts match this filter"""
+  """
+  Return Components where one of the related Hosts match this filter
+  """
   hosts_SINGLE: HostWhere
 
-  """Return Components where some of the related Hosts match this filter"""
+  """
+  Return Components where some of the related Hosts match this filter
+  """
   hosts_SOME: HostWhere
 
   """
@@ -1028,9 +1117,22 @@ input ComponentWhere {
 type Contact {
   _id: ID!
   name: String!
-  subnetsAggregate(where: SubnetWhere, directed: Boolean = true): ContactSubnetSubnetsAggregationSelection
-  subnets(where: SubnetWhere, options: SubnetOptions, directed: Boolean = true): [Subnet!]!
-  subnetsConnection(where: ContactSubnetsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [ContactSubnetsConnectionSort!]): ContactSubnetsConnection!
+  subnetsAggregate(
+    where: SubnetWhere
+    directed: Boolean = true
+  ): ContactSubnetSubnetsAggregationSelection
+  subnets(
+    where: SubnetWhere
+    options: SubnetOptions
+    directed: Boolean = true
+  ): [Subnet!]!
+  subnetsConnection(
+    where: ContactSubnetsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [ContactSubnetsConnectionSort!]
+  ): ContactSubnetsConnection!
 }
 
 type ContactAggregateSelection {
@@ -1236,16 +1338,24 @@ input ContactWhere {
   AND: [ContactWhere!]
   NOT: ContactWhere
 
-  """Return Contacts where all of the related Subnets match this filter"""
+  """
+  Return Contacts where all of the related Subnets match this filter
+  """
   subnets_ALL: SubnetWhere
 
-  """Return Contacts where none of the related Subnets match this filter"""
+  """
+  Return Contacts where none of the related Subnets match this filter
+  """
   subnets_NONE: SubnetWhere
 
-  """Return Contacts where one of the related Subnets match this filter"""
+  """
+  Return Contacts where one of the related Subnets match this filter
+  """
   subnets_SINGLE: SubnetWhere
 
-  """Return Contacts where some of the related Subnets match this filter"""
+  """
+  Return Contacts where some of the related Subnets match this filter
+  """
   subnets_SOME: SubnetWhere
 
   """
@@ -1334,7 +1444,10 @@ type CreateHostsMutationResponse {
 Information about the number of nodes and relationships created during a create mutation
 """
 type CreateInfo {
-  bookmark: String @deprecated(reason: "This field has been deprecated because bookmarks are now handled by the driver.")
+  bookmark: String
+    @deprecated(
+      reason: "This field has been deprecated because bookmarks are now handled by the driver."
+    )
   nodesCreated: Int!
   relationshipsCreated: Int!
 }
@@ -1404,21 +1517,86 @@ type CVE {
   published: String!
   last_modified: String!
   result_impacts: [String]
-  vulnerabilityAggregate(where: VulnerabilityWhere, directed: Boolean = true): CVEVulnerabilityVulnerabilityAggregationSelection
-  vulnerability(where: VulnerabilityWhere, options: VulnerabilityOptions, directed: Boolean = true): Vulnerability!
-  vulnerabilityConnection(where: CVEVulnerabilityConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [CVEVulnerabilityConnectionSort!]): CVEVulnerabilityConnection!
-  cvss_v2Aggregate(where: CVSSv2Where, directed: Boolean = true): CVECVSSv2Cvss_v2AggregationSelection
-  cvss_v2(where: CVSSv2Where, options: CVSSv2Options, directed: Boolean = true): CVSSv2
-  cvss_v2Connection(where: CVECvss_v2ConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [CVECvss_v2ConnectionSort!]): CVECvss_v2Connection!
-  cvss_v30Aggregate(where: CVSSv30Where, directed: Boolean = true): CVECVSSv30Cvss_v30AggregationSelection
-  cvss_v30(where: CVSSv30Where, options: CVSSv30Options, directed: Boolean = true): CVSSv30
-  cvss_v30Connection(where: CVECvss_v30ConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [CVECvss_v30ConnectionSort!]): CVECvss_v30Connection!
-  cvss_v31Aggregate(where: CVSSv31Where, directed: Boolean = true): CVECVSSv31Cvss_v31AggregationSelection
-  cvss_v31(where: CVSSv31Where, options: CVSSv31Options, directed: Boolean = true): CVSSv31
-  cvss_v31Connection(where: CVECvss_v31ConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [CVECvss_v31ConnectionSort!]): CVECvss_v31Connection!
-  cvss_v40Aggregate(where: CVSSv40Where, directed: Boolean = true): CVECVSSv40Cvss_v40AggregationSelection
-  cvss_v40(where: CVSSv40Where, options: CVSSv40Options, directed: Boolean = true): CVSSv40
-  cvss_v40Connection(where: CVECvss_v40ConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [CVECvss_v40ConnectionSort!]): CVECvss_v40Connection!
+  vulnerabilityAggregate(
+    where: VulnerabilityWhere
+    directed: Boolean = true
+  ): CVEVulnerabilityVulnerabilityAggregationSelection
+  vulnerability(
+    where: VulnerabilityWhere
+    options: VulnerabilityOptions
+    directed: Boolean = true
+  ): Vulnerability!
+  vulnerabilityConnection(
+    where: CVEVulnerabilityConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [CVEVulnerabilityConnectionSort!]
+  ): CVEVulnerabilityConnection!
+  cvss_v2Aggregate(
+    where: CVSSv2Where
+    directed: Boolean = true
+  ): CVECVSSv2Cvss_v2AggregationSelection
+  cvss_v2(
+    where: CVSSv2Where
+    options: CVSSv2Options
+    directed: Boolean = true
+  ): CVSSv2
+  cvss_v2Connection(
+    where: CVECvss_v2ConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [CVECvss_v2ConnectionSort!]
+  ): CVECvss_v2Connection!
+  cvss_v30Aggregate(
+    where: CVSSv30Where
+    directed: Boolean = true
+  ): CVECVSSv30Cvss_v30AggregationSelection
+  cvss_v30(
+    where: CVSSv30Where
+    options: CVSSv30Options
+    directed: Boolean = true
+  ): CVSSv30
+  cvss_v30Connection(
+    where: CVECvss_v30ConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [CVECvss_v30ConnectionSort!]
+  ): CVECvss_v30Connection!
+  cvss_v31Aggregate(
+    where: CVSSv31Where
+    directed: Boolean = true
+  ): CVECVSSv31Cvss_v31AggregationSelection
+  cvss_v31(
+    where: CVSSv31Where
+    options: CVSSv31Options
+    directed: Boolean = true
+  ): CVSSv31
+  cvss_v31Connection(
+    where: CVECvss_v31ConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [CVECvss_v31ConnectionSort!]
+  ): CVECvss_v31Connection!
+  cvss_v40Aggregate(
+    where: CVSSv40Where
+    directed: Boolean = true
+  ): CVECVSSv40Cvss_v40AggregationSelection
+  cvss_v40(
+    where: CVSSv40Where
+    options: CVSSv40Options
+    directed: Boolean = true
+  ): CVSSv40
+  cvss_v40Connection(
+    where: CVECvss_v40ConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [CVECvss_v40ConnectionSort!]
+  ): CVECvss_v40Connection!
 }
 
 type CVEAggregateSelection {
@@ -3774,7 +3952,10 @@ input CVSSv40Where {
 Information about the number of nodes and relationships deleted during a delete mutation
 """
 type DeleteInfo {
-  bookmark: String @deprecated(reason: "This field has been deprecated because bookmarks are now handled by the driver.")
+  bookmark: String
+    @deprecated(
+      reason: "This field has been deprecated because bookmarks are now handled by the driver."
+    )
   nodesDeleted: Int!
   relationshipsDeleted: Int!
 }
@@ -3784,12 +3965,38 @@ type Device {
   name: String
   state: String
   power: String
-  hardware_versionAggregate(where: HardwareVersionWhere, directed: Boolean = true): DeviceHardwareVersionHardware_versionAggregationSelection
-  hardware_version(where: HardwareVersionWhere, options: HardwareVersionOptions, directed: Boolean = true): HardwareVersion
-  hardware_versionConnection(where: DeviceHardware_versionConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [DeviceHardware_versionConnectionSort!]): DeviceHardware_versionConnection!
-  applicationsAggregate(where: ApplicationWhere, directed: Boolean = true): DeviceApplicationApplicationsAggregationSelection
-  applications(where: ApplicationWhere, options: ApplicationOptions, directed: Boolean = true): [Application!]!
-  applicationsConnection(where: DeviceApplicationsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [DeviceApplicationsConnectionSort!]): DeviceApplicationsConnection!
+  hardware_versionAggregate(
+    where: HardwareVersionWhere
+    directed: Boolean = true
+  ): DeviceHardwareVersionHardware_versionAggregationSelection
+  hardware_version(
+    where: HardwareVersionWhere
+    options: HardwareVersionOptions
+    directed: Boolean = true
+  ): HardwareVersion
+  hardware_versionConnection(
+    where: DeviceHardware_versionConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [DeviceHardware_versionConnectionSort!]
+  ): DeviceHardware_versionConnection!
+  applicationsAggregate(
+    where: ApplicationWhere
+    directed: Boolean = true
+  ): DeviceApplicationApplicationsAggregationSelection
+  applications(
+    where: ApplicationWhere
+    options: ApplicationOptions
+    directed: Boolean = true
+  ): [Application!]!
+  applicationsConnection(
+    where: DeviceApplicationsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [DeviceApplicationsConnectionSort!]
+  ): DeviceApplicationsConnection!
 }
 
 type DeviceAggregateSelection {
@@ -4130,7 +4337,9 @@ input DeviceWhere {
   hardware_versionConnection_NOT: DeviceHardware_versionConnectionWhere
   hardware_versionAggregate: DeviceHardware_versionAggregateInput
 
-  """Return Devices where all of the related Applications match this filter"""
+  """
+  Return Devices where all of the related Applications match this filter
+  """
   applications_ALL: ApplicationWhere
 
   """
@@ -4138,7 +4347,9 @@ input DeviceWhere {
   """
   applications_NONE: ApplicationWhere
 
-  """Return Devices where one of the related Applications match this filter"""
+  """
+  Return Devices where one of the related Applications match this filter
+  """
   applications_SINGLE: ApplicationWhere
 
   """
@@ -4172,9 +4383,18 @@ type DomainName {
   _id: ID!
   domain_name: String!
   tag: [String]!
-  ipsAggregate(where: IPWhere, directed: Boolean = true): DomainNameIPIpsAggregationSelection
+  ipsAggregate(
+    where: IPWhere
+    directed: Boolean = true
+  ): DomainNameIPIpsAggregationSelection
   ips(where: IPWhere, options: IPOptions, directed: Boolean = true): [IP!]!
-  ipsConnection(where: DomainNameIpsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [DomainNameIpsConnectionSort!]): DomainNameIpsConnection!
+  ipsConnection(
+    where: DomainNameIpsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [DomainNameIpsConnectionSort!]
+  ): DomainNameIpsConnection!
 }
 
 type DomainNameAggregateSelection {
@@ -4407,16 +4627,24 @@ input DomainNameWhere {
   AND: [DomainNameWhere!]
   NOT: DomainNameWhere
 
-  """Return DomainNames where all of the related IPS match this filter"""
+  """
+  Return DomainNames where all of the related IPS match this filter
+  """
   ips_ALL: IPWhere
 
-  """Return DomainNames where none of the related IPS match this filter"""
+  """
+  Return DomainNames where none of the related IPS match this filter
+  """
   ips_NONE: IPWhere
 
-  """Return DomainNames where one of the related IPS match this filter"""
+  """
+  Return DomainNames where one of the related IPS match this filter
+  """
   ips_SINGLE: IPWhere
 
-  """Return DomainNames where some of the related IPS match this filter"""
+  """
+  Return DomainNames where some of the related IPS match this filter
+  """
   ips_SOME: IPWhere
 
   """
@@ -4452,9 +4680,22 @@ type HardwareVersion {
   _id: ID!
   manufacturer: String!
   model: String!
-  devicesAggregate(where: DeviceWhere, directed: Boolean = true): HardwareVersionDeviceDevicesAggregationSelection
-  devices(where: DeviceWhere, options: DeviceOptions, directed: Boolean = true): [Device!]!
-  devicesConnection(where: HardwareVersionDevicesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [HardwareVersionDevicesConnectionSort!]): HardwareVersionDevicesConnection!
+  devicesAggregate(
+    where: DeviceWhere
+    directed: Boolean = true
+  ): HardwareVersionDeviceDevicesAggregationSelection
+  devices(
+    where: DeviceWhere
+    options: DeviceOptions
+    directed: Boolean = true
+  ): [Device!]!
+  devicesConnection(
+    where: HardwareVersionDevicesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [HardwareVersionDevicesConnectionSort!]
+  ): HardwareVersionDevicesConnection!
 }
 
 type HardwareVersionAggregateSelection {
@@ -4807,18 +5048,70 @@ input HasAssignedWhere {
 type Host {
   _id: ID!
   hostname: String
-  nodeAggregate(where: NodeObjectWhere, directed: Boolean = true): HostNodeObjectNodeAggregationSelection
-  node(where: NodeObjectWhere, options: NodeObjectOptions, directed: Boolean = true): NodeObject
-  nodeConnection(where: HostNodeConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [HostNodeConnectionSort!]): HostNodeConnection!
-  software_versionsAggregate(where: SoftwareVersionWhere, directed: Boolean = true): HostSoftwareVersionSoftware_versionsAggregationSelection
-  software_versions(where: SoftwareVersionWhere, options: SoftwareVersionOptions, directed: Boolean = true): [SoftwareVersion!]!
-  software_versionsConnection(where: HostSoftware_versionsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [HostSoftware_versionsConnectionSort!]): HostSoftware_versionsConnection!
-  componentsAggregate(where: ComponentWhere, directed: Boolean = true): HostComponentComponentsAggregationSelection
-  components(where: ComponentWhere, options: ComponentOptions, directed: Boolean = true): [Component!]!
-  componentsConnection(where: HostComponentsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [HostComponentsConnectionSort!]): HostComponentsConnection!
-  network_servicesAggregate(where: NetworkServiceWhere, directed: Boolean = true): HostNetworkServiceNetwork_servicesAggregationSelection
-  network_services(where: NetworkServiceWhere, options: NetworkServiceOptions, directed: Boolean = true): [NetworkService!]!
-  network_servicesConnection(where: HostNetwork_servicesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [HostNetwork_servicesConnectionSort!]): HostNetwork_servicesConnection!
+  nodeAggregate(
+    where: NodeObjectWhere
+    directed: Boolean = true
+  ): HostNodeObjectNodeAggregationSelection
+  node(
+    where: NodeObjectWhere
+    options: NodeObjectOptions
+    directed: Boolean = true
+  ): NodeObject
+  nodeConnection(
+    where: HostNodeConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [HostNodeConnectionSort!]
+  ): HostNodeConnection!
+  software_versionsAggregate(
+    where: SoftwareVersionWhere
+    directed: Boolean = true
+  ): HostSoftwareVersionSoftware_versionsAggregationSelection
+  software_versions(
+    where: SoftwareVersionWhere
+    options: SoftwareVersionOptions
+    directed: Boolean = true
+  ): [SoftwareVersion!]!
+  software_versionsConnection(
+    where: HostSoftware_versionsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [HostSoftware_versionsConnectionSort!]
+  ): HostSoftware_versionsConnection!
+  componentsAggregate(
+    where: ComponentWhere
+    directed: Boolean = true
+  ): HostComponentComponentsAggregationSelection
+  components(
+    where: ComponentWhere
+    options: ComponentOptions
+    directed: Boolean = true
+  ): [Component!]!
+  componentsConnection(
+    where: HostComponentsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [HostComponentsConnectionSort!]
+  ): HostComponentsConnection!
+  network_servicesAggregate(
+    where: NetworkServiceWhere
+    directed: Boolean = true
+  ): HostNetworkServiceNetwork_servicesAggregationSelection
+  network_services(
+    where: NetworkServiceWhere
+    options: NetworkServiceOptions
+    directed: Boolean = true
+  ): [NetworkService!]!
+  network_servicesConnection(
+    where: HostNetwork_servicesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [HostNetwork_servicesConnectionSort!]
+  ): HostNetwork_servicesConnection!
 }
 
 type HostAggregateSelection {
@@ -5579,16 +5872,24 @@ input HostWhere {
   software_versionsConnection_SOME: HostSoftware_versionsConnectionWhere
   software_versionsAggregate: HostSoftware_versionsAggregateInput
 
-  """Return Hosts where all of the related Components match this filter"""
+  """
+  Return Hosts where all of the related Components match this filter
+  """
   components_ALL: ComponentWhere
 
-  """Return Hosts where none of the related Components match this filter"""
+  """
+  Return Hosts where none of the related Components match this filter
+  """
   components_NONE: ComponentWhere
 
-  """Return Hosts where one of the related Components match this filter"""
+  """
+  Return Hosts where one of the related Components match this filter
+  """
   components_SINGLE: ComponentWhere
 
-  """Return Hosts where some of the related Components match this filter"""
+  """
+  Return Hosts where some of the related Components match this filter
+  """
   components_SOME: ComponentWhere
 
   """
@@ -5667,18 +5968,66 @@ type IP {
   version: Int
   tag: [String]
   status: String
-  domain_namesAggregate(where: DomainNameWhere, directed: Boolean = true): IPDomainNameDomain_namesAggregationSelection
-  domain_names(where: DomainNameWhere, options: DomainNameOptions, directed: Boolean = true): [DomainName!]!
-  domain_namesConnection(where: IPDomain_namesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [IPDomain_namesConnectionSort!]): IPDomain_namesConnection!
-  urisAggregate(where: URIWhere, directed: Boolean = true): IPURIUrisAggregationSelection
+  domain_namesAggregate(
+    where: DomainNameWhere
+    directed: Boolean = true
+  ): IPDomainNameDomain_namesAggregationSelection
+  domain_names(
+    where: DomainNameWhere
+    options: DomainNameOptions
+    directed: Boolean = true
+  ): [DomainName!]!
+  domain_namesConnection(
+    where: IPDomain_namesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [IPDomain_namesConnectionSort!]
+  ): IPDomain_namesConnection!
+  urisAggregate(
+    where: URIWhere
+    directed: Boolean = true
+  ): IPURIUrisAggregationSelection
   uris(where: URIWhere, options: URIOptions, directed: Boolean = true): [URI!]!
-  urisConnection(where: IPUrisConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [IPUrisConnectionSort!]): IPUrisConnection!
-  nodesAggregate(where: NodeObjectWhere, directed: Boolean = true): IPNodeObjectNodesAggregationSelection
-  nodes(where: NodeObjectWhere, options: NodeObjectOptions, directed: Boolean = true): [NodeObject!]!
-  nodesConnection(where: IPNodesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [IPNodesConnectionSort!]): IPNodesConnection!
-  subnetsAggregate(where: SubnetWhere, directed: Boolean = true): IPSubnetSubnetsAggregationSelection
-  subnets(where: SubnetWhere, options: SubnetOptions, directed: Boolean = true): [Subnet!]!
-  subnetsConnection(where: IPSubnetsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [IPSubnetsConnectionSort!]): IPSubnetsConnection!
+  urisConnection(
+    where: IPUrisConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [IPUrisConnectionSort!]
+  ): IPUrisConnection!
+  nodesAggregate(
+    where: NodeObjectWhere
+    directed: Boolean = true
+  ): IPNodeObjectNodesAggregationSelection
+  nodes(
+    where: NodeObjectWhere
+    options: NodeObjectOptions
+    directed: Boolean = true
+  ): [NodeObject!]!
+  nodesConnection(
+    where: IPNodesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [IPNodesConnectionSort!]
+  ): IPNodesConnection!
+  subnetsAggregate(
+    where: SubnetWhere
+    directed: Boolean = true
+  ): IPSubnetSubnetsAggregationSelection
+  subnets(
+    where: SubnetWhere
+    options: SubnetOptions
+    directed: Boolean = true
+  ): [Subnet!]!
+  subnetsConnection(
+    where: IPSubnetsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [IPSubnetsConnectionSort!]
+  ): IPSubnetsConnection!
 }
 
 type IPAggregateSelection {
@@ -6425,16 +6774,24 @@ input IPWhere {
   AND: [IPWhere!]
   NOT: IPWhere
 
-  """Return IPS where all of the related DomainNames match this filter"""
+  """
+  Return IPS where all of the related DomainNames match this filter
+  """
   domain_names_ALL: DomainNameWhere
 
-  """Return IPS where none of the related DomainNames match this filter"""
+  """
+  Return IPS where none of the related DomainNames match this filter
+  """
   domain_names_NONE: DomainNameWhere
 
-  """Return IPS where one of the related DomainNames match this filter"""
+  """
+  Return IPS where one of the related DomainNames match this filter
+  """
   domain_names_SINGLE: DomainNameWhere
 
-  """Return IPS where some of the related DomainNames match this filter"""
+  """
+  Return IPS where some of the related DomainNames match this filter
+  """
   domain_names_SOME: DomainNameWhere
 
   """
@@ -6458,16 +6815,24 @@ input IPWhere {
   domain_namesConnection_SOME: IPDomain_namesConnectionWhere
   domain_namesAggregate: IPDomain_namesAggregateInput
 
-  """Return IPS where all of the related URIS match this filter"""
+  """
+  Return IPS where all of the related URIS match this filter
+  """
   uris_ALL: URIWhere
 
-  """Return IPS where none of the related URIS match this filter"""
+  """
+  Return IPS where none of the related URIS match this filter
+  """
   uris_NONE: URIWhere
 
-  """Return IPS where one of the related URIS match this filter"""
+  """
+  Return IPS where one of the related URIS match this filter
+  """
   uris_SINGLE: URIWhere
 
-  """Return IPS where some of the related URIS match this filter"""
+  """
+  Return IPS where some of the related URIS match this filter
+  """
   uris_SOME: URIWhere
 
   """
@@ -6491,16 +6856,24 @@ input IPWhere {
   urisConnection_SOME: IPUrisConnectionWhere
   urisAggregate: IPUrisAggregateInput
 
-  """Return IPS where all of the related NodeObjects match this filter"""
+  """
+  Return IPS where all of the related NodeObjects match this filter
+  """
   nodes_ALL: NodeObjectWhere
 
-  """Return IPS where none of the related NodeObjects match this filter"""
+  """
+  Return IPS where none of the related NodeObjects match this filter
+  """
   nodes_NONE: NodeObjectWhere
 
-  """Return IPS where one of the related NodeObjects match this filter"""
+  """
+  Return IPS where one of the related NodeObjects match this filter
+  """
   nodes_SINGLE: NodeObjectWhere
 
-  """Return IPS where some of the related NodeObjects match this filter"""
+  """
+  Return IPS where some of the related NodeObjects match this filter
+  """
   nodes_SOME: NodeObjectWhere
 
   """
@@ -6524,16 +6897,24 @@ input IPWhere {
   nodesConnection_SOME: IPNodesConnectionWhere
   nodesAggregate: IPNodesAggregateInput
 
-  """Return IPS where all of the related Subnets match this filter"""
+  """
+  Return IPS where all of the related Subnets match this filter
+  """
   subnets_ALL: SubnetWhere
 
-  """Return IPS where none of the related Subnets match this filter"""
+  """
+  Return IPS where none of the related Subnets match this filter
+  """
   subnets_NONE: SubnetWhere
 
-  """Return IPS where one of the related Subnets match this filter"""
+  """
+  Return IPS where one of the related Subnets match this filter
+  """
   subnets_SINGLE: SubnetWhere
 
-  """Return IPS where some of the related Subnets match this filter"""
+  """
+  Return IPS where some of the related Subnets match this filter
+  """
   subnets_SOME: SubnetWhere
 
   """
@@ -6567,9 +6948,22 @@ type Mission {
   description: String!
   name: String!
   structure: String!
-  componentsAggregate(where: ComponentWhere, directed: Boolean = true): MissionComponentComponentsAggregationSelection
-  components(where: ComponentWhere, options: ComponentOptions, directed: Boolean = true): [Component!]!
-  componentsConnection(where: MissionComponentsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [MissionComponentsConnectionSort!]): MissionComponentsConnection!
+  componentsAggregate(
+    where: ComponentWhere
+    directed: Boolean = true
+  ): MissionComponentComponentsAggregationSelection
+  components(
+    where: ComponentWhere
+    options: ComponentOptions
+    directed: Boolean = true
+  ): [Component!]!
+  componentsConnection(
+    where: MissionComponentsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MissionComponentsConnectionSort!]
+  ): MissionComponentsConnection!
 }
 
 type MissionAggregateSelection {
@@ -6720,12 +7114,38 @@ type MissionDependenciesConnection {
 
 type MissionDependency {
   _id: ID!
-  from_componentsAggregate(where: ComponentWhere, directed: Boolean = true): MissionDependencyComponentFrom_componentsAggregationSelection
-  from_components(where: ComponentWhere, options: ComponentOptions, directed: Boolean = true): [Component!]!
-  from_componentsConnection(where: MissionDependencyFrom_componentsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [MissionDependencyFrom_componentsConnectionSort!]): MissionDependencyFrom_componentsConnection!
-  to_componentsAggregate(where: ComponentWhere, directed: Boolean = true): MissionDependencyComponentTo_componentsAggregationSelection
-  to_components(where: ComponentWhere, options: ComponentOptions, directed: Boolean = true): [Component!]!
-  to_componentsConnection(where: MissionDependencyTo_componentsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [MissionDependencyTo_componentsConnectionSort!]): MissionDependencyTo_componentsConnection!
+  from_componentsAggregate(
+    where: ComponentWhere
+    directed: Boolean = true
+  ): MissionDependencyComponentFrom_componentsAggregationSelection
+  from_components(
+    where: ComponentWhere
+    options: ComponentOptions
+    directed: Boolean = true
+  ): [Component!]!
+  from_componentsConnection(
+    where: MissionDependencyFrom_componentsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MissionDependencyFrom_componentsConnectionSort!]
+  ): MissionDependencyFrom_componentsConnection!
+  to_componentsAggregate(
+    where: ComponentWhere
+    directed: Boolean = true
+  ): MissionDependencyComponentTo_componentsAggregationSelection
+  to_components(
+    where: ComponentWhere
+    options: ComponentOptions
+    directed: Boolean = true
+  ): [Component!]!
+  to_componentsConnection(
+    where: MissionDependencyTo_componentsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [MissionDependencyTo_componentsConnectionSort!]
+  ): MissionDependencyTo_componentsConnection!
 }
 
 type MissionDependencyAggregateSelection {
@@ -7208,16 +7628,24 @@ input MissionWhere {
   AND: [MissionWhere!]
   NOT: MissionWhere
 
-  """Return Missions where all of the related Components match this filter"""
+  """
+  Return Missions where all of the related Components match this filter
+  """
   components_ALL: ComponentWhere
 
-  """Return Missions where none of the related Components match this filter"""
+  """
+  Return Missions where none of the related Components match this filter
+  """
   components_NONE: ComponentWhere
 
-  """Return Missions where one of the related Components match this filter"""
+  """
+  Return Missions where one of the related Components match this filter
+  """
   components_SINGLE: ComponentWhere
 
-  """Return Missions where some of the related Components match this filter"""
+  """
+  Return Missions where some of the related Components match this filter
+  """
   components_SOME: ComponentWhere
 
   """
@@ -7243,88 +7671,230 @@ input MissionWhere {
 }
 
 type Mutation {
-  createApplications(input: [ApplicationCreateInput!]!): CreateApplicationsMutationResponse!
-  deleteApplications(where: ApplicationWhere, delete: ApplicationDeleteInput): DeleteInfo!
-  updateApplications(where: ApplicationWhere, update: ApplicationUpdateInput): UpdateApplicationsMutationResponse!
-  createComponents(input: [ComponentCreateInput!]!): CreateComponentsMutationResponse!
-  deleteComponents(where: ComponentWhere, delete: ComponentDeleteInput): DeleteInfo!
-  updateComponents(where: ComponentWhere, update: ComponentUpdateInput): UpdateComponentsMutationResponse!
+  createApplications(
+    input: [ApplicationCreateInput!]!
+  ): CreateApplicationsMutationResponse!
+  deleteApplications(
+    where: ApplicationWhere
+    delete: ApplicationDeleteInput
+  ): DeleteInfo!
+  updateApplications(
+    where: ApplicationWhere
+    update: ApplicationUpdateInput
+  ): UpdateApplicationsMutationResponse!
+  createComponents(
+    input: [ComponentCreateInput!]!
+  ): CreateComponentsMutationResponse!
+  deleteComponents(
+    where: ComponentWhere
+    delete: ComponentDeleteInput
+  ): DeleteInfo!
+  updateComponents(
+    where: ComponentWhere
+    update: ComponentUpdateInput
+  ): UpdateComponentsMutationResponse!
   createContacts(input: [ContactCreateInput!]!): CreateContactsMutationResponse!
   deleteContacts(where: ContactWhere, delete: ContactDeleteInput): DeleteInfo!
-  updateContacts(where: ContactWhere, update: ContactUpdateInput): UpdateContactsMutationResponse!
+  updateContacts(
+    where: ContactWhere
+    update: ContactUpdateInput
+  ): UpdateContactsMutationResponse!
   createCvsSv2s(input: [CVSSv2CreateInput!]!): CreateCvsSv2sMutationResponse!
   deleteCvsSv2s(where: CVSSv2Where): DeleteInfo!
-  updateCvsSv2s(where: CVSSv2Where, update: CVSSv2UpdateInput): UpdateCvsSv2sMutationResponse!
+  updateCvsSv2s(
+    where: CVSSv2Where
+    update: CVSSv2UpdateInput
+  ): UpdateCvsSv2sMutationResponse!
   createCvsSv30s(input: [CVSSv30CreateInput!]!): CreateCvsSv30sMutationResponse!
   deleteCvsSv30s(where: CVSSv30Where): DeleteInfo!
-  updateCvsSv30s(where: CVSSv30Where, update: CVSSv30UpdateInput): UpdateCvsSv30sMutationResponse!
+  updateCvsSv30s(
+    where: CVSSv30Where
+    update: CVSSv30UpdateInput
+  ): UpdateCvsSv30sMutationResponse!
   createCvsSv31s(input: [CVSSv31CreateInput!]!): CreateCvsSv31sMutationResponse!
   deleteCvsSv31s(where: CVSSv31Where): DeleteInfo!
-  updateCvsSv31s(where: CVSSv31Where, update: CVSSv31UpdateInput): UpdateCvsSv31sMutationResponse!
+  updateCvsSv31s(
+    where: CVSSv31Where
+    update: CVSSv31UpdateInput
+  ): UpdateCvsSv31sMutationResponse!
   createCvsSv40s(input: [CVSSv40CreateInput!]!): CreateCvsSv40sMutationResponse!
   deleteCvsSv40s(where: CVSSv40Where): DeleteInfo!
-  updateCvsSv40s(where: CVSSv40Where, update: CVSSv40UpdateInput): UpdateCvsSv40sMutationResponse!
+  updateCvsSv40s(
+    where: CVSSv40Where
+    update: CVSSv40UpdateInput
+  ): UpdateCvsSv40sMutationResponse!
   createCves(input: [CVECreateInput!]!): CreateCvesMutationResponse!
   deleteCves(where: CVEWhere, delete: CVEDeleteInput): DeleteInfo!
-  updateCves(where: CVEWhere, update: CVEUpdateInput): UpdateCvesMutationResponse!
+  updateCves(
+    where: CVEWhere
+    update: CVEUpdateInput
+  ): UpdateCvesMutationResponse!
   createDevices(input: [DeviceCreateInput!]!): CreateDevicesMutationResponse!
   deleteDevices(where: DeviceWhere, delete: DeviceDeleteInput): DeleteInfo!
-  updateDevices(where: DeviceWhere, update: DeviceUpdateInput): UpdateDevicesMutationResponse!
-  createDomainNames(input: [DomainNameCreateInput!]!): CreateDomainNamesMutationResponse!
-  deleteDomainNames(where: DomainNameWhere, delete: DomainNameDeleteInput): DeleteInfo!
-  updateDomainNames(where: DomainNameWhere, update: DomainNameUpdateInput): UpdateDomainNamesMutationResponse!
-  createHardwareVersions(input: [HardwareVersionCreateInput!]!): CreateHardwareVersionsMutationResponse!
-  deleteHardwareVersions(where: HardwareVersionWhere, delete: HardwareVersionDeleteInput): DeleteInfo!
-  updateHardwareVersions(where: HardwareVersionWhere, update: HardwareVersionUpdateInput): UpdateHardwareVersionsMutationResponse!
+  updateDevices(
+    where: DeviceWhere
+    update: DeviceUpdateInput
+  ): UpdateDevicesMutationResponse!
+  createDomainNames(
+    input: [DomainNameCreateInput!]!
+  ): CreateDomainNamesMutationResponse!
+  deleteDomainNames(
+    where: DomainNameWhere
+    delete: DomainNameDeleteInput
+  ): DeleteInfo!
+  updateDomainNames(
+    where: DomainNameWhere
+    update: DomainNameUpdateInput
+  ): UpdateDomainNamesMutationResponse!
+  createHardwareVersions(
+    input: [HardwareVersionCreateInput!]!
+  ): CreateHardwareVersionsMutationResponse!
+  deleteHardwareVersions(
+    where: HardwareVersionWhere
+    delete: HardwareVersionDeleteInput
+  ): DeleteInfo!
+  updateHardwareVersions(
+    where: HardwareVersionWhere
+    update: HardwareVersionUpdateInput
+  ): UpdateHardwareVersionsMutationResponse!
   createHosts(input: [HostCreateInput!]!): CreateHostsMutationResponse!
   deleteHosts(where: HostWhere, delete: HostDeleteInput): DeleteInfo!
-  updateHosts(where: HostWhere, update: HostUpdateInput): UpdateHostsMutationResponse!
+  updateHosts(
+    where: HostWhere
+    update: HostUpdateInput
+  ): UpdateHostsMutationResponse!
   createIps(input: [IPCreateInput!]!): CreateIpsMutationResponse!
   deleteIps(where: IPWhere, delete: IPDeleteInput): DeleteInfo!
   updateIps(where: IPWhere, update: IPUpdateInput): UpdateIpsMutationResponse!
-  createNetworkServices(input: [NetworkServiceCreateInput!]!): CreateNetworkServicesMutationResponse!
-  deleteNetworkServices(where: NetworkServiceWhere, delete: NetworkServiceDeleteInput): DeleteInfo!
-  updateNetworkServices(where: NetworkServiceWhere, update: NetworkServiceUpdateInput): UpdateNetworkServicesMutationResponse!
-  createNodeObjects(input: [NodeObjectCreateInput!]!): CreateNodeObjectsMutationResponse!
-  deleteNodeObjects(where: NodeObjectWhere, delete: NodeObjectDeleteInput): DeleteInfo!
-  updateNodeObjects(where: NodeObjectWhere, update: NodeObjectUpdateInput): UpdateNodeObjectsMutationResponse!
-  createOrganizationUnits(input: [OrganizationUnitCreateInput!]!): CreateOrganizationUnitsMutationResponse!
-  deleteOrganizationUnits(where: OrganizationUnitWhere, delete: OrganizationUnitDeleteInput): DeleteInfo!
-  updateOrganizationUnits(where: OrganizationUnitWhere, update: OrganizationUnitUpdateInput): UpdateOrganizationUnitsMutationResponse!
-  createPhysicalEnvironments(input: [PhysicalEnvironmentCreateInput!]!): CreatePhysicalEnvironmentsMutationResponse!
-  deletePhysicalEnvironments(where: PhysicalEnvironmentWhere, delete: PhysicalEnvironmentDeleteInput): DeleteInfo!
-  updatePhysicalEnvironments(where: PhysicalEnvironmentWhere, update: PhysicalEnvironmentUpdateInput): UpdatePhysicalEnvironmentsMutationResponse!
-  createSoftwareVersions(input: [SoftwareVersionCreateInput!]!): CreateSoftwareVersionsMutationResponse!
-  deleteSoftwareVersions(where: SoftwareVersionWhere, delete: SoftwareVersionDeleteInput): DeleteInfo!
-  updateSoftwareVersions(where: SoftwareVersionWhere, update: SoftwareVersionUpdateInput): UpdateSoftwareVersionsMutationResponse!
+  createNetworkServices(
+    input: [NetworkServiceCreateInput!]!
+  ): CreateNetworkServicesMutationResponse!
+  deleteNetworkServices(
+    where: NetworkServiceWhere
+    delete: NetworkServiceDeleteInput
+  ): DeleteInfo!
+  updateNetworkServices(
+    where: NetworkServiceWhere
+    update: NetworkServiceUpdateInput
+  ): UpdateNetworkServicesMutationResponse!
+  createNodeObjects(
+    input: [NodeObjectCreateInput!]!
+  ): CreateNodeObjectsMutationResponse!
+  deleteNodeObjects(
+    where: NodeObjectWhere
+    delete: NodeObjectDeleteInput
+  ): DeleteInfo!
+  updateNodeObjects(
+    where: NodeObjectWhere
+    update: NodeObjectUpdateInput
+  ): UpdateNodeObjectsMutationResponse!
+  createOrganizationUnits(
+    input: [OrganizationUnitCreateInput!]!
+  ): CreateOrganizationUnitsMutationResponse!
+  deleteOrganizationUnits(
+    where: OrganizationUnitWhere
+    delete: OrganizationUnitDeleteInput
+  ): DeleteInfo!
+  updateOrganizationUnits(
+    where: OrganizationUnitWhere
+    update: OrganizationUnitUpdateInput
+  ): UpdateOrganizationUnitsMutationResponse!
+  createPhysicalEnvironments(
+    input: [PhysicalEnvironmentCreateInput!]!
+  ): CreatePhysicalEnvironmentsMutationResponse!
+  deletePhysicalEnvironments(
+    where: PhysicalEnvironmentWhere
+    delete: PhysicalEnvironmentDeleteInput
+  ): DeleteInfo!
+  updatePhysicalEnvironments(
+    where: PhysicalEnvironmentWhere
+    update: PhysicalEnvironmentUpdateInput
+  ): UpdatePhysicalEnvironmentsMutationResponse!
+  createSoftwareVersions(
+    input: [SoftwareVersionCreateInput!]!
+  ): CreateSoftwareVersionsMutationResponse!
+  deleteSoftwareVersions(
+    where: SoftwareVersionWhere
+    delete: SoftwareVersionDeleteInput
+  ): DeleteInfo!
+  updateSoftwareVersions(
+    where: SoftwareVersionWhere
+    update: SoftwareVersionUpdateInput
+  ): UpdateSoftwareVersionsMutationResponse!
   createSubnets(input: [SubnetCreateInput!]!): CreateSubnetsMutationResponse!
   deleteSubnets(where: SubnetWhere, delete: SubnetDeleteInput): DeleteInfo!
-  updateSubnets(where: SubnetWhere, update: SubnetUpdateInput): UpdateSubnetsMutationResponse!
+  updateSubnets(
+    where: SubnetWhere
+    update: SubnetUpdateInput
+  ): UpdateSubnetsMutationResponse!
   createMissions(input: [MissionCreateInput!]!): CreateMissionsMutationResponse!
   deleteMissions(where: MissionWhere, delete: MissionDeleteInput): DeleteInfo!
-  updateMissions(where: MissionWhere, update: MissionUpdateInput): UpdateMissionsMutationResponse!
-  createMissionDependencies(input: [MissionDependencyCreateInput!]!): CreateMissionDependenciesMutationResponse!
-  deleteMissionDependencies(where: MissionDependencyWhere, delete: MissionDependencyDeleteInput): DeleteInfo!
-  updateMissionDependencies(where: MissionDependencyWhere, update: MissionDependencyUpdateInput): UpdateMissionDependenciesMutationResponse!
+  updateMissions(
+    where: MissionWhere
+    update: MissionUpdateInput
+  ): UpdateMissionsMutationResponse!
+  createMissionDependencies(
+    input: [MissionDependencyCreateInput!]!
+  ): CreateMissionDependenciesMutationResponse!
+  deleteMissionDependencies(
+    where: MissionDependencyWhere
+    delete: MissionDependencyDeleteInput
+  ): DeleteInfo!
+  updateMissionDependencies(
+    where: MissionDependencyWhere
+    update: MissionDependencyUpdateInput
+  ): UpdateMissionDependenciesMutationResponse!
   createUris(input: [URICreateInput!]!): CreateUrisMutationResponse!
   deleteUris(where: URIWhere, delete: URIDeleteInput): DeleteInfo!
-  updateUris(where: URIWhere, update: URIUpdateInput): UpdateUrisMutationResponse!
-  createVulnerabilities(input: [VulnerabilityCreateInput!]!): CreateVulnerabilitiesMutationResponse!
-  deleteVulnerabilities(where: VulnerabilityWhere, delete: VulnerabilityDeleteInput): DeleteInfo!
-  updateVulnerabilities(where: VulnerabilityWhere, update: VulnerabilityUpdateInput): UpdateVulnerabilitiesMutationResponse!
+  updateUris(
+    where: URIWhere
+    update: URIUpdateInput
+  ): UpdateUrisMutationResponse!
+  createVulnerabilities(
+    input: [VulnerabilityCreateInput!]!
+  ): CreateVulnerabilitiesMutationResponse!
+  deleteVulnerabilities(
+    where: VulnerabilityWhere
+    delete: VulnerabilityDeleteInput
+  ): DeleteInfo!
+  updateVulnerabilities(
+    where: VulnerabilityWhere
+    update: VulnerabilityUpdateInput
+  ): UpdateVulnerabilitiesMutationResponse!
   linkSubnetToParent(subnetRange: String!, parentSubnetRange: String!): Subnet
   linkSubnetToOrgUnit(subnetRange: String!, orgUnitName: String!): Subnet
-  mergeSubnetWithContacts(subnetRange: String!, contactNames: [String!]!): Subnet
+  mergeSubnetWithContacts(
+    subnetRange: String!
+    contactNames: [String!]!
+  ): Subnet
   unlinkSubnetFromParent(subnetRange: String!, parentRange: String!): Subnet
   unlinkSubnetFromOrgUnit(subnetRange: String!, orgUnitName: String!): Subnet
-  unlinkSubnetFromContacts(subnetRange: String!, contactNames: [String!]!): Subnet
-  linkOrgUnitToParentOrg(orgUnitName: String!, parentOrgUnitName: String!): OrganizationUnit
-  mergeOrgUnitWithContacts(orgUnitName: String!, contactNames: [String!]!): OrganizationUnit
+  unlinkSubnetFromContacts(
+    subnetRange: String!
+    contactNames: [String!]!
+  ): Subnet
+  linkOrgUnitToParentOrg(
+    orgUnitName: String!
+    parentOrgUnitName: String!
+  ): OrganizationUnit
+  mergeOrgUnitWithContacts(
+    orgUnitName: String!
+    contactNames: [String!]!
+  ): OrganizationUnit
   unlinkOrgUnitFromParents(orgUnitName: String!): OrganizationUnit
-  unlinkOrgUnitFromContacts(orgUnitName: String!, contactNames: [String!]!): OrganizationUnit
+  unlinkOrgUnitFromContacts(
+    orgUnitName: String!
+    contactNames: [String!]!
+  ): OrganizationUnit
   updateIPTag(address: String!, tag: [String]!): IP
   updateIPStatus(address: String!, status: String!): IP
-  updateNetworkServiceStatus(address: String!, protocol: String!, port: Int!, service: String!, status: String!): NetworkServiceOn
+  updateNetworkServiceStatus(
+    address: String!
+    protocol: String!
+    port: Int!
+    service: String!
+    status: String!
+  ): NetworkServiceOn
   updateVulnerabilityStatus(cve: String!, status: [String]!): Vulnerability
 }
 
@@ -7334,12 +7904,38 @@ type NetworkService {
   port: Int
   tag: [String]
   service: String
-  hostsAggregate(where: HostWhere, directed: Boolean = true): NetworkServiceHostHostsAggregationSelection
-  hosts(where: HostWhere, options: HostOptions, directed: Boolean = true): [Host!]!
-  hostsConnection(where: NetworkServiceHostsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [NetworkServiceHostsConnectionSort!]): NetworkServiceHostsConnection!
-  software_versionsAggregate(where: SoftwareVersionWhere, directed: Boolean = false): NetworkServiceSoftwareVersionSoftware_versionsAggregationSelection
-  software_versions(where: SoftwareVersionWhere, options: SoftwareVersionOptions, directed: Boolean = false): [SoftwareVersion!]!
-  software_versionsConnection(where: NetworkServiceSoftware_versionsConnectionWhere, first: Int, after: String, directed: Boolean = false, sort: [NetworkServiceSoftware_versionsConnectionSort!]): NetworkServiceSoftware_versionsConnection!
+  hostsAggregate(
+    where: HostWhere
+    directed: Boolean = true
+  ): NetworkServiceHostHostsAggregationSelection
+  hosts(
+    where: HostWhere
+    options: HostOptions
+    directed: Boolean = true
+  ): [Host!]!
+  hostsConnection(
+    where: NetworkServiceHostsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [NetworkServiceHostsConnectionSort!]
+  ): NetworkServiceHostsConnection!
+  software_versionsAggregate(
+    where: SoftwareVersionWhere
+    directed: Boolean = false
+  ): NetworkServiceSoftwareVersionSoftware_versionsAggregationSelection
+  software_versions(
+    where: SoftwareVersionWhere
+    options: SoftwareVersionOptions
+    directed: Boolean = false
+  ): [SoftwareVersion!]!
+  software_versionsConnection(
+    where: NetworkServiceSoftware_versionsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = false
+    sort: [NetworkServiceSoftware_versionsConnectionSort!]
+  ): NetworkServiceSoftware_versionsConnection!
 }
 
 type NetworkServiceAggregateSelection {
@@ -7883,18 +8479,62 @@ type NodeObject {
   topology_betweenness_norm: Float
   mission_criticality: Float
   final_criticality: Float
-  ipsAggregate(where: IPWhere, directed: Boolean = true): NodeObjectIPIpsAggregationSelection
+  ipsAggregate(
+    where: IPWhere
+    directed: Boolean = true
+  ): NodeObjectIPIpsAggregationSelection
   ips(where: IPWhere, options: IPOptions, directed: Boolean = true): [IP!]!
-  ipsConnection(where: NodeObjectIpsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [NodeObjectIpsConnectionSort!]): NodeObjectIpsConnection!
-  hostAggregate(where: HostWhere, directed: Boolean = true): NodeObjectHostHostAggregationSelection
+  ipsConnection(
+    where: NodeObjectIpsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [NodeObjectIpsConnectionSort!]
+  ): NodeObjectIpsConnection!
+  hostAggregate(
+    where: HostWhere
+    directed: Boolean = true
+  ): NodeObjectHostHostAggregationSelection
   host(where: HostWhere, options: HostOptions, directed: Boolean = true): Host
-  hostConnection(where: NodeObjectHostConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [NodeObjectHostConnectionSort!]): NodeObjectHostConnection!
-  is_dependent_on_nodesAggregate(where: NodeObjectWhere, directed: Boolean = true): NodeObjectNodeObjectIs_dependent_on_nodesAggregationSelection
-  is_dependent_on_nodes(where: NodeObjectWhere, options: NodeObjectOptions, directed: Boolean = true): [NodeObject!]!
-  is_dependent_on_nodesConnection(where: NodeObjectIs_dependent_on_nodesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [NodeObjectIs_dependent_on_nodesConnectionSort!]): NodeObjectIs_dependent_on_nodesConnection!
-  is_connected_to_nodesAggregate(where: NodeObjectWhere, directed: Boolean = true): NodeObjectNodeObjectIs_connected_to_nodesAggregationSelection
-  is_connected_to_nodes(where: NodeObjectWhere, options: NodeObjectOptions, directed: Boolean = true): [NodeObject!]!
-  is_connected_to_nodesConnection(where: NodeObjectIs_connected_to_nodesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [NodeObjectIs_connected_to_nodesConnectionSort!]): NodeObjectIs_connected_to_nodesConnection!
+  hostConnection(
+    where: NodeObjectHostConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [NodeObjectHostConnectionSort!]
+  ): NodeObjectHostConnection!
+  is_dependent_on_nodesAggregate(
+    where: NodeObjectWhere
+    directed: Boolean = true
+  ): NodeObjectNodeObjectIs_dependent_on_nodesAggregationSelection
+  is_dependent_on_nodes(
+    where: NodeObjectWhere
+    options: NodeObjectOptions
+    directed: Boolean = true
+  ): [NodeObject!]!
+  is_dependent_on_nodesConnection(
+    where: NodeObjectIs_dependent_on_nodesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [NodeObjectIs_dependent_on_nodesConnectionSort!]
+  ): NodeObjectIs_dependent_on_nodesConnection!
+  is_connected_to_nodesAggregate(
+    where: NodeObjectWhere
+    directed: Boolean = true
+  ): NodeObjectNodeObjectIs_connected_to_nodesAggregationSelection
+  is_connected_to_nodes(
+    where: NodeObjectWhere
+    options: NodeObjectOptions
+    directed: Boolean = true
+  ): [NodeObject!]!
+  is_connected_to_nodesConnection(
+    where: NodeObjectIs_connected_to_nodesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [NodeObjectIs_connected_to_nodesConnectionSort!]
+  ): NodeObjectIs_connected_to_nodesConnection!
 }
 
 type NodeObjectAggregateSelection {
@@ -8877,16 +9517,24 @@ input NodeObjectWhere {
   AND: [NodeObjectWhere!]
   NOT: NodeObjectWhere
 
-  """Return NodeObjects where all of the related IPS match this filter"""
+  """
+  Return NodeObjects where all of the related IPS match this filter
+  """
   ips_ALL: IPWhere
 
-  """Return NodeObjects where none of the related IPS match this filter"""
+  """
+  Return NodeObjects where none of the related IPS match this filter
+  """
   ips_NONE: IPWhere
 
-  """Return NodeObjects where one of the related IPS match this filter"""
+  """
+  Return NodeObjects where one of the related IPS match this filter
+  """
   ips_SINGLE: IPWhere
 
-  """Return NodeObjects where some of the related IPS match this filter"""
+  """
+  Return NodeObjects where some of the related IPS match this filter
+  """
   ips_SOME: IPWhere
 
   """
@@ -9001,18 +9649,70 @@ input NodeObjectWhere {
 type OrganizationUnit {
   _id: ID!
   name: String!
-  subnetsAggregate(where: SubnetWhere, directed: Boolean = true): OrganizationUnitSubnetSubnetsAggregationSelection
-  subnets(where: SubnetWhere, options: SubnetOptions, directed: Boolean = true): [Subnet!]!
-  subnetsConnection(where: OrganizationUnitSubnetsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [OrganizationUnitSubnetsConnectionSort!]): OrganizationUnitSubnetsConnection!
-  physical_environmentsAggregate(where: PhysicalEnvironmentWhere, directed: Boolean = true): OrganizationUnitPhysicalEnvironmentPhysical_environmentsAggregationSelection
-  physical_environments(where: PhysicalEnvironmentWhere, options: PhysicalEnvironmentOptions, directed: Boolean = true): [PhysicalEnvironment!]!
-  physical_environmentsConnection(where: OrganizationUnitPhysical_environmentsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [OrganizationUnitPhysical_environmentsConnectionSort!]): OrganizationUnitPhysical_environmentsConnection!
-  parent_org_unitAggregate(where: OrganizationUnitWhere, directed: Boolean = true): OrganizationUnitOrganizationUnitParent_org_unitAggregationSelection
-  parent_org_unit(where: OrganizationUnitWhere, options: OrganizationUnitOptions, directed: Boolean = true): [OrganizationUnit!]!
-  parent_org_unitConnection(where: OrganizationUnitParent_org_unitConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [OrganizationUnitParent_org_unitConnectionSort!]): OrganizationUnitParent_org_unitConnection!
-  contactsAggregate(where: ContactWhere, directed: Boolean = true): OrganizationUnitContactContactsAggregationSelection
-  contacts(where: ContactWhere, options: ContactOptions, directed: Boolean = true): [Contact!]!
-  contactsConnection(where: OrganizationUnitContactsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [OrganizationUnitContactsConnectionSort!]): OrganizationUnitContactsConnection!
+  subnetsAggregate(
+    where: SubnetWhere
+    directed: Boolean = true
+  ): OrganizationUnitSubnetSubnetsAggregationSelection
+  subnets(
+    where: SubnetWhere
+    options: SubnetOptions
+    directed: Boolean = true
+  ): [Subnet!]!
+  subnetsConnection(
+    where: OrganizationUnitSubnetsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [OrganizationUnitSubnetsConnectionSort!]
+  ): OrganizationUnitSubnetsConnection!
+  physical_environmentsAggregate(
+    where: PhysicalEnvironmentWhere
+    directed: Boolean = true
+  ): OrganizationUnitPhysicalEnvironmentPhysical_environmentsAggregationSelection
+  physical_environments(
+    where: PhysicalEnvironmentWhere
+    options: PhysicalEnvironmentOptions
+    directed: Boolean = true
+  ): [PhysicalEnvironment!]!
+  physical_environmentsConnection(
+    where: OrganizationUnitPhysical_environmentsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [OrganizationUnitPhysical_environmentsConnectionSort!]
+  ): OrganizationUnitPhysical_environmentsConnection!
+  parent_org_unitAggregate(
+    where: OrganizationUnitWhere
+    directed: Boolean = true
+  ): OrganizationUnitOrganizationUnitParent_org_unitAggregationSelection
+  parent_org_unit(
+    where: OrganizationUnitWhere
+    options: OrganizationUnitOptions
+    directed: Boolean = true
+  ): [OrganizationUnit!]!
+  parent_org_unitConnection(
+    where: OrganizationUnitParent_org_unitConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [OrganizationUnitParent_org_unitConnectionSort!]
+  ): OrganizationUnitParent_org_unitConnection!
+  contactsAggregate(
+    where: ContactWhere
+    directed: Boolean = true
+  ): OrganizationUnitContactContactsAggregationSelection
+  contacts(
+    where: ContactWhere
+    options: ContactOptions
+    directed: Boolean = true
+  ): [Contact!]!
+  contactsConnection(
+    where: OrganizationUnitContactsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [OrganizationUnitContactsConnectionSort!]
+  ): OrganizationUnitContactsConnection!
 }
 
 type OrganizationUnitAggregateSelection {
@@ -9719,7 +10419,9 @@ input OrganizationUnitWhere {
   contactsAggregate: OrganizationUnitContactsAggregateInput
 }
 
-"""Pagination information (Relay)"""
+"""
+Pagination information (Relay)
+"""
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -9730,9 +10432,22 @@ type PageInfo {
 type PhysicalEnvironment {
   _id: ID!
   location: String!
-  org_unitsAggregate(where: OrganizationUnitWhere, directed: Boolean = true): PhysicalEnvironmentOrganizationUnitOrg_unitsAggregationSelection
-  org_units(where: OrganizationUnitWhere, options: OrganizationUnitOptions, directed: Boolean = true): [OrganizationUnit!]!
-  org_unitsConnection(where: PhysicalEnvironmentOrg_unitsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [PhysicalEnvironmentOrg_unitsConnectionSort!]): PhysicalEnvironmentOrg_unitsConnection!
+  org_unitsAggregate(
+    where: OrganizationUnitWhere
+    directed: Boolean = true
+  ): PhysicalEnvironmentOrganizationUnitOrg_unitsAggregationSelection
+  org_units(
+    where: OrganizationUnitWhere
+    options: OrganizationUnitOptions
+    directed: Boolean = true
+  ): [OrganizationUnit!]!
+  org_unitsConnection(
+    where: PhysicalEnvironmentOrg_unitsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [PhysicalEnvironmentOrg_unitsConnectionSort!]
+  ): PhysicalEnvironmentOrg_unitsConnection!
 }
 
 type PhysicalEnvironmentAggregateSelection {
@@ -9966,75 +10681,234 @@ input PhysicalEnvironmentWhere {
 }
 
 type Query {
-  applications(where: ApplicationWhere, options: ApplicationOptions): [Application!]!
-  applicationsConnection(first: Int, after: String, where: ApplicationWhere, sort: [ApplicationSort]): ApplicationsConnection!
+  applications(
+    where: ApplicationWhere
+    options: ApplicationOptions
+  ): [Application!]!
+  applicationsConnection(
+    first: Int
+    after: String
+    where: ApplicationWhere
+    sort: [ApplicationSort]
+  ): ApplicationsConnection!
   applicationsAggregate(where: ApplicationWhere): ApplicationAggregateSelection!
   components(where: ComponentWhere, options: ComponentOptions): [Component!]!
-  componentsConnection(first: Int, after: String, where: ComponentWhere, sort: [ComponentSort]): ComponentsConnection!
+  componentsConnection(
+    first: Int
+    after: String
+    where: ComponentWhere
+    sort: [ComponentSort]
+  ): ComponentsConnection!
   componentsAggregate(where: ComponentWhere): ComponentAggregateSelection!
   contacts(where: ContactWhere, options: ContactOptions): [Contact!]!
-  contactsConnection(first: Int, after: String, where: ContactWhere, sort: [ContactSort]): ContactsConnection!
+  contactsConnection(
+    first: Int
+    after: String
+    where: ContactWhere
+    sort: [ContactSort]
+  ): ContactsConnection!
   contactsAggregate(where: ContactWhere): ContactAggregateSelection!
   cvsSv2s(where: CVSSv2Where, options: CVSSv2Options): [CVSSv2!]!
-  cvsSv2sConnection(first: Int, after: String, where: CVSSv2Where, sort: [CVSSv2Sort]): CvsSv2sConnection!
+  cvsSv2sConnection(
+    first: Int
+    after: String
+    where: CVSSv2Where
+    sort: [CVSSv2Sort]
+  ): CvsSv2sConnection!
   cvsSv2sAggregate(where: CVSSv2Where): CVSSv2AggregateSelection!
   cvsSv30s(where: CVSSv30Where, options: CVSSv30Options): [CVSSv30!]!
-  cvsSv30sConnection(first: Int, after: String, where: CVSSv30Where, sort: [CVSSv30Sort]): CvsSv30sConnection!
+  cvsSv30sConnection(
+    first: Int
+    after: String
+    where: CVSSv30Where
+    sort: [CVSSv30Sort]
+  ): CvsSv30sConnection!
   cvsSv30sAggregate(where: CVSSv30Where): CVSSv30AggregateSelection!
   cvsSv31s(where: CVSSv31Where, options: CVSSv31Options): [CVSSv31!]!
-  cvsSv31sConnection(first: Int, after: String, where: CVSSv31Where, sort: [CVSSv31Sort]): CvsSv31sConnection!
+  cvsSv31sConnection(
+    first: Int
+    after: String
+    where: CVSSv31Where
+    sort: [CVSSv31Sort]
+  ): CvsSv31sConnection!
   cvsSv31sAggregate(where: CVSSv31Where): CVSSv31AggregateSelection!
   cvsSv40s(where: CVSSv40Where, options: CVSSv40Options): [CVSSv40!]!
-  cvsSv40sConnection(first: Int, after: String, where: CVSSv40Where, sort: [CVSSv40Sort]): CvsSv40sConnection!
+  cvsSv40sConnection(
+    first: Int
+    after: String
+    where: CVSSv40Where
+    sort: [CVSSv40Sort]
+  ): CvsSv40sConnection!
   cvsSv40sAggregate(where: CVSSv40Where): CVSSv40AggregateSelection!
   cves(where: CVEWhere, options: CVEOptions): [CVE!]!
-  cvesConnection(first: Int, after: String, where: CVEWhere, sort: [CVESort]): CvesConnection!
+  cvesConnection(
+    first: Int
+    after: String
+    where: CVEWhere
+    sort: [CVESort]
+  ): CvesConnection!
   cvesAggregate(where: CVEWhere): CVEAggregateSelection!
   devices(where: DeviceWhere, options: DeviceOptions): [Device!]!
-  devicesConnection(first: Int, after: String, where: DeviceWhere, sort: [DeviceSort]): DevicesConnection!
+  devicesConnection(
+    first: Int
+    after: String
+    where: DeviceWhere
+    sort: [DeviceSort]
+  ): DevicesConnection!
   devicesAggregate(where: DeviceWhere): DeviceAggregateSelection!
-  domainNames(where: DomainNameWhere, options: DomainNameOptions): [DomainName!]!
-  domainNamesConnection(first: Int, after: String, where: DomainNameWhere, sort: [DomainNameSort]): DomainNamesConnection!
+  domainNames(
+    where: DomainNameWhere
+    options: DomainNameOptions
+  ): [DomainName!]!
+  domainNamesConnection(
+    first: Int
+    after: String
+    where: DomainNameWhere
+    sort: [DomainNameSort]
+  ): DomainNamesConnection!
   domainNamesAggregate(where: DomainNameWhere): DomainNameAggregateSelection!
-  hardwareVersions(where: HardwareVersionWhere, options: HardwareVersionOptions): [HardwareVersion!]!
-  hardwareVersionsConnection(first: Int, after: String, where: HardwareVersionWhere, sort: [HardwareVersionSort]): HardwareVersionsConnection!
-  hardwareVersionsAggregate(where: HardwareVersionWhere): HardwareVersionAggregateSelection!
+  hardwareVersions(
+    where: HardwareVersionWhere
+    options: HardwareVersionOptions
+  ): [HardwareVersion!]!
+  hardwareVersionsConnection(
+    first: Int
+    after: String
+    where: HardwareVersionWhere
+    sort: [HardwareVersionSort]
+  ): HardwareVersionsConnection!
+  hardwareVersionsAggregate(
+    where: HardwareVersionWhere
+  ): HardwareVersionAggregateSelection!
   hosts(where: HostWhere, options: HostOptions): [Host!]!
-  hostsConnection(first: Int, after: String, where: HostWhere, sort: [HostSort]): HostsConnection!
+  hostsConnection(
+    first: Int
+    after: String
+    where: HostWhere
+    sort: [HostSort]
+  ): HostsConnection!
   hostsAggregate(where: HostWhere): HostAggregateSelection!
   ips(where: IPWhere, options: IPOptions): [IP!]!
-  ipsConnection(first: Int, after: String, where: IPWhere, sort: [IPSort]): IpsConnection!
+  ipsConnection(
+    first: Int
+    after: String
+    where: IPWhere
+    sort: [IPSort]
+  ): IpsConnection!
   ipsAggregate(where: IPWhere): IPAggregateSelection!
-  networkServices(where: NetworkServiceWhere, options: NetworkServiceOptions): [NetworkService!]!
-  networkServicesConnection(first: Int, after: String, where: NetworkServiceWhere, sort: [NetworkServiceSort]): NetworkServicesConnection!
-  networkServicesAggregate(where: NetworkServiceWhere): NetworkServiceAggregateSelection!
-  nodeObjects(where: NodeObjectWhere, options: NodeObjectOptions): [NodeObject!]!
-  nodeObjectsConnection(first: Int, after: String, where: NodeObjectWhere, sort: [NodeObjectSort]): NodeObjectsConnection!
+  networkServices(
+    where: NetworkServiceWhere
+    options: NetworkServiceOptions
+  ): [NetworkService!]!
+  networkServicesConnection(
+    first: Int
+    after: String
+    where: NetworkServiceWhere
+    sort: [NetworkServiceSort]
+  ): NetworkServicesConnection!
+  networkServicesAggregate(
+    where: NetworkServiceWhere
+  ): NetworkServiceAggregateSelection!
+  nodeObjects(
+    where: NodeObjectWhere
+    options: NodeObjectOptions
+  ): [NodeObject!]!
+  nodeObjectsConnection(
+    first: Int
+    after: String
+    where: NodeObjectWhere
+    sort: [NodeObjectSort]
+  ): NodeObjectsConnection!
   nodeObjectsAggregate(where: NodeObjectWhere): NodeObjectAggregateSelection!
-  organizationUnits(where: OrganizationUnitWhere, options: OrganizationUnitOptions): [OrganizationUnit!]!
-  organizationUnitsConnection(first: Int, after: String, where: OrganizationUnitWhere, sort: [OrganizationUnitSort]): OrganizationUnitsConnection!
-  organizationUnitsAggregate(where: OrganizationUnitWhere): OrganizationUnitAggregateSelection!
-  physicalEnvironments(where: PhysicalEnvironmentWhere, options: PhysicalEnvironmentOptions): [PhysicalEnvironment!]!
-  physicalEnvironmentsConnection(first: Int, after: String, where: PhysicalEnvironmentWhere, sort: [PhysicalEnvironmentSort]): PhysicalEnvironmentsConnection!
-  physicalEnvironmentsAggregate(where: PhysicalEnvironmentWhere): PhysicalEnvironmentAggregateSelection!
-  softwareVersions(where: SoftwareVersionWhere, options: SoftwareVersionOptions): [SoftwareVersion!]!
-  softwareVersionsConnection(first: Int, after: String, where: SoftwareVersionWhere, sort: [SoftwareVersionSort]): SoftwareVersionsConnection!
-  softwareVersionsAggregate(where: SoftwareVersionWhere): SoftwareVersionAggregateSelection!
+  organizationUnits(
+    where: OrganizationUnitWhere
+    options: OrganizationUnitOptions
+  ): [OrganizationUnit!]!
+  organizationUnitsConnection(
+    first: Int
+    after: String
+    where: OrganizationUnitWhere
+    sort: [OrganizationUnitSort]
+  ): OrganizationUnitsConnection!
+  organizationUnitsAggregate(
+    where: OrganizationUnitWhere
+  ): OrganizationUnitAggregateSelection!
+  physicalEnvironments(
+    where: PhysicalEnvironmentWhere
+    options: PhysicalEnvironmentOptions
+  ): [PhysicalEnvironment!]!
+  physicalEnvironmentsConnection(
+    first: Int
+    after: String
+    where: PhysicalEnvironmentWhere
+    sort: [PhysicalEnvironmentSort]
+  ): PhysicalEnvironmentsConnection!
+  physicalEnvironmentsAggregate(
+    where: PhysicalEnvironmentWhere
+  ): PhysicalEnvironmentAggregateSelection!
+  softwareVersions(
+    where: SoftwareVersionWhere
+    options: SoftwareVersionOptions
+  ): [SoftwareVersion!]!
+  softwareVersionsConnection(
+    first: Int
+    after: String
+    where: SoftwareVersionWhere
+    sort: [SoftwareVersionSort]
+  ): SoftwareVersionsConnection!
+  softwareVersionsAggregate(
+    where: SoftwareVersionWhere
+  ): SoftwareVersionAggregateSelection!
   subnets(where: SubnetWhere, options: SubnetOptions): [Subnet!]!
-  subnetsConnection(first: Int, after: String, where: SubnetWhere, sort: [SubnetSort]): SubnetsConnection!
+  subnetsConnection(
+    first: Int
+    after: String
+    where: SubnetWhere
+    sort: [SubnetSort]
+  ): SubnetsConnection!
   subnetsAggregate(where: SubnetWhere): SubnetAggregateSelection!
   missions(where: MissionWhere, options: MissionOptions): [Mission!]!
-  missionsConnection(first: Int, after: String, where: MissionWhere, sort: [MissionSort]): MissionsConnection!
+  missionsConnection(
+    first: Int
+    after: String
+    where: MissionWhere
+    sort: [MissionSort]
+  ): MissionsConnection!
   missionsAggregate(where: MissionWhere): MissionAggregateSelection!
-  missionDependencies(where: MissionDependencyWhere, options: MissionDependencyOptions): [MissionDependency!]!
-  missionDependenciesConnection(first: Int, after: String, where: MissionDependencyWhere, sort: [MissionDependencySort]): MissionDependenciesConnection!
-  missionDependenciesAggregate(where: MissionDependencyWhere): MissionDependencyAggregateSelection!
+  missionDependencies(
+    where: MissionDependencyWhere
+    options: MissionDependencyOptions
+  ): [MissionDependency!]!
+  missionDependenciesConnection(
+    first: Int
+    after: String
+    where: MissionDependencyWhere
+    sort: [MissionDependencySort]
+  ): MissionDependenciesConnection!
+  missionDependenciesAggregate(
+    where: MissionDependencyWhere
+  ): MissionDependencyAggregateSelection!
   uris(where: URIWhere, options: URIOptions): [URI!]!
-  urisConnection(first: Int, after: String, where: URIWhere, sort: [URISort]): UrisConnection!
+  urisConnection(
+    first: Int
+    after: String
+    where: URIWhere
+    sort: [URISort]
+  ): UrisConnection!
   urisAggregate(where: URIWhere): URIAggregateSelection!
-  vulnerabilities(where: VulnerabilityWhere, options: VulnerabilityOptions): [Vulnerability!]!
-  vulnerabilitiesConnection(first: Int, after: String, where: VulnerabilityWhere, sort: [VulnerabilitySort]): VulnerabilitiesConnection!
-  vulnerabilitiesAggregate(where: VulnerabilityWhere): VulnerabilityAggregateSelection!
+  vulnerabilities(
+    where: VulnerabilityWhere
+    options: VulnerabilityOptions
+  ): [Vulnerability!]!
+  vulnerabilitiesConnection(
+    first: Int
+    after: String
+    where: VulnerabilityWhere
+    sort: [VulnerabilitySort]
+  ): VulnerabilitiesConnection!
+  vulnerabilitiesAggregate(
+    where: VulnerabilityWhere
+  ): VulnerabilityAggregateSelection!
 }
 
 """
@@ -10192,15 +11066,54 @@ input SoftwareOnWhere {
 type SoftwareVersion {
   _id: ID!
   version: String!
-  hostsAggregate(where: HostWhere, directed: Boolean = true): SoftwareVersionHostHostsAggregationSelection
-  hosts(where: HostWhere, options: HostOptions, directed: Boolean = true): [Host!]!
-  hostsConnection(where: SoftwareVersionHostsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [SoftwareVersionHostsConnectionSort!]): SoftwareVersionHostsConnection!
-  network_servicesAggregate(where: NetworkServiceWhere, directed: Boolean = false): SoftwareVersionNetworkServiceNetwork_servicesAggregationSelection
-  network_services(where: NetworkServiceWhere, options: NetworkServiceOptions, directed: Boolean = false): [NetworkService!]!
-  network_servicesConnection(where: SoftwareVersionNetwork_servicesConnectionWhere, first: Int, after: String, directed: Boolean = false, sort: [SoftwareVersionNetwork_servicesConnectionSort!]): SoftwareVersionNetwork_servicesConnection!
-  vulnerabilitiesAggregate(where: VulnerabilityWhere, directed: Boolean = true): SoftwareVersionVulnerabilityVulnerabilitiesAggregationSelection
-  vulnerabilities(where: VulnerabilityWhere, options: VulnerabilityOptions, directed: Boolean = true): [Vulnerability!]!
-  vulnerabilitiesConnection(where: SoftwareVersionVulnerabilitiesConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [SoftwareVersionVulnerabilitiesConnectionSort!]): SoftwareVersionVulnerabilitiesConnection!
+  hostsAggregate(
+    where: HostWhere
+    directed: Boolean = true
+  ): SoftwareVersionHostHostsAggregationSelection
+  hosts(
+    where: HostWhere
+    options: HostOptions
+    directed: Boolean = true
+  ): [Host!]!
+  hostsConnection(
+    where: SoftwareVersionHostsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [SoftwareVersionHostsConnectionSort!]
+  ): SoftwareVersionHostsConnection!
+  network_servicesAggregate(
+    where: NetworkServiceWhere
+    directed: Boolean = false
+  ): SoftwareVersionNetworkServiceNetwork_servicesAggregationSelection
+  network_services(
+    where: NetworkServiceWhere
+    options: NetworkServiceOptions
+    directed: Boolean = false
+  ): [NetworkService!]!
+  network_servicesConnection(
+    where: SoftwareVersionNetwork_servicesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = false
+    sort: [SoftwareVersionNetwork_servicesConnectionSort!]
+  ): SoftwareVersionNetwork_servicesConnection!
+  vulnerabilitiesAggregate(
+    where: VulnerabilityWhere
+    directed: Boolean = true
+  ): SoftwareVersionVulnerabilityVulnerabilitiesAggregationSelection
+  vulnerabilities(
+    where: VulnerabilityWhere
+    options: VulnerabilityOptions
+    directed: Boolean = true
+  ): [Vulnerability!]!
+  vulnerabilitiesConnection(
+    where: SoftwareVersionVulnerabilitiesConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [SoftwareVersionVulnerabilitiesConnectionSort!]
+  ): SoftwareVersionVulnerabilitiesConnection!
 }
 
 type SoftwareVersionAggregateSelection {
@@ -10788,12 +11701,18 @@ input SoftwareVersionWhere {
   vulnerabilitiesAggregate: SoftwareVersionVulnerabilitiesAggregateInput
 }
 
-"""An enum for sorting in either ascending or descending order."""
+"""
+An enum for sorting in either ascending or descending order.
+"""
 enum SortDirection {
-  """Sort by field values in ascending order."""
+  """
+  Sort by field values in ascending order.
+  """
   ASC
 
-  """Sort by field values in descending order."""
+  """
+  Sort by field values in descending order.
+  """
   DESC
 }
 
@@ -10806,15 +11725,54 @@ type Subnet {
   _id: ID!
   note: String
   range: String!
-  org_unitsAggregate(where: OrganizationUnitWhere, directed: Boolean = true): SubnetOrganizationUnitOrg_unitsAggregationSelection
-  org_units(where: OrganizationUnitWhere, options: OrganizationUnitOptions, directed: Boolean = true): [OrganizationUnit!]!
-  org_unitsConnection(where: SubnetOrg_unitsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [SubnetOrg_unitsConnectionSort!]): SubnetOrg_unitsConnection!
-  parent_subnetAggregate(where: SubnetWhere, directed: Boolean = true): SubnetSubnetParent_subnetAggregationSelection
-  parent_subnet(where: SubnetWhere, options: SubnetOptions, directed: Boolean = true): [Subnet!]!
-  parent_subnetConnection(where: SubnetParent_subnetConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [SubnetParent_subnetConnectionSort!]): SubnetParent_subnetConnection!
-  contactsAggregate(where: ContactWhere, directed: Boolean = true): SubnetContactContactsAggregationSelection
-  contacts(where: ContactWhere, options: ContactOptions, directed: Boolean = true): [Contact!]!
-  contactsConnection(where: SubnetContactsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [SubnetContactsConnectionSort!]): SubnetContactsConnection!
+  org_unitsAggregate(
+    where: OrganizationUnitWhere
+    directed: Boolean = true
+  ): SubnetOrganizationUnitOrg_unitsAggregationSelection
+  org_units(
+    where: OrganizationUnitWhere
+    options: OrganizationUnitOptions
+    directed: Boolean = true
+  ): [OrganizationUnit!]!
+  org_unitsConnection(
+    where: SubnetOrg_unitsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [SubnetOrg_unitsConnectionSort!]
+  ): SubnetOrg_unitsConnection!
+  parent_subnetAggregate(
+    where: SubnetWhere
+    directed: Boolean = true
+  ): SubnetSubnetParent_subnetAggregationSelection
+  parent_subnet(
+    where: SubnetWhere
+    options: SubnetOptions
+    directed: Boolean = true
+  ): [Subnet!]!
+  parent_subnetConnection(
+    where: SubnetParent_subnetConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [SubnetParent_subnetConnectionSort!]
+  ): SubnetParent_subnetConnection!
+  contactsAggregate(
+    where: ContactWhere
+    directed: Boolean = true
+  ): SubnetContactContactsAggregationSelection
+  contacts(
+    where: ContactWhere
+    options: ContactOptions
+    directed: Boolean = true
+  ): [Contact!]!
+  contactsConnection(
+    where: SubnetContactsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [SubnetContactsConnectionSort!]
+  ): SubnetContactsConnection!
 }
 
 type SubnetAggregateSelection {
@@ -11294,16 +12252,24 @@ input SubnetWhere {
   org_unitsConnection_SOME: SubnetOrg_unitsConnectionWhere
   org_unitsAggregate: SubnetOrg_unitsAggregateInput
 
-  """Return Subnets where all of the related Subnets match this filter"""
+  """
+  Return Subnets where all of the related Subnets match this filter
+  """
   parent_subnet_ALL: SubnetWhere
 
-  """Return Subnets where none of the related Subnets match this filter"""
+  """
+  Return Subnets where none of the related Subnets match this filter
+  """
   parent_subnet_NONE: SubnetWhere
 
-  """Return Subnets where one of the related Subnets match this filter"""
+  """
+  Return Subnets where one of the related Subnets match this filter
+  """
   parent_subnet_SINGLE: SubnetWhere
 
-  """Return Subnets where some of the related Subnets match this filter"""
+  """
+  Return Subnets where some of the related Subnets match this filter
+  """
   parent_subnet_SOME: SubnetWhere
 
   """
@@ -11327,16 +12293,24 @@ input SubnetWhere {
   parent_subnetConnection_SOME: SubnetParent_subnetConnectionWhere
   parent_subnetAggregate: SubnetParent_subnetAggregateInput
 
-  """Return Subnets where all of the related Contacts match this filter"""
+  """
+  Return Subnets where all of the related Contacts match this filter
+  """
   contacts_ALL: ContactWhere
 
-  """Return Subnets where none of the related Contacts match this filter"""
+  """
+  Return Subnets where none of the related Contacts match this filter
+  """
   contacts_NONE: ContactWhere
 
-  """Return Subnets where one of the related Contacts match this filter"""
+  """
+  Return Subnets where one of the related Contacts match this filter
+  """
   contacts_SINGLE: ContactWhere
 
-  """Return Subnets where some of the related Contacts match this filter"""
+  """
+  Return Subnets where some of the related Contacts match this filter
+  """
   contacts_SOME: ContactWhere
 
   """
@@ -11425,7 +12399,10 @@ type UpdateHostsMutationResponse {
 Information about the number of nodes and relationships created and deleted during an update mutation
 """
 type UpdateInfo {
-  bookmark: String @deprecated(reason: "This field has been deprecated because bookmarks are now handled by the driver.")
+  bookmark: String
+    @deprecated(
+      reason: "This field has been deprecated because bookmarks are now handled by the driver."
+    )
   nodesCreated: Int!
   nodesDeleted: Int!
   relationshipsCreated: Int!
@@ -11490,9 +12467,18 @@ type UpdateVulnerabilitiesMutationResponse {
 type URI {
   _id: ID!
   identifier: String!
-  ipsAggregate(where: IPWhere, directed: Boolean = true): URIIPIpsAggregationSelection
+  ipsAggregate(
+    where: IPWhere
+    directed: Boolean = true
+  ): URIIPIpsAggregationSelection
   ips(where: IPWhere, options: IPOptions, directed: Boolean = true): [IP!]!
-  ipsConnection(where: URIIpsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [URIIpsConnectionSort!]): URIIpsConnection!
+  ipsConnection(
+    where: URIIpsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [URIIpsConnectionSort!]
+  ): URIIpsConnection!
 }
 
 type URIAggregateSelection {
@@ -11719,16 +12705,24 @@ input URIWhere {
   AND: [URIWhere!]
   NOT: URIWhere
 
-  """Return URIS where all of the related IPS match this filter"""
+  """
+  Return URIS where all of the related IPS match this filter
+  """
   ips_ALL: IPWhere
 
-  """Return URIS where none of the related IPS match this filter"""
+  """
+  Return URIS where none of the related IPS match this filter
+  """
   ips_NONE: IPWhere
 
-  """Return URIS where one of the related IPS match this filter"""
+  """
+  Return URIS where one of the related IPS match this filter
+  """
   ips_SINGLE: IPWhere
 
-  """Return URIS where some of the related IPS match this filter"""
+  """
+  Return URIS where some of the related IPS match this filter
+  """
   ips_SOME: IPWhere
 
   """
@@ -11763,12 +12757,34 @@ type Vulnerability {
   _id: ID!
   description: String!
   status: [String!]
-  software_versionsAggregate(where: SoftwareVersionWhere, directed: Boolean = true): VulnerabilitySoftwareVersionSoftware_versionsAggregationSelection
-  software_versions(where: SoftwareVersionWhere, options: SoftwareVersionOptions, directed: Boolean = true): [SoftwareVersion!]!
-  software_versionsConnection(where: VulnerabilitySoftware_versionsConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [VulnerabilitySoftware_versionsConnectionSort!]): VulnerabilitySoftware_versionsConnection!
-  cveAggregate(where: CVEWhere, directed: Boolean = true): VulnerabilityCVECveAggregationSelection
+  software_versionsAggregate(
+    where: SoftwareVersionWhere
+    directed: Boolean = true
+  ): VulnerabilitySoftwareVersionSoftware_versionsAggregationSelection
+  software_versions(
+    where: SoftwareVersionWhere
+    options: SoftwareVersionOptions
+    directed: Boolean = true
+  ): [SoftwareVersion!]!
+  software_versionsConnection(
+    where: VulnerabilitySoftware_versionsConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [VulnerabilitySoftware_versionsConnectionSort!]
+  ): VulnerabilitySoftware_versionsConnection!
+  cveAggregate(
+    where: CVEWhere
+    directed: Boolean = true
+  ): VulnerabilityCVECveAggregationSelection
   cve(where: CVEWhere, options: CVEOptions, directed: Boolean = true): CVE
-  cveConnection(where: VulnerabilityCveConnectionWhere, first: Int, after: String, directed: Boolean = true, sort: [VulnerabilityCveConnectionSort!]): VulnerabilityCveConnection!
+  cveConnection(
+    where: VulnerabilityCveConnectionWhere
+    first: Int
+    after: String
+    directed: Boolean = true
+    sort: [VulnerabilityCveConnectionSort!]
+  ): VulnerabilityCveConnection!
 }
 
 type VulnerabilityAggregateSelection {
@@ -12164,4 +13180,3 @@ input VulnerabilityWhere {
   cveConnection_NOT: VulnerabilityCveConnectionWhere
   cveAggregate: VulnerabilityCveAggregateInput
 }
-

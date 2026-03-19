@@ -79,7 +79,7 @@ export class MissionValidator {
 
   /**
    * Service node must have OR/AND node as a parent and a name
-   *  */ 
+   *  */
   private validateServiceNode(
     node: MissionNode,
     nodes: MissionNode[],
@@ -102,7 +102,7 @@ export class MissionValidator {
 
   /**
    * Host node must have OR/AND node as a parent and must have hostname and IP address
-   * */ 
+   * */
   private validateHostNode(
     node: MissionNode,
     nodes: MissionNode[],
@@ -131,7 +131,7 @@ export class MissionValidator {
 
   /**
    * OR node must have AND node as a parent and at least one child
-   *  */ 
+   *  */
   private validateORNode(
     node: MissionNode,
     nodes: MissionNode[],
@@ -168,7 +168,7 @@ export class MissionValidator {
 
   /**
    * AND node must have at least one child
-   *  */ 
+   *  */
   private validateANDNode(
     node: MissionNode,
     nodes: MissionNode[],

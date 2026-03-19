@@ -24,6 +24,18 @@ graphqlApi: 'http://127.0.0.1:4001/graphql/',
 
 to appropiate location of the GraphQL.
 
+To get latest graphql schema from the GraphQL server:
+
+```
+npx get-graphql-schema http://localhost:4001/graphql > graphql/schema.graphql
+```
+
+To then generate fragments and operation, run:
+
+```
+npm run codegen
+```
+
 and then running the dashboard by:
 
 ```

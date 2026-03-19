@@ -18,8 +18,6 @@ import { Router } from '@angular/router';
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Subnet } from '../../models/vulnerability.model';
-import { DataService } from '../../services/data.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -34,11 +32,20 @@ import { SentinelButtonWithIconComponent } from '@sentinel/components/button-wit
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { MatIcon } from '@angular/material/icon';
-import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
-import { StatusChipComponent } from '../../components/status-color-chip/status-color-chip.component';
+import { SUBNETS_PATH } from '../../paths';
 import { AssetTypeChipComponent } from './asset-type-chip/asset-type-chip';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { AssetStatusEditChipComponent } from './asset-status-edit-chip/asset-status-edit-chip.component';
+import {
+  AssetPageGetIPsQueryService,
+  AssetPageGetNetworkServicesQueryService,
+  AssetPageGetDomainNamesQueryService,
+} from './graphql/asset-page.operation.generated';
+import {
+  AssetPageIpFragment,
+  AssetPageNetworkServiceFragment,
+  AssetPageDomainNameFragment,
+} from './graphql/asset-page.fragment.generated';
 
 export interface Asset {
   ip: string;
@@ -55,16 +62,6 @@ export interface Asset {
   };
   last_seen: Date | null;
   isEditOpen?: boolean;
-}
-
-export interface IP {
-  _id: string;
-  address: string;
-  tag: string[];
-  status: string;
-  subnets: Subnet[];
-  type: string;
-  networkServicesCount: number;
 }
 
 interface Filter {
@@ -135,9 +132,9 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   emptyResponse = false;
   errorResponse = '';
 
-  ips: IP[] = [];
-  networkServices: any[] = [];
-  domains: any[] = [];
+  ips: AssetPageIpFragment[] = [];
+  networkServices: AssetPageNetworkServiceFragment[] = [];
+  domains: AssetPageDomainNameFragment[] = [];
 
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
@@ -145,7 +142,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   assets = signal<Asset[]>([]);
   totalSortedAssets = computed(() => this.assets().length);
 
-  filters: Filter[] = []; // Filters for severity and status (+ potentially other selects in the future)
+  filters: Filter[] = [];
   defaultValue = 'All';
   filterDictionary = new Map<string, string>();
 
@@ -177,7 +174,9 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   controls: SentinelControlItem[] = [];
 
   constructor(
-    private data: DataService,
+    private getIPsService: AssetPageGetIPsQueryService,
+    private getNetworkServicesService: AssetPageGetNetworkServicesQueryService,
+    private getDomainNamesService: AssetPageGetDomainNamesQueryService,
     private changeDetector: ChangeDetectorRef,
   ) {
     this.dataSource = new MatTableDataSource<Asset>([]);
@@ -188,19 +187,14 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dataLoading = true;
 
-    this.data.getIPs().subscribe({
-      next: (ips) => {
-        this.ips = ips;
-
+    this.getIPsService.fetch().subscribe({
+      next: ({ data }) => {
+        this.ips = data.ips;
         this.processIPs();
 
-        if (this.ips.length > 0) {
-          this.dataLoaded = true;
-        } else {
-          this.emptyResponse = true;
-        }
+        this.dataLoaded = this.ips.length > 0;
+        this.emptyResponse = this.ips.length === 0;
         this.dataLoading = false;
-
         this.changeDetector.detectChanges();
       },
       error: (error) => {
@@ -211,14 +205,10 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       },
     });
 
-    this.data.getNetworkServices().subscribe({
-      next: (services) => {
-        this.networkServices = services;
-
-        console.log('Network Services:', this.networkServices);
-
+    this.getNetworkServicesService.fetch().subscribe({
+      next: ({ data }) => {
+        this.networkServices = data.networkServices;
         this.processNetworkServices();
-
         this.changeDetector.detectChanges();
       },
       error: (error) => {
@@ -226,12 +216,10 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       },
     });
 
-    this.data.getDomainNames().subscribe({
-      next: (domains) => {
-        this.domains = domains;
-
+    this.getDomainNamesService.fetch().subscribe({
+      next: ({ data }) => {
+        this.domains = data.domainNames;
         this.processDomains();
-
         this.changeDetector.detectChanges();
       },
       error: (error) => {
@@ -240,7 +228,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     });
 
     // Initialize filters
-
     this.filters.push({
       name: 'tag',
       options: this.tags(),
@@ -397,8 +384,8 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  saveData(address: string, tags: string[]): void {
-    this.data.changeTag(address, tags);
+  saveData(_address: string, _tags: string[]): void {
+    // TODO: implement via mutation service when tag mutation is added to asset-page.operation.graphql
   }
 
   private detectChanges(): void {
@@ -415,21 +402,28 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   private processIPs(): void {
     this.assets.update((assets) => [
       ...assets,
-      ...this.ips.map((ip, _) => ({
-        id: ip._id,
-        type: ip.type,
-        ip: ip.address,
-        service:
-          ip.networkServicesCount > 0
-            ? ip.networkServicesCount == 1
-              ? `${ip.networkServicesCount} service`
-              : `${ip.networkServicesCount} services`
-            : null,
-        status: ip.status || 'unknown',
-        subnet: (ip.subnets ?? []).map((item) => item.range),
-        tag: [...(ip.tag ?? [])],
-        last_seen: null, // TODO: When last_seen is available in the IP model, set it here
-      })),
+      ...this.ips.map((ip) => {
+        const svcCount = ip.nodes.reduce(
+          (sum, node) =>
+            sum + (node.host?.network_servicesAggregate?.count ?? 0),
+          0,
+        );
+        return {
+          id: ip._id,
+          type: 'IP',
+          ip: ip.address,
+          service:
+            svcCount > 0
+              ? svcCount === 1
+                ? '1 service'
+                : `${svcCount} services`
+              : null,
+          status: ip.status ?? 'unknown',
+          subnet: ip.subnets.map((s) => s.range),
+          tag: (ip.tag ?? []).filter((t): t is string => t !== null),
+          last_seen: null,
+        };
+      }),
     ]);
 
     this.detectChanges();
@@ -438,20 +432,20 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   private processNetworkServices(): void {
     this.assets.update((assets) => [
       ...assets,
-      ...this.networkServices.map((service, _) => ({
-        id: service._id,
-        type: service.type,
-        ip: service.ip_address,
-        service: service.service + ':' + service.port + '/' + service.protocol,
+      ...this.networkServices.map((svc) => ({
+        id: svc._id,
+        type: 'NetworkService',
+        ip: svc.hostsConnection.edges[0]?.node.node?.ips[0]?.address ?? 'N/A',
+        service: `${svc.service ?? ''}:${svc.port ?? ''}/${svc.protocol ?? ''}`,
         service_data: {
-          service: service.service,
-          port: service.port,
-          protocol: service.protocol,
+          service: svc.service ?? '',
+          port: svc.port ?? 0,
+          protocol: svc.protocol ?? '',
         },
-        status: service.status || 'unknown',
+        status: svc.hostsConnection.edges[0]?.properties.status ?? 'unknown',
         subnet: [],
-        tag: [...(service.tag ?? [])],
-        last_seen: null, // TODO: When last_seen is available in the NetworkService model, set it here
+        tag: [],
+        last_seen: null,
       })),
     ]);
 
@@ -459,18 +453,17 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   }
 
   private processDomains(): void {
-    // Similar processing for DomainName assets can be added here
     this.assets.update((assets) => [
       ...assets,
-      ...this.domains.map((domain, _) => ({
-        id: domain._id,
-        type: domain.type,
-        ip: domain.ips.length > 0 ? domain.ips[0] : 'N/A', // Assuming the first IP for display
+      ...this.domains.map((domain) => ({
+        id: domain.domain_name,
+        type: 'DomainName',
+        ip: domain.ips[0]?.address ?? 'N/A',
         service: null,
-        status: 'known', // TODO
+        status: 'known',
         subnet: [],
-        tag: [...(domain.tag ?? [])],
-        last_seen: null, // TODO: When last_seen is available in the DomainName model, set it here
+        tag: [],
+        last_seen: null,
       })),
     ]);
 
@@ -502,14 +495,6 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   navigateToNetworkNodeView(asset: Asset): void {
     this.searchTerm.set(asset.ip);
     this.applyIPFilter();
-
-    // if (asset.type.toLowerCase() !== 'ip') {
-
-    //   return;
-    // }
-    // this.router.navigate([NETWORK_NODES_PATH], {
-    //   queryParams: { ip: asset.ip }
-    // });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {

@@ -529,7 +529,9 @@ export class SubnetService {
       .query<any>({
         query: gql`
           query GetChildIPs($range: String!) {
-            ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
+            ips(
+              where: { subnetsConnection_SINGLE: { node: { range: $range } } }
+            ) {
               address
               version
               subnets {

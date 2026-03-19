@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
-import { IP } from '../../asset-page/asset-page.component';
+import { IP } from './flow-editor.component';
 
 @Injectable({
   providedIn: 'root',
