@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  DestroyRef,
   inject,
   model,
   signal,
@@ -25,7 +26,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
-import { DataService } from '../../services/data.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  MissionPageGetNamesQueryService,
+  MissionPageGetMissionQueryService,
+} from '../mission-page/graphql/mission-page.operation.generated';
 import * as dagre from 'dagre';
 
 export type MissionData = {
@@ -110,6 +115,7 @@ export class MissionEditorComponent {
   ]);
 
   private _snackBar = inject(MatSnackBar);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild(FlowEditorComponent)
   private flowEditor!: FlowEditorComponent;
@@ -123,7 +129,8 @@ export class MissionEditorComponent {
   constructor(
     private missionValidator: MissionValidator,
     private missionEditorService: MissionEditorService,
-    private dataService: DataService,
+    private getMissionNamesService: MissionPageGetNamesQueryService,
+    private getMissionService: MissionPageGetMissionQueryService,
   ) {
     this.getMissionNames();
   }
@@ -140,26 +147,32 @@ export class MissionEditorComponent {
   }
 
   getMissionNames() {
-    this.dataService.getMissionNames().subscribe({
-      next: (missions: any) => {
-        this.existingMissionNames.set(missions);
-      },
-    });
+    this.getMissionNamesService
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.existingMissionNames.set(
+            result.data.missions.map((m) => m.name) as any,
+          );
+        },
+      });
   }
 
   loadMission(event: { value: string }) {
-    this.dataService.getMission(event.value ?? '').subscribe({
-      next: (response) => {
-        const payload = response[0]?.structure;
-        if (!payload) {
-          alert('no structure for mission!');
-        }
-
-        const parsedPayload = JSON.parse(payload);
-
-        this.convertPayloadToNodesConnections(parsedPayload);
-      },
-    });
+    this.getMissionService
+      .fetch({ name: event.value ?? '' }, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const payload = result.data.missions[0]?.structure;
+          if (!payload) {
+            alert('no structure for mission!');
+            return;
+          }
+          this.convertPayloadToNodesConnections(JSON.parse(payload));
+        },
+      });
   }
 
   resetEditor() {
