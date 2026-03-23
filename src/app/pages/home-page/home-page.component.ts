@@ -1,10 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -19,8 +20,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { HomePageDataService } from './home-page.data.service';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { QueryRef } from 'apollo-angular';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-page-component',
@@ -35,26 +34,18 @@ import { Subscription } from 'rxjs';
   ],
   standalone: true,
 })
-export class HomePageComponent implements OnInit, OnDestroy {
+export class HomePageComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
   data = inject(HomePageDataService);
 
-  queries: QueryRef<any>[] = [];
-  querySubscriptions: Subscription[] = [];
-
-  constructor() {}
-
   ngOnInit() {
-    this.data.fetchData();
-
-    this.route.queryParams.subscribe((_) => {
-      this.data.refreshData();
-    });
-  }
-
-  ngOnDestroy() {
-    this.data.unscubscribeAll();
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.data.fetchData(this.destroyRef);
+      });
   }
 
   customColors = [

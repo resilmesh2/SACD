@@ -1,122 +1,86 @@
-import { Injectable, signal } from '@angular/core';
-import { Apollo, QueryRef } from 'apollo-angular';
-import { Subscription } from 'rxjs';
+import { DestroyRef, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { combineLatest } from 'rxjs';
 import { Subnet } from '../../models/vulnerability.model';
-import { QUERIES } from './home-page.data.queries';
+import {
+  HomePageGetSubnetsQueryService,
+  HomePageGetOrgUnitsQueryService,
+  HomePageGetIPsQueryService,
+  HomePageGetNodeObjectsQueryService,
+  HomePageGetMissionsQueryService,
+  HomePageGetVulnerabilitiesQueryService,
+  HomePageGetHostsQueryService,
+} from './graphql/home-page.operation.generated';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HomePageDataService {
-  queries: { [key: string]: QueryRef<any> } = {};
-  querySubscriptions: Subscription[] = [];
-
   subnets = signal(<Subnet[]>[]);
   orgUnits = signal(<{ name: string }[]>[]);
   ipCount = signal(0);
   csaNodesCount = signal(0);
   missionsCount = signal(0);
-
   vulnerabilityChartData = signal<{ name: string; value: number }[]>([]);
   osChartData = signal<{ name: string; value: number }[]>([]);
 
-  constructor(private apollo: Apollo) {
-    Object.entries(QUERIES).map(([key, queryGQL]) => {
-      const query = this.apollo.watchQuery<any>({
-        query: queryGQL,
-        pollInterval: 500,
-      });
-      this.queries[key] = query;
-    });
-  }
+  constructor(
+    private getSubnets: HomePageGetSubnetsQueryService,
+    private getOrgUnits: HomePageGetOrgUnitsQueryService,
+    private getIPs: HomePageGetIPsQueryService,
+    private getNodeObjects: HomePageGetNodeObjectsQueryService,
+    private getMissions: HomePageGetMissionsQueryService,
+    private getVulnerabilities: HomePageGetVulnerabilitiesQueryService,
+    private getHosts: HomePageGetHostsQueryService,
+  ) {}
 
-  refreshData() {
-    Object.values(this.queries).forEach((query) => query.refetch());
-  }
+  fetchData(destroyRef: DestroyRef) {
+    combineLatest([
+      this.getSubnets.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getOrgUnits.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getIPs.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getNodeObjects.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getMissions.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getVulnerabilities.fetch({}, { fetchPolicy: 'network-only' }),
+      this.getHosts.fetch({}, { fetchPolicy: 'network-only' }),
+    ])
+      .pipe(takeUntilDestroyed(destroyRef))
+      .subscribe({
+        next: ([
+          subnetsResult,
+          orgUnitsResult,
+          ipsResult,
+          nodesResult,
+          missionsResult,
+          vulnsResult,
+          hostsResult,
+        ]) => {
+          this.subnets.set(subnetsResult.data.subnets as Subnet[]);
+          this.orgUnits.set(orgUnitsResult.data.organizationUnits);
+          this.ipCount.set(ipsResult.data.ips.length);
+          this.csaNodesCount.set(nodesResult.data.nodeObjects.length);
+          this.missionsCount.set(missionsResult.data.missions.length);
 
-  unscubscribeAll() {
-    this.querySubscriptions.forEach((sub) => sub.unsubscribe());
-  }
-
-  fetchData() {
-    this.querySubscriptions.push(
-      this.queries['GET_SUBNETS'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          this.subnets.set(data.subnets);
-        },
-      ),
-    );
-
-    this.querySubscriptions.push(
-      this.queries['GET_ORG_UNITS'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          this.orgUnits.set(data.organizationUnits);
-        },
-      ),
-    );
-
-    this.querySubscriptions.push(
-      this.queries['GET_IPS'].valueChanges.subscribe(({ data, loading }) => {
-        this.ipCount.set(data.ips.length);
-      }),
-    );
-
-    this.querySubscriptions.push(
-      this.queries['GET_CSA_NODES'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          this.csaNodesCount.set(data.nodeObjects.length);
-        },
-      ),
-    );
-
-    this.querySubscriptions.push(
-      this.queries['GET_MISSIONS'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          this.missionsCount.set(data.missions.length);
-        },
-      ),
-    );
-
-    this.querySubscriptions.push(
-      this.queries['GET_VULNERABILITIES'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          const severityCountMap: { [key: string]: number } = {};
-          const cves = data.cves;
-
-          cves.forEach((cve: any) => {
-            const severity = cve.cvss_v31?.base_severity || 'unknown';
-            if (severityCountMap[severity]) {
-              severityCountMap[severity]++;
-            } else {
-              severityCountMap[severity] = 1;
-            }
+          const severityCountMap: Record<string, number> = {};
+          vulnsResult.data.cves.forEach((cve) => {
+            const severity = cve.cvss_v31?.base_severity ?? 'unknown';
+            severityCountMap[severity] = (severityCountMap[severity] ?? 0) + 1;
           });
-
           this.vulnerabilityChartData.set(
-            Object.entries(severityCountMap).map(([severity, count]) => ({
-              name: severity,
-              value: count,
+            Object.entries(severityCountMap).map(([name, value]) => ({
+              name,
+              value,
             })),
           );
-        },
-      ),
-    );
 
-    this.querySubscriptions.push(
-      this.queries['GET_OS_DATA'].valueChanges.subscribe(
-        ({ data, loading }) => {
-          const osCountMap: { [key: string]: number } = {};
-          const hosts = data.hosts;
-
-          hosts.forEach((host: any) => {
-            host.software_versions.forEach((version: any) => {
-              if (version.version.startsWith('cpe:2.3:o')) {
-                osCountMap[version.version] =
-                  (osCountMap[version.version] || 0) + 1;
+          const osCountMap: Record<string, number> = {};
+          hostsResult.data.hosts.forEach((host) => {
+            host.software_versions.forEach((sv) => {
+              if (sv.version.startsWith('cpe:2.3:o')) {
+                osCountMap[sv.version] = (osCountMap[sv.version] ?? 0) + 1;
               }
             });
           });
-
           this.osChartData.set(
             Object.entries(osCountMap)
               .map(([name, value]) => ({
@@ -126,7 +90,6 @@ export class HomePageDataService {
               .sort((a, b) => b.value - a.value),
           );
         },
-      ),
-    );
+      });
   }
 }
