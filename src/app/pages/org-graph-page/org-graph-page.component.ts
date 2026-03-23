@@ -16,6 +16,7 @@ import {
   MissionStructure,
 } from '../../models/mission-structure.model';
 import { DataService } from '../../services/data.service';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/graph-label.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -170,7 +171,7 @@ export class OrgGraphPageComponent implements OnInit {
 
   public getLabel(node: Node) {
     console.log('Getting label for node', node);
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {

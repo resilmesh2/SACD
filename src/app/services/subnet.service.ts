@@ -11,7 +11,7 @@ import { GraphInput } from '../../../models/graph.model';
 import {
   entities,
   EntityStructure,
-} from '../pages/network-page/entities.config';
+} from '../utils/graph-utils/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';

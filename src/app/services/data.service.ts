@@ -11,7 +11,7 @@ import { GraphInput } from '../../../models/graph.model';
 import {
   entities,
   EntityStructure,
-} from '../pages/network-page/entities.config';
+} from '../utils/graph-utils/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';
@@ -221,31 +221,6 @@ export class DataService {
     delete clonedItem._id;
     delete clonedItem.__typename;
     return clonedItem;
-  }
-
-  /**
-   * Returns label of ngx-graph node based on static config
-   * @param node
-   */
-  public getLabelOfGraphNode(node: Node) {
-    const initialLabel: keyof EntityStructure = node.data.type;
-    if (typeof entities[initialLabel] === 'undefined') {
-      return initialLabel;
-    }
-    if (entities[initialLabel].showProperty.length === 0) {
-      return initialLabel;
-    }
-    const propKey = entities[initialLabel].showProperty.find(
-      (pk) => typeof node.data[pk] !== 'undefined' && node.data[pk] !== null,
-    );
-
-    if (propKey === undefined) {
-      return '';
-    }
-    if (typeof node.data[propKey] === 'undefined') {
-      return initialLabel;
-    }
-    return node.data[propKey].toString();
   }
 
   /**

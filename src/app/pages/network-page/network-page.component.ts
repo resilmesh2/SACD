@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import _ from 'lodash';
 import { DataService } from '../../services/data.service';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/graph-label.utils';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -120,7 +121,7 @@ export class NetworkPageComponent implements OnInit {
   }
 
   public getLabel(node: Node) {
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
   }
 
   public expandNode(node: Node) {
