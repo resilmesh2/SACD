@@ -3,36 +3,26 @@ import {
   OnInit,
   ViewChild,
   AfterViewInit,
-  ElementRef,
-  ChangeDetectorRef,
+  DestroyRef,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { DataService } from '../../services/data.service';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { Issue } from '../../models/issue.model';
 import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
 import { scoreToClassCVSS } from '../../utils/utils';
+import { GetVulnerableMachinesQueryService } from '../../graphql/vulnerable-machines/vulnerable-machines.operation.generated';
 
 export interface IssueDetail {
   affectedAsset: string;
   description: string;
   software: string;
   vulnerabilityCount: number;
-}
-
-export interface VulnerabilityData {
-  ip: string;
-  domainName: string;
-  subnet: string;
-  software: string;
 }
 
 @Component({
@@ -83,11 +73,12 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   errorResponse = '';
 
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private data: DataService,
+    private getVulnerableMachinesService: GetVulnerableMachinesQueryService,
   ) {
     this.dataSource = new MatTableDataSource<IssueDetail>([]);
   }
@@ -105,52 +96,66 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   }
 
   getRouteParameters(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.issueName = params.get('name') || '';
-    });
+    this.route.paramMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.issueName = params.get('name') || '';
+      });
 
-    this.route.queryParams.subscribe((params) => {
-      this.issueSeverity = params['severity'] || '';
-      this.issueStatus = params['status'] || '';
-      this.issueDescription = params['description'] || '';
-      this.issueImpact = params['impact'] || '';
-    });
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.issueSeverity = params['severity'] || '';
+        this.issueStatus = params['status'] || '';
+        this.issueDescription = params['description'] || '';
+        this.issueImpact = params['impact'] || '';
+      });
   }
 
   getVulnerableAssets(): void {
-    this.data
-      .getVulnerableMachines(this.issueName)
-      .pipe(
-        catchError((error) => {
-          this.errorResponse = `Error fetching data: ${error}`;
-          this.dataLoading = false;
-          this.emptyResponse = true;
-          console.error(this.errorResponse);
-          return of([]);
-        }),
-      )
-      .subscribe((vulnerables: VulnerabilityData[] | null) => {
-        if (vulnerables && vulnerables.length > 0) {
-          // Filter and map valid rows
-          this.issueDetails = vulnerables
-            .filter((row) => row.ip && row.subnet && row.software)
-            .map((row) => ({
+    this.getVulnerableMachinesService
+      .fetch({ cveId: this.issueName }, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const rows = (
+            result.data.cves[0]?.vulnerability.software_versions ?? []
+          ).flatMap((sv) =>
+            sv.hosts.flatMap((host) =>
+              (host.node?.ips ?? []).map((ip) => ({
+                ip: ip.address,
+                subnet: ip.subnets[0]?.range ?? '',
+                software: sv.version,
+              })),
+            ),
+          );
+
+          const valid = rows.filter(
+            (row) => row.ip && row.subnet && row.software,
+          );
+
+          if (valid.length > 0) {
+            this.issueDetails = valid.map((row) => ({
               affectedAsset: row.ip,
               description: this.issueDescription,
               software: row.software,
               vulnerabilityCount: 1,
             }));
+            this.totalOccurrences = this.issueDetails.length;
+            this.setDataSource();
+          } else {
+            this.emptyResponse = true;
+          }
 
-          this.totalOccurrences = this.issueDetails.length;
-
-          // Set the dataSource with the fetched issueDetails
-          this.setDataSource();
-        } else {
+          this.dataLoading = false;
+          this.dataLoaded = true;
+        },
+        error: (error) => {
+          this.errorResponse = `Error fetching data: ${error}`;
+          this.dataLoading = false;
           this.emptyResponse = true;
-        }
-
-        this.dataLoading = false;
-        this.dataLoaded = true;
+          console.error(this.errorResponse);
+        },
       });
   }
 

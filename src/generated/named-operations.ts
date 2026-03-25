@@ -1,5 +1,6 @@
 export const namedOperations = {
   Query: {
+    GetVulnerableMachines: 'GetVulnerableMachines',
     AssetPageGetIPs: 'AssetPageGetIPs',
     AssetPageGetNetworkServices: 'AssetPageGetNetworkServices',
     AssetPageGetDomainNames: 'AssetPageGetDomainNames',
@@ -24,13 +25,12 @@ export const namedOperations = {
     SubnetPageGetChildIPs: 'SubnetPageGetChildIPs',
     SubnetPageGetChildSubnets: 'SubnetPageGetChildSubnets',
     VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails',
-    VulnerabilityPageGetVulnerableMachines:
-      'VulnerabilityPageGetVulnerableMachines',
   },
   Mutation: {
     IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
   },
   Fragment: {
+    VulnerableMachines: 'VulnerableMachines',
     AssetPageIP: 'AssetPageIP',
     AssetPageNetworkService: 'AssetPageNetworkService',
     AssetPageDomainName: 'AssetPageDomainName',
@@ -48,6 +48,5 @@ export const namedOperations = {
     SubnetPageSubnet: 'SubnetPageSubnet',
     SubnetPageChildIP: 'SubnetPageChildIP',
     VulnerabilityPageCVEDetails: 'VulnerabilityPageCVEDetails',
-    VulnerabilityPageVulnerableMachines: 'VulnerabilityPageVulnerableMachines',
   },
 };
