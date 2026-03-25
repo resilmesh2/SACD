@@ -40,8 +40,8 @@
           <p class="error-message">{{ errorMessage }}</p>
         </ng-container>
       } @else if (
-        missions.length > 0 &&
         missionsStructure &&
+        missionsStructure.nodes.missions.length > 0 &&
         !graphLoading &&
         !errorMessage
       ) {
