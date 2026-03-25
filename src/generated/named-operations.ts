@@ -11,6 +11,7 @@ export const namedOperations = {
     HomePageGetMissions: 'HomePageGetMissions',
     HomePageGetVulnerabilities: 'HomePageGetVulnerabilities',
     HomePageGetHosts: 'HomePageGetHosts',
+    IssuePageGetVulnerabilities: 'IssuePageGetVulnerabilities',
     MissionEditorGetHosts: 'MissionEditorGetHosts',
     MissionEditorGetIPs: 'MissionEditorGetIPs',
     MissionEditorGetComponents: 'MissionEditorGetComponents',
@@ -26,6 +27,9 @@ export const namedOperations = {
     VulnerabilityPageGetVulnerableMachines:
       'VulnerabilityPageGetVulnerableMachines',
   },
+  Mutation: {
+    IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
+  },
   Fragment: {
     AssetPageIP: 'AssetPageIP',
     AssetPageNetworkService: 'AssetPageNetworkService',
@@ -38,6 +42,7 @@ export const namedOperations = {
     HomePageMission: 'HomePageMission',
     HomePageCVE: 'HomePageCVE',
     HomePageHost: 'HomePageHost',
+    IssuePageVulnerability: 'IssuePageVulnerability',
     MissionPageMission: 'MissionPageMission',
     OrgUnitsPageOrgUnit: 'OrgUnitsPageOrgUnit',
     SubnetPageSubnet: 'SubnetPageSubnet',

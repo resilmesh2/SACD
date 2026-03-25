@@ -1,0 +1,12 @@
+fragment IssuePageVulnerability on Vulnerability {
+  status
+  cve {
+    cve_id
+    description
+    published
+    result_impacts
+    cvss_v31 {
+      base_severity
+    }
+  }
+}

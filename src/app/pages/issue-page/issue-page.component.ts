@@ -5,19 +5,24 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   computed,
+  DestroyRef,
   effect,
   WritableSignal,
   signal,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Issue } from '../../models/issue.model';
-import { CVE } from '../../models/vulnerability.model';
-import { DataService } from '../../services/data.service';
+import {
+  IssuePageGetVulnerabilitiesQueryService,
+  IssuePageGetVulnerabilitiesQuery,
+  IssuePageUpdateVulnerabilityStatusMutationService,
+} from './graphql/issue-page.operation.generated';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -102,8 +107,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
-  vulnerabilties: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
@@ -137,7 +142,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   controls: SentinelControlItem[] = [];
 
   constructor(
-    private data: DataService,
+    private getVulnerabilitiesService: IssuePageGetVulnerabilitiesQueryService,
+    private updateStatusService: IssuePageUpdateVulnerabilityStatusMutationService,
     private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
   ) {
@@ -152,46 +158,43 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.route.queryParams.subscribe((params) => {
-      if (params['severity']) {
-        if (params['severity'] !== 'All') {
-          this.selectedSeverity.set(params['severity'].toLowerCase());
-          this.filterDictionary.set(
-            'severity',
-            params['severity'].toLowerCase(),
-          );
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        if (params['severity']) {
+          if (params['severity'] !== 'All') {
+            this.selectedSeverity.set(params['severity'].toLowerCase());
+            this.filterDictionary.set(
+              'severity',
+              params['severity'].toLowerCase(),
+            );
+          }
         }
-      }
-    });
+      });
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
 
-    this.data.getVulnerabilities().subscribe({
-      next: (vulnerabilties) => {
-        this.vulnerabilties = vulnerabilties;
-
-        console.log('Fetched Vulnerabilities:', this.vulnerabilties);
-
-        this.processIssues();
-
-        if (this.vulnerabilties.length > 0) {
-          this.dataLoaded = true;
-        } else {
-          this.emptyResponse = true;
-        }
-        this.dataLoading = false;
-
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.errorResponse = error;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
-    });
+    this.getVulnerabilitiesService
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const vulnerabilities = result.data.vulnerabilities;
+          this.processIssues(vulnerabilities);
+          this.dataLoaded = vulnerabilities.length > 0;
+          this.emptyResponse = vulnerabilities.length === 0;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.errorResponse = error;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+      });
 
     this.filters.push({
       name: 'severity',
@@ -420,25 +423,26 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     return (indexA < indexB ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
-  private processIssues(): void {
-    console.log('Processing Vulnerabilities:', this.vulnerabilties);
+  private processIssues(
+    vulnerabilities: IssuePageGetVulnerabilitiesQuery['vulnerabilities'],
+  ): void {
     this.issues.set(
-      this.vulnerabilties.map((vuln, index) => ({
-        ...this.vulnerabilties[index], // Spread CVE properties
-        name: vuln.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
-        severity: vuln.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-        status: vuln.status ?? ['estimated'], //index % 3 === 0 ? ["confirmed", "reassessed"] : index % 7 === 0 ? ["resolved"] : index % 10 === 0 ? ["closed"] :
-        description: vuln.description,
-        last_seen: vuln.published ? new Date(vuln.published) : null,
-        impact: vuln.result_impacts
-          ? vuln.result_impacts.join(', ')
-          : 'No impact data available',
-      })),
+      vulnerabilities
+        .filter((vuln) => vuln.cve != null)
+        .map((vuln) => ({
+          name: vuln.cve!.cve_id,
+          severity:
+            vuln.cve!.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown',
+          status: vuln.status ?? ['estimated'],
+          description: vuln.cve!.description,
+          last_seen: vuln.cve!.published ? new Date(vuln.cve!.published) : null,
+          impact:
+            vuln.cve!.result_impacts?.filter(Boolean).join(', ') ??
+            'No impact data available',
+        })),
     );
 
     this.dataSource.data = this.issues();
-
-    console.log('Processed Issues:', this.issues(), this.dataSource.data);
 
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
@@ -466,6 +470,11 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
 
     // Change status in the DB as well
-    this.data.updateVulnerabilityStatus(issue.name, newStatus);
+    this.updateStatusService
+      .mutate({ cve: issue.name, status: newStatus })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: (error) => console.error('Error running mutation', error),
+      });
   }
 }
