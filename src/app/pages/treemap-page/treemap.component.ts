@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   HighchartsChartDirective,
   providePartialHighcharts,
 } from 'highcharts-angular';
-import { DataService } from '../../services/data.service';
 import { Router } from '@angular/router';
 import { SUBNETS_PATH } from '../../paths';
-import { OrgUnitData } from '../../models/org-unit.model';
-import { uniqueId } from 'lodash';
+import {
+  OrgUnitsPageGetAllQueryService,
+  OrgUnitsPageGetAllQuery,
+} from '../org-units-page/graphql/org-units-page.operation.generated';
+
+type OrgUnit = OrgUnitsPageGetAllQuery['organizationUnits'][0];
 
 @Component({
   templateUrl: './treemap.component.html',
@@ -25,7 +29,7 @@ import { uniqueId } from 'lodash';
     }),
   ],
 })
-export class TreemapComponent {
+export class TreemapComponent implements OnInit {
   chartOptions: Highcharts.Options = this.buildChartOptions([]);
   drilledInto: string | null = null;
   private orgData: {
@@ -35,17 +39,26 @@ export class TreemapComponent {
     parent?: string;
   }[] = [];
 
-  constructor(
-    private data: DataService,
-    private router: Router,
-  ) {
-    this.data.getOrgUnits().subscribe((units) => {
-      this.orgData = this.convertOrgUnitsToTreemapData(units);
-      this.chartOptions = this.buildChartOptions(this.orgData);
-    });
+  private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
+
+  constructor(private getOrgUnits: OrgUnitsPageGetAllQueryService) {}
+
+  ngOnInit(): void {
+    this.getOrgUnits
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.orgData = this.convertOrgUnitsToTreemapData(
+            result.data.organizationUnits,
+          );
+          this.chartOptions = this.buildChartOptions(this.orgData);
+        },
+      });
   }
 
-  convertOrgUnitsToTreemapData(orgUnits: OrgUnitData[]) {
+  convertOrgUnitsToTreemapData(orgUnits: OrgUnit[]) {
     const data: {
       id?: string;
       name: string;
@@ -55,19 +68,19 @@ export class TreemapComponent {
     console.log(orgUnits);
 
     for (const unit of orgUnits) {
+      const parentOrgUnit = unit.parent_org_unit[0]?.name;
       data.push({
         id: unit.name,
         name: unit.name,
-        parent:
-          unit.parentOrgUnit == '---' || !unit.parentOrgUnit
-            ? undefined
-            : unit.parentOrgUnit,
+        parent: parentOrgUnit || undefined,
         value: 32,
       });
 
       // Find subnet ranges that are referenced as parents
       const parentRanges = new Set(
-        unit.subnets.filter((s) => s.parent).map((s) => s.parent),
+        unit.subnets
+          .filter((s) => s.parent_subnet.length > 0)
+          .map((s) => s.parent_subnet[0].range),
       );
 
       // Add parent subnet nodes that aren't in the subnet list themselves
@@ -81,6 +94,7 @@ export class TreemapComponent {
       for (const subnet of unit.subnets) {
         const prefix = parseInt(subnet.range.split('/')[1]);
         const value = 32 - prefix || 1;
+        const parentRange = subnet.parent_subnet[0]?.range;
         const node: {
           id?: string;
           name: string;
@@ -89,10 +103,9 @@ export class TreemapComponent {
         } = {
           name: subnet.range,
           value,
-          parent: subnet.parent ? subnet.parent : unit.name,
+          parent: parentRange ?? unit.name,
         };
 
-        // If this subnet is a parent to others, give it an id so children can reference it
         if (parentRanges.has(subnet.range)) {
           node.id = subnet.range;
         }
