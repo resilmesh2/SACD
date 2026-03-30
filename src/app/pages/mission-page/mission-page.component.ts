@@ -84,16 +84,11 @@ export class MissionPageComponent implements OnInit {
     this.selectedNode = null;
 
     this.getMissionService
-      .fetch(
-        { name: this.selectedMissionName },
-        { fetchPolicy: 'network-only' },
-      )
+      .fetch({ name: this.selectedMissionName }, { fetchPolicy: 'network-only' })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.missionsStructure = this.makeMissionsStructure(
-            result.data.missions,
-          );
+          this.missionsStructure = this.makeMissionsStructure(result.data.missions);
           this.graphLoading = false;
           this.errorMessage = '';
         },
@@ -119,33 +114,15 @@ export class MissionPageComponent implements OnInit {
             hosts: [...acc.nodes.hosts, ...structure.nodes.hosts],
             services: [...acc.nodes.services, ...structure.nodes.services],
             aggregations: {
-              or: [
-                ...acc.nodes.aggregations.or,
-                ...structure.nodes.aggregations.or,
-              ],
-              and: [
-                ...acc.nodes.aggregations.and,
-                ...structure.nodes.aggregations.and,
-              ],
+              or: [...acc.nodes.aggregations.or, ...structure.nodes.aggregations.or],
+              and: [...acc.nodes.aggregations.and, ...structure.nodes.aggregations.and],
             },
           },
           relationships: {
-            two_way: [
-              ...acc.relationships.two_way,
-              ...structure.relationships.two_way,
-            ],
-            one_way: [
-              ...acc.relationships.one_way,
-              ...structure.relationships.one_way,
-            ],
-            supports: [
-              ...acc.relationships.supports,
-              ...structure.relationships.supports,
-            ],
-            has_identity: [
-              ...acc.relationships.has_identity,
-              ...structure.relationships.has_identity,
-            ],
+            two_way: [...acc.relationships.two_way, ...structure.relationships.two_way],
+            one_way: [...acc.relationships.one_way, ...structure.relationships.one_way],
+            supports: [...acc.relationships.supports, ...structure.relationships.supports],
+            has_identity: [...acc.relationships.has_identity, ...structure.relationships.has_identity],
           },
         };
       },

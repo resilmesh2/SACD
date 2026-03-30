@@ -49,17 +49,9 @@ import { SubnetService } from '../../services/subnet.service';
   ],
 })
 export class SubnetPageComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [
-    'note',
-    'range',
-    'org_units',
-    'contacts',
-    'parent_subnet',
-    'actions',
-  ];
+  displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
   dataSource: MatTableDataSource<SubnetExtendedData>;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null =
-    null;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
 
   dataLoaded = false;
@@ -160,49 +152,34 @@ export class SubnetPageComponent implements OnInit, AfterViewInit {
     });
 
     // Listen for subnet updates from the dialog (e.g., after insert or edit)
-    dialogRef.componentInstance.updateSubnetDataSource.subscribe(
-      ({ oldRange, subnet }) => {
-        // Refreshes the data source with the updated subnet
-        // Either updates the existing subnet or adds a new one if it doesn't exist
-        const index = this.dataSource.data.findIndex(
-          (item) => item.range === oldRange,
-        );
-        if (index !== -1) {
-          this.dataSource.data[index] = subnet;
+    dialogRef.componentInstance.updateSubnetDataSource.subscribe(({ oldRange, subnet }) => {
+      // Refreshes the data source with the updated subnet
+      // Either updates the existing subnet or adds a new one if it doesn't exist
+      const index = this.dataSource.data.findIndex((item) => item.range === oldRange);
+      if (index !== -1) {
+        this.dataSource.data[index] = subnet;
 
-          // Update parent subnet references
-          this.dataSource.data.forEach((item) => {
-            if (item.parentSubnet === oldRange) {
-              item.parentSubnet = subnet.range;
-            }
-          });
+        // Update parent subnet references
+        this.dataSource.data.forEach((item) => {
+          if (item.parentSubnet === oldRange) {
+            item.parentSubnet = subnet.range;
+          }
+        });
 
-          this.dataSource._updateChangeSubscription(); // Refresh the data source
-          this.openSnackBar(
-            `Subnet ${subnet.range} updated successfully.`,
-            'Close',
-          );
-        } else {
-          this.dataSource.data = [subnet, ...this.dataSource.data]; // Add new subnet if it doesn't exist
-          this.openSnackBar(
-            `Subnet ${subnet.range} [${subnet.note}] added successfully.`,
-            'Close',
-          );
-        }
-      },
-    );
+        this.dataSource._updateChangeSubscription(); // Refresh the data source
+        this.openSnackBar(`Subnet ${subnet.range} updated successfully.`, 'Close');
+      } else {
+        this.dataSource.data = [subnet, ...this.dataSource.data]; // Add new subnet if it doesn't exist
+        this.openSnackBar(`Subnet ${subnet.range} [${subnet.note}] added successfully.`, 'Close');
+      }
+    });
   }
 
   deleteSubnet(subnet: SubnetExtendedData): void {
     if (this.data.deleteSubnet(subnet.range)) {
       // Handle successful deletion (e.g., show a message, refresh the list)
-      this.dataSource.data = this.dataSource.data.filter(
-        (item) => item.range !== subnet.range,
-      );
-      this.openSnackBar(
-        `Subnet ${subnet.range} deleted successfully.`,
-        'Close',
-      );
+      this.dataSource.data = this.dataSource.data.filter((item) => item.range !== subnet.range);
+      this.openSnackBar(`Subnet ${subnet.range} deleted successfully.`, 'Close');
     } else {
       // Handle deletion failure (e.g., show an error message)
       this.openSnackBar(`Failed to delete subnet ${subnet.range}.`, 'Close');

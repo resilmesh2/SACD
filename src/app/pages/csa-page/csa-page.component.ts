@@ -115,36 +115,18 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
 
   COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
-  getCriticalityColor = (
-    value: number,
-    isFinalCriticality: boolean = false,
-  ) => {
+  getCriticalityColor = (value: number, isFinalCriticality: boolean = false) => {
     if (value === null || value === undefined) {
       return { bg: '#cacaca', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)
-    ) {
+    } else if (value >= this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)) {
       return { bg: '#1C1D21', color: '#FFFFFF' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)
-    ) {
+    } else if (value >= this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)) {
       return { bg: '#9F85FF', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)
-    ) {
+    } else if (value >= this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)) {
       return { bg: '#ed625e', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)
-    ) {
+    } else if (value >= this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)) {
       return { bg: '#ed913b', color: '#000000' };
-    } else if (
-      value >
-      this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)
-    ) {
+    } else if (value > this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)) {
       return { bg: '#f6d55c', color: '#000000' };
     } else {
       return { bg: '#86B46A', color: '#000000' };
@@ -206,9 +188,7 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
           isMatch =
             value === 'All' ||
             value == '' ||
-            record.ips.some((ip) =>
-              ip.toLowerCase().includes(value.trim().toLowerCase()),
-            );
+            record.ips.some((ip) => ip.toLowerCase().includes(value.trim().toLowerCase()));
           if (!isMatch) return false;
         }
       }
@@ -219,9 +199,7 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   applyNameFilter(): void {
     this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();

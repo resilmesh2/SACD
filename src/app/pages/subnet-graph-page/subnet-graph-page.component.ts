@@ -11,10 +11,7 @@ import {
 import { tap } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import {
-  Mission,
-  MissionStructure,
-} from '../../models/mission-structure.model';
+import { Mission, MissionStructure } from '../../models/mission-structure.model';
 import { DataService } from '../../services/data.service';
 import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
@@ -113,11 +110,7 @@ export class SubnetGraphPageComponent implements OnInit {
   }
 
   hasNoParent(subnet: SubnetExtendedData) {
-    return (
-      subnet.parentSubnet == undefined ||
-      subnet.parentSubnet == null ||
-      subnet.parentSubnet == ''
-    );
+    return subnet.parentSubnet == undefined || subnet.parentSubnet == null || subnet.parentSubnet == '';
   }
 
   isRoot(subnetRange: string) {
@@ -133,11 +126,7 @@ export class SubnetGraphPageComponent implements OnInit {
   setEdgesAndNodes(): void {
     this.nodes.set(
       this.subnets().flatMap((subnet) => {
-        if (
-          !this.isNotParent(subnet.range) &&
-          this.hasNoParent(subnet) &&
-          !this.isRoot(subnet.range)
-        ) {
+        if (!this.isNotParent(subnet.range) && this.hasNoParent(subnet) && !this.isRoot(subnet.range)) {
           return [];
         }
         let isInternal = this.isPartOfConstituency();
@@ -145,16 +134,8 @@ export class SubnetGraphPageComponent implements OnInit {
           id: `${subnet.range}`,
           label: subnet.range,
           data: {
-            type: this.isRoot(subnet.range)
-              ? 'root'
-              : isInternal
-                ? 'subnet'
-                : 'external subnet',
-            customColor: this.isRoot(subnet.range)
-              ? '#212951'
-              : isInternal
-                ? '#3a4d81'
-                : '#307351',
+            type: this.isRoot(subnet.range) ? 'root' : isInternal ? 'subnet' : 'external subnet',
+            customColor: this.isRoot(subnet.range) ? '#212951' : isInternal ? '#3a4d81' : '#307351',
             textColor: '#fff',
             ...subnet,
           },
@@ -164,11 +145,7 @@ export class SubnetGraphPageComponent implements OnInit {
 
     this.edges.set(
       this.subnets().flatMap((subnet, index) => {
-        if (
-          subnet.parentSubnet === undefined ||
-          subnet.parentSubnet === null ||
-          subnet.parentSubnet === ''
-        ) {
+        if (subnet.parentSubnet === undefined || subnet.parentSubnet === null || subnet.parentSubnet === '') {
           return [];
         }
 

@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -41,12 +34,7 @@ export interface IssueDetail {
 export class IssueDetailComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<IssueDetail>();
 
-  displayedColumns: string[] = [
-    'affectedAsset',
-    'description',
-    'software',
-    'vulnerabilityCount',
-  ];
+  displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
 
   paginator: MatPaginator | null = null;
 
@@ -96,20 +84,16 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   }
 
   getRouteParameters(): void {
-    this.route.paramMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        this.issueName = params.get('name') || '';
-      });
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.issueName = params.get('name') || '';
+    });
 
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((params) => {
-        this.issueSeverity = params['severity'] || '';
-        this.issueStatus = params['status'] || '';
-        this.issueDescription = params['description'] || '';
-        this.issueImpact = params['impact'] || '';
-      });
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.issueSeverity = params['severity'] || '';
+      this.issueStatus = params['status'] || '';
+      this.issueDescription = params['description'] || '';
+      this.issueImpact = params['impact'] || '';
+    });
   }
 
   getVulnerableAssets(): void {
@@ -118,9 +102,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          const rows = (
-            result.data.cves[0]?.vulnerability.software_versions ?? []
-          ).flatMap((sv) =>
+          const rows = (result.data.cves[0]?.vulnerability.software_versions ?? []).flatMap((sv) =>
             sv.hosts.flatMap((host) =>
               (host.node?.ips ?? []).map((ip) => ({
                 ip: ip.address,
@@ -130,9 +112,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
             ),
           );
 
-          const valid = rows.filter(
-            (row) => row.ip && row.subnet && row.software,
-          );
+          const valid = rows.filter((row) => row.ip && row.subnet && row.software);
 
           if (valid.length > 0) {
             this.issueDetails = valid.map((row) => ({

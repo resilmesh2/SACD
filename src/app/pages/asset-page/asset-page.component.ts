@@ -102,15 +102,7 @@ interface Filter {
 })
 export class AssetPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Asset>();
-  displayedColumns: string[] = [
-    'type',
-    'ip',
-    'status',
-    'subnet',
-    'service',
-    'tag',
-    'last_seen',
-  ];
+  displayedColumns: string[] = ['type', 'ip', 'status', 'subnet', 'service', 'tag', 'last_seen'];
 
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -156,23 +148,15 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   selectedStatus: WritableSignal<string> = signal(this.defaultValue);
   selectedType: WritableSignal<string> = signal(this.defaultValue);
 
-  tags = computed(() =>
-    Array.from(new Set(this.assets().flatMap((asset) => asset.tag))),
-  );
-  subnets = computed(() =>
-    Array.from(new Set(this.assets().flatMap((asset) => asset.subnet))),
-  );
-  assetTypes = computed(() =>
-    Array.from(new Set(this.assets().flatMap((asset) => asset.type))),
-  );
+  tags = computed(() => Array.from(new Set(this.assets().flatMap((asset) => asset.tag))));
+  subnets = computed(() => Array.from(new Set(this.assets().flatMap((asset) => asset.subnet))));
+  assetTypes = computed(() => Array.from(new Set(this.assets().flatMap((asset) => asset.type))));
 
   statusOptions = computed(() => ['unknown', 'known', 'rediscovered']);
 
   startDate: WritableSignal<Date | null> = signal(null);
   endDate: WritableSignal<Date | null> = signal(null);
-  isDateRangeValid = computed(
-    () => this.startDate() !== null && this.endDate() !== null,
-  );
+  isDateRangeValid = computed(() => this.startDate() !== null && this.endDate() !== null);
 
   controls: SentinelControlItem[] = [];
 
@@ -259,10 +243,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       for (let [key, value] of map) {
         // IP filter
         if (key === 'ip') {
-          isMatch =
-            value === 'All' ||
-            value == '' ||
-            record.ip.toLowerCase().includes(value.trim().toLowerCase());
+          isMatch = value === 'All' || value == '' || record.ip.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
           // If no date range is specified, match all records
@@ -274,19 +255,12 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
           const dateRange = JSON.parse(value);
           const startDate = new Date(dateRange.start);
           const endDate = new Date(dateRange.end);
-          const lastSeenDate = record.last_seen
-            ? new Date(record.last_seen)
-            : null;
-          isMatch =
-            !lastSeenDate ||
-            (lastSeenDate >= startDate && lastSeenDate <= endDate);
+          const lastSeenDate = record.last_seen ? new Date(record.last_seen) : null;
+          isMatch = !lastSeenDate || (lastSeenDate >= startDate && lastSeenDate <= endDate);
 
           if (!isMatch) return false;
         } else if (key === 'tag') {
-          isMatch =
-            value === 'All' ||
-            value == '' ||
-            record.tag.includes(value.trim().toLowerCase());
+          isMatch = value === 'All' || value == '' || record.tag.includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else {
           // For any other filters, check if the value matches the record's property
@@ -306,9 +280,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   applySelectFilter(event: MatSelectChange, filter: Filter) {
     this.filterDictionary.set(filter.name, event.value);
 
-    var jsonString = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
 
     this.dataSource.filter = jsonString;
 
@@ -316,19 +288,12 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
 
-    console.log(
-      'Applied Filter:',
-      event.value,
-      filter.name,
-      this.dataSource.filter,
-    );
+    console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
   applyIPFilter(): void {
     this.filterDictionary.set('ip', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -345,9 +310,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
           end: this.endDate()?.toISOString(),
         }),
       );
-      this.dataSource.filter = JSON.stringify(
-        Array.from(this.filterDictionary.entries()),
-      );
+      this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     }
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -356,9 +319,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
 
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -397,21 +358,12 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.assets.update((assets) => [
       ...assets,
       ...this.ips.map((ip) => {
-        const svcCount = ip.nodes.reduce(
-          (sum, node) =>
-            sum + (node.host?.network_servicesAggregate?.count ?? 0),
-          0,
-        );
+        const svcCount = ip.nodes.reduce((sum, node) => sum + (node.host?.network_servicesAggregate?.count ?? 0), 0);
         return {
           id: ip._id,
           type: 'IP',
           ip: ip.address,
-          service:
-            svcCount > 0
-              ? svcCount === 1
-                ? '1 service'
-                : `${svcCount} services`
-              : null,
+          service: svcCount > 0 ? (svcCount === 1 ? '1 service' : `${svcCount} services`) : null,
           status: ip.status ?? 'unknown',
           subnet: ip.subnets.map((s) => s.range),
           tag: (ip.tag ?? []).filter((t): t is string => t !== null),

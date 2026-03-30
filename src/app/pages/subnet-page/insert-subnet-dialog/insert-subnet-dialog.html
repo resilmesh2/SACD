@@ -15,7 +15,7 @@
     <mat-select [(value)]="parentSubnet">
       <mat-option value="null">---</mat-option>
       @for (subnet of allSubnets(); track subnet.range) {
-        <mat-option [value]="subnet.range">{{ subnet.range }}</mat-option>
+      <mat-option [value]="subnet.range">{{ subnet.range }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -24,7 +24,7 @@
     <mat-select [(value)]="orgUnit">
       <mat-option value="null">---</mat-option>
       @for (orgUnit of allOrgUnits(); track orgUnit) {
-        <mat-option [value]="orgUnit.name">{{ orgUnit.name }}</mat-option>
+      <mat-option [value]="orgUnit.name">{{ orgUnit.name }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -33,27 +33,27 @@
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Cancel</button>
   @if (data.mode === "edit") {
-    <sentinel-button-with-icon
-      color="primary"
-      icon="save"
-      tooltip=""
-      (click)="editSubnet()"
-      mat-dialog-close
-      cdkFocusInitial
-    >
-      Save
-    </sentinel-button-with-icon>
+  <sentinel-button-with-icon
+    color="primary"
+    icon="save"
+    tooltip=""
+    (click)="editSubnet()"
+    mat-dialog-close
+    cdkFocusInitial
+  >
+    Save
+  </sentinel-button-with-icon>
   } @else if (data.mode === "insert") {
-    <sentinel-button-with-icon
-      color="primary"
-      icon="add"
-      tooltip=""
-      (click)="insertSubnet()"
-      cdkFocusInitial
-      [disabled]="!range()"
-    >
-      Insert
-    </sentinel-button-with-icon>
+  <sentinel-button-with-icon
+    color="primary"
+    icon="add"
+    tooltip=""
+    (click)="insertSubnet()"
+    cdkFocusInitial
+    [disabled]="!range()"
+  >
+    Insert
+  </sentinel-button-with-icon>
   }
 </mat-dialog-actions>
 

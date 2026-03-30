@@ -46,15 +46,7 @@ export class HomePageDataService {
     ])
       .pipe(takeUntilDestroyed(destroyRef))
       .subscribe({
-        next: ([
-          subnetsResult,
-          orgUnitsResult,
-          ipsResult,
-          nodesResult,
-          missionsResult,
-          vulnsResult,
-          hostsResult,
-        ]) => {
+        next: ([subnetsResult, orgUnitsResult, ipsResult, nodesResult, missionsResult, vulnsResult, hostsResult]) => {
           this.subnets.set(subnetsResult.data.subnets as Subnet[]);
           this.orgUnits.set(orgUnitsResult.data.organizationUnits);
           this.ipCount.set(ipsResult.data.ips.length);

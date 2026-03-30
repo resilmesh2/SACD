@@ -238,9 +238,7 @@ export class FlowEditorComponent implements OnInit {
       .flatMap((node) => {
         if (node.type === 'and') {
           if (this.selected().includes(`f-node-${node.id}`)) {
-            const parentConnection = this.connections().find(
-              (conn) => conn.to === `${node.id}-input`,
-            );
+            const parentConnection = this.connections().find((conn) => conn.to === `${node.id}-input`);
             if (parentConnection) {
               return parentConnection.from.split('-')[0];
             }
@@ -274,9 +272,7 @@ export class FlowEditorComponent implements OnInit {
       this.connections().filter((conn) => {
         const fromId = conn.from.split('-')[0];
         const toId = conn.to.split('-')[0];
-        return (
-          !this.selected().includes(fromId) && !this.selected().includes(toId)
-        );
+        return !this.selected().includes(fromId) && !this.selected().includes(toId);
       }),
     );
 
@@ -292,25 +288,16 @@ export class FlowEditorComponent implements OnInit {
       return;
     }
 
-    const alreadyConnected = this.connections().some(
-      (conn) => conn.to === event.fInputId,
-    );
-    const nodeType = this.nodes().find(
-      (node) => node.id === event.fInputId?.split('-')[0],
-    )?.type;
+    const alreadyConnected = this.connections().some((conn) => conn.to === event.fInputId);
+    const nodeType = this.nodes().find((node) => node.id === event.fInputId?.split('-')[0])?.type;
 
     // disallow duplicate connections between two same nodes
     const alreadyConnectedFromSameNode = this.connections().some(
-      (conn) =>
-        conn.to === event.fInputId &&
-        conn.from.split('-')[0] === event.fOutputId.split('-')[0],
+      (conn) => conn.to === event.fInputId && conn.from.split('-')[0] === event.fOutputId.split('-')[0],
     );
 
     // should allow multiple connections to component nodes
-    if (
-      (alreadyConnected && nodeType !== 'component') ||
-      alreadyConnectedFromSameNode
-    ) {
+    if ((alreadyConnected && nodeType !== 'component') || alreadyConnectedFromSameNode) {
       return;
     }
 
@@ -342,15 +329,10 @@ export class FlowEditorComponent implements OnInit {
     this.componentGroupCount.set(this.componentGroupCount() + 1);
   }
 
-  getChildOffsets({
-    base,
-    step,
-    direction,
-  }: {
-    base: number;
-    step: number;
-    direction: number;
-  }): { left: number; right: number } {
+  getChildOffsets({ base, step, direction }: { base: number; step: number; direction: number }): {
+    left: number;
+    right: number;
+  } {
     const left = base + 100 * direction;
     const right = base - 100 * direction;
     return { left, right };
@@ -359,19 +341,9 @@ export class FlowEditorComponent implements OnInit {
   addNewMissionRoot() {
     let newRootXCoord = Object.keys(this.missionsMap()).length * 300;
 
-    const newRootId = this.createNode(
-      '',
-      'root',
-      { x: newRootXCoord, y: 0 },
-      'root',
-    );
+    const newRootId = this.createNode('', 'root', { x: newRootXCoord, y: 0 }, 'root');
 
-    const newRootAndId = this.createNode(
-      'AND',
-      'and',
-      { x: newRootXCoord, y: 100 },
-      'root-and',
-    );
+    const newRootAndId = this.createNode('AND', 'and', { x: newRootXCoord, y: 100 }, 'root-and');
 
     this.createConnection(`${newRootId}-output`, `${newRootAndId}-input`);
 
@@ -395,12 +367,7 @@ export class FlowEditorComponent implements OnInit {
 
     const childOffsets = this.getChildOffsets(this.componentGroupXOffset());
 
-    const componentAId = this.createNode(
-      'A',
-      'component',
-      { x: childOffsets.left, y: LAYER_Y.COMPONENT },
-      'component',
-    );
+    const componentAId = this.createNode('A', 'component', { x: childOffsets.left, y: LAYER_Y.COMPONENT }, 'component');
 
     const componentAAddId = this.createNode(
       'AND',
@@ -439,18 +406,8 @@ export class FlowEditorComponent implements OnInit {
   }
 
   public addComponentNode(): void {
-    const componentId = this.createNode(
-      'Component',
-      'component',
-      { x: 700, y: LAYER_Y.COMPONENT },
-      'component',
-    );
-    const andId = this.createNode(
-      'AND',
-      'and',
-      { x: 700, y: LAYER_Y.COMPONENT_AND_AGGREGATION },
-      'component-and',
-    );
+    const componentId = this.createNode('Component', 'component', { x: 700, y: LAYER_Y.COMPONENT }, 'component');
+    const andId = this.createNode('AND', 'and', { x: 700, y: LAYER_Y.COMPONENT_AND_AGGREGATION }, 'component-and');
 
     this.createConnection(`${componentId}-output`, `${andId}-input`);
     this.selectNodes([`f-node-${componentId}`, `f-node-${andId}`]);
@@ -484,22 +441,13 @@ export class FlowEditorComponent implements OnInit {
   }
 
   public addHostGroup(): void {
-    const orId = this.createNode(
-      'OR',
-      'or',
-      { x: 300, y: LAYER_Y.HOST_GROUP },
-      'host-or',
-    );
+    const orId = this.createNode('OR', 'or', { x: 300, y: LAYER_Y.HOST_GROUP }, 'host-or');
     const hostAId = this.addHostNode(undefined, undefined, 200);
     const hostBId = this.addHostNode(undefined, undefined, 400);
 
     this.createConnection(`${orId}-output`, `${hostAId}-input`);
     this.createConnection(`${orId}-output`, `${hostBId}-input`);
-    this.selectNodes([
-      `f-node-${orId}`,
-      `f-node-${hostAId}`,
-      `f-node-${hostBId}`,
-    ]);
+    this.selectNodes([`f-node-${orId}`, `f-node-${hostAId}`, `f-node-${hostBId}`]);
   }
 
   public addHostNode(hostname?: string, ip?: string, x?: number): number {

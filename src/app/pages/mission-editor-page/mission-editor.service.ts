@@ -65,9 +65,7 @@ export class MissionEditorService {
   private http = inject(HttpClient);
   constructor() {}
 
-  convertConnectionsToRelationships(
-    connections: { from: string; to: string }[],
-  ): NodeRelationshipById[] {
+  convertConnectionsToRelationships(connections: { from: string; to: string }[]): NodeRelationshipById[] {
     return connections.map((conn) => {
       const fromId = parseInt(conn.from.split('-')[0], 10);
       const toId = parseInt(conn.to.split('-')[0], 10);
@@ -114,19 +112,11 @@ export class MissionEditorService {
     relationships: NodeRelationshipById[],
     groupedNodes: GroupedNodes,
   ): MissionNodeWithId[] {
-    const directIds: number[] = relationships
-      .filter((r) => r.from === serviceId)
-      .map((r) => r.to);
-    const indirectIds: number[] = relationships
-      .filter((r) => directIds.includes(r.from))
-      .map((r) => r.to);
-    const leafHostsIds: number[] = relationships
-      .filter((r) => indirectIds.includes(r.from))
-      .map((r) => r.to);
+    const directIds: number[] = relationships.filter((r) => r.from === serviceId).map((r) => r.to);
+    const indirectIds: number[] = relationships.filter((r) => directIds.includes(r.from)).map((r) => r.to);
+    const leafHostsIds: number[] = relationships.filter((r) => indirectIds.includes(r.from)).map((r) => r.to);
 
-    const allConnectedIds = [
-      ...new Set([...directIds, ...indirectIds, ...leafHostsIds]),
-    ];
+    const allConnectedIds = [...new Set([...directIds, ...indirectIds, ...leafHostsIds])];
 
     return groupedNodes.hosts
       .map((host) => ({ ...host, id: ~~host.id }) as MissionNodeWithId)
@@ -141,11 +131,7 @@ export class MissionEditorService {
     const services = groupedNodes.services;
 
     for (const service of services) {
-      const connectedHosts = this.getHostsConnectedToService(
-        ~~service.id,
-        relationships,
-        groupedNodes,
-      );
+      const connectedHosts = this.getHostsConnectedToService(~~service.id, relationships, groupedNodes);
       for (const host of connectedHosts) {
         hasIdentityRelationships.push({
           from: service.data.name || '',
@@ -162,19 +148,11 @@ export class MissionEditorService {
     groupedNodes: GroupedNodes,
     rootId: number,
   ): MissionNodeWithId[] {
-    const directIds: number[] = relationships
-      .filter((r) => r.from === rootId)
-      .map((r) => r.to);
-    const indirectIds: number[] = relationships
-      .filter((r) => directIds.includes(r.from))
-      .map((r) => r.to);
-    const leafServiceIds: number[] = relationships
-      .filter((r) => indirectIds.includes(r.from))
-      .map((r) => r.to);
+    const directIds: number[] = relationships.filter((r) => r.from === rootId).map((r) => r.to);
+    const indirectIds: number[] = relationships.filter((r) => directIds.includes(r.from)).map((r) => r.to);
+    const leafServiceIds: number[] = relationships.filter((r) => indirectIds.includes(r.from)).map((r) => r.to);
 
-    const allConnectedIds = [
-      ...new Set([...directIds, ...indirectIds, ...leafServiceIds]),
-    ];
+    const allConnectedIds = [...new Set([...directIds, ...indirectIds, ...leafServiceIds])];
 
     return groupedNodes.services
       .map((service) => ({ ...service, id: ~~service.id }) as MissionNodeWithId)
@@ -187,36 +165,22 @@ export class MissionEditorService {
     missionId: number,
     missionName: string,
   ): NodeRelationshipByName[] {
-    const connectedServices = this.getServicesConnectedToMission(
-      relationships,
-      groupedNodes,
-      missionId,
-    );
+    const connectedServices = this.getServicesConnectedToMission(relationships, groupedNodes, missionId);
 
-    const supportsRelationships: NodeRelationshipByName[] =
-      connectedServices.map((service) => ({
-        from: missionName,
-        to: service.data.name || '',
-      }));
+    const supportsRelationships: NodeRelationshipByName[] = connectedServices.map((service) => ({
+      from: missionName,
+      to: service.data.name || '',
+    }));
     return supportsRelationships;
   }
 
   createMissionPayload(data: MissionData): MissionPayload {
-    const relationships = this.convertConnectionsToRelationships(
-      data.connections,
-    );
+    const relationships = this.convertConnectionsToRelationships(data.connections);
     const groupedNodes = this.getNodesGroupedByType(data);
 
-    const allSupportsRelationships = Object.keys(data.missions).flatMap(
-      (missionId) => {
-        return this.getSupportsRelationships(
-          relationships,
-          groupedNodes,
-          ~~missionId,
-          data.missions[missionId].name,
-        );
-      },
-    );
+    const allSupportsRelationships = Object.keys(data.missions).flatMap((missionId) => {
+      return this.getSupportsRelationships(relationships, groupedNodes, ~~missionId, data.missions[missionId].name);
+    });
 
     const allMissions = Object.keys(data.missions).map((missionId) => {
       const mission = data.missions[missionId];
@@ -233,10 +197,7 @@ export class MissionEditorService {
         two_way: [],
         one_way: relationships,
         supports: allSupportsRelationships,
-        has_identity: this.getHasIdentityRelationships(
-          relationships,
-          groupedNodes,
-        ),
+        has_identity: this.getHasIdentityRelationships(relationships, groupedNodes),
         dependencies: [],
       },
       nodes: {
@@ -259,10 +220,7 @@ export class MissionEditorService {
     return payload;
   }
 
-  uploadMissionPayload(
-    payload: MissionPayload,
-    uploadMode: 'create' | 'update' = 'create',
-  ): Observable<any> {
+  uploadMissionPayload(payload: MissionPayload, uploadMode: 'create' | 'update' = 'create'): Observable<any> {
     // Connection check (optional)
     // this.http.get('http://localhost:8000/missions').subscribe({
     //     next: (response) => {

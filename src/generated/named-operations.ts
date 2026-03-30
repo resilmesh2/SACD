@@ -24,10 +24,10 @@ export const namedOperations = {
     SubnetPageGetSubnet: 'SubnetPageGetSubnet',
     SubnetPageGetChildIPs: 'SubnetPageGetChildIPs',
     SubnetPageGetChildSubnets: 'SubnetPageGetChildSubnets',
-    VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails'
+    VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails',
   },
   Mutation: {
-    IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus'
+    IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
   },
   Fragment: {
     OrgUnit: 'OrgUnit',
@@ -47,6 +47,6 @@ export const namedOperations = {
     IssuePageVulnerability: 'IssuePageVulnerability',
     MissionPageMission: 'MissionPageMission',
     SubnetPageChildIP: 'SubnetPageChildIP',
-    VulnerabilityPageCVEDetails: 'VulnerabilityPageCVEDetails'
-  }
-}
+    VulnerabilityPageCVEDetails: 'VulnerabilityPageCVEDetails',
+  },
+};

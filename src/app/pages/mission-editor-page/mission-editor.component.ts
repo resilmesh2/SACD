@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  model,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, inject, model, signal, ViewChild, WritableSignal } from '@angular/core';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -90,9 +81,7 @@ export class MissionEditorComponent {
   uploadMode = signal<'create' | 'update'>('create');
   selectedMission = signal('');
 
-  public connections: WritableSignal<{ from: string; to: string }[]> = model([
-    { from: '0-output', to: '1-input' },
-  ]);
+  public connections: WritableSignal<{ from: string; to: string }[]> = model([{ from: '0-output', to: '1-input' }]);
 
   public nodes: WritableSignal<MissionNode[]> = model([
     {
@@ -135,11 +124,7 @@ export class MissionEditorComponent {
     this.getMissionNames();
   }
 
-  updateMissionField(
-    missionId: string,
-    field: keyof MissionMetadata,
-    value: any,
-  ) {
+  updateMissionField(missionId: string, field: keyof MissionMetadata, value: any) {
     this.missionsMap.update((map) => ({
       ...map,
       [missionId]: { ...map[missionId], [field]: value },
@@ -152,9 +137,7 @@ export class MissionEditorComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.existingMissionNames.set(
-            result.data.missions.map((m) => m.name) as any,
-          );
+          this.existingMissionNames.set(result.data.missions.map((m) => m.name) as any);
         },
       });
   }
@@ -241,12 +224,7 @@ export class MissionEditorComponent {
     this.flowEditor.fCanvas.resetScaleAndCenter(false);
     this.uploadMode.set('update');
 
-    console.log(
-      'Loaded mission payload:',
-      this.missionsMap(),
-      this.nodes(),
-      this.connections(),
-    );
+    console.log('Loaded mission payload:', this.missionsMap(), this.nodes(), this.connections());
     this.openSnackBar(
       `Successfully loaded existing mission (${payload.nodes.missions.length} connected mission(s) total)`,
       'OK',
@@ -310,18 +288,12 @@ export class MissionEditorComponent {
     });
 
     for (const info of nodeInfoMap.values()) {
-      const parents = (parentOf.get(info.id) ?? []).map((p) =>
-        nodeInfoMap.get(p),
-      );
+      const parents = (parentOf.get(info.id) ?? []).map((p) => nodeInfoMap.get(p));
       if (info.type === 'and') {
-        info.layer = parents.some((p) => p?.type === 'root')
-          ? 'root-and'
-          : 'component-and';
+        info.layer = parents.some((p) => p?.type === 'root') ? 'root-and' : 'component-and';
       } else if (info.type === 'or') {
         const parentLayers = parents.map((p) => p?.layer);
-        info.layer = parentLayers.includes('root-and')
-          ? 'component-or'
-          : 'host-or';
+        info.layer = parentLayers.includes('root-and') ? 'component-or' : 'host-or';
       }
     }
 
@@ -333,9 +305,7 @@ export class MissionEditorComponent {
     for (const info of nodeInfoMap.values()) {
       g.setNode(`${info.id}`, { width: 200, height: 50 });
     }
-    payload.relationships.one_way.forEach((rel) =>
-      g.setEdge(`${rel.from}`, `${rel.to}`),
-    );
+    payload.relationships.one_way.forEach((rel) => g.setEdge(`${rel.from}`, `${rel.to}`));
 
     dagre.layout(g);
 
@@ -382,10 +352,7 @@ export class MissionEditorComponent {
 
     this.validateMissionsMetadata();
 
-    const isValid = this.missionValidator.validateMission(
-      this.nodes,
-      this.connections,
-    );
+    const isValid = this.missionValidator.validateMission(this.nodes, this.connections);
 
     if (!isValid) {
       return false;
@@ -400,10 +367,7 @@ export class MissionEditorComponent {
     if (!payload) {
       return;
     }
-    let $missionUpload = this.missionEditorService.uploadMissionPayload(
-      payload,
-      this.uploadMode(),
-    );
+    let $missionUpload = this.missionEditorService.uploadMissionPayload(payload, this.uploadMode());
 
     $missionUpload.subscribe({
       next: (response) => {
@@ -412,11 +376,7 @@ export class MissionEditorComponent {
       },
       error: (error) => {
         console.error('Error uploading mission payload:', error);
-        this.openSnackBar(
-          `Failed to save mission. [${error.message}]`,
-          'Close',
-          { error: true },
-        );
+        this.openSnackBar(`Failed to save mission. [${error.message}]`, 'Close', { error: true });
       },
     });
   }
@@ -471,10 +431,6 @@ export class MissionEditorComponent {
   // Returns mission data as it is used in the mission editor
   // To be used for debugging purposes
   getMissionJSON(): string {
-    return JSON.stringify(
-      { nodes: this.nodes(), connections: this.connections() },
-      null,
-      2,
-    );
+    return JSON.stringify({ nodes: this.nodes(), connections: this.connections() }, null, 2);
   }
 }

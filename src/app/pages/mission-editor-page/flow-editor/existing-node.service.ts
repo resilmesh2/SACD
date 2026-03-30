@@ -50,15 +50,13 @@ export class ExistingNodeService {
   }
 
   public getMissionComponents(): Observable<string[]> {
-    return this.getComponentsService
-      .fetch({}, { fetchPolicy: 'network-only' })
-      .pipe(
-        map((result) =>
-          result.data.components
-            .map((component) => component.name)
-            .filter((name) => name && name.length > 0)
-            .sort((a, b) => a.localeCompare(b)),
-        ),
-      );
+    return this.getComponentsService.fetch({}, { fetchPolicy: 'network-only' }).pipe(
+      map((result) =>
+        result.data.components
+          .map((component) => component.name)
+          .filter((name) => name && name.length > 0)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    );
   }
 }

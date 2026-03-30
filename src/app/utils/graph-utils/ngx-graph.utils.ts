@@ -35,10 +35,7 @@ export function getLabelOfGraphNode(node: Node): string {
 export function getLabel(node: any): string {
   const initialLabel: keyof EntityStructure = node.__typename;
 
-  if (
-    typeof entities[initialLabel] === 'undefined' ||
-    entities[initialLabel].showProperty.length === 0
-  ) {
+  if (typeof entities[initialLabel] === 'undefined' || entities[initialLabel].showProperty.length === 0) {
     return initialLabel;
   }
 
@@ -46,11 +43,7 @@ export function getLabel(node: any): string {
     (pk) => typeof node[pk] !== 'undefined' && node[pk] !== null,
   );
 
-  if (
-    propKey === undefined ||
-    node[propKey] === null ||
-    node[propKey] === undefined
-  ) {
+  if (propKey === undefined || node[propKey] === null || node[propKey] === undefined) {
     return '';
   }
 
@@ -63,11 +56,7 @@ export function getLabel(node: any): string {
  * @param parent
  * @param edgeName
  */
-export function converToGraph(
-  data: any[],
-  parent?: string,
-  edgeName?: string,
-): GraphInput {
+export function converToGraph(data: any[], parent?: string, edgeName?: string): GraphInput {
   let nodes: Node[] = [];
   let edges: Edge[] = [];
 
@@ -91,22 +80,10 @@ export function converToGraph(
     }
 
     Object.keys(item).forEach((key) => {
-      if (
-        Array.isArray(item[key]) &&
-        item[key].length > 0 &&
-        item[key][0].__typename
-      ) {
-        const { nodes: newNodes, edges: newEdges } = converToGraph(
-          item[key],
-          item._id,
-          key,
-        );
+      if (Array.isArray(item[key]) && item[key].length > 0 && item[key][0].__typename) {
+        const { nodes: newNodes, edges: newEdges } = converToGraph(item[key], item._id, key);
         nodes = _.unionBy(nodes, newNodes, (n) => n.id);
-        edges = _.unionBy(edges, newEdges, (e) => [
-          e.source,
-          e.target,
-          e.label,
-        ]);
+        edges = _.unionBy(edges, newEdges, (e) => [e.source, e.target, e.label]);
       }
     });
   });
@@ -122,10 +99,7 @@ export function converToGraph(
 export function getLabelName(node: any): string {
   const initialLabel: keyof EntityStructure = node.__typename;
 
-  if (
-    typeof entities[initialLabel] === 'undefined' ||
-    entities[initialLabel].showProperty.length === 0
-  ) {
+  if (typeof entities[initialLabel] === 'undefined' || entities[initialLabel].showProperty.length === 0) {
     return initialLabel;
   }
 

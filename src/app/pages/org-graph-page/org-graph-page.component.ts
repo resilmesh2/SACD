@@ -1,11 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
@@ -24,10 +17,7 @@ import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
-import {
-  GetAllOrgUnitsQuery,
-  GetAllOrgUnitsQueryService,
-} from '../../graphql/org-units/org-units.operation.generated';
+import { GetAllOrgUnitsQuery, GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.operation.generated';
 
 type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
 
@@ -83,9 +73,7 @@ export class OrgGraphPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          const orgUnits = [...result.data.organizationUnits].sort((a, b) =>
-            a.name.localeCompare(b.name),
-          );
+          const orgUnits = [...result.data.organizationUnits].sort((a, b) => a.name.localeCompare(b.name));
           this.orgUnits.set(orgUnits);
           this.setEdgesAndNodes();
           this.graphLoading = false;

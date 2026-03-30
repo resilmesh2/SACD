@@ -8,10 +8,7 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../../../models/graph.model';
-import {
-  entities,
-  EntityStructure,
-} from '../utils/graph-utils/entities.config';
+import { entities, EntityStructure } from '../utils/graph-utils/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';
@@ -69,9 +66,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(
-            data.data[node.data.type],
-          );
+          const { nodes, edges } = this.converToGraph(data.data[node.data.type]);
           return { nodes, edges };
         }),
       );
@@ -97,9 +92,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const missions = data.data.missions.map(
-            (mission: any) => mission.name,
-          );
+          const missions = data.data.missions.map((mission: any) => mission.name);
           return missions;
         }),
       );
@@ -109,7 +102,7 @@ export class DataService {
    * Gets mission object by its name
    * @param name name of the mission
    */
-  public getMission(name: String): Observable<Mission[]> {
+  public getMission(name: string): Observable<Mission[]> {
     return this.apollo // Assuming 'this' has an Apollo instance
       .query<any>({
         query: gql`
@@ -149,33 +142,15 @@ export class DataService {
             hosts: [...acc.nodes.hosts, ...structure.nodes.hosts],
             services: [...acc.nodes.services, ...structure.nodes.services],
             aggregations: {
-              or: [
-                ...acc.nodes.aggregations.or,
-                ...structure.nodes.aggregations.or,
-              ],
-              and: [
-                ...acc.nodes.aggregations.and,
-                ...structure.nodes.aggregations.and,
-              ],
+              or: [...acc.nodes.aggregations.or, ...structure.nodes.aggregations.or],
+              and: [...acc.nodes.aggregations.and, ...structure.nodes.aggregations.and],
             },
           },
           relationships: {
-            two_way: [
-              ...acc.relationships.two_way,
-              ...structure.relationships.two_way,
-            ],
-            one_way: [
-              ...acc.relationships.one_way,
-              ...structure.relationships.one_way,
-            ],
-            supports: [
-              ...acc.relationships.supports,
-              ...structure.relationships.supports,
-            ],
-            has_identity: [
-              ...acc.relationships.has_identity,
-              ...structure.relationships.has_identity,
-            ],
+            two_way: [...acc.relationships.two_way, ...structure.relationships.two_way],
+            one_way: [...acc.relationships.one_way, ...structure.relationships.one_way],
+            supports: [...acc.relationships.supports, ...structure.relationships.supports],
+            has_identity: [...acc.relationships.has_identity, ...structure.relationships.has_identity],
           },
         };
       },
@@ -295,9 +270,7 @@ export class DataService {
    * Returns vulnerable machines (software version, ip address, domain, subnet)
    * @param cveCode CVE code of vulnerability
    */
-  public getVulnerableMachines(
-    cveCode: string,
-  ): Observable<VulnerabilityData[] | null> {
+  public getVulnerableMachines(cveCode: string): Observable<VulnerabilityData[] | null> {
     return this.apollo
       .query<CVEResponse>({
         query: gql`
@@ -336,34 +309,26 @@ export class DataService {
             return null;
           }
 
-          response.data.cves[0].vulnerability.software_versions.forEach(
-            (sv) => {
-              const softwareName = sv.version || 'N/A';
+          response.data.cves[0].vulnerability.software_versions.forEach((sv) => {
+            const softwareName = sv.version || 'N/A';
 
-              sv.hosts.forEach((host) => {
-                if (host.node && host.node.ips) {
-                  host.node.ips.forEach((ip) => {
-                    const domain =
-                      ip.domain_names && ip.domain_names.length > 0
-                        ? ip.domain_names[0].domain_name
-                        : 'N/A';
+            sv.hosts.forEach((host) => {
+              if (host.node && host.node.ips) {
+                host.node.ips.forEach((ip) => {
+                  const domain = ip.domain_names && ip.domain_names.length > 0 ? ip.domain_names[0].domain_name : 'N/A';
 
-                    const subnet =
-                      ip.subnets && ip.subnets.length > 0
-                        ? ip.subnets[0].range
-                        : 'N/A';
+                  const subnet = ip.subnets && ip.subnets.length > 0 ? ip.subnets[0].range : 'N/A';
 
-                    responseArray.push({
-                      domainName: domain,
-                      subnet: subnet,
-                      ip: ip.address || 'N/A',
-                      software: softwareName,
-                    });
+                  responseArray.push({
+                    domainName: domain,
+                    subnet: subnet,
+                    ip: ip.address || 'N/A',
+                    software: softwareName,
                   });
-                }
-              });
-            },
-          );
+                });
+              }
+            });
+          });
 
           return responseArray;
         }),
@@ -529,14 +494,9 @@ export class DataService {
             status: ipNode.status,
             subnets: ipNode.subnets,
             tag: ipNode.tag,
-            networkServicesCount: ipNode.nodes.reduce(
-              (count: number, node: any) => {
-                return (
-                  count + (node?.host?.network_servicesAggregate?.count || 0)
-                );
-              },
-              0,
-            ),
+            networkServicesCount: ipNode.nodes.reduce((count: number, node: any) => {
+              return count + (node?.host?.network_servicesAggregate?.count || 0);
+            }, 0),
           }));
         }),
       );
@@ -623,10 +583,7 @@ export class DataService {
     this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation UpdateVulnerabilityStatus(
-            $cve: String!
-            $status: [String]!
-          ) {
+          mutation UpdateVulnerabilityStatus($cve: String!, $status: [String]!) {
             updateVulnerabilityStatus(cve: $cve, status: $status) {
               status
             }
@@ -760,7 +717,7 @@ export class DataService {
       })
       .pipe(
         map((response) => {
-          const allTags: String[] = [];
+          const allTags: string[] = [];
           response.data.ips.forEach((ip) => {
             if (ip.tag) {
               ip.tag.forEach((tag) => {
@@ -800,19 +757,17 @@ export class DataService {
       })
       .pipe(
         map((response) => {
-          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
-            (orgUnit: any) => ({
-              name: orgUnit.name,
-              subnets: orgUnit.subnets.map((subnet) => {
-                return {
-                  range: subnet.range,
-                  parent: subnet.parent_subnet[0]?.range,
-                };
-              }),
-              contacts: orgUnit.contacts.map((contact: any) => contact.name),
-              parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
+            name: orgUnit.name,
+            subnets: orgUnit.subnets.map((subnet) => {
+              return {
+                range: subnet.range,
+                parent: subnet.parent_subnet[0]?.range,
+              };
             }),
-          );
+            contacts: orgUnit.contacts.map((contact: any) => contact.name),
+            parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+          }));
           console.log('Org Units loaded:', orgUnits);
           return orgUnits;
         }),
@@ -844,19 +799,17 @@ export class DataService {
       })
       .pipe(
         map((response) => {
-          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map(
-            (orgUnit: any) => ({
-              name: orgUnit.name,
-              subnets: orgUnit.subnets.map((subnet) => {
-                return {
-                  range: subnet.range,
-                  parent: subnet.parent_subnet[0]?.range,
-                };
-              }),
-              contacts: orgUnit.contacts.map((contact: any) => contact.name),
-              parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+          const orgUnits: OrgUnitData[] = response.data.organizationUnits.map((orgUnit: any) => ({
+            name: orgUnit.name,
+            subnets: orgUnit.subnets.map((subnet) => {
+              return {
+                range: subnet.range,
+                parent: subnet.parent_subnet[0]?.range,
+              };
             }),
-          );
+            contacts: orgUnit.contacts.map((contact: any) => contact.name),
+            parentOrgUnit: orgUnit.parent_org_unit[0]?.name || '---',
+          }));
           console.log('Org Units loaded:', orgUnits);
           return orgUnits[0] || null;
         }),
@@ -883,29 +836,19 @@ export class DataService {
       })
       .pipe(
         map((response) => {
-          const orgUnit: OrgUnitData =
-            response.data.createOrganizationUnits.organizationUnits[0];
+          const orgUnit: OrgUnitData = response.data.createOrganizationUnits.organizationUnits[0];
           console.log('Org Unit created:', orgUnit);
           return orgUnit;
         }),
       );
   }
 
-  public linkOrgUnitToParent(
-    orgUnitName: string,
-    parentOrgUnitName: string,
-  ): void {
+  public linkOrgUnitToParent(orgUnitName: string, parentOrgUnitName: string): void {
     return this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation LinkOrgUnitToParent(
-            $orgUnitName: String!
-            $parentOrgUnitName: String!
-          ) {
-            linkOrgUnitToParentOrg(
-              orgUnitName: $orgUnitName
-              parentOrgUnitName: $parentOrgUnitName
-            ) {
+          mutation LinkOrgUnitToParent($orgUnitName: String!, $parentOrgUnitName: String!) {
+            linkOrgUnitToParentOrg(orgUnitName: $orgUnitName, parentOrgUnitName: $parentOrgUnitName) {
               name
             }
           }
@@ -917,36 +860,22 @@ export class DataService {
       })
       .subscribe({
         next: (response) => {
-          console.log(
-            'Org unit linked to parent org unit:',
-            response.data.linkOrgUnitToParent,
-          );
+          console.log('Org unit linked to parent org unit:', response.data.linkOrgUnitToParent);
           return response.data.linkOrgUnitToParent;
         },
         error: (error) => {
           console.error('Error linking org unit to parent org unit:', error);
-          return throwError(
-            () => new Error('Failed to link org unit to parent org unit'),
-          );
+          return throwError(() => new Error('Failed to link org unit to parent org unit'));
         },
       });
   }
 
-  public mergeOrgUnitWithContacts(
-    orgUnitName: string,
-    contactNames: string[],
-  ): void {
+  public mergeOrgUnitWithContacts(orgUnitName: string, contactNames: string[]): void {
     return this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation MergeOrgUnitWithContacts(
-            $orgUnitName: String!
-            $contactNames: [String!]!
-          ) {
-            mergeOrgUnitWithContacts(
-              orgUnitName: $orgUnitName
-              contactNames: $contactNames
-            ) {
+          mutation MergeOrgUnitWithContacts($orgUnitName: String!, $contactNames: [String!]!) {
+            mergeOrgUnitWithContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
               name
               contacts {
                 name
@@ -961,17 +890,12 @@ export class DataService {
       })
       .subscribe({
         next: (response) => {
-          console.log(
-            'Org Unit merged with contacts:',
-            response.data.mergeOrgUnitWithContacts,
-          );
+          console.log('Org Unit merged with contacts:', response.data.mergeOrgUnitWithContacts);
           return response.data.mergeOrgUnitWithContacts;
         },
         error: (error) => {
           console.error('Error merging org unit with contacts:', error);
-          return throwError(
-            () => new Error('Failed to merge org unit with contacts'),
-          );
+          return throwError(() => new Error('Failed to merge org unit with contacts'));
         },
       });
   }
@@ -1016,10 +940,7 @@ export class DataService {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(
-            'Org Unit deleted:',
-            response.data.deleteOrganizationUnits.nodesDeleted,
-          );
+          console.log('Org Unit deleted:', response.data.deleteOrganizationUnits.nodesDeleted);
           return response.data.deleteOrganizationUnits.nodesDeleted > 0;
         },
         error: (error) => {
@@ -1029,17 +950,11 @@ export class DataService {
       });
   }
 
-  public updateOrgUnit(
-    oldName: string,
-    newName: string,
-  ): Observable<OrgUnitData> {
+  public updateOrgUnit(oldName: string, newName: string): Observable<OrgUnitData> {
     return this.apollo.mutate<any>({
       mutation: gql`
         mutation UpdateOrgUnit($oldName: String!, $newName: String!) {
-          updateOrganizationUnits(
-            where: { name: $oldName }
-            update: { name: $newName }
-          ) {
+          updateOrganizationUnits(where: { name: $oldName }, update: { name: $newName }) {
             organizationUnits {
               name
             }
@@ -1068,20 +983,11 @@ export class DataService {
     });
   }
 
-  public unlinkOrgUnitFromContacts(
-    orgUnitName: string,
-    contactNames: string[],
-  ): void {
+  public unlinkOrgUnitFromContacts(orgUnitName: string, contactNames: string[]): void {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UnlinkOrgUnitFromContacts(
-          $orgUnitName: String!
-          $contactNames: [String!]!
-        ) {
-          unlinkOrgUnitFromContacts(
-            orgUnitName: $orgUnitName
-            contactNames: $contactNames
-          ) {
+        mutation UnlinkOrgUnitFromContacts($orgUnitName: String!, $contactNames: [String!]!) {
+          unlinkOrgUnitFromContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
             name
           }
         }
@@ -1101,14 +1007,8 @@ export class DataService {
 
         this.unlinkOrgUnitFromParents(oldOrgUnit.name).subscribe({
           next: () => {
-            if (
-              newOrgUnit.parentOrgUnit &&
-              newOrgUnit.name !== newOrgUnit.parentOrgUnit
-            ) {
-              this.linkOrgUnitToParent(
-                newOrgUnit.name,
-                newOrgUnit.parentOrgUnit,
-              );
+            if (newOrgUnit.parentOrgUnit && newOrgUnit.name !== newOrgUnit.parentOrgUnit) {
+              this.linkOrgUnitToParent(newOrgUnit.name, newOrgUnit.parentOrgUnit);
             }
           },
           error: (error) => {
@@ -1116,24 +1016,12 @@ export class DataService {
           },
         });
 
-        this.unlinkOrgUnitFromContacts(
-          oldOrgUnit.name,
-          oldOrgUnit.contacts,
-        ).subscribe({
+        this.unlinkOrgUnitFromContacts(oldOrgUnit.name, oldOrgUnit.contacts).subscribe({
           next: () => {
-            console.log(
-              'Org Unit unlinked from contacts:',
-              oldOrgUnit.contacts,
-            );
+            console.log('Org Unit unlinked from contacts:', oldOrgUnit.contacts);
             if (newOrgUnit.contacts && newOrgUnit.contacts.length > 0) {
-              console.log(
-                'Merging org unit with contacts:',
-                newOrgUnit.contacts,
-              );
-              this.mergeOrgUnitWithContacts(
-                newOrgUnit.name,
-                newOrgUnit.contacts,
-              );
+              console.log('Merging org unit with contacts:', newOrgUnit.contacts);
+              this.mergeOrgUnitWithContacts(newOrgUnit.name, newOrgUnit.contacts);
             }
           },
           error: (error) => {

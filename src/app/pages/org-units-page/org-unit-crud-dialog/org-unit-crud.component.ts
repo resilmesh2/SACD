@@ -9,11 +9,7 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DataService } from '../../../services/data.service';
 import { ChipsContacts } from '../../../components/chips-contacts/chips-contacts.component';
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
@@ -51,15 +47,9 @@ export class OrgUnitCrudDialog implements OnInit {
     mode: 'insert' | 'edit';
   };
 
-  title = computed(() =>
-    this.data.mode === 'insert'
-      ? 'Create Organization Unit'
-      : 'Edit Organization Unit',
-  );
+  title = computed(() => (this.data.mode === 'insert' ? 'Create Organization Unit' : 'Edit Organization Unit'));
 
-  allOrgUnits: WritableSignal<OrgUnitData[]> = model(
-    this.data.allOrgUnits || [],
-  );
+  allOrgUnits: WritableSignal<OrgUnitData[]> = model(this.data.allOrgUnits || []);
 
   updateOrgUnitDataSource = output<{ oldName: string; orgUnit: OrgUnitData }>();
   remove = output<string>();

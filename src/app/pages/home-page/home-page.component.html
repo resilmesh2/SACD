@@ -13,12 +13,7 @@
           <mat-icon class="dashboard-icon">dns</mat-icon>
         </span>
         <p>View your assets, manage tags, visualise connections.</p>
-        <sentinel-button-with-icon
-          color="primary"
-          icon="arrow_forward"
-          class="card-button"
-          (click)="navigateToIPs()"
-        >
+        <sentinel-button-with-icon color="primary" icon="arrow_forward" class="card-button" (click)="navigateToIPs()">
           Go to Assets
         </sentinel-button-with-icon>
       </div>
@@ -33,9 +28,7 @@
           <h3>{{ this.data.csaNodesCount() }} nodes</h3>
           <mat-icon class="dashboard-icon">network_node</mat-icon>
         </span>
-        <p>
-          View nodes with topology degree, betweenness, and final criticality.
-        </p>
+        <p>View nodes with topology degree, betweenness, and final criticality.</p>
         <sentinel-button-with-icon
           color="primary"
           icon="arrow_forward"

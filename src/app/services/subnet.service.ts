@@ -8,10 +8,7 @@ import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
 import { map, take, tap } from 'rxjs/operators';
 import { GraphInput } from '../../../models/graph.model';
-import {
-  entities,
-  EntityStructure,
-} from '../utils/graph-utils/entities.config';
+import { entities, EntityStructure } from '../utils/graph-utils/entities.config';
 import { Attributes, AttributeStructure } from '../config/attributes';
 import { Mission } from '../../../models/mission.model';
 import { MissionStructure } from '../../../models/mission-structure.model';
@@ -54,20 +51,14 @@ export class SubnetService {
       })
       .pipe(
         map((response) => {
-          const subnets: SubnetExtendedData[] = response.data.subnets.map(
-            (subnet: any) => ({
-              _id: subnet._id,
-              range: subnet.range,
-              note: subnet.note || null,
-              organizationUnit:
-                subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
-              contacts: subnet.contacts.map((contact: any) => contact.name),
-              parentSubnet:
-                subnet.parent_subnet.length > 0
-                  ? subnet.parent_subnet[0].range
-                  : '',
-            }),
-          );
+          const subnets: SubnetExtendedData[] = response.data.subnets.map((subnet: any) => ({
+            _id: subnet._id,
+            range: subnet.range,
+            note: subnet.note || null,
+            organizationUnit: subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
+            contacts: subnet.contacts.map((contact: any) => contact.name),
+            parentSubnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0].range : '',
+          }));
           return subnets;
         }),
       );
@@ -92,21 +83,12 @@ export class SubnetService {
     });
   }
 
-  public linkSubnetToParent(
-    subnetRange: string,
-    parentSubnetRange: string,
-  ): void {
+  public linkSubnetToParent(subnetRange: string, parentSubnetRange: string): void {
     return this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation LinkSubnetToParent(
-            $subnetRange: String!
-            $parentSubnetRange: String!
-          ) {
-            linkSubnetToParent(
-              subnetRange: $subnetRange
-              parentSubnetRange: $parentSubnetRange
-            ) {
+          mutation LinkSubnetToParent($subnetRange: String!, $parentSubnetRange: String!) {
+            linkSubnetToParent(subnetRange: $subnetRange, parentSubnetRange: $parentSubnetRange) {
               _id
               range
               note
@@ -123,10 +105,7 @@ export class SubnetService {
       })
       .subscribe({
         next: (response) => {
-          console.log(
-            'Subnet linked to parent:',
-            response.data.linkSubnetToParent.parent_subnet[0].range,
-          );
+          console.log('Subnet linked to parent:', response.data.linkSubnetToParent.parent_subnet[0].range);
           return response.data.linkSubnetToParent;
         },
         error: (error) => {
@@ -140,14 +119,8 @@ export class SubnetService {
     return this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation LinkSubnetToOrgUnit(
-            $subnetRange: String!
-            $orgUnitName: String!
-          ) {
-            linkSubnetToOrgUnit(
-              subnetRange: $subnetRange
-              orgUnitName: $orgUnitName
-            ) {
+          mutation LinkSubnetToOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+            linkSubnetToOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
               _id
               range
               note
@@ -161,36 +134,22 @@ export class SubnetService {
       })
       .subscribe({
         next: (response) => {
-          console.log(
-            'Subnet linked to org unit:',
-            response.data.linkSubnetToOrgUnit,
-          );
+          console.log('Subnet linked to org unit:', response.data.linkSubnetToOrgUnit);
           return response.data.linkSubnetToOrgUnit;
         },
         error: (error) => {
           console.error('Error linking subnet to org unit:', error);
-          return throwError(
-            () => new Error('Failed to link subnet to org unit'),
-          );
+          return throwError(() => new Error('Failed to link subnet to org unit'));
         },
       });
   }
 
-  public mergeSubnetWithContacts(
-    subnetRange: string,
-    contactNames: string[],
-  ): void {
+  public mergeSubnetWithContacts(subnetRange: string, contactNames: string[]): void {
     return this.apollo
       .mutate<any>({
         mutation: gql`
-          mutation MergeSubnetWithContacts(
-            $subnetRange: String!
-            $contactNames: [String!]!
-          ) {
-            mergeSubnetWithContacts(
-              subnetRange: $subnetRange
-              contactNames: $contactNames
-            ) {
+          mutation MergeSubnetWithContacts($subnetRange: String!, $contactNames: [String!]!) {
+            mergeSubnetWithContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
               _id
               range
               note
@@ -204,17 +163,12 @@ export class SubnetService {
       })
       .subscribe({
         next: (response) => {
-          console.log(
-            'Subnet merged with contacts:',
-            response.data.mergeSubnetWithContacts,
-          );
+          console.log('Subnet merged with contacts:', response.data.mergeSubnetWithContacts);
           return response.data.mergeSubnetWithContacts;
         },
         error: (error) => {
           console.error('Error merging subnet with contacts:', error);
-          return throwError(
-            () => new Error('Failed to merge subnet with contacts'),
-          );
+          return throwError(() => new Error('Failed to merge subnet with contacts'));
         },
       });
   }
@@ -264,10 +218,7 @@ export class SubnetService {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(
-            'Subnet deleted:',
-            response.data.deleteSubnets.nodesDeleted,
-          );
+          console.log('Subnet deleted:', response.data.deleteSubnets.nodesDeleted);
           return response.data.deleteSubnets.nodesDeleted > 0;
         },
         error: (error) => {
@@ -277,22 +228,11 @@ export class SubnetService {
       });
   }
 
-  public updateSubnet(
-    oldRange: string,
-    newRange: string,
-    note: string,
-  ): Observable<Subnet> {
+  public updateSubnet(oldRange: string, newRange: string, note: string): Observable<Subnet> {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UpdateSubnet(
-          $oldRange: String!
-          $newRange: String!
-          $note: String
-        ) {
-          updateSubnets(
-            where: { range: $oldRange }
-            update: { range: $newRange, note: $note }
-          ) {
+        mutation UpdateSubnet($oldRange: String!, $newRange: String!, $note: String) {
+          updateSubnets(where: { range: $oldRange }, update: { range: $newRange, note: $note }) {
             subnets {
               _id
               note
@@ -309,20 +249,11 @@ export class SubnetService {
     });
   }
 
-  public unlinkSubnetFromParent(
-    subnetRange: string,
-    parentRange: string,
-  ): void {
+  public unlinkSubnetFromParent(subnetRange: string, parentRange: string): void {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UnlinkSubnetFromParent(
-          $subnetRange: String!
-          $parentRange: String!
-        ) {
-          unlinkSubnetFromParent(
-            subnetRange: $subnetRange
-            parentRange: $parentRange
-          ) {
+        mutation UnlinkSubnetFromParent($subnetRange: String!, $parentRange: String!) {
+          unlinkSubnetFromParent(subnetRange: $subnetRange, parentRange: $parentRange) {
             _id
             range
             note
@@ -336,20 +267,11 @@ export class SubnetService {
     });
   }
 
-  public unlinkSubnetFromOrgUnit(
-    subnetRange: string,
-    orgUnitName: string,
-  ): void {
+  public unlinkSubnetFromOrgUnit(subnetRange: string, orgUnitName: string): void {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UnlinkSubnetFromOrgUnit(
-          $subnetRange: String!
-          $orgUnitName: String!
-        ) {
-          unlinkSubnetFromOrgUnit(
-            subnetRange: $subnetRange
-            orgUnitName: $orgUnitName
-          ) {
+        mutation UnlinkSubnetFromOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+          unlinkSubnetFromOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
             _id
             range
             note
@@ -363,20 +285,11 @@ export class SubnetService {
     });
   }
 
-  public unlinkSubnetFromContacts(
-    subnetRange: string,
-    contactNames: string[],
-  ): void {
+  public unlinkSubnetFromContacts(subnetRange: string, contactNames: string[]): void {
     return this.apollo.mutate<any>({
       mutation: gql`
-        mutation UnlinkSubnetFromContacts(
-          $subnetRange: String!
-          $contactNames: [String!]!
-        ) {
-          unlinkSubnetFromContacts(
-            subnetRange: $subnetRange
-            contactNames: $contactNames
-          ) {
+        mutation UnlinkSubnetFromContacts($subnetRange: String!, $contactNames: [String!]!) {
+          unlinkSubnetFromContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
             _id
             range
             note
@@ -390,28 +303,15 @@ export class SubnetService {
     });
   }
 
-  public editSubnet(
-    oldSubnet: SubnetExtendedData,
-    newSubnet: SubnetExtendedData,
-  ): void {
-    this.updateSubnet(
-      oldSubnet.range,
-      newSubnet.range,
-      newSubnet.note,
-    ).subscribe({
+  public editSubnet(oldSubnet: SubnetExtendedData, newSubnet: SubnetExtendedData): void {
+    this.updateSubnet(oldSubnet.range, newSubnet.range, newSubnet.note).subscribe({
       next: (response) => {
         console.log('Subnet updated:', response.data.updateSubnets.subnets[0]);
 
-        this.unlinkSubnetFromParent(
-          oldSubnet.range,
-          oldSubnet.parentSubnet,
-        ).subscribe({
+        this.unlinkSubnetFromParent(oldSubnet.range, oldSubnet.parentSubnet).subscribe({
           next: () => {
             console.log('Subnet unlinked from parent:', oldSubnet.parentSubnet);
-            if (
-              newSubnet.parentSubnet &&
-              newSubnet.range !== newSubnet.parentSubnet
-            ) {
+            if (newSubnet.parentSubnet && newSubnet.range !== newSubnet.parentSubnet) {
               this.linkSubnetToParent(newSubnet.range, newSubnet.parentSubnet);
             }
           },
@@ -420,23 +320,11 @@ export class SubnetService {
           },
         });
 
-        this.unlinkSubnetFromOrgUnit(
-          oldSubnet.range,
-          oldSubnet.organizationUnit,
-        ).subscribe({
+        this.unlinkSubnetFromOrgUnit(oldSubnet.range, oldSubnet.organizationUnit).subscribe({
           next: () => {
-            console.log(
-              'Subnet unlinked from org unit:',
-              oldSubnet.organizationUnit,
-            );
-            if (
-              newSubnet.organizationUnit &&
-              newSubnet.organizationUnit !== oldSubnet.organizationUnit
-            ) {
-              this.linkSubnetToOrgUnit(
-                newSubnet.range,
-                newSubnet.organizationUnit,
-              );
+            console.log('Subnet unlinked from org unit:', oldSubnet.organizationUnit);
+            if (newSubnet.organizationUnit && newSubnet.organizationUnit !== oldSubnet.organizationUnit) {
+              this.linkSubnetToOrgUnit(newSubnet.range, newSubnet.organizationUnit);
             }
           },
           error: (error) => {
@@ -444,10 +332,7 @@ export class SubnetService {
           },
         });
 
-        this.unlinkSubnetFromContacts(
-          oldSubnet.range,
-          oldSubnet.contacts,
-        ).subscribe({
+        this.unlinkSubnetFromContacts(oldSubnet.range, oldSubnet.contacts).subscribe({
           next: () => {
             console.log('Subnet unlinked from contacts:', oldSubnet.contacts);
             if (newSubnet.contacts && newSubnet.contacts.length > 0) {
@@ -471,11 +356,9 @@ export class SubnetService {
    * Gets subnet details based on its range
    * @param range range of the subnet
    */
-  public getSubnet(range: String): Observable<SubnetExtendedData> {
+  public getSubnet(range: string): Observable<SubnetExtendedData> {
     if (!range) {
-      return throwError(
-        () => new Error('Range is required to fetch subnet details'),
-      );
+      return throwError(() => new Error('Range is required to fetch subnet details'));
     }
     return this.apollo // Assuming 'this' has an Apollo instance
       .query<any>({
@@ -507,13 +390,9 @@ export class SubnetService {
           return {
             range: subnet.range,
             note: subnet.note || null,
-            organizationUnit:
-              subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
+            organizationUnit: subnet.org_units.length > 0 ? subnet.org_units[0].name : null,
             contacts: subnet.contacts.map((contact: any) => contact.name),
-            parentSubnet:
-              subnet.parent_subnet.length > 0
-                ? subnet.parent_subnet[0].range
-                : '',
+            parentSubnet: subnet.parent_subnet.length > 0 ? subnet.parent_subnet[0].range : '',
           };
         }),
       );
@@ -523,15 +402,13 @@ export class SubnetService {
    * Gets all child IPs of a subnet based on its range
    * @param range range of the subnet
    */
-  public getChildIPs(range: String): Observable<ChildIP[]> {
+  public getChildIPs(range: string): Observable<ChildIP[]> {
     console.log('Fetching child IPs for subnet range:', range);
     return this.apollo
       .query<any>({
         query: gql`
           query GetChildIPs($range: String!) {
-            ips(
-              where: { subnetsConnection_SINGLE: { node: { range: $range } } }
-            ) {
+            ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
               address
               version
               subnets {
@@ -562,15 +439,11 @@ export class SubnetService {
             subnet: ip.subnets.length > 0 ? ip.subnets[0].range : '',
             affectedBy: ip.nodes
               .map((node: any) =>
-                node.host.software_versions.map((sv: any) =>
-                  sv.vulnerabilities.map((v: any) => v.cve.cve_id),
-                ),
+                node.host.software_versions.map((sv: any) => sv.vulnerabilities.map((v: any) => v.cve.cve_id)),
               )
               .flat(2),
             softwareVersion: ip.nodes
-              .map((node: any) =>
-                node.host.software_versions.map((sv: any) => sv.version),
-              )
+              .map((node: any) => node.host.software_versions.map((sv: any) => sv.version))
               .flat(2),
           }));
           return childIPs;
@@ -578,7 +451,7 @@ export class SubnetService {
       );
   }
 
-  public getChildSubnets(range: String): Observable<{ range: string }[]> {
+  public getChildSubnets(range: string): Observable<{ range: string }[]> {
     return this.apollo
       .query<any>({
         query: gql`
@@ -592,11 +465,9 @@ export class SubnetService {
       })
       .pipe(
         map((response) => {
-          const childSubnets: any[] = response.data.subnets.map(
-            (subnet: any) => ({
-              range: subnet.range,
-            }),
-          );
+          const childSubnets: any[] = response.data.subnets.map((subnet: any) => ({
+            range: subnet.range,
+          }));
           return childSubnets;
         }),
       );

@@ -1,11 +1,5 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  model,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { DataService } from '../../../services/data.service';
 
 @Component({
@@ -21,9 +15,7 @@ export class AssetStatusEditChipComponent {
   type = input<string | undefined>(undefined);
 
   address = input<string | undefined>(undefined);
-  serviceData = input<
-    { service: string; port: number; protocol: string } | undefined
-  >(undefined);
+  serviceData = input<{ service: string; port: number; protocol: string } | undefined>(undefined);
 
   isEditOpen = model<boolean>(false);
 
@@ -59,9 +51,7 @@ export class AssetStatusEditChipComponent {
         this.updateNetworkServiceStatus(status);
         break;
       default:
-        console.error(
-          `Unsupported asset type: ${this.type()}. Cannot update status.`,
-        );
+        console.error(`Unsupported asset type: ${this.type()}. Cannot update status.`);
     }
   }
 
@@ -79,9 +69,7 @@ export class AssetStatusEditChipComponent {
       return;
     }
 
-    console.error(
-      'Address, protocol, or port is undefined. Cannot update status.',
-    );
+    console.error('Address, protocol, or port is undefined. Cannot update status.');
   }
 
   updateIPStatus(status: string): void {

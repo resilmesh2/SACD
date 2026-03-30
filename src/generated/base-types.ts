@@ -7,11 +7,11 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
 };
 
 export type Application = {
@@ -23,19 +23,16 @@ export type Application = {
   name: Scalars['String']['output'];
 };
 
-
 export type ApplicationDevicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
-
 export type ApplicationDevicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DeviceWhere>;
 };
-
 
 export type ApplicationDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -313,19 +310,16 @@ export type Cve = {
   vulnerabilityConnection: CveVulnerabilityConnection;
 };
 
-
 export type CveCvss_V2Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv2Options>;
   where?: InputMaybe<CvsSv2Where>;
 };
 
-
 export type CveCvss_V2AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv2Where>;
 };
-
 
 export type CveCvss_V2ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -335,19 +329,16 @@ export type CveCvss_V2ConnectionArgs = {
   where?: InputMaybe<CveCvss_V2ConnectionWhere>;
 };
 
-
 export type CveCvss_V30Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv30Options>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
-
 export type CveCvss_V30AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv30Where>;
 };
-
 
 export type CveCvss_V30ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -357,19 +348,16 @@ export type CveCvss_V30ConnectionArgs = {
   where?: InputMaybe<CveCvss_V30ConnectionWhere>;
 };
 
-
 export type CveCvss_V31Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv31Options>;
   where?: InputMaybe<CvsSv31Where>;
 };
 
-
 export type CveCvss_V31AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv31Where>;
 };
-
 
 export type CveCvss_V31ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -379,19 +367,16 @@ export type CveCvss_V31ConnectionArgs = {
   where?: InputMaybe<CveCvss_V31ConnectionWhere>;
 };
 
-
 export type CveCvss_V40Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv40Options>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
-
 export type CveCvss_V40AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv40Where>;
 };
-
 
 export type CveCvss_V40ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -401,19 +386,16 @@ export type CveCvss_V40ConnectionArgs = {
   where?: InputMaybe<CveCvss_V40ConnectionWhere>;
 };
 
-
 export type CveVulnerabilityArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
-
 export type CveVulnerabilityAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
-
 
 export type CveVulnerabilityConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -2774,19 +2756,16 @@ export type Component = {
   to_mission_dependenciesConnection: ComponentTo_Mission_DependenciesConnection;
 };
 
-
 export type ComponentFrom_Mission_DependenciesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
-
 export type ComponentFrom_Mission_DependenciesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
-
 
 export type ComponentFrom_Mission_DependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -2796,19 +2775,16 @@ export type ComponentFrom_Mission_DependenciesConnectionArgs = {
   where?: InputMaybe<ComponentFrom_Mission_DependenciesConnectionWhere>;
 };
 
-
 export type ComponentHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type ComponentHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type ComponentHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -2818,19 +2794,16 @@ export type ComponentHostsConnectionArgs = {
   where?: InputMaybe<ComponentHostsConnectionWhere>;
 };
 
-
 export type ComponentMissionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionOptions>;
   where?: InputMaybe<MissionWhere>;
 };
 
-
 export type ComponentMissionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionWhere>;
 };
-
 
 export type ComponentMissionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -2840,19 +2813,16 @@ export type ComponentMissionsConnectionArgs = {
   where?: InputMaybe<ComponentMissionsConnectionWhere>;
 };
 
-
 export type ComponentTo_Mission_DependenciesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
-
 export type ComponentTo_Mission_DependenciesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
-
 
 export type ComponentTo_Mission_DependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3529,19 +3499,16 @@ export type Contact = {
   subnetsConnection: ContactSubnetsConnection;
 };
 
-
 export type ContactSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type ContactSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
-
 
 export type ContactSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3980,19 +3947,16 @@ export type Device = {
   state?: Maybe<Scalars['String']['output']>;
 };
 
-
 export type DeviceApplicationsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ApplicationOptions>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
-
 export type DeviceApplicationsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ApplicationWhere>;
 };
-
 
 export type DeviceApplicationsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4002,19 +3966,16 @@ export type DeviceApplicationsConnectionArgs = {
   where?: InputMaybe<DeviceApplicationsConnectionWhere>;
 };
 
-
 export type DeviceHardware_VersionArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HardwareVersionOptions>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
-
 export type DeviceHardware_VersionAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
-
 
 export type DeviceHardware_VersionConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4394,19 +4355,16 @@ export type DomainName = {
   tag: Array<Maybe<Scalars['String']['output']>>;
 };
 
-
 export type DomainNameIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type DomainNameIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
-
 
 export type DomainNameIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4685,19 +4643,16 @@ export type HardwareVersion = {
   model: Scalars['String']['output'];
 };
 
-
 export type HardwareVersionDevicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
-
 export type HardwareVersionDevicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DeviceWhere>;
 };
-
 
 export type HardwareVersionDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5052,19 +5007,16 @@ export type Host = {
   software_versionsConnection: HostSoftware_VersionsConnection;
 };
 
-
 export type HostComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type HostComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type HostComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5074,19 +5026,16 @@ export type HostComponentsConnectionArgs = {
   where?: InputMaybe<HostComponentsConnectionWhere>;
 };
 
-
 export type HostNetwork_ServicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
-
 export type HostNetwork_ServicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
-
 
 export type HostNetwork_ServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5096,19 +5045,16 @@ export type HostNetwork_ServicesConnectionArgs = {
   where?: InputMaybe<HostNetwork_ServicesConnectionWhere>;
 };
 
-
 export type HostNodeArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type HostNodeAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
-
 
 export type HostNodeConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5118,19 +5064,16 @@ export type HostNodeConnectionArgs = {
   where?: InputMaybe<HostNodeConnectionWhere>;
 };
 
-
 export type HostSoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
-
 export type HostSoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type HostSoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5936,19 +5879,16 @@ export type Ip = {
   version?: Maybe<Scalars['Int']['output']>;
 };
 
-
 export type IpDomain_NamesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DomainNameOptions>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
-
 export type IpDomain_NamesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DomainNameWhere>;
 };
-
 
 export type IpDomain_NamesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5958,19 +5898,16 @@ export type IpDomain_NamesConnectionArgs = {
   where?: InputMaybe<IpDomain_NamesConnectionWhere>;
 };
 
-
 export type IpNodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type IpNodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
-
 
 export type IpNodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5980,19 +5917,16 @@ export type IpNodesConnectionArgs = {
   where?: InputMaybe<IpNodesConnectionWhere>;
 };
 
-
 export type IpSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type IpSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
-
 
 export type IpSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6002,19 +5936,16 @@ export type IpSubnetsConnectionArgs = {
   where?: InputMaybe<IpSubnetsConnectionWhere>;
 };
 
-
 export type IpUrisArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<UriOptions>;
   where?: InputMaybe<UriWhere>;
 };
 
-
 export type IpUrisAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<UriWhere>;
 };
-
 
 export type IpUrisConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6868,19 +6799,16 @@ export type Mission = {
   structure: Scalars['String']['output'];
 };
 
-
 export type MissionComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type MissionComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type MissionComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7050,19 +6978,16 @@ export type MissionDependency = {
   to_componentsConnection: MissionDependencyTo_ComponentsConnection;
 };
 
-
 export type MissionDependencyFrom_ComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type MissionDependencyFrom_ComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type MissionDependencyFrom_ComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7072,19 +6997,16 @@ export type MissionDependencyFrom_ComponentsConnectionArgs = {
   where?: InputMaybe<MissionDependencyFrom_ComponentsConnectionWhere>;
 };
 
-
 export type MissionDependencyTo_ComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type MissionDependencyTo_ComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type MissionDependencyTo_ComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7635,416 +7557,342 @@ export type Mutation = {
   updateVulnerabilityStatus?: Maybe<Vulnerability>;
 };
 
-
 export type MutationCreateApplicationsArgs = {
   input: Array<ApplicationCreateInput>;
 };
-
 
 export type MutationCreateComponentsArgs = {
   input: Array<ComponentCreateInput>;
 };
 
-
 export type MutationCreateContactsArgs = {
   input: Array<ContactCreateInput>;
 };
-
 
 export type MutationCreateCvesArgs = {
   input: Array<CveCreateInput>;
 };
 
-
 export type MutationCreateCvsSv2sArgs = {
   input: Array<CvsSv2CreateInput>;
 };
-
 
 export type MutationCreateCvsSv30sArgs = {
   input: Array<CvsSv30CreateInput>;
 };
 
-
 export type MutationCreateCvsSv31sArgs = {
   input: Array<CvsSv31CreateInput>;
 };
-
 
 export type MutationCreateCvsSv40sArgs = {
   input: Array<CvsSv40CreateInput>;
 };
 
-
 export type MutationCreateDevicesArgs = {
   input: Array<DeviceCreateInput>;
 };
-
 
 export type MutationCreateDomainNamesArgs = {
   input: Array<DomainNameCreateInput>;
 };
 
-
 export type MutationCreateHardwareVersionsArgs = {
   input: Array<HardwareVersionCreateInput>;
 };
-
 
 export type MutationCreateHostsArgs = {
   input: Array<HostCreateInput>;
 };
 
-
 export type MutationCreateIpsArgs = {
   input: Array<IpCreateInput>;
 };
-
 
 export type MutationCreateMissionDependenciesArgs = {
   input: Array<MissionDependencyCreateInput>;
 };
 
-
 export type MutationCreateMissionsArgs = {
   input: Array<MissionCreateInput>;
 };
-
 
 export type MutationCreateNetworkServicesArgs = {
   input: Array<NetworkServiceCreateInput>;
 };
 
-
 export type MutationCreateNodeObjectsArgs = {
   input: Array<NodeObjectCreateInput>;
 };
-
 
 export type MutationCreateOrganizationUnitsArgs = {
   input: Array<OrganizationUnitCreateInput>;
 };
 
-
 export type MutationCreatePhysicalEnvironmentsArgs = {
   input: Array<PhysicalEnvironmentCreateInput>;
 };
-
 
 export type MutationCreateSoftwareVersionsArgs = {
   input: Array<SoftwareVersionCreateInput>;
 };
 
-
 export type MutationCreateSubnetsArgs = {
   input: Array<SubnetCreateInput>;
 };
-
 
 export type MutationCreateUrisArgs = {
   input: Array<UriCreateInput>;
 };
 
-
 export type MutationCreateVulnerabilitiesArgs = {
   input: Array<VulnerabilityCreateInput>;
 };
-
 
 export type MutationDeleteApplicationsArgs = {
   delete?: InputMaybe<ApplicationDeleteInput>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
-
 export type MutationDeleteComponentsArgs = {
   delete?: InputMaybe<ComponentDeleteInput>;
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type MutationDeleteContactsArgs = {
   delete?: InputMaybe<ContactDeleteInput>;
   where?: InputMaybe<ContactWhere>;
 };
 
-
 export type MutationDeleteCvesArgs = {
   delete?: InputMaybe<CveDeleteInput>;
   where?: InputMaybe<CveWhere>;
 };
 
-
 export type MutationDeleteCvsSv2sArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
-
 
 export type MutationDeleteCvsSv30sArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
 
-
 export type MutationDeleteCvsSv31sArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
 
-
 export type MutationDeleteCvsSv40sArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
-
 
 export type MutationDeleteDevicesArgs = {
   delete?: InputMaybe<DeviceDeleteInput>;
   where?: InputMaybe<DeviceWhere>;
 };
 
-
 export type MutationDeleteDomainNamesArgs = {
   delete?: InputMaybe<DomainNameDeleteInput>;
   where?: InputMaybe<DomainNameWhere>;
 };
-
 
 export type MutationDeleteHardwareVersionsArgs = {
   delete?: InputMaybe<HardwareVersionDeleteInput>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
-
 export type MutationDeleteHostsArgs = {
   delete?: InputMaybe<HostDeleteInput>;
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type MutationDeleteIpsArgs = {
   delete?: InputMaybe<IpDeleteInput>;
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type MutationDeleteMissionDependenciesArgs = {
   delete?: InputMaybe<MissionDependencyDeleteInput>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
-
 
 export type MutationDeleteMissionsArgs = {
   delete?: InputMaybe<MissionDeleteInput>;
   where?: InputMaybe<MissionWhere>;
 };
 
-
 export type MutationDeleteNetworkServicesArgs = {
   delete?: InputMaybe<NetworkServiceDeleteInput>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
-
 
 export type MutationDeleteNodeObjectsArgs = {
   delete?: InputMaybe<NodeObjectDeleteInput>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type MutationDeleteOrganizationUnitsArgs = {
   delete?: InputMaybe<OrganizationUnitDeleteInput>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type MutationDeletePhysicalEnvironmentsArgs = {
   delete?: InputMaybe<PhysicalEnvironmentDeleteInput>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
-
 export type MutationDeleteSoftwareVersionsArgs = {
   delete?: InputMaybe<SoftwareVersionDeleteInput>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type MutationDeleteSubnetsArgs = {
   delete?: InputMaybe<SubnetDeleteInput>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type MutationDeleteUrisArgs = {
   delete?: InputMaybe<UriDeleteInput>;
   where?: InputMaybe<UriWhere>;
 };
-
 
 export type MutationDeleteVulnerabilitiesArgs = {
   delete?: InputMaybe<VulnerabilityDeleteInput>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
-
 export type MutationLinkOrgUnitToParentOrgArgs = {
   orgUnitName: Scalars['String']['input'];
   parentOrgUnitName: Scalars['String']['input'];
 };
-
 
 export type MutationLinkSubnetToOrgUnitArgs = {
   orgUnitName: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
 
-
 export type MutationLinkSubnetToParentArgs = {
   parentSubnetRange: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
-
 
 export type MutationMergeOrgUnitWithContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   orgUnitName: Scalars['String']['input'];
 };
 
-
 export type MutationMergeSubnetWithContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   subnetRange: Scalars['String']['input'];
 };
-
 
 export type MutationUnlinkOrgUnitFromContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   orgUnitName: Scalars['String']['input'];
 };
 
-
 export type MutationUnlinkOrgUnitFromParentsArgs = {
   orgUnitName: Scalars['String']['input'];
 };
-
 
 export type MutationUnlinkSubnetFromContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   subnetRange: Scalars['String']['input'];
 };
 
-
 export type MutationUnlinkSubnetFromOrgUnitArgs = {
   orgUnitName: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
-
 
 export type MutationUnlinkSubnetFromParentArgs = {
   parentRange: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
 
-
 export type MutationUpdateApplicationsArgs = {
   update?: InputMaybe<ApplicationUpdateInput>;
   where?: InputMaybe<ApplicationWhere>;
 };
-
 
 export type MutationUpdateComponentsArgs = {
   update?: InputMaybe<ComponentUpdateInput>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type MutationUpdateContactsArgs = {
   update?: InputMaybe<ContactUpdateInput>;
   where?: InputMaybe<ContactWhere>;
 };
-
 
 export type MutationUpdateCvesArgs = {
   update?: InputMaybe<CveUpdateInput>;
   where?: InputMaybe<CveWhere>;
 };
 
-
 export type MutationUpdateCvsSv2sArgs = {
   update?: InputMaybe<CvsSv2UpdateInput>;
   where?: InputMaybe<CvsSv2Where>;
 };
-
 
 export type MutationUpdateCvsSv30sArgs = {
   update?: InputMaybe<CvsSv30UpdateInput>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
-
 export type MutationUpdateCvsSv31sArgs = {
   update?: InputMaybe<CvsSv31UpdateInput>;
   where?: InputMaybe<CvsSv31Where>;
 };
-
 
 export type MutationUpdateCvsSv40sArgs = {
   update?: InputMaybe<CvsSv40UpdateInput>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
-
 export type MutationUpdateDevicesArgs = {
   update?: InputMaybe<DeviceUpdateInput>;
   where?: InputMaybe<DeviceWhere>;
 };
-
 
 export type MutationUpdateDomainNamesArgs = {
   update?: InputMaybe<DomainNameUpdateInput>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
-
 export type MutationUpdateHardwareVersionsArgs = {
   update?: InputMaybe<HardwareVersionUpdateInput>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
-
 
 export type MutationUpdateHostsArgs = {
   update?: InputMaybe<HostUpdateInput>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type MutationUpdateIpStatusArgs = {
   address: Scalars['String']['input'];
   status: Scalars['String']['input'];
 };
-
 
 export type MutationUpdateIpTagArgs = {
   address: Scalars['String']['input'];
   tag: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
-
 export type MutationUpdateIpsArgs = {
   update?: InputMaybe<IpUpdateInput>;
   where?: InputMaybe<IpWhere>;
 };
-
 
 export type MutationUpdateMissionDependenciesArgs = {
   update?: InputMaybe<MissionDependencyUpdateInput>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
-
 export type MutationUpdateMissionsArgs = {
   update?: InputMaybe<MissionUpdateInput>;
   where?: InputMaybe<MissionWhere>;
 };
-
 
 export type MutationUpdateNetworkServiceStatusArgs = {
   address: Scalars['String']['input'];
@@ -8054,54 +7902,45 @@ export type MutationUpdateNetworkServiceStatusArgs = {
   status: Scalars['String']['input'];
 };
 
-
 export type MutationUpdateNetworkServicesArgs = {
   update?: InputMaybe<NetworkServiceUpdateInput>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
-
 
 export type MutationUpdateNodeObjectsArgs = {
   update?: InputMaybe<NodeObjectUpdateInput>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type MutationUpdateOrganizationUnitsArgs = {
   update?: InputMaybe<OrganizationUnitUpdateInput>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type MutationUpdatePhysicalEnvironmentsArgs = {
   update?: InputMaybe<PhysicalEnvironmentUpdateInput>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
-
 export type MutationUpdateSoftwareVersionsArgs = {
   update?: InputMaybe<SoftwareVersionUpdateInput>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type MutationUpdateSubnetsArgs = {
   update?: InputMaybe<SubnetUpdateInput>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type MutationUpdateUrisArgs = {
   update?: InputMaybe<UriUpdateInput>;
   where?: InputMaybe<UriWhere>;
 };
 
-
 export type MutationUpdateVulnerabilitiesArgs = {
   update?: InputMaybe<VulnerabilityUpdateInput>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
-
 
 export type MutationUpdateVulnerabilityStatusArgs = {
   cve: Scalars['String']['input'];
@@ -8123,19 +7962,16 @@ export type NetworkService = {
   tag?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
-
 export type NetworkServiceHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type NetworkServiceHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type NetworkServiceHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8145,19 +7981,16 @@ export type NetworkServiceHostsConnectionArgs = {
   where?: InputMaybe<NetworkServiceHostsConnectionWhere>;
 };
 
-
 export type NetworkServiceSoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
-
 export type NetworkServiceSoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type NetworkServiceSoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8681,19 +8514,16 @@ export type NodeObject = {
   topology_degree_norm?: Maybe<Scalars['Float']['output']>;
 };
 
-
 export type NodeObjectHostArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type NodeObjectHostAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type NodeObjectHostConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8703,19 +8533,16 @@ export type NodeObjectHostConnectionArgs = {
   where?: InputMaybe<NodeObjectHostConnectionWhere>;
 };
 
-
 export type NodeObjectIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type NodeObjectIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
-
 
 export type NodeObjectIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8725,19 +8552,16 @@ export type NodeObjectIpsConnectionArgs = {
   where?: InputMaybe<NodeObjectIpsConnectionWhere>;
 };
 
-
 export type NodeObjectIs_Connected_To_NodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type NodeObjectIs_Connected_To_NodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
-
 
 export type NodeObjectIs_Connected_To_NodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8747,19 +8571,16 @@ export type NodeObjectIs_Connected_To_NodesConnectionArgs = {
   where?: InputMaybe<NodeObjectIs_Connected_To_NodesConnectionWhere>;
 };
 
-
 export type NodeObjectIs_Dependent_On_NodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type NodeObjectIs_Dependent_On_NodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
-
 
 export type NodeObjectIs_Dependent_On_NodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9831,19 +9652,16 @@ export type OrganizationUnit = {
   subnetsConnection: OrganizationUnitSubnetsConnection;
 };
 
-
 export type OrganizationUnitContactsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
-
 export type OrganizationUnitContactsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ContactWhere>;
 };
-
 
 export type OrganizationUnitContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9853,19 +9671,16 @@ export type OrganizationUnitContactsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitContactsConnectionWhere>;
 };
 
-
 export type OrganizationUnitParent_Org_UnitArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
-
 export type OrganizationUnitParent_Org_UnitAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type OrganizationUnitParent_Org_UnitConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9875,19 +9690,16 @@ export type OrganizationUnitParent_Org_UnitConnectionArgs = {
   where?: InputMaybe<OrganizationUnitParent_Org_UnitConnectionWhere>;
 };
 
-
 export type OrganizationUnitPhysical_EnvironmentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<PhysicalEnvironmentOptions>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
-
 export type OrganizationUnitPhysical_EnvironmentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
-
 
 export type OrganizationUnitPhysical_EnvironmentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9897,19 +9709,16 @@ export type OrganizationUnitPhysical_EnvironmentsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitPhysical_EnvironmentsConnectionWhere>;
 };
 
-
 export type OrganizationUnitSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type OrganizationUnitSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
-
 
 export type OrganizationUnitSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10551,19 +10360,16 @@ export type PhysicalEnvironment = {
   org_unitsConnection: PhysicalEnvironmentOrg_UnitsConnection;
 };
 
-
 export type PhysicalEnvironmentOrg_UnitsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
-
 export type PhysicalEnvironmentOrg_UnitsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type PhysicalEnvironmentOrg_UnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10855,17 +10661,14 @@ export type Query = {
   vulnerabilitiesConnection: VulnerabilitiesConnection;
 };
 
-
 export type QueryApplicationsArgs = {
   options?: InputMaybe<ApplicationOptions>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
-
 export type QueryApplicationsAggregateArgs = {
   where?: InputMaybe<ApplicationWhere>;
 };
-
 
 export type QueryApplicationsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10874,17 +10677,14 @@ export type QueryApplicationsConnectionArgs = {
   where?: InputMaybe<ApplicationWhere>;
 };
 
-
 export type QueryComponentsArgs = {
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type QueryComponentsAggregateArgs = {
   where?: InputMaybe<ComponentWhere>;
 };
-
 
 export type QueryComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10893,17 +10693,14 @@ export type QueryComponentsConnectionArgs = {
   where?: InputMaybe<ComponentWhere>;
 };
 
-
 export type QueryContactsArgs = {
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
-
 export type QueryContactsAggregateArgs = {
   where?: InputMaybe<ContactWhere>;
 };
-
 
 export type QueryContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10912,17 +10709,14 @@ export type QueryContactsConnectionArgs = {
   where?: InputMaybe<ContactWhere>;
 };
 
-
 export type QueryCvesArgs = {
   options?: InputMaybe<CveOptions>;
   where?: InputMaybe<CveWhere>;
 };
 
-
 export type QueryCvesAggregateArgs = {
   where?: InputMaybe<CveWhere>;
 };
-
 
 export type QueryCvesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10931,17 +10725,14 @@ export type QueryCvesConnectionArgs = {
   where?: InputMaybe<CveWhere>;
 };
 
-
 export type QueryCvsSv2sArgs = {
   options?: InputMaybe<CvsSv2Options>;
   where?: InputMaybe<CvsSv2Where>;
 };
 
-
 export type QueryCvsSv2sAggregateArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
-
 
 export type QueryCvsSv2sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10950,17 +10741,14 @@ export type QueryCvsSv2sConnectionArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
 
-
 export type QueryCvsSv30sArgs = {
   options?: InputMaybe<CvsSv30Options>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
-
 export type QueryCvsSv30sAggregateArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
-
 
 export type QueryCvsSv30sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10969,17 +10757,14 @@ export type QueryCvsSv30sConnectionArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
 
-
 export type QueryCvsSv31sArgs = {
   options?: InputMaybe<CvsSv31Options>;
   where?: InputMaybe<CvsSv31Where>;
 };
 
-
 export type QueryCvsSv31sAggregateArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
-
 
 export type QueryCvsSv31sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10988,17 +10773,14 @@ export type QueryCvsSv31sConnectionArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
 
-
 export type QueryCvsSv40sArgs = {
   options?: InputMaybe<CvsSv40Options>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
-
 export type QueryCvsSv40sAggregateArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
-
 
 export type QueryCvsSv40sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11007,17 +10789,14 @@ export type QueryCvsSv40sConnectionArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
 
-
 export type QueryDevicesArgs = {
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
-
 export type QueryDevicesAggregateArgs = {
   where?: InputMaybe<DeviceWhere>;
 };
-
 
 export type QueryDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11026,17 +10805,14 @@ export type QueryDevicesConnectionArgs = {
   where?: InputMaybe<DeviceWhere>;
 };
 
-
 export type QueryDomainNamesArgs = {
   options?: InputMaybe<DomainNameOptions>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
-
 export type QueryDomainNamesAggregateArgs = {
   where?: InputMaybe<DomainNameWhere>;
 };
-
 
 export type QueryDomainNamesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11045,17 +10821,14 @@ export type QueryDomainNamesConnectionArgs = {
   where?: InputMaybe<DomainNameWhere>;
 };
 
-
 export type QueryHardwareVersionsArgs = {
   options?: InputMaybe<HardwareVersionOptions>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
-
 export type QueryHardwareVersionsAggregateArgs = {
   where?: InputMaybe<HardwareVersionWhere>;
 };
-
 
 export type QueryHardwareVersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11064,17 +10837,14 @@ export type QueryHardwareVersionsConnectionArgs = {
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
-
 export type QueryHostsArgs = {
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type QueryHostsAggregateArgs = {
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type QueryHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11083,17 +10853,14 @@ export type QueryHostsConnectionArgs = {
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type QueryIpsArgs = {
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type QueryIpsAggregateArgs = {
   where?: InputMaybe<IpWhere>;
 };
-
 
 export type QueryIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11102,17 +10869,14 @@ export type QueryIpsConnectionArgs = {
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type QueryMissionDependenciesArgs = {
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
-
 export type QueryMissionDependenciesAggregateArgs = {
   where?: InputMaybe<MissionDependencyWhere>;
 };
-
 
 export type QueryMissionDependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11121,17 +10885,14 @@ export type QueryMissionDependenciesConnectionArgs = {
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
-
 export type QueryMissionsArgs = {
   options?: InputMaybe<MissionOptions>;
   where?: InputMaybe<MissionWhere>;
 };
 
-
 export type QueryMissionsAggregateArgs = {
   where?: InputMaybe<MissionWhere>;
 };
-
 
 export type QueryMissionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11140,17 +10901,14 @@ export type QueryMissionsConnectionArgs = {
   where?: InputMaybe<MissionWhere>;
 };
 
-
 export type QueryNetworkServicesArgs = {
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
-
 export type QueryNetworkServicesAggregateArgs = {
   where?: InputMaybe<NetworkServiceWhere>;
 };
-
 
 export type QueryNetworkServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11159,17 +10917,14 @@ export type QueryNetworkServicesConnectionArgs = {
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
-
 export type QueryNodeObjectsArgs = {
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type QueryNodeObjectsAggregateArgs = {
   where?: InputMaybe<NodeObjectWhere>;
 };
-
 
 export type QueryNodeObjectsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11178,17 +10933,14 @@ export type QueryNodeObjectsConnectionArgs = {
   where?: InputMaybe<NodeObjectWhere>;
 };
 
-
 export type QueryOrganizationUnitsArgs = {
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
-
 export type QueryOrganizationUnitsAggregateArgs = {
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type QueryOrganizationUnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11197,17 +10949,14 @@ export type QueryOrganizationUnitsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
-
 export type QueryPhysicalEnvironmentsArgs = {
   options?: InputMaybe<PhysicalEnvironmentOptions>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
-
 export type QueryPhysicalEnvironmentsAggregateArgs = {
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
-
 
 export type QueryPhysicalEnvironmentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11216,17 +10965,14 @@ export type QueryPhysicalEnvironmentsConnectionArgs = {
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
-
 export type QuerySoftwareVersionsArgs = {
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
-
 export type QuerySoftwareVersionsAggregateArgs = {
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type QuerySoftwareVersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11235,17 +10981,14 @@ export type QuerySoftwareVersionsConnectionArgs = {
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
-
 export type QuerySubnetsArgs = {
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type QuerySubnetsAggregateArgs = {
   where?: InputMaybe<SubnetWhere>;
 };
-
 
 export type QuerySubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11254,17 +10997,14 @@ export type QuerySubnetsConnectionArgs = {
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type QueryUrisArgs = {
   options?: InputMaybe<UriOptions>;
   where?: InputMaybe<UriWhere>;
 };
 
-
 export type QueryUrisAggregateArgs = {
   where?: InputMaybe<UriWhere>;
 };
-
 
 export type QueryUrisConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11273,17 +11013,14 @@ export type QueryUrisConnectionArgs = {
   where?: InputMaybe<UriWhere>;
 };
 
-
 export type QueryVulnerabilitiesArgs = {
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
-
 export type QueryVulnerabilitiesAggregateArgs = {
   where?: InputMaybe<VulnerabilityWhere>;
 };
-
 
 export type QueryVulnerabilitiesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11461,19 +11198,16 @@ export type SoftwareVersion = {
   vulnerabilitiesConnection: SoftwareVersionVulnerabilitiesConnection;
 };
 
-
 export type SoftwareVersionHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
-
 export type SoftwareVersionHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
-
 
 export type SoftwareVersionHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11483,19 +11217,16 @@ export type SoftwareVersionHostsConnectionArgs = {
   where?: InputMaybe<SoftwareVersionHostsConnectionWhere>;
 };
 
-
 export type SoftwareVersionNetwork_ServicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
-
 export type SoftwareVersionNetwork_ServicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
-
 
 export type SoftwareVersionNetwork_ServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11505,19 +11236,16 @@ export type SoftwareVersionNetwork_ServicesConnectionArgs = {
   where?: InputMaybe<SoftwareVersionNetwork_ServicesConnectionWhere>;
 };
 
-
 export type SoftwareVersionVulnerabilitiesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
-
 export type SoftwareVersionVulnerabilitiesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
-
 
 export type SoftwareVersionVulnerabilitiesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12051,7 +11779,7 @@ export enum SortDirection {
   /** Sort by field values in ascending order. */
   Asc = 'ASC',
   /** Sort by field values in descending order. */
-  Desc = 'DESC'
+  Desc = 'DESC',
 }
 
 export type StringAggregateSelection = {
@@ -12076,19 +11804,16 @@ export type Subnet = {
   range: Scalars['String']['output'];
 };
 
-
 export type SubnetContactsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
-
 export type SubnetContactsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ContactWhere>;
 };
-
 
 export type SubnetContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12098,19 +11823,16 @@ export type SubnetContactsConnectionArgs = {
   where?: InputMaybe<SubnetContactsConnectionWhere>;
 };
 
-
 export type SubnetOrg_UnitsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
-
 export type SubnetOrg_UnitsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
-
 
 export type SubnetOrg_UnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12120,19 +11842,16 @@ export type SubnetOrg_UnitsConnectionArgs = {
   where?: InputMaybe<SubnetOrg_UnitsConnectionWhere>;
 };
 
-
 export type SubnetParent_SubnetArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
-
 export type SubnetParent_SubnetAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
-
 
 export type SubnetParent_SubnetConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12644,19 +12363,16 @@ export type Uri = {
   ipsConnection: UriIpsConnection;
 };
 
-
 export type UriIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
-
 export type UriIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
-
 
 export type UriIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13080,19 +12796,16 @@ export type Vulnerability = {
   status?: Maybe<Array<Scalars['String']['output']>>;
 };
 
-
 export type VulnerabilityCveArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CveOptions>;
   where?: InputMaybe<CveWhere>;
 };
 
-
 export type VulnerabilityCveAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CveWhere>;
 };
-
 
 export type VulnerabilityCveConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13102,19 +12815,16 @@ export type VulnerabilityCveConnectionArgs = {
   where?: InputMaybe<VulnerabilityCveConnectionWhere>;
 };
 
-
 export type VulnerabilitySoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
-
 export type VulnerabilitySoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
-
 
 export type VulnerabilitySoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;

@@ -13,10 +13,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -45,9 +42,7 @@ export class TagComponent {
   readonly editOn = signal<boolean>(false);
   readonly filteredTags = computed(() => {
     const currentTag = this.currentTag().toLowerCase();
-    return currentTag
-      ? this.allTags.filter((tag) => tag.toLowerCase().includes(currentTag))
-      : this.allTags.slice();
+    return currentTag ? this.allTags.filter((tag) => tag.toLowerCase().includes(currentTag)) : this.allTags.slice();
   });
 
   inputTags: InputSignal<string[]> = input<string[]>([]);

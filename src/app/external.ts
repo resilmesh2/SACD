@@ -29,6 +29,4 @@ export const EXTERNAL_ROUTES = EXTERNAL.map((ext) => ({
   },
 }));
 
-export const EXTERNAL_AGENDAS = EXTERNAL.map(
-  (ext) => new Agenda(ext.name, ext.path),
-);
+export const EXTERNAL_AGENDAS = EXTERNAL.map((ext) => new Agenda(ext.name, ext.path));

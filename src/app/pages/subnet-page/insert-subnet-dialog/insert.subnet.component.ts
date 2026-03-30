@@ -13,11 +13,7 @@ import {
   Signal,
   WritableSignal,
 } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SubnetExtendedData } from '../../../models/subnet.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DataService } from '../../../services/data.service';
@@ -57,14 +53,10 @@ export class InsertSubnetDialog implements OnInit {
     mode: 'insert' | 'edit';
   };
 
-  title = computed(() =>
-    this.data.mode === 'insert' ? 'Insert Subnet' : 'Edit Subnet',
-  );
+  title = computed(() => (this.data.mode === 'insert' ? 'Insert Subnet' : 'Edit Subnet'));
 
   //allSubnets: Signal<SubnetExtendedData[]>;
-  allSubnets: WritableSignal<SubnetExtendedData[]> = model(
-    this.data.allSubnets || [],
-  );
+  allSubnets: WritableSignal<SubnetExtendedData[]> = model(this.data.allSubnets || []);
   allOrgUnits: Signal<{ _id: string; name: string }[]>;
 
   updateSubnetDataSource = output<{
@@ -115,9 +107,7 @@ export class InsertSubnetDialog implements OnInit {
   }
 
   editSubnet() {
-    console.log(
-      `Updating subnet ${this.data.subnet.range} -> ${this.range()} | ${this.data.subnet.note}`,
-    );
+    console.log(`Updating subnet ${this.data.subnet.range} -> ${this.range()} | ${this.data.subnet.note}`);
     this.subnetService.editSubnet(this.data.subnet, this.updatedSubnet());
 
     this.updateSubnetDataSource.emit({

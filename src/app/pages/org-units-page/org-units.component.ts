@@ -1,20 +1,9 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ChangeDetectorRef,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { OrgUnitCrudDialog } from './org-unit-crud-dialog/org-unit-crud.component';
 import { DataService } from '../../services/data.service';
 import { MatIcon } from '@angular/material/icon';
@@ -41,16 +30,9 @@ import { ORGANIZATION_PATH } from '../../paths';
   ],
 })
 export class OrgUnitsComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [
-    'name',
-    'subnets',
-    'contacts',
-    'parent_org_unit',
-    'actions',
-  ];
+  displayedColumns: string[] = ['name', 'subnets', 'contacts', 'parent_org_unit', 'actions'];
   dataSource: MatTableDataSource<OrgUnitData>;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null =
-    null;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null = null;
   @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
   dataLoaded = false;
   dataLoading = true;
@@ -90,10 +72,7 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
           orgUnits.map((orgUnit) => ({
             name: orgUnit.name ?? '???', // Can't be undefined, fallback just in case
             parentOrgUnit: orgUnit.parentOrgUnit ?? '---',
-            subnets:
-              orgUnit.subnets.length == 0
-                ? [{ range: '---' }]
-                : orgUnit.subnets,
+            subnets: orgUnit.subnets.length == 0 ? [{ range: '---' }] : orgUnit.subnets,
             contacts: orgUnit.contacts.length == 0 ? [] : orgUnit.contacts,
           })),
         );
@@ -137,49 +116,34 @@ export class OrgUnitsComponent implements OnInit, AfterViewInit {
     });
 
     // Listen for org unit updates from the dialog (e.g., after insert or edit)
-    this.dialogRef.componentInstance.updateOrgUnitDataSource.subscribe(
-      ({ oldName, orgUnit }) => {
-        // Refreshes the data source with the updated org unit
-        // Either updates the existing org unit or adds a new one if it doesn't exist
-        const index = this.dataSource.data.findIndex(
-          (item) => item.name === oldName,
-        );
-        if (index !== -1) {
-          this.dataSource.data[index] = orgUnit;
+    this.dialogRef.componentInstance.updateOrgUnitDataSource.subscribe(({ oldName, orgUnit }) => {
+      // Refreshes the data source with the updated org unit
+      // Either updates the existing org unit or adds a new one if it doesn't exist
+      const index = this.dataSource.data.findIndex((item) => item.name === oldName);
+      if (index !== -1) {
+        this.dataSource.data[index] = orgUnit;
 
-          // Update parent org unit references
-          this.dataSource.data.forEach((item) => {
-            if (item.parentOrgUnit === oldName) {
-              item.parentOrgUnit = orgUnit.name;
-            }
-          });
+        // Update parent org unit references
+        this.dataSource.data.forEach((item) => {
+          if (item.parentOrgUnit === oldName) {
+            item.parentOrgUnit = orgUnit.name;
+          }
+        });
 
-          this.dataSource._updateChangeSubscription(); // Refresh the data source
-          this.openSnackBar(
-            `Org Unit ${orgUnit.name} updated successfully.`,
-            'Close',
-          );
-        } else {
-          this.dataSource.data = [orgUnit, ...this.dataSource.data]; // Add new org unit if it doesn't exist
-          this.openSnackBar(
-            `Org Unit ${orgUnit.name} added successfully.`,
-            'Close',
-          );
-        }
-      },
-    );
+        this.dataSource._updateChangeSubscription(); // Refresh the data source
+        this.openSnackBar(`Org Unit ${orgUnit.name} updated successfully.`, 'Close');
+      } else {
+        this.dataSource.data = [orgUnit, ...this.dataSource.data]; // Add new org unit if it doesn't exist
+        this.openSnackBar(`Org Unit ${orgUnit.name} added successfully.`, 'Close');
+      }
+    });
   }
 
   deleteOrgUnit(orgUnit: OrgUnitData): void {
     if (this.data.deleteOrgUnit(orgUnit.name)) {
       // Handle successful deletion (e.g., show a message, refresh the list)
-      this.dataSource.data = this.dataSource.data.filter(
-        (item) => item.name !== orgUnit.name,
-      );
-      this.openSnackBar(
-        `Org Unit ${orgUnit.name} deleted successfully.`,
-        'Close',
-      );
+      this.dataSource.data = this.dataSource.data.filter((item) => item.name !== orgUnit.name);
+      this.openSnackBar(`Org Unit ${orgUnit.name} deleted successfully.`, 'Close');
     } else {
       // Handle deletion failure (e.g., show an error message)
       this.openSnackBar(`Failed to delete Org Unit ${orgUnit.name}.`, 'Close');

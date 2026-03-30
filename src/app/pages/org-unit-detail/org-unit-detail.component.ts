@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal, ViewChild, WritableSignal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -35,12 +28,7 @@ import { SubnetService } from '../../services/subnet.service';
 })
 export class OrgUnitDetailComponent {
   dataSource = new MatTableDataSource<ChildIP>();
-  displayedColumns: string[] = [
-    'ip',
-    'subnet',
-    'softwareVersion',
-    'affectedBy',
-  ];
+  displayedColumns: string[] = ['ip', 'subnet', 'softwareVersion', 'affectedBy'];
   paginator: MatPaginator | null = null;
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
@@ -118,10 +106,7 @@ export class OrgUnitDetailComponent {
     if (!affectedBy || affectedBy.length === 0) {
       return 'No vulnerabilities';
     }
-    return (
-      affectedBy.slice(0, 5).join(', ') +
-      (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '')
-    );
+    return affectedBy.slice(0, 5).join(', ') + (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '');
   }
 
   calcSubnetSize(range: string): number {
@@ -134,15 +119,10 @@ export class OrgUnitDetailComponent {
 
   calculateOccupancyData(): { name: string; value: number }[] {
     const total =
-      this.orgUnitDetail()?.subnets.reduce(
-        (acc, subnet) => acc + this.calcSubnetSize(subnet.range),
-        0,
-      ) || 0;
+      this.orgUnitDetail()?.subnets.reduce((acc, subnet) => acc + this.calcSubnetSize(subnet.range), 0) || 0;
     const occupied = this.dataSource.data.length;
     const unoccupied = total - occupied;
-    const affectedCount = this.dataSource.data.filter(
-      (ip) => ip.affectedBy && ip.affectedBy.length > 0,
-    ).length;
+    const affectedCount = this.dataSource.data.filter((ip) => ip.affectedBy && ip.affectedBy.length > 0).length;
 
     return [
       { name: 'Unoccupied', value: unoccupied },

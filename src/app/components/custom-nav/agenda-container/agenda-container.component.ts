@@ -28,10 +28,7 @@ export class AgendaContainerComponent {
 
   readonly agendaContainer: InputSignal<AgendaContainer | undefined> = input();
   readonly agendaSelected = output<Agenda>();
-  agendas = computed(
-    () =>
-      this.agendaContainer()?.children.map((agenda) => agenda as Agenda) || [],
-  );
+  agendas = computed(() => this.agendaContainer()?.children.map((agenda) => agenda as Agenda) || []);
 
   isCollapsed = signal<boolean>(false);
 

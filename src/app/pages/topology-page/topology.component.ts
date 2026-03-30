@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  HighchartsChartDirective,
-  providePartialHighcharts,
-} from 'highcharts-angular';
+import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
 import { DataService } from '../../services/data.service';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { Router } from '@angular/router';
@@ -15,10 +12,7 @@ import { SUBNETS_PATH } from '../../paths';
   providers: [
     providePartialHighcharts({
       modules: () => {
-        return [
-          import('highcharts/esm/highcharts-more'),
-          import('highcharts/modules/boost'),
-        ];
+        return [import('highcharts/esm/highcharts-more'), import('highcharts/modules/boost')];
       },
       timeout: 900,
     }),
@@ -77,9 +71,7 @@ export class TopologyComponent {
     this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
 
-  private buildChartOptions(
-    series: { name: string; data: { name: string; value: number }[] }[],
-  ): Highcharts.Options {
+  private buildChartOptions(series: { name: string; data: { name: string; value: number }[] }[]): Highcharts.Options {
     return {
       chart: {
         type: 'packedbubble',
@@ -123,9 +115,7 @@ export class TopologyComponent {
                 }
                 if (e.point.value > 1) {
                   this.navigateToSubnetDetail(e.point.name);
-                  console.log(
-                    `Clicked on ${e.point.name} with value ${e.point.value}`,
-                  );
+                  console.log(`Clicked on ${e.point.name} with value ${e.point.value}`);
                 }
               },
             },

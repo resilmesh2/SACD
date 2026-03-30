@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { colorLookupTable } from './colorLookupTable';
 
 @Component({
@@ -33,18 +28,9 @@ export class CvssChipComponent {
   });
 
   color = computed(() => {
-    console.log(
-      'Computing color for:',
-      this.label(),
-      this.property(),
-      this.version(),
-    );
+    console.log('Computing color for:', this.label(), this.property(), this.version());
 
-    switch (
-      this.property() != 'base_severity'
-        ? this.propertySeverity()
-        : this.label()?.toLowerCase()
-    ) {
+    switch (this.property() != 'base_severity' ? this.propertySeverity() : this.label()?.toLowerCase()) {
       case 'none':
         return '#86B46A';
       case 'low':

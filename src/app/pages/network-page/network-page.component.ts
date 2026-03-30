@@ -115,9 +115,7 @@ export class NetworkPageComponent implements OnInit {
     delete attr.textColor;
     delete attr.type;
     delete attr.labelName;
-    return Object.entries(attr).filter(
-      (a) => typeof a[1] === 'string' || typeof a[1] === 'number',
-    );
+    return Object.entries(attr).filter((a) => typeof a[1] === 'string' || typeof a[1] === 'number');
   }
 
   public getLabel(node: Node) {
@@ -127,9 +125,7 @@ export class NetworkPageComponent implements OnInit {
   public expandNode(node: Node) {
     this.dataService.getNodeNeighbours(node).subscribe({
       next: (res) => {
-        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) =>
-          [e.source, e.target, e.label].join(),
-        );
+        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) => [e.source, e.target, e.label].join());
         this.nodes = _.unionBy(this.nodes, res.nodes, (n: Node) => n.id);
 
         if (this.nodes.length === 0 && this.edges.length === 0) {

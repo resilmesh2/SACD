@@ -1,15 +1,9 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  HighchartsChartDirective,
-  providePartialHighcharts,
-} from 'highcharts-angular';
+import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
 import { Router } from '@angular/router';
 import { SUBNETS_PATH } from '../../paths';
-import {
-  GetAllOrgUnitsQuery,
-  GetAllOrgUnitsQueryService,
-} from '../../graphql/org-units/org-units.operation.generated';
+import { GetAllOrgUnitsQuery, GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.operation.generated';
 
 type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
 
@@ -20,10 +14,7 @@ type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
   providers: [
     providePartialHighcharts({
       modules: () => {
-        return [
-          import('highcharts/esm/modules/treemap'),
-          import('highcharts/esm/modules/stock'),
-        ];
+        return [import('highcharts/esm/modules/treemap'), import('highcharts/esm/modules/stock')];
       },
       timeout: 900,
     }),
@@ -50,9 +41,7 @@ export class TreemapComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.orgData = this.convertOrgUnitsToTreemapData(
-            result.data.organizationUnits,
-          );
+          this.orgData = this.convertOrgUnitsToTreemapData(result.data.organizationUnits);
           this.chartOptions = this.buildChartOptions(this.orgData);
         },
       });
@@ -78,9 +67,7 @@ export class TreemapComponent implements OnInit {
 
       // Find subnet ranges that are referenced as parents
       const parentRanges = new Set(
-        unit.subnets
-          .filter((s) => s.parent_subnet.length > 0)
-          .map((s) => s.parent_subnet[0].range),
+        unit.subnets.filter((s) => s.parent_subnet.length > 0).map((s) => s.parent_subnet[0].range),
       );
 
       // Add parent subnet nodes that aren't in the subnet list themselves
