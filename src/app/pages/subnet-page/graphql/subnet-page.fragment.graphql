@@ -1,20 +1,3 @@
-fragment SubnetPageSubnet on Subnet {
-  _id
-  note
-  range
-  org_units {
-    name
-  }
-  contacts {
-    name
-  }
-  parent_subnet {
-    _id
-    note
-    range
-  }
-}
-
 fragment SubnetPageChildIP on IP {
   address
   version

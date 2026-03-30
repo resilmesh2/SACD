@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgxGraphModule, Node } from '@swimlane/ngx-graph';
 import { MissionStructure } from '../../models/mission-structure.model';
-import { getLabelOfGraphNode } from '../../utils/graph-utils/graph-label.utils';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';

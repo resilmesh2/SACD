@@ -1,12 +1,6 @@
-query SubnetPageGetSubnets {
-  subnets {
-    ...SubnetPageSubnet
-  }
-}
-
 query SubnetPageGetSubnet($range: String!) {
   subnets(where: { range: $range }) {
-    ...SubnetPageSubnet
+    ...Subnet
   }
 }
 

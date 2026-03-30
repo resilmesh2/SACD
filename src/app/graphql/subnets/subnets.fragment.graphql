@@ -1,0 +1,16 @@
+fragment Subnet on Subnet {
+  _id
+  note
+  range
+  org_units {
+    name
+  }
+  contacts {
+    name
+  }
+  parent_subnet {
+    _id
+    note
+    range
+  }
+}

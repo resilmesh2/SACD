@@ -1,30 +1,17 @@
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T,
-> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
-    };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
 };
 
 export type Application = {
@@ -36,16 +23,19 @@ export type Application = {
   name: Scalars['String']['output'];
 };
 
+
 export type ApplicationDevicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
+
 export type ApplicationDevicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DeviceWhere>;
 };
+
 
 export type ApplicationDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -323,16 +313,19 @@ export type Cve = {
   vulnerabilityConnection: CveVulnerabilityConnection;
 };
 
+
 export type CveCvss_V2Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv2Options>;
   where?: InputMaybe<CvsSv2Where>;
 };
 
+
 export type CveCvss_V2AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv2Where>;
 };
+
 
 export type CveCvss_V2ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -342,16 +335,19 @@ export type CveCvss_V2ConnectionArgs = {
   where?: InputMaybe<CveCvss_V2ConnectionWhere>;
 };
 
+
 export type CveCvss_V30Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv30Options>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
+
 export type CveCvss_V30AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv30Where>;
 };
+
 
 export type CveCvss_V30ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -361,16 +357,19 @@ export type CveCvss_V30ConnectionArgs = {
   where?: InputMaybe<CveCvss_V30ConnectionWhere>;
 };
 
+
 export type CveCvss_V31Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv31Options>;
   where?: InputMaybe<CvsSv31Where>;
 };
 
+
 export type CveCvss_V31AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv31Where>;
 };
+
 
 export type CveCvss_V31ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -380,16 +379,19 @@ export type CveCvss_V31ConnectionArgs = {
   where?: InputMaybe<CveCvss_V31ConnectionWhere>;
 };
 
+
 export type CveCvss_V40Args = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CvsSv40Options>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
+
 export type CveCvss_V40AggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CvsSv40Where>;
 };
+
 
 export type CveCvss_V40ConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -399,16 +401,19 @@ export type CveCvss_V40ConnectionArgs = {
   where?: InputMaybe<CveCvss_V40ConnectionWhere>;
 };
 
+
 export type CveVulnerabilityArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
+
 export type CveVulnerabilityAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
+
 
 export type CveVulnerabilityConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -604,9 +609,7 @@ export type CveCvss_V2NodeAggregationWhereInput = {
   AND?: InputMaybe<Array<CveCvss_V2NodeAggregationWhereInput>>;
   NOT?: InputMaybe<CveCvss_V2NodeAggregationWhereInput>;
   OR?: InputMaybe<Array<CveCvss_V2NodeAggregationWhereInput>>;
-  access_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  access_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   access_complexity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   access_complexity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   access_complexity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -651,27 +654,17 @@ export type CveCvss_V2NodeAggregationWhereInput = {
   authentication_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   authentication_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   authentication_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -711,51 +704,21 @@ export type CveCvss_V2NodeAggregationWhereInput = {
   base_severity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
   exploitability_score_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -904,9 +867,7 @@ export type CveCvss_V30NodeAggregationWhereInput = {
   AND?: InputMaybe<Array<CveCvss_V30NodeAggregationWhereInput>>;
   NOT?: InputMaybe<CveCvss_V30NodeAggregationWhereInput>;
   OR?: InputMaybe<Array<CveCvss_V30NodeAggregationWhereInput>>;
-  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -936,27 +897,17 @@ export type CveCvss_V30NodeAggregationWhereInput = {
   attack_vector_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   attack_vector_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   attack_vector_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -996,51 +947,21 @@ export type CveCvss_V30NodeAggregationWhereInput = {
   base_severity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
   exploitability_score_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -1096,27 +1017,17 @@ export type CveCvss_V30NodeAggregationWhereInput = {
   integrity_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   integrity_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   integrity_impact_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -1244,9 +1155,7 @@ export type CveCvss_V31NodeAggregationWhereInput = {
   AND?: InputMaybe<Array<CveCvss_V31NodeAggregationWhereInput>>;
   NOT?: InputMaybe<CveCvss_V31NodeAggregationWhereInput>;
   OR?: InputMaybe<Array<CveCvss_V31NodeAggregationWhereInput>>;
-  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -1276,27 +1185,17 @@ export type CveCvss_V31NodeAggregationWhereInput = {
   attack_vector_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   attack_vector_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   attack_vector_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   availability_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  availability_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  availability_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -1336,51 +1235,21 @@ export type CveCvss_V31NodeAggregationWhereInput = {
   base_severity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   base_severity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  confidentiality_impact_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  confidentiality_impact_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
   exploitability_score_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -1436,27 +1305,17 @@ export type CveCvss_V31NodeAggregationWhereInput = {
   integrity_impact_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   integrity_impact_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   integrity_impact_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -1584,9 +1443,7 @@ export type CveCvss_V40NodeAggregationWhereInput = {
   AND?: InputMaybe<Array<CveCvss_V40NodeAggregationWhereInput>>;
   NOT?: InputMaybe<CveCvss_V40NodeAggregationWhereInput>;
   OR?: InputMaybe<Array<CveCvss_V40NodeAggregationWhereInput>>;
-  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  attack_complexity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   attack_complexity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -1601,27 +1458,17 @@ export type CveCvss_V40NodeAggregationWhereInput = {
   attack_complexity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   attack_complexity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   attack_complexity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  attack_requirements_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  attack_requirements_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   attack_requirements_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  attack_requirements_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  attack_requirements_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   attack_requirements_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  attack_requirements_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  attack_requirements_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  attack_requirements_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  attack_requirements_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  attack_requirements_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  attack_requirements_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   attack_requirements_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
@@ -1691,166 +1538,66 @@ export type CveCvss_V40NodeAggregationWhereInput = {
   exploit_maturity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   exploit_maturity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   exploit_maturity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
   privileges_required_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
-  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  privileges_required_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  privileges_required_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   privileges_required_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  subsequent_system_availability_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_availability_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_availability_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_availability_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_availability_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_availability_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_availability_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_confidentiality_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_confidentiality_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_confidentiality_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_confidentiality_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_confidentiality_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_confidentiality_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_integrity_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_integrity_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_integrity_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_integrity_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  subsequent_system_integrity_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  subsequent_system_integrity_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  subsequent_system_availability_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_availability_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_availability_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_availability_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_availability_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_availability_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_availability_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_confidentiality_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_confidentiality_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_confidentiality_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_confidentiality_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_confidentiality_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_confidentiality_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_integrity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_integrity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_integrity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_integrity_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  subsequent_system_integrity_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  subsequent_system_integrity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
   user_interaction_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   user_interaction_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   user_interaction_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -1881,141 +1628,51 @@ export type CveCvss_V40NodeAggregationWhereInput = {
   vector_string_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
   vector_string_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
   vector_string_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
-  vulnerable_system_availability_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_availability_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_availability_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_availability_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_availability_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_availability_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_availability_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_confidentiality_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_confidentiality_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_confidentiality_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_confidentiality_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_confidentiality_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_confidentiality_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_AVERAGE_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_integrity_AVERAGE_LENGTH_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_integrity_AVERAGE_LENGTH_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_integrity_AVERAGE_LENGTH_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_integrity_AVERAGE_LENGTH_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  vulnerable_system_integrity_LONGEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_LONGEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_LONGEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_LONGEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_LONGEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_SHORTEST_LENGTH_EQUAL?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_SHORTEST_LENGTH_GT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_SHORTEST_LENGTH_GTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_SHORTEST_LENGTH_LT?: InputMaybe<
-    Scalars['Int']['input']
-  >;
-  vulnerable_system_integrity_SHORTEST_LENGTH_LTE?: InputMaybe<
-    Scalars['Int']['input']
-  >;
+  vulnerable_system_availability_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_availability_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_availability_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_availability_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_availability_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_availability_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_availability_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_confidentiality_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_confidentiality_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_confidentiality_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_confidentiality_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_confidentiality_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_confidentiality_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_integrity_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_integrity_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_integrity_AVERAGE_LENGTH_LT?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_integrity_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars['Float']['input']>;
+  vulnerable_system_integrity_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_LONGEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_LONGEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_LONGEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_LONGEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_SHORTEST_LENGTH_GT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_SHORTEST_LENGTH_LT?: InputMaybe<Scalars['Int']['input']>;
+  vulnerable_system_integrity_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CveCvss_V40Relationship = {
@@ -2109,9 +1766,7 @@ export type CveUpdateInput = {
   ref_tags_PUSH?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   result_impacts?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   result_impacts_POP?: InputMaybe<Scalars['Int']['input']>;
-  result_impacts_PUSH?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  result_impacts_PUSH?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   vulnerability?: InputMaybe<CveVulnerabilityUpdateFieldInput>;
 };
 
@@ -2430,9 +2085,7 @@ export type CvsSv2Where = {
   access_complexity?: InputMaybe<Scalars['String']['input']>;
   access_complexity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   access_complexity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  access_complexity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  access_complexity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   access_complexity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   access_vector?: InputMaybe<Scalars['String']['input']>;
   access_vector_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2447,9 +2100,7 @@ export type CvsSv2Where = {
   availability_impact?: InputMaybe<Scalars['String']['input']>;
   availability_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   availability_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  availability_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  availability_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   availability_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   base_score?: InputMaybe<Scalars['Float']['input']>;
   base_score_GT?: InputMaybe<Scalars['Float']['input']>;
@@ -2465,16 +2116,12 @@ export type CvsSv2Where = {
   confidentiality_impact?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  confidentiality_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  confidentiality_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   confidentiality_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   exploitability_score?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GTE?: InputMaybe<Scalars['Float']['input']>;
-  exploitability_score_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  exploitability_score_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   exploitability_score_LT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_LTE?: InputMaybe<Scalars['Float']['input']>;
   impact_score?: InputMaybe<Scalars['Float']['input']>;
@@ -2486,9 +2133,7 @@ export type CvsSv2Where = {
   integrity_impact?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  integrity_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  integrity_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   integrity_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   obtain_all_privilege?: InputMaybe<Scalars['Boolean']['input']>;
   obtain_other_privilege?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2634,9 +2279,7 @@ export type CvsSv30Where = {
   attack_complexity?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  attack_complexity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  attack_complexity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   attack_complexity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   attack_vector?: InputMaybe<Scalars['String']['input']>;
   attack_vector_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2646,9 +2289,7 @@ export type CvsSv30Where = {
   availability_impact?: InputMaybe<Scalars['String']['input']>;
   availability_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   availability_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  availability_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  availability_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   availability_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   base_score?: InputMaybe<Scalars['Float']['input']>;
   base_score_GT?: InputMaybe<Scalars['Float']['input']>;
@@ -2664,16 +2305,12 @@ export type CvsSv30Where = {
   confidentiality_impact?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  confidentiality_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  confidentiality_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   confidentiality_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   exploitability_score?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GTE?: InputMaybe<Scalars['Float']['input']>;
-  exploitability_score_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  exploitability_score_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   exploitability_score_LT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_LTE?: InputMaybe<Scalars['Float']['input']>;
   impact_score?: InputMaybe<Scalars['Float']['input']>;
@@ -2685,16 +2322,12 @@ export type CvsSv30Where = {
   integrity_impact?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  integrity_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  integrity_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   integrity_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   privileges_required?: InputMaybe<Scalars['String']['input']>;
   privileges_required_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   privileges_required_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  privileges_required_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  privileges_required_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   privileges_required_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<Scalars['String']['input']>;
   scope_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2704,9 +2337,7 @@ export type CvsSv30Where = {
   user_interaction?: InputMaybe<Scalars['String']['input']>;
   user_interaction_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   user_interaction_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  user_interaction_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  user_interaction_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   user_interaction_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vector_string?: InputMaybe<Scalars['String']['input']>;
   vector_string_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2848,9 +2479,7 @@ export type CvsSv31Where = {
   attack_complexity?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  attack_complexity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  attack_complexity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   attack_complexity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   attack_vector?: InputMaybe<Scalars['String']['input']>;
   attack_vector_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2860,9 +2489,7 @@ export type CvsSv31Where = {
   availability_impact?: InputMaybe<Scalars['String']['input']>;
   availability_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   availability_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  availability_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  availability_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   availability_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   base_score?: InputMaybe<Scalars['Float']['input']>;
   base_score_GT?: InputMaybe<Scalars['Float']['input']>;
@@ -2878,16 +2505,12 @@ export type CvsSv31Where = {
   confidentiality_impact?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   confidentiality_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  confidentiality_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  confidentiality_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   confidentiality_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   exploitability_score?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_GTE?: InputMaybe<Scalars['Float']['input']>;
-  exploitability_score_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  exploitability_score_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   exploitability_score_LT?: InputMaybe<Scalars['Float']['input']>;
   exploitability_score_LTE?: InputMaybe<Scalars['Float']['input']>;
   impact_score?: InputMaybe<Scalars['Float']['input']>;
@@ -2899,16 +2522,12 @@ export type CvsSv31Where = {
   integrity_impact?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   integrity_impact_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  integrity_impact_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  integrity_impact_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   integrity_impact_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   privileges_required?: InputMaybe<Scalars['String']['input']>;
   privileges_required_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   privileges_required_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  privileges_required_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  privileges_required_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   privileges_required_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<Scalars['String']['input']>;
   scope_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -2918,9 +2537,7 @@ export type CvsSv31Where = {
   user_interaction?: InputMaybe<Scalars['String']['input']>;
   user_interaction_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   user_interaction_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  user_interaction_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  user_interaction_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   user_interaction_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vector_string?: InputMaybe<Scalars['String']['input']>;
   vector_string_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -3064,16 +2681,12 @@ export type CvsSv40Where = {
   attack_complexity?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   attack_complexity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  attack_complexity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  attack_complexity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   attack_complexity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   attack_requirements?: InputMaybe<Scalars['String']['input']>;
   attack_requirements_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   attack_requirements_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  attack_requirements_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  attack_requirements_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   attack_requirements_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   attack_vector?: InputMaybe<Scalars['String']['input']>;
   attack_vector_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -3094,60 +2707,32 @@ export type CvsSv40Where = {
   exploit_maturity?: InputMaybe<Scalars['String']['input']>;
   exploit_maturity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   exploit_maturity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  exploit_maturity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  exploit_maturity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   exploit_maturity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   privileges_required?: InputMaybe<Scalars['String']['input']>;
   privileges_required_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   privileges_required_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  privileges_required_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  privileges_required_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   privileges_required_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   subsequent_system_availability?: InputMaybe<Scalars['String']['input']>;
-  subsequent_system_availability_CONTAINS?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  subsequent_system_availability_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  subsequent_system_availability_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  subsequent_system_availability_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  subsequent_system_availability_CONTAINS?: InputMaybe<Scalars['String']['input']>;
+  subsequent_system_availability_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  subsequent_system_availability_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  subsequent_system_availability_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   subsequent_system_confidentiality?: InputMaybe<Scalars['String']['input']>;
-  subsequent_system_confidentiality_CONTAINS?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  subsequent_system_confidentiality_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  subsequent_system_confidentiality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  subsequent_system_confidentiality_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  subsequent_system_confidentiality_CONTAINS?: InputMaybe<Scalars['String']['input']>;
+  subsequent_system_confidentiality_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  subsequent_system_confidentiality_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  subsequent_system_confidentiality_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   subsequent_system_integrity?: InputMaybe<Scalars['String']['input']>;
   subsequent_system_integrity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
-  subsequent_system_integrity_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  subsequent_system_integrity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  subsequent_system_integrity_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  subsequent_system_integrity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  subsequent_system_integrity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  subsequent_system_integrity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   user_interaction?: InputMaybe<Scalars['String']['input']>;
   user_interaction_CONTAINS?: InputMaybe<Scalars['String']['input']>;
   user_interaction_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
-  user_interaction_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
+  user_interaction_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   user_interaction_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vector_string?: InputMaybe<Scalars['String']['input']>;
   vector_string_CONTAINS?: InputMaybe<Scalars['String']['input']>;
@@ -3155,42 +2740,20 @@ export type CvsSv40Where = {
   vector_string_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   vector_string_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vulnerable_system_availability?: InputMaybe<Scalars['String']['input']>;
-  vulnerable_system_availability_CONTAINS?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  vulnerable_system_availability_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  vulnerable_system_availability_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  vulnerable_system_availability_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  vulnerable_system_availability_CONTAINS?: InputMaybe<Scalars['String']['input']>;
+  vulnerable_system_availability_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  vulnerable_system_availability_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  vulnerable_system_availability_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vulnerable_system_confidentiality?: InputMaybe<Scalars['String']['input']>;
-  vulnerable_system_confidentiality_CONTAINS?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  vulnerable_system_confidentiality_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  vulnerable_system_confidentiality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  vulnerable_system_confidentiality_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  vulnerable_system_confidentiality_CONTAINS?: InputMaybe<Scalars['String']['input']>;
+  vulnerable_system_confidentiality_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  vulnerable_system_confidentiality_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  vulnerable_system_confidentiality_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
   vulnerable_system_integrity?: InputMaybe<Scalars['String']['input']>;
   vulnerable_system_integrity_CONTAINS?: InputMaybe<Scalars['String']['input']>;
-  vulnerable_system_integrity_ENDS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
-  vulnerable_system_integrity_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['String']['input']>>
-  >;
-  vulnerable_system_integrity_STARTS_WITH?: InputMaybe<
-    Scalars['String']['input']
-  >;
+  vulnerable_system_integrity_ENDS_WITH?: InputMaybe<Scalars['String']['input']>;
+  vulnerable_system_integrity_IN?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  vulnerable_system_integrity_STARTS_WITH?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Component = {
@@ -3211,16 +2774,19 @@ export type Component = {
   to_mission_dependenciesConnection: ComponentTo_Mission_DependenciesConnection;
 };
 
+
 export type ComponentFrom_Mission_DependenciesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
+
 export type ComponentFrom_Mission_DependenciesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
+
 
 export type ComponentFrom_Mission_DependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3230,16 +2796,19 @@ export type ComponentFrom_Mission_DependenciesConnectionArgs = {
   where?: InputMaybe<ComponentFrom_Mission_DependenciesConnectionWhere>;
 };
 
+
 export type ComponentHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type ComponentHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type ComponentHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3249,16 +2818,19 @@ export type ComponentHostsConnectionArgs = {
   where?: InputMaybe<ComponentHostsConnectionWhere>;
 };
 
+
 export type ComponentMissionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionOptions>;
   where?: InputMaybe<MissionWhere>;
 };
 
+
 export type ComponentMissionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionWhere>;
 };
+
 
 export type ComponentMissionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3268,16 +2840,19 @@ export type ComponentMissionsConnectionArgs = {
   where?: InputMaybe<ComponentMissionsConnectionWhere>;
 };
 
+
 export type ComponentTo_Mission_DependenciesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
+
 export type ComponentTo_Mission_DependenciesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
+
 
 export type ComponentTo_Mission_DependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -3294,14 +2869,10 @@ export type ComponentAggregateSelection = {
 };
 
 export type ComponentConnectInput = {
-  from_mission_dependencies?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesConnectFieldInput>
-  >;
+  from_mission_dependencies?: InputMaybe<Array<ComponentFrom_Mission_DependenciesConnectFieldInput>>;
   hosts?: InputMaybe<Array<ComponentHostsConnectFieldInput>>;
   missions?: InputMaybe<Array<ComponentMissionsConnectFieldInput>>;
-  to_mission_dependencies?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesConnectFieldInput>
-  >;
+  to_mission_dependencies?: InputMaybe<Array<ComponentTo_Mission_DependenciesConnectFieldInput>>;
 };
 
 export type ComponentConnectWhere = {
@@ -3317,25 +2888,17 @@ export type ComponentCreateInput = {
 };
 
 export type ComponentDeleteInput = {
-  from_mission_dependencies?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesDeleteFieldInput>
-  >;
+  from_mission_dependencies?: InputMaybe<Array<ComponentFrom_Mission_DependenciesDeleteFieldInput>>;
   hosts?: InputMaybe<Array<ComponentHostsDeleteFieldInput>>;
   missions?: InputMaybe<Array<ComponentMissionsDeleteFieldInput>>;
-  to_mission_dependencies?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesDeleteFieldInput>
-  >;
+  to_mission_dependencies?: InputMaybe<Array<ComponentTo_Mission_DependenciesDeleteFieldInput>>;
 };
 
 export type ComponentDisconnectInput = {
-  from_mission_dependencies?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesDisconnectFieldInput>
-  >;
+  from_mission_dependencies?: InputMaybe<Array<ComponentFrom_Mission_DependenciesDisconnectFieldInput>>;
   hosts?: InputMaybe<Array<ComponentHostsDisconnectFieldInput>>;
   missions?: InputMaybe<Array<ComponentMissionsDisconnectFieldInput>>;
-  to_mission_dependencies?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesDisconnectFieldInput>
-  >;
+  to_mission_dependencies?: InputMaybe<Array<ComponentTo_Mission_DependenciesDisconnectFieldInput>>;
 };
 
 export type ComponentEdge = {
@@ -3395,12 +2958,8 @@ export type ComponentFrom_Mission_DependenciesDisconnectFieldInput = {
 };
 
 export type ComponentFrom_Mission_DependenciesFieldInput = {
-  connect?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesConnectFieldInput>
-  >;
-  create?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesCreateFieldInput>
-  >;
+  connect?: InputMaybe<Array<ComponentFrom_Mission_DependenciesConnectFieldInput>>;
+  create?: InputMaybe<Array<ComponentFrom_Mission_DependenciesCreateFieldInput>>;
 };
 
 export type ComponentFrom_Mission_DependenciesRelationship = {
@@ -3414,18 +2973,10 @@ export type ComponentFrom_Mission_DependenciesUpdateConnectionInput = {
 };
 
 export type ComponentFrom_Mission_DependenciesUpdateFieldInput = {
-  connect?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesConnectFieldInput>
-  >;
-  create?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesCreateFieldInput>
-  >;
-  delete?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesDeleteFieldInput>
-  >;
-  disconnect?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesDisconnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<ComponentFrom_Mission_DependenciesConnectFieldInput>>;
+  create?: InputMaybe<Array<ComponentFrom_Mission_DependenciesCreateFieldInput>>;
+  delete?: InputMaybe<Array<ComponentFrom_Mission_DependenciesDeleteFieldInput>>;
+  disconnect?: InputMaybe<Array<ComponentFrom_Mission_DependenciesDisconnectFieldInput>>;
   update?: InputMaybe<ComponentFrom_Mission_DependenciesUpdateConnectionInput>;
   where?: InputMaybe<ComponentFrom_Mission_DependenciesConnectionWhere>;
 };
@@ -3537,17 +3088,15 @@ export type ComponentHostsUpdateFieldInput = {
   where?: InputMaybe<ComponentHostsConnectionWhere>;
 };
 
-export type ComponentMissionDependencyFrom_Mission_DependenciesAggregationSelection =
-  {
-    __typename?: 'ComponentMissionDependencyFrom_mission_dependenciesAggregationSelection';
-    count: Scalars['Int']['output'];
-  };
+export type ComponentMissionDependencyFrom_Mission_DependenciesAggregationSelection = {
+  __typename?: 'ComponentMissionDependencyFrom_mission_dependenciesAggregationSelection';
+  count: Scalars['Int']['output'];
+};
 
-export type ComponentMissionDependencyTo_Mission_DependenciesAggregationSelection =
-  {
-    __typename?: 'ComponentMissionDependencyTo_mission_dependenciesAggregationSelection';
-    count: Scalars['Int']['output'];
-  };
+export type ComponentMissionDependencyTo_Mission_DependenciesAggregationSelection = {
+  __typename?: 'ComponentMissionDependencyTo_mission_dependenciesAggregationSelection';
+  count: Scalars['Int']['output'];
+};
 
 export type ComponentMissionMissionsAggregationSelection = {
   __typename?: 'ComponentMissionMissionsAggregationSelection';
@@ -3626,9 +3175,7 @@ export type ComponentMissionsNodeAggregationWhereInput = {
   AND?: InputMaybe<Array<ComponentMissionsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<ComponentMissionsNodeAggregationWhereInput>;
   OR?: InputMaybe<Array<ComponentMissionsNodeAggregationWhereInput>>;
-  availability_requirement_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  availability_requirement_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   availability_requirement_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   availability_requirement_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
   availability_requirement_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -3648,21 +3195,11 @@ export type ComponentMissionsNodeAggregationWhereInput = {
   availability_requirement_SUM_GTE?: InputMaybe<Scalars['Int']['input']>;
   availability_requirement_SUM_LT?: InputMaybe<Scalars['Int']['input']>;
   availability_requirement_SUM_LTE?: InputMaybe<Scalars['Int']['input']>;
-  confidentiality_requirement_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_requirement_AVERAGE_GT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_requirement_AVERAGE_GTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_requirement_AVERAGE_LT?: InputMaybe<
-    Scalars['Float']['input']
-  >;
-  confidentiality_requirement_AVERAGE_LTE?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  confidentiality_requirement_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_requirement_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_requirement_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_requirement_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
+  confidentiality_requirement_AVERAGE_LTE?: InputMaybe<Scalars['Float']['input']>;
   confidentiality_requirement_MAX_EQUAL?: InputMaybe<Scalars['Int']['input']>;
   confidentiality_requirement_MAX_GT?: InputMaybe<Scalars['Int']['input']>;
   confidentiality_requirement_MAX_GTE?: InputMaybe<Scalars['Int']['input']>;
@@ -3795,14 +3332,10 @@ export type ComponentOptions = {
 };
 
 export type ComponentRelationInput = {
-  from_mission_dependencies?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesCreateFieldInput>
-  >;
+  from_mission_dependencies?: InputMaybe<Array<ComponentFrom_Mission_DependenciesCreateFieldInput>>;
   hosts?: InputMaybe<Array<ComponentHostsCreateFieldInput>>;
   missions?: InputMaybe<Array<ComponentMissionsCreateFieldInput>>;
-  to_mission_dependencies?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesCreateFieldInput>
-  >;
+  to_mission_dependencies?: InputMaybe<Array<ComponentTo_Mission_DependenciesCreateFieldInput>>;
 };
 
 /**
@@ -3865,9 +3398,7 @@ export type ComponentTo_Mission_DependenciesDisconnectFieldInput = {
 };
 
 export type ComponentTo_Mission_DependenciesFieldInput = {
-  connect?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesConnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<ComponentTo_Mission_DependenciesConnectFieldInput>>;
   create?: InputMaybe<Array<ComponentTo_Mission_DependenciesCreateFieldInput>>;
 };
 
@@ -3882,28 +3413,20 @@ export type ComponentTo_Mission_DependenciesUpdateConnectionInput = {
 };
 
 export type ComponentTo_Mission_DependenciesUpdateFieldInput = {
-  connect?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesConnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<ComponentTo_Mission_DependenciesConnectFieldInput>>;
   create?: InputMaybe<Array<ComponentTo_Mission_DependenciesCreateFieldInput>>;
   delete?: InputMaybe<Array<ComponentTo_Mission_DependenciesDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<ComponentTo_Mission_DependenciesDisconnectFieldInput>>;
   update?: InputMaybe<ComponentTo_Mission_DependenciesUpdateConnectionInput>;
   where?: InputMaybe<ComponentTo_Mission_DependenciesConnectionWhere>;
 };
 
 export type ComponentUpdateInput = {
-  from_mission_dependencies?: InputMaybe<
-    Array<ComponentFrom_Mission_DependenciesUpdateFieldInput>
-  >;
+  from_mission_dependencies?: InputMaybe<Array<ComponentFrom_Mission_DependenciesUpdateFieldInput>>;
   hosts?: InputMaybe<Array<ComponentHostsUpdateFieldInput>>;
   missions?: InputMaybe<Array<ComponentMissionsUpdateFieldInput>>;
   name?: InputMaybe<Scalars['String']['input']>;
-  to_mission_dependencies?: InputMaybe<
-    Array<ComponentTo_Mission_DependenciesUpdateFieldInput>
-  >;
+  to_mission_dependencies?: InputMaybe<Array<ComponentTo_Mission_DependenciesUpdateFieldInput>>;
 };
 
 export type ComponentWhere = {
@@ -4006,16 +3529,19 @@ export type Contact = {
   subnetsConnection: ContactSubnetsConnection;
 };
 
+
 export type ContactSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type ContactSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
+
 
 export type ContactSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4454,16 +3980,19 @@ export type Device = {
   state?: Maybe<Scalars['String']['output']>;
 };
 
+
 export type DeviceApplicationsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ApplicationOptions>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
+
 export type DeviceApplicationsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ApplicationWhere>;
 };
+
 
 export type DeviceApplicationsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4473,16 +4002,19 @@ export type DeviceApplicationsConnectionArgs = {
   where?: InputMaybe<DeviceApplicationsConnectionWhere>;
 };
 
+
 export type DeviceHardware_VersionArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HardwareVersionOptions>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
+
 export type DeviceHardware_VersionAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
+
 
 export type DeviceHardware_VersionConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -4862,16 +4394,19 @@ export type DomainName = {
   tag: Array<Maybe<Scalars['String']['output']>>;
 };
 
+
 export type DomainNameIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type DomainNameIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
+
 
 export type DomainNameIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5150,16 +4685,19 @@ export type HardwareVersion = {
   model: Scalars['String']['output'];
 };
 
+
 export type HardwareVersionDevicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
+
 export type HardwareVersionDevicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DeviceWhere>;
 };
+
 
 export type HardwareVersionDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5514,16 +5052,19 @@ export type Host = {
   software_versionsConnection: HostSoftware_VersionsConnection;
 };
 
+
 export type HostComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type HostComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type HostComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5533,16 +5074,19 @@ export type HostComponentsConnectionArgs = {
   where?: InputMaybe<HostComponentsConnectionWhere>;
 };
 
+
 export type HostNetwork_ServicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
+
 export type HostNetwork_ServicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
+
 
 export type HostNetwork_ServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5552,16 +5096,19 @@ export type HostNetwork_ServicesConnectionArgs = {
   where?: InputMaybe<HostNetwork_ServicesConnectionWhere>;
 };
 
+
 export type HostNodeArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type HostNodeAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
+
 
 export type HostNodeConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5571,16 +5118,19 @@ export type HostNodeConnectionArgs = {
   where?: InputMaybe<HostNodeConnectionWhere>;
 };
 
+
 export type HostSoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
+
 export type HostSoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type HostSoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5731,13 +5281,9 @@ export type HostDeleteInput = {
 
 export type HostDisconnectInput = {
   components?: InputMaybe<Array<HostComponentsDisconnectFieldInput>>;
-  network_services?: InputMaybe<
-    Array<HostNetwork_ServicesDisconnectFieldInput>
-  >;
+  network_services?: InputMaybe<Array<HostNetwork_ServicesDisconnectFieldInput>>;
   node?: InputMaybe<HostNodeDisconnectFieldInput>;
-  software_versions?: InputMaybe<
-    Array<HostSoftware_VersionsDisconnectFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<HostSoftware_VersionsDisconnectFieldInput>>;
 };
 
 export type HostEdge = {
@@ -6050,9 +5596,7 @@ export type HostNodeNodeAggregationWhereInput = {
   topology_betweenness_SUM_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -6392,16 +5936,19 @@ export type Ip = {
   version?: Maybe<Scalars['Int']['output']>;
 };
 
+
 export type IpDomain_NamesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<DomainNameOptions>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
+
 export type IpDomain_NamesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<DomainNameWhere>;
 };
+
 
 export type IpDomain_NamesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6411,16 +5958,19 @@ export type IpDomain_NamesConnectionArgs = {
   where?: InputMaybe<IpDomain_NamesConnectionWhere>;
 };
 
+
 export type IpNodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type IpNodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
+
 
 export type IpNodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6430,16 +5980,19 @@ export type IpNodesConnectionArgs = {
   where?: InputMaybe<IpNodesConnectionWhere>;
 };
 
+
 export type IpSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type IpSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
+
 
 export type IpSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6449,16 +6002,19 @@ export type IpSubnetsConnectionArgs = {
   where?: InputMaybe<IpSubnetsConnectionWhere>;
 };
 
+
 export type IpUrisArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<UriOptions>;
   where?: InputMaybe<UriWhere>;
 };
 
+
 export type IpUrisAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<UriWhere>;
 };
+
 
 export type IpUrisConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -6829,9 +6385,7 @@ export type IpNodesNodeAggregationWhereInput = {
   topology_betweenness_SUM_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -7314,16 +6868,19 @@ export type Mission = {
   structure: Scalars['String']['output'];
 };
 
+
 export type MissionComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type MissionComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type MissionComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7493,16 +7050,19 @@ export type MissionDependency = {
   to_componentsConnection: MissionDependencyTo_ComponentsConnection;
 };
 
+
 export type MissionDependencyFrom_ComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type MissionDependencyFrom_ComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type MissionDependencyFrom_ComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7512,16 +7072,19 @@ export type MissionDependencyFrom_ComponentsConnectionArgs = {
   where?: InputMaybe<MissionDependencyFrom_ComponentsConnectionWhere>;
 };
 
+
 export type MissionDependencyTo_ComponentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type MissionDependencyTo_ComponentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type MissionDependencyTo_ComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -7559,12 +7122,8 @@ export type MissionDependencyComponentTo_ComponentsNodeAggregateSelection = {
 };
 
 export type MissionDependencyConnectInput = {
-  from_components?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsConnectFieldInput>
-  >;
-  to_components?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsConnectFieldInput>
-  >;
+  from_components?: InputMaybe<Array<MissionDependencyFrom_ComponentsConnectFieldInput>>;
+  to_components?: InputMaybe<Array<MissionDependencyTo_ComponentsConnectFieldInput>>;
 };
 
 export type MissionDependencyConnectWhere = {
@@ -7577,21 +7136,13 @@ export type MissionDependencyCreateInput = {
 };
 
 export type MissionDependencyDeleteInput = {
-  from_components?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsDeleteFieldInput>
-  >;
-  to_components?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsDeleteFieldInput>
-  >;
+  from_components?: InputMaybe<Array<MissionDependencyFrom_ComponentsDeleteFieldInput>>;
+  to_components?: InputMaybe<Array<MissionDependencyTo_ComponentsDeleteFieldInput>>;
 };
 
 export type MissionDependencyDisconnectInput = {
-  from_components?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsDisconnectFieldInput>
-  >;
-  to_components?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsDisconnectFieldInput>
-  >;
+  from_components?: InputMaybe<Array<MissionDependencyFrom_ComponentsDisconnectFieldInput>>;
+  to_components?: InputMaybe<Array<MissionDependencyTo_ComponentsDisconnectFieldInput>>;
 };
 
 export type MissionDependencyEdge = {
@@ -7652,20 +7203,14 @@ export type MissionDependencyFrom_ComponentsDisconnectFieldInput = {
 };
 
 export type MissionDependencyFrom_ComponentsFieldInput = {
-  connect?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsConnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<MissionDependencyFrom_ComponentsConnectFieldInput>>;
   create?: InputMaybe<Array<MissionDependencyFrom_ComponentsCreateFieldInput>>;
 };
 
 export type MissionDependencyFrom_ComponentsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<MissionDependencyFrom_ComponentsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<MissionDependencyFrom_ComponentsNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<MissionDependencyFrom_ComponentsNodeAggregationWhereInput>>;
   name_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -7694,14 +7239,10 @@ export type MissionDependencyFrom_ComponentsUpdateConnectionInput = {
 };
 
 export type MissionDependencyFrom_ComponentsUpdateFieldInput = {
-  connect?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsConnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<MissionDependencyFrom_ComponentsConnectFieldInput>>;
   create?: InputMaybe<Array<MissionDependencyFrom_ComponentsCreateFieldInput>>;
   delete?: InputMaybe<Array<MissionDependencyFrom_ComponentsDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<MissionDependencyFrom_ComponentsDisconnectFieldInput>>;
   update?: InputMaybe<MissionDependencyFrom_ComponentsUpdateConnectionInput>;
   where?: InputMaybe<MissionDependencyFrom_ComponentsConnectionWhere>;
 };
@@ -7717,12 +7258,8 @@ export type MissionDependencyOptions = {
 };
 
 export type MissionDependencyRelationInput = {
-  from_components?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsCreateFieldInput>
-  >;
-  to_components?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsCreateFieldInput>
-  >;
+  from_components?: InputMaybe<Array<MissionDependencyFrom_ComponentsCreateFieldInput>>;
+  to_components?: InputMaybe<Array<MissionDependencyTo_ComponentsCreateFieldInput>>;
 };
 
 /**
@@ -7790,13 +7327,9 @@ export type MissionDependencyTo_ComponentsFieldInput = {
 };
 
 export type MissionDependencyTo_ComponentsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<MissionDependencyTo_ComponentsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<MissionDependencyTo_ComponentsNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<MissionDependencyTo_ComponentsNodeAggregationWhereInput>>;
   name_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -7828,20 +7361,14 @@ export type MissionDependencyTo_ComponentsUpdateFieldInput = {
   connect?: InputMaybe<Array<MissionDependencyTo_ComponentsConnectFieldInput>>;
   create?: InputMaybe<Array<MissionDependencyTo_ComponentsCreateFieldInput>>;
   delete?: InputMaybe<Array<MissionDependencyTo_ComponentsDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<MissionDependencyTo_ComponentsDisconnectFieldInput>>;
   update?: InputMaybe<MissionDependencyTo_ComponentsUpdateConnectionInput>;
   where?: InputMaybe<MissionDependencyTo_ComponentsConnectionWhere>;
 };
 
 export type MissionDependencyUpdateInput = {
-  from_components?: InputMaybe<
-    Array<MissionDependencyFrom_ComponentsUpdateFieldInput>
-  >;
-  to_components?: InputMaybe<
-    Array<MissionDependencyTo_ComponentsUpdateFieldInput>
-  >;
+  from_components?: InputMaybe<Array<MissionDependencyFrom_ComponentsUpdateFieldInput>>;
+  to_components?: InputMaybe<Array<MissionDependencyTo_ComponentsUpdateFieldInput>>;
 };
 
 export type MissionDependencyWhere = {
@@ -7959,9 +7486,7 @@ export type MissionWhere = {
   availability_requirement?: InputMaybe<Scalars['Int']['input']>;
   availability_requirement_GT?: InputMaybe<Scalars['Int']['input']>;
   availability_requirement_GTE?: InputMaybe<Scalars['Int']['input']>;
-  availability_requirement_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Int']['input']>>
-  >;
+  availability_requirement_IN?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   availability_requirement_LT?: InputMaybe<Scalars['Int']['input']>;
   availability_requirement_LTE?: InputMaybe<Scalars['Int']['input']>;
   componentsAggregate?: InputMaybe<MissionComponentsAggregateInput>;
@@ -7984,9 +7509,7 @@ export type MissionWhere = {
   confidentiality_requirement?: InputMaybe<Scalars['Int']['input']>;
   confidentiality_requirement_GT?: InputMaybe<Scalars['Int']['input']>;
   confidentiality_requirement_GTE?: InputMaybe<Scalars['Int']['input']>;
-  confidentiality_requirement_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Int']['input']>>
-  >;
+  confidentiality_requirement_IN?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   confidentiality_requirement_LT?: InputMaybe<Scalars['Int']['input']>;
   confidentiality_requirement_LTE?: InputMaybe<Scalars['Int']['input']>;
   criticality?: InputMaybe<Scalars['Int']['input']>;
@@ -8003,9 +7526,7 @@ export type MissionWhere = {
   integrity_requirement?: InputMaybe<Scalars['Int']['input']>;
   integrity_requirement_GT?: InputMaybe<Scalars['Int']['input']>;
   integrity_requirement_GTE?: InputMaybe<Scalars['Int']['input']>;
-  integrity_requirement_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Int']['input']>>
-  >;
+  integrity_requirement_IN?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   integrity_requirement_LT?: InputMaybe<Scalars['Int']['input']>;
   integrity_requirement_LTE?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -8114,342 +7635,416 @@ export type Mutation = {
   updateVulnerabilityStatus?: Maybe<Vulnerability>;
 };
 
+
 export type MutationCreateApplicationsArgs = {
   input: Array<ApplicationCreateInput>;
 };
+
 
 export type MutationCreateComponentsArgs = {
   input: Array<ComponentCreateInput>;
 };
 
+
 export type MutationCreateContactsArgs = {
   input: Array<ContactCreateInput>;
 };
+
 
 export type MutationCreateCvesArgs = {
   input: Array<CveCreateInput>;
 };
 
+
 export type MutationCreateCvsSv2sArgs = {
   input: Array<CvsSv2CreateInput>;
 };
+
 
 export type MutationCreateCvsSv30sArgs = {
   input: Array<CvsSv30CreateInput>;
 };
 
+
 export type MutationCreateCvsSv31sArgs = {
   input: Array<CvsSv31CreateInput>;
 };
+
 
 export type MutationCreateCvsSv40sArgs = {
   input: Array<CvsSv40CreateInput>;
 };
 
+
 export type MutationCreateDevicesArgs = {
   input: Array<DeviceCreateInput>;
 };
+
 
 export type MutationCreateDomainNamesArgs = {
   input: Array<DomainNameCreateInput>;
 };
 
+
 export type MutationCreateHardwareVersionsArgs = {
   input: Array<HardwareVersionCreateInput>;
 };
+
 
 export type MutationCreateHostsArgs = {
   input: Array<HostCreateInput>;
 };
 
+
 export type MutationCreateIpsArgs = {
   input: Array<IpCreateInput>;
 };
+
 
 export type MutationCreateMissionDependenciesArgs = {
   input: Array<MissionDependencyCreateInput>;
 };
 
+
 export type MutationCreateMissionsArgs = {
   input: Array<MissionCreateInput>;
 };
+
 
 export type MutationCreateNetworkServicesArgs = {
   input: Array<NetworkServiceCreateInput>;
 };
 
+
 export type MutationCreateNodeObjectsArgs = {
   input: Array<NodeObjectCreateInput>;
 };
+
 
 export type MutationCreateOrganizationUnitsArgs = {
   input: Array<OrganizationUnitCreateInput>;
 };
 
+
 export type MutationCreatePhysicalEnvironmentsArgs = {
   input: Array<PhysicalEnvironmentCreateInput>;
 };
+
 
 export type MutationCreateSoftwareVersionsArgs = {
   input: Array<SoftwareVersionCreateInput>;
 };
 
+
 export type MutationCreateSubnetsArgs = {
   input: Array<SubnetCreateInput>;
 };
+
 
 export type MutationCreateUrisArgs = {
   input: Array<UriCreateInput>;
 };
 
+
 export type MutationCreateVulnerabilitiesArgs = {
   input: Array<VulnerabilityCreateInput>;
 };
+
 
 export type MutationDeleteApplicationsArgs = {
   delete?: InputMaybe<ApplicationDeleteInput>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
+
 export type MutationDeleteComponentsArgs = {
   delete?: InputMaybe<ComponentDeleteInput>;
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type MutationDeleteContactsArgs = {
   delete?: InputMaybe<ContactDeleteInput>;
   where?: InputMaybe<ContactWhere>;
 };
 
+
 export type MutationDeleteCvesArgs = {
   delete?: InputMaybe<CveDeleteInput>;
   where?: InputMaybe<CveWhere>;
 };
 
+
 export type MutationDeleteCvsSv2sArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
+
 
 export type MutationDeleteCvsSv30sArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
 
+
 export type MutationDeleteCvsSv31sArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
 
+
 export type MutationDeleteCvsSv40sArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
+
 
 export type MutationDeleteDevicesArgs = {
   delete?: InputMaybe<DeviceDeleteInput>;
   where?: InputMaybe<DeviceWhere>;
 };
 
+
 export type MutationDeleteDomainNamesArgs = {
   delete?: InputMaybe<DomainNameDeleteInput>;
   where?: InputMaybe<DomainNameWhere>;
 };
+
 
 export type MutationDeleteHardwareVersionsArgs = {
   delete?: InputMaybe<HardwareVersionDeleteInput>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
+
 export type MutationDeleteHostsArgs = {
   delete?: InputMaybe<HostDeleteInput>;
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type MutationDeleteIpsArgs = {
   delete?: InputMaybe<IpDeleteInput>;
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type MutationDeleteMissionDependenciesArgs = {
   delete?: InputMaybe<MissionDependencyDeleteInput>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
+
 
 export type MutationDeleteMissionsArgs = {
   delete?: InputMaybe<MissionDeleteInput>;
   where?: InputMaybe<MissionWhere>;
 };
 
+
 export type MutationDeleteNetworkServicesArgs = {
   delete?: InputMaybe<NetworkServiceDeleteInput>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
+
 
 export type MutationDeleteNodeObjectsArgs = {
   delete?: InputMaybe<NodeObjectDeleteInput>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type MutationDeleteOrganizationUnitsArgs = {
   delete?: InputMaybe<OrganizationUnitDeleteInput>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type MutationDeletePhysicalEnvironmentsArgs = {
   delete?: InputMaybe<PhysicalEnvironmentDeleteInput>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
+
 export type MutationDeleteSoftwareVersionsArgs = {
   delete?: InputMaybe<SoftwareVersionDeleteInput>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type MutationDeleteSubnetsArgs = {
   delete?: InputMaybe<SubnetDeleteInput>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type MutationDeleteUrisArgs = {
   delete?: InputMaybe<UriDeleteInput>;
   where?: InputMaybe<UriWhere>;
 };
+
 
 export type MutationDeleteVulnerabilitiesArgs = {
   delete?: InputMaybe<VulnerabilityDeleteInput>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
+
 export type MutationLinkOrgUnitToParentOrgArgs = {
   orgUnitName: Scalars['String']['input'];
   parentOrgUnitName: Scalars['String']['input'];
 };
+
 
 export type MutationLinkSubnetToOrgUnitArgs = {
   orgUnitName: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
 
+
 export type MutationLinkSubnetToParentArgs = {
   parentSubnetRange: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
+
 
 export type MutationMergeOrgUnitWithContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   orgUnitName: Scalars['String']['input'];
 };
 
+
 export type MutationMergeSubnetWithContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   subnetRange: Scalars['String']['input'];
 };
+
 
 export type MutationUnlinkOrgUnitFromContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   orgUnitName: Scalars['String']['input'];
 };
 
+
 export type MutationUnlinkOrgUnitFromParentsArgs = {
   orgUnitName: Scalars['String']['input'];
 };
+
 
 export type MutationUnlinkSubnetFromContactsArgs = {
   contactNames: Array<Scalars['String']['input']>;
   subnetRange: Scalars['String']['input'];
 };
 
+
 export type MutationUnlinkSubnetFromOrgUnitArgs = {
   orgUnitName: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
+
 
 export type MutationUnlinkSubnetFromParentArgs = {
   parentRange: Scalars['String']['input'];
   subnetRange: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateApplicationsArgs = {
   update?: InputMaybe<ApplicationUpdateInput>;
   where?: InputMaybe<ApplicationWhere>;
 };
+
 
 export type MutationUpdateComponentsArgs = {
   update?: InputMaybe<ComponentUpdateInput>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type MutationUpdateContactsArgs = {
   update?: InputMaybe<ContactUpdateInput>;
   where?: InputMaybe<ContactWhere>;
 };
+
 
 export type MutationUpdateCvesArgs = {
   update?: InputMaybe<CveUpdateInput>;
   where?: InputMaybe<CveWhere>;
 };
 
+
 export type MutationUpdateCvsSv2sArgs = {
   update?: InputMaybe<CvsSv2UpdateInput>;
   where?: InputMaybe<CvsSv2Where>;
 };
+
 
 export type MutationUpdateCvsSv30sArgs = {
   update?: InputMaybe<CvsSv30UpdateInput>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
+
 export type MutationUpdateCvsSv31sArgs = {
   update?: InputMaybe<CvsSv31UpdateInput>;
   where?: InputMaybe<CvsSv31Where>;
 };
+
 
 export type MutationUpdateCvsSv40sArgs = {
   update?: InputMaybe<CvsSv40UpdateInput>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
+
 export type MutationUpdateDevicesArgs = {
   update?: InputMaybe<DeviceUpdateInput>;
   where?: InputMaybe<DeviceWhere>;
 };
+
 
 export type MutationUpdateDomainNamesArgs = {
   update?: InputMaybe<DomainNameUpdateInput>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
+
 export type MutationUpdateHardwareVersionsArgs = {
   update?: InputMaybe<HardwareVersionUpdateInput>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
+
 
 export type MutationUpdateHostsArgs = {
   update?: InputMaybe<HostUpdateInput>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type MutationUpdateIpStatusArgs = {
   address: Scalars['String']['input'];
   status: Scalars['String']['input'];
 };
+
 
 export type MutationUpdateIpTagArgs = {
   address: Scalars['String']['input'];
   tag: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+
 export type MutationUpdateIpsArgs = {
   update?: InputMaybe<IpUpdateInput>;
   where?: InputMaybe<IpWhere>;
 };
+
 
 export type MutationUpdateMissionDependenciesArgs = {
   update?: InputMaybe<MissionDependencyUpdateInput>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
+
 export type MutationUpdateMissionsArgs = {
   update?: InputMaybe<MissionUpdateInput>;
   where?: InputMaybe<MissionWhere>;
 };
+
 
 export type MutationUpdateNetworkServiceStatusArgs = {
   address: Scalars['String']['input'];
@@ -8459,45 +8054,54 @@ export type MutationUpdateNetworkServiceStatusArgs = {
   status: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateNetworkServicesArgs = {
   update?: InputMaybe<NetworkServiceUpdateInput>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
+
 
 export type MutationUpdateNodeObjectsArgs = {
   update?: InputMaybe<NodeObjectUpdateInput>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type MutationUpdateOrganizationUnitsArgs = {
   update?: InputMaybe<OrganizationUnitUpdateInput>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type MutationUpdatePhysicalEnvironmentsArgs = {
   update?: InputMaybe<PhysicalEnvironmentUpdateInput>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
+
 export type MutationUpdateSoftwareVersionsArgs = {
   update?: InputMaybe<SoftwareVersionUpdateInput>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type MutationUpdateSubnetsArgs = {
   update?: InputMaybe<SubnetUpdateInput>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type MutationUpdateUrisArgs = {
   update?: InputMaybe<UriUpdateInput>;
   where?: InputMaybe<UriWhere>;
 };
 
+
 export type MutationUpdateVulnerabilitiesArgs = {
   update?: InputMaybe<VulnerabilityUpdateInput>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
+
 
 export type MutationUpdateVulnerabilityStatusArgs = {
   cve: Scalars['String']['input'];
@@ -8519,16 +8123,19 @@ export type NetworkService = {
   tag?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
+
 export type NetworkServiceHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type NetworkServiceHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type NetworkServiceHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8538,16 +8145,19 @@ export type NetworkServiceHostsConnectionArgs = {
   where?: InputMaybe<NetworkServiceHostsConnectionWhere>;
 };
 
+
 export type NetworkServiceSoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
+
 export type NetworkServiceSoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type NetworkServiceSoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -8567,9 +8177,7 @@ export type NetworkServiceAggregateSelection = {
 
 export type NetworkServiceConnectInput = {
   hosts?: InputMaybe<Array<NetworkServiceHostsConnectFieldInput>>;
-  software_versions?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsConnectFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<NetworkServiceSoftware_VersionsConnectFieldInput>>;
 };
 
 export type NetworkServiceConnectWhere = {
@@ -8587,16 +8195,12 @@ export type NetworkServiceCreateInput = {
 
 export type NetworkServiceDeleteInput = {
   hosts?: InputMaybe<Array<NetworkServiceHostsDeleteFieldInput>>;
-  software_versions?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsDeleteFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<NetworkServiceSoftware_VersionsDeleteFieldInput>>;
 };
 
 export type NetworkServiceDisconnectInput = {
   hosts?: InputMaybe<Array<NetworkServiceHostsDisconnectFieldInput>>;
-  software_versions?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsDisconnectFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<NetworkServiceSoftware_VersionsDisconnectFieldInput>>;
 };
 
 export type NetworkServiceEdge = {
@@ -8848,23 +8452,19 @@ export type NetworkServiceOptions = {
 
 export type NetworkServiceRelationInput = {
   hosts?: InputMaybe<Array<NetworkServiceHostsCreateFieldInput>>;
-  software_versions?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsCreateFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<NetworkServiceSoftware_VersionsCreateFieldInput>>;
 };
 
-export type NetworkServiceSoftwareVersionSoftware_VersionsAggregationSelection =
-  {
-    __typename?: 'NetworkServiceSoftwareVersionSoftware_versionsAggregationSelection';
-    count: Scalars['Int']['output'];
-    node?: Maybe<NetworkServiceSoftwareVersionSoftware_VersionsNodeAggregateSelection>;
-  };
+export type NetworkServiceSoftwareVersionSoftware_VersionsAggregationSelection = {
+  __typename?: 'NetworkServiceSoftwareVersionSoftware_versionsAggregationSelection';
+  count: Scalars['Int']['output'];
+  node?: Maybe<NetworkServiceSoftwareVersionSoftware_VersionsNodeAggregateSelection>;
+};
 
-export type NetworkServiceSoftwareVersionSoftware_VersionsNodeAggregateSelection =
-  {
-    __typename?: 'NetworkServiceSoftwareVersionSoftware_versionsNodeAggregateSelection';
-    version: StringAggregateSelection;
-  };
+export type NetworkServiceSoftwareVersionSoftware_VersionsNodeAggregateSelection = {
+  __typename?: 'NetworkServiceSoftwareVersionSoftware_versionsNodeAggregateSelection';
+  version: StringAggregateSelection;
+};
 
 export type NetworkServiceSoftware_VersionsAggregateInput = {
   AND?: InputMaybe<Array<NetworkServiceSoftware_VersionsAggregateInput>>;
@@ -8923,13 +8523,9 @@ export type NetworkServiceSoftware_VersionsFieldInput = {
 };
 
 export type NetworkServiceSoftware_VersionsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<NetworkServiceSoftware_VersionsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<NetworkServiceSoftware_VersionsNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<NetworkServiceSoftware_VersionsNodeAggregationWhereInput>>;
   version_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   version_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   version_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -8961,9 +8557,7 @@ export type NetworkServiceSoftware_VersionsUpdateFieldInput = {
   connect?: InputMaybe<Array<NetworkServiceSoftware_VersionsConnectFieldInput>>;
   create?: InputMaybe<Array<NetworkServiceSoftware_VersionsCreateFieldInput>>;
   delete?: InputMaybe<Array<NetworkServiceSoftware_VersionsDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<NetworkServiceSoftware_VersionsDisconnectFieldInput>>;
   update?: InputMaybe<NetworkServiceSoftware_VersionsUpdateConnectionInput>;
   where?: InputMaybe<NetworkServiceSoftware_VersionsConnectionWhere>;
 };
@@ -8986,9 +8580,7 @@ export type NetworkServiceUpdateInput = {
   port_INCREMENT?: InputMaybe<Scalars['Int']['input']>;
   protocol?: InputMaybe<Scalars['String']['input']>;
   service?: InputMaybe<Scalars['String']['input']>;
-  software_versions?: InputMaybe<
-    Array<NetworkServiceSoftware_VersionsUpdateFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<NetworkServiceSoftware_VersionsUpdateFieldInput>>;
   tag?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   tag_POP?: InputMaybe<Scalars['Int']['input']>;
   tag_PUSH?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -9089,16 +8681,19 @@ export type NodeObject = {
   topology_degree_norm?: Maybe<Scalars['Float']['output']>;
 };
 
+
 export type NodeObjectHostArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type NodeObjectHostAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type NodeObjectHostConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9108,16 +8703,19 @@ export type NodeObjectHostConnectionArgs = {
   where?: InputMaybe<NodeObjectHostConnectionWhere>;
 };
 
+
 export type NodeObjectIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type NodeObjectIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
+
 
 export type NodeObjectIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9127,16 +8725,19 @@ export type NodeObjectIpsConnectionArgs = {
   where?: InputMaybe<NodeObjectIpsConnectionWhere>;
 };
 
+
 export type NodeObjectIs_Connected_To_NodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type NodeObjectIs_Connected_To_NodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
+
 
 export type NodeObjectIs_Connected_To_NodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9146,16 +8747,19 @@ export type NodeObjectIs_Connected_To_NodesConnectionArgs = {
   where?: InputMaybe<NodeObjectIs_Connected_To_NodesConnectionWhere>;
 };
 
+
 export type NodeObjectIs_Dependent_On_NodesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type NodeObjectIs_Dependent_On_NodesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NodeObjectWhere>;
 };
+
 
 export type NodeObjectIs_Dependent_On_NodesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -9181,12 +8785,8 @@ export type NodeObjectAggregateSelection = {
 export type NodeObjectConnectInput = {
   host?: InputMaybe<NodeObjectHostConnectFieldInput>;
   ips?: InputMaybe<Array<NodeObjectIpsConnectFieldInput>>;
-  is_connected_to_nodes?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesConnectFieldInput>
-  >;
-  is_dependent_on_nodes?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesConnectFieldInput>
-  >;
+  is_connected_to_nodes?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesConnectFieldInput>>;
+  is_dependent_on_nodes?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesConnectFieldInput>>;
 };
 
 export type NodeObjectConnectWhere = {
@@ -9211,23 +8811,15 @@ export type NodeObjectCreateInput = {
 export type NodeObjectDeleteInput = {
   host?: InputMaybe<NodeObjectHostDeleteFieldInput>;
   ips?: InputMaybe<Array<NodeObjectIpsDeleteFieldInput>>;
-  is_connected_to_nodes?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesDeleteFieldInput>
-  >;
-  is_dependent_on_nodes?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesDeleteFieldInput>
-  >;
+  is_connected_to_nodes?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesDeleteFieldInput>>;
+  is_dependent_on_nodes?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesDeleteFieldInput>>;
 };
 
 export type NodeObjectDisconnectInput = {
   host?: InputMaybe<NodeObjectHostDisconnectFieldInput>;
   ips?: InputMaybe<Array<NodeObjectIpsDisconnectFieldInput>>;
-  is_connected_to_nodes?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesDisconnectFieldInput>
-  >;
-  is_dependent_on_nodes?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesDisconnectFieldInput>
-  >;
+  is_connected_to_nodes?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesDisconnectFieldInput>>;
+  is_dependent_on_nodes?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesDisconnectFieldInput>>;
 };
 
 export type NodeObjectEdge = {
@@ -9558,13 +9150,9 @@ export type NodeObjectIs_Connected_To_NodesFieldInput = {
 };
 
 export type NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput>>;
   NOT?: InputMaybe<NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput>>;
   degree_centrality_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -9665,9 +9253,7 @@ export type NodeObjectIs_Connected_To_NodesNodeAggregationWhereInput = {
   topology_betweenness_SUM_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -9743,9 +9329,7 @@ export type NodeObjectIs_Connected_To_NodesUpdateFieldInput = {
   connect?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesConnectFieldInput>>;
   create?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesCreateFieldInput>>;
   delete?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesDisconnectFieldInput>>;
   update?: InputMaybe<NodeObjectIs_Connected_To_NodesUpdateConnectionInput>;
   where?: InputMaybe<NodeObjectIs_Connected_To_NodesConnectionWhere>;
 };
@@ -9807,13 +9391,9 @@ export type NodeObjectIs_Dependent_On_NodesFieldInput = {
 };
 
 export type NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput>>;
   NOT?: InputMaybe<NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput>>;
   degree_centrality_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -9914,9 +9494,7 @@ export type NodeObjectIs_Dependent_On_NodesNodeAggregationWhereInput = {
   topology_betweenness_SUM_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_SUM_LTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<
-    Scalars['Float']['input']
-  >;
+  topology_betweenness_norm_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_AVERAGE_LT?: InputMaybe<Scalars['Float']['input']>;
@@ -9992,9 +9570,7 @@ export type NodeObjectIs_Dependent_On_NodesUpdateFieldInput = {
   connect?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesConnectFieldInput>>;
   create?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesCreateFieldInput>>;
   delete?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesDisconnectFieldInput>>;
   update?: InputMaybe<NodeObjectIs_Dependent_On_NodesUpdateConnectionInput>;
   where?: InputMaybe<NodeObjectIs_Dependent_On_NodesConnectionWhere>;
 };
@@ -10048,12 +9624,8 @@ export type NodeObjectOptions = {
 export type NodeObjectRelationInput = {
   host?: InputMaybe<NodeObjectHostCreateFieldInput>;
   ips?: InputMaybe<Array<NodeObjectIpsCreateFieldInput>>;
-  is_connected_to_nodes?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesCreateFieldInput>
-  >;
-  is_dependent_on_nodes?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesCreateFieldInput>
-  >;
+  is_connected_to_nodes?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesCreateFieldInput>>;
+  is_dependent_on_nodes?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesCreateFieldInput>>;
 };
 
 /**
@@ -10085,12 +9657,8 @@ export type NodeObjectUpdateInput = {
   final_criticality_SUBTRACT?: InputMaybe<Scalars['Float']['input']>;
   host?: InputMaybe<NodeObjectHostUpdateFieldInput>;
   ips?: InputMaybe<Array<NodeObjectIpsUpdateFieldInput>>;
-  is_connected_to_nodes?: InputMaybe<
-    Array<NodeObjectIs_Connected_To_NodesUpdateFieldInput>
-  >;
-  is_dependent_on_nodes?: InputMaybe<
-    Array<NodeObjectIs_Dependent_On_NodesUpdateFieldInput>
-  >;
+  is_connected_to_nodes?: InputMaybe<Array<NodeObjectIs_Connected_To_NodesUpdateFieldInput>>;
+  is_dependent_on_nodes?: InputMaybe<Array<NodeObjectIs_Dependent_On_NodesUpdateFieldInput>>;
   mission_criticality?: InputMaybe<Scalars['Float']['input']>;
   mission_criticality_ADD?: InputMaybe<Scalars['Float']['input']>;
   mission_criticality_DIVIDE?: InputMaybe<Scalars['Float']['input']>;
@@ -10135,17 +9703,13 @@ export type NodeObjectWhere = {
   degree_centrality?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_GT?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_GTE?: InputMaybe<Scalars['Float']['input']>;
-  degree_centrality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  degree_centrality_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   degree_centrality_LT?: InputMaybe<Scalars['Float']['input']>;
   degree_centrality_LTE?: InputMaybe<Scalars['Float']['input']>;
   final_criticality?: InputMaybe<Scalars['Float']['input']>;
   final_criticality_GT?: InputMaybe<Scalars['Float']['input']>;
   final_criticality_GTE?: InputMaybe<Scalars['Float']['input']>;
-  final_criticality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  final_criticality_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   final_criticality_LT?: InputMaybe<Scalars['Float']['input']>;
   final_criticality_LTE?: InputMaybe<Scalars['Float']['input']>;
   host?: InputMaybe<HostWhere>;
@@ -10207,33 +9771,25 @@ export type NodeObjectWhere = {
   mission_criticality?: InputMaybe<Scalars['Float']['input']>;
   mission_criticality_GT?: InputMaybe<Scalars['Float']['input']>;
   mission_criticality_GTE?: InputMaybe<Scalars['Float']['input']>;
-  mission_criticality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  mission_criticality_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   mission_criticality_LT?: InputMaybe<Scalars['Float']['input']>;
   mission_criticality_LTE?: InputMaybe<Scalars['Float']['input']>;
   pagerank_centrality?: InputMaybe<Scalars['Float']['input']>;
   pagerank_centrality_GT?: InputMaybe<Scalars['Float']['input']>;
   pagerank_centrality_GTE?: InputMaybe<Scalars['Float']['input']>;
-  pagerank_centrality_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  pagerank_centrality_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   pagerank_centrality_LT?: InputMaybe<Scalars['Float']['input']>;
   pagerank_centrality_LTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_GTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  topology_betweenness_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   topology_betweenness_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_LTE?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_GTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_betweenness_norm_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  topology_betweenness_norm_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   topology_betweenness_norm_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_betweenness_norm_LTE?: InputMaybe<Scalars['Float']['input']>;
   topology_degree?: InputMaybe<Scalars['Float']['input']>;
@@ -10245,9 +9801,7 @@ export type NodeObjectWhere = {
   topology_degree_norm?: InputMaybe<Scalars['Float']['input']>;
   topology_degree_norm_GT?: InputMaybe<Scalars['Float']['input']>;
   topology_degree_norm_GTE?: InputMaybe<Scalars['Float']['input']>;
-  topology_degree_norm_IN?: InputMaybe<
-    Array<InputMaybe<Scalars['Float']['input']>>
-  >;
+  topology_degree_norm_IN?: InputMaybe<Array<InputMaybe<Scalars['Float']['input']>>>;
   topology_degree_norm_LT?: InputMaybe<Scalars['Float']['input']>;
   topology_degree_norm_LTE?: InputMaybe<Scalars['Float']['input']>;
 };
@@ -10277,16 +9831,19 @@ export type OrganizationUnit = {
   subnetsConnection: OrganizationUnitSubnetsConnection;
 };
 
+
 export type OrganizationUnitContactsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
+
 export type OrganizationUnitContactsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ContactWhere>;
 };
+
 
 export type OrganizationUnitContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10296,16 +9853,19 @@ export type OrganizationUnitContactsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitContactsConnectionWhere>;
 };
 
+
 export type OrganizationUnitParent_Org_UnitArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
+
 export type OrganizationUnitParent_Org_UnitAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type OrganizationUnitParent_Org_UnitConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10315,16 +9875,19 @@ export type OrganizationUnitParent_Org_UnitConnectionArgs = {
   where?: InputMaybe<OrganizationUnitParent_Org_UnitConnectionWhere>;
 };
 
+
 export type OrganizationUnitPhysical_EnvironmentsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<PhysicalEnvironmentOptions>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
+
 export type OrganizationUnitPhysical_EnvironmentsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
+
 
 export type OrganizationUnitPhysical_EnvironmentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10334,16 +9897,19 @@ export type OrganizationUnitPhysical_EnvironmentsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitPhysical_EnvironmentsConnectionWhere>;
 };
 
+
 export type OrganizationUnitSubnetsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type OrganizationUnitSubnetsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
+
 
 export type OrganizationUnitSubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -10361,12 +9927,8 @@ export type OrganizationUnitAggregateSelection = {
 
 export type OrganizationUnitConnectInput = {
   contacts?: InputMaybe<Array<OrganizationUnitContactsConnectFieldInput>>;
-  parent_org_unit?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitConnectFieldInput>
-  >;
-  physical_environments?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>
-  >;
+  parent_org_unit?: InputMaybe<Array<OrganizationUnitParent_Org_UnitConnectFieldInput>>;
+  physical_environments?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>>;
   subnets?: InputMaybe<Array<OrganizationUnitSubnetsConnectFieldInput>>;
 };
 
@@ -10491,23 +10053,15 @@ export type OrganizationUnitCreateInput = {
 
 export type OrganizationUnitDeleteInput = {
   contacts?: InputMaybe<Array<OrganizationUnitContactsDeleteFieldInput>>;
-  parent_org_unit?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitDeleteFieldInput>
-  >;
-  physical_environments?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsDeleteFieldInput>
-  >;
+  parent_org_unit?: InputMaybe<Array<OrganizationUnitParent_Org_UnitDeleteFieldInput>>;
+  physical_environments?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsDeleteFieldInput>>;
   subnets?: InputMaybe<Array<OrganizationUnitSubnetsDeleteFieldInput>>;
 };
 
 export type OrganizationUnitDisconnectInput = {
   contacts?: InputMaybe<Array<OrganizationUnitContactsDisconnectFieldInput>>;
-  parent_org_unit?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitDisconnectFieldInput>
-  >;
-  physical_environments?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsDisconnectFieldInput>
-  >;
+  parent_org_unit?: InputMaybe<Array<OrganizationUnitParent_Org_UnitDisconnectFieldInput>>;
+  physical_environments?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsDisconnectFieldInput>>;
   subnets?: InputMaybe<Array<OrganizationUnitSubnetsDisconnectFieldInput>>;
 };
 
@@ -10527,18 +10081,16 @@ export type OrganizationUnitOptions = {
   sort?: InputMaybe<Array<OrganizationUnitSort>>;
 };
 
-export type OrganizationUnitOrganizationUnitParent_Org_UnitAggregationSelection =
-  {
-    __typename?: 'OrganizationUnitOrganizationUnitParent_org_unitAggregationSelection';
-    count: Scalars['Int']['output'];
-    node?: Maybe<OrganizationUnitOrganizationUnitParent_Org_UnitNodeAggregateSelection>;
-  };
+export type OrganizationUnitOrganizationUnitParent_Org_UnitAggregationSelection = {
+  __typename?: 'OrganizationUnitOrganizationUnitParent_org_unitAggregationSelection';
+  count: Scalars['Int']['output'];
+  node?: Maybe<OrganizationUnitOrganizationUnitParent_Org_UnitNodeAggregateSelection>;
+};
 
-export type OrganizationUnitOrganizationUnitParent_Org_UnitNodeAggregateSelection =
-  {
-    __typename?: 'OrganizationUnitOrganizationUnitParent_org_unitNodeAggregateSelection';
-    name: StringAggregateSelection;
-  };
+export type OrganizationUnitOrganizationUnitParent_Org_UnitNodeAggregateSelection = {
+  __typename?: 'OrganizationUnitOrganizationUnitParent_org_unitNodeAggregateSelection';
+  name: StringAggregateSelection;
+};
 
 export type OrganizationUnitParent_Org_UnitAggregateInput = {
   AND?: InputMaybe<Array<OrganizationUnitParent_Org_UnitAggregateInput>>;
@@ -10597,13 +10149,9 @@ export type OrganizationUnitParent_Org_UnitFieldInput = {
 };
 
 export type OrganizationUnitParent_Org_UnitNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<OrganizationUnitParent_Org_UnitNodeAggregationWhereInput>>;
   NOT?: InputMaybe<OrganizationUnitParent_Org_UnitNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<OrganizationUnitParent_Org_UnitNodeAggregationWhereInput>>;
   name_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   name_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -10635,25 +10183,21 @@ export type OrganizationUnitParent_Org_UnitUpdateFieldInput = {
   connect?: InputMaybe<Array<OrganizationUnitParent_Org_UnitConnectFieldInput>>;
   create?: InputMaybe<Array<OrganizationUnitParent_Org_UnitCreateFieldInput>>;
   delete?: InputMaybe<Array<OrganizationUnitParent_Org_UnitDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<OrganizationUnitParent_Org_UnitDisconnectFieldInput>>;
   update?: InputMaybe<OrganizationUnitParent_Org_UnitUpdateConnectionInput>;
   where?: InputMaybe<OrganizationUnitParent_Org_UnitConnectionWhere>;
 };
 
-export type OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsAggregationSelection =
-  {
-    __typename?: 'OrganizationUnitPhysicalEnvironmentPhysical_environmentsAggregationSelection';
-    count: Scalars['Int']['output'];
-    node?: Maybe<OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsNodeAggregateSelection>;
-  };
+export type OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsAggregationSelection = {
+  __typename?: 'OrganizationUnitPhysicalEnvironmentPhysical_environmentsAggregationSelection';
+  count: Scalars['Int']['output'];
+  node?: Maybe<OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsNodeAggregateSelection>;
+};
 
-export type OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsNodeAggregateSelection =
-  {
-    __typename?: 'OrganizationUnitPhysicalEnvironmentPhysical_environmentsNodeAggregateSelection';
-    location: StringAggregateSelection;
-  };
+export type OrganizationUnitPhysicalEnvironmentPhysical_EnvironmentsNodeAggregateSelection = {
+  __typename?: 'OrganizationUnitPhysicalEnvironmentPhysical_environmentsNodeAggregateSelection';
+  location: StringAggregateSelection;
+};
 
 export type OrganizationUnitPhysical_EnvironmentsAggregateInput = {
   AND?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsAggregateInput>>;
@@ -10707,22 +10251,14 @@ export type OrganizationUnitPhysical_EnvironmentsDisconnectFieldInput = {
 };
 
 export type OrganizationUnitPhysical_EnvironmentsFieldInput = {
-  connect?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>
-  >;
-  create?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>
-  >;
+  connect?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>>;
+  create?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>>;
 };
 
 export type OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsNodeAggregationWhereInput>>;
   location_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   location_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   location_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -10751,30 +10287,18 @@ export type OrganizationUnitPhysical_EnvironmentsUpdateConnectionInput = {
 };
 
 export type OrganizationUnitPhysical_EnvironmentsUpdateFieldInput = {
-  connect?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>
-  >;
-  create?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>
-  >;
-  delete?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsDeleteFieldInput>
-  >;
-  disconnect?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsDisconnectFieldInput>
-  >;
+  connect?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsConnectFieldInput>>;
+  create?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>>;
+  delete?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsDeleteFieldInput>>;
+  disconnect?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsDisconnectFieldInput>>;
   update?: InputMaybe<OrganizationUnitPhysical_EnvironmentsUpdateConnectionInput>;
   where?: InputMaybe<OrganizationUnitPhysical_EnvironmentsConnectionWhere>;
 };
 
 export type OrganizationUnitRelationInput = {
   contacts?: InputMaybe<Array<OrganizationUnitContactsCreateFieldInput>>;
-  parent_org_unit?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitCreateFieldInput>
-  >;
-  physical_environments?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>
-  >;
+  parent_org_unit?: InputMaybe<Array<OrganizationUnitParent_Org_UnitCreateFieldInput>>;
+  physical_environments?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsCreateFieldInput>>;
   subnets?: InputMaybe<Array<OrganizationUnitSubnetsCreateFieldInput>>;
 };
 
@@ -10913,12 +10437,8 @@ export type OrganizationUnitSubnetsUpdateFieldInput = {
 export type OrganizationUnitUpdateInput = {
   contacts?: InputMaybe<Array<OrganizationUnitContactsUpdateFieldInput>>;
   name?: InputMaybe<Scalars['String']['input']>;
-  parent_org_unit?: InputMaybe<
-    Array<OrganizationUnitParent_Org_UnitUpdateFieldInput>
-  >;
-  physical_environments?: InputMaybe<
-    Array<OrganizationUnitPhysical_EnvironmentsUpdateFieldInput>
-  >;
+  parent_org_unit?: InputMaybe<Array<OrganizationUnitParent_Org_UnitUpdateFieldInput>>;
+  physical_environments?: InputMaybe<Array<OrganizationUnitPhysical_EnvironmentsUpdateFieldInput>>;
   subnets?: InputMaybe<Array<OrganizationUnitSubnetsUpdateFieldInput>>;
 };
 
@@ -11031,16 +10551,19 @@ export type PhysicalEnvironment = {
   org_unitsConnection: PhysicalEnvironmentOrg_UnitsConnection;
 };
 
+
 export type PhysicalEnvironmentOrg_UnitsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
+
 export type PhysicalEnvironmentOrg_UnitsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type PhysicalEnvironmentOrg_UnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11074,9 +10597,7 @@ export type PhysicalEnvironmentDeleteInput = {
 };
 
 export type PhysicalEnvironmentDisconnectInput = {
-  org_units?: InputMaybe<
-    Array<PhysicalEnvironmentOrg_UnitsDisconnectFieldInput>
-  >;
+  org_units?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsDisconnectFieldInput>>;
 };
 
 export type PhysicalEnvironmentEdge = {
@@ -11153,9 +10674,7 @@ export type PhysicalEnvironmentOrg_UnitsFieldInput = {
 };
 
 export type PhysicalEnvironmentOrg_UnitsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<PhysicalEnvironmentOrg_UnitsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<PhysicalEnvironmentOrg_UnitsNodeAggregationWhereInput>;
   OR?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsNodeAggregationWhereInput>>;
   name_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
@@ -11189,9 +10708,7 @@ export type PhysicalEnvironmentOrg_UnitsUpdateFieldInput = {
   connect?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsConnectFieldInput>>;
   create?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsCreateFieldInput>>;
   delete?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<PhysicalEnvironmentOrg_UnitsDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsDisconnectFieldInput>>;
   update?: InputMaybe<PhysicalEnvironmentOrg_UnitsUpdateConnectionInput>;
   where?: InputMaybe<PhysicalEnvironmentOrg_UnitsConnectionWhere>;
 };
@@ -11202,11 +10719,10 @@ export type PhysicalEnvironmentOrganizationUnitOrg_UnitsAggregationSelection = {
   node?: Maybe<PhysicalEnvironmentOrganizationUnitOrg_UnitsNodeAggregateSelection>;
 };
 
-export type PhysicalEnvironmentOrganizationUnitOrg_UnitsNodeAggregateSelection =
-  {
-    __typename?: 'PhysicalEnvironmentOrganizationUnitOrg_unitsNodeAggregateSelection';
-    name: StringAggregateSelection;
-  };
+export type PhysicalEnvironmentOrganizationUnitOrg_UnitsNodeAggregateSelection = {
+  __typename?: 'PhysicalEnvironmentOrganizationUnitOrg_unitsNodeAggregateSelection';
+  name: StringAggregateSelection;
+};
 
 export type PhysicalEnvironmentRelationInput = {
   org_units?: InputMaybe<Array<PhysicalEnvironmentOrg_UnitsCreateFieldInput>>;
@@ -11339,14 +10855,17 @@ export type Query = {
   vulnerabilitiesConnection: VulnerabilitiesConnection;
 };
 
+
 export type QueryApplicationsArgs = {
   options?: InputMaybe<ApplicationOptions>;
   where?: InputMaybe<ApplicationWhere>;
 };
 
+
 export type QueryApplicationsAggregateArgs = {
   where?: InputMaybe<ApplicationWhere>;
 };
+
 
 export type QueryApplicationsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11355,14 +10874,17 @@ export type QueryApplicationsConnectionArgs = {
   where?: InputMaybe<ApplicationWhere>;
 };
 
+
 export type QueryComponentsArgs = {
   options?: InputMaybe<ComponentOptions>;
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type QueryComponentsAggregateArgs = {
   where?: InputMaybe<ComponentWhere>;
 };
+
 
 export type QueryComponentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11371,14 +10893,17 @@ export type QueryComponentsConnectionArgs = {
   where?: InputMaybe<ComponentWhere>;
 };
 
+
 export type QueryContactsArgs = {
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
+
 export type QueryContactsAggregateArgs = {
   where?: InputMaybe<ContactWhere>;
 };
+
 
 export type QueryContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11387,14 +10912,17 @@ export type QueryContactsConnectionArgs = {
   where?: InputMaybe<ContactWhere>;
 };
 
+
 export type QueryCvesArgs = {
   options?: InputMaybe<CveOptions>;
   where?: InputMaybe<CveWhere>;
 };
 
+
 export type QueryCvesAggregateArgs = {
   where?: InputMaybe<CveWhere>;
 };
+
 
 export type QueryCvesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11403,14 +10931,17 @@ export type QueryCvesConnectionArgs = {
   where?: InputMaybe<CveWhere>;
 };
 
+
 export type QueryCvsSv2sArgs = {
   options?: InputMaybe<CvsSv2Options>;
   where?: InputMaybe<CvsSv2Where>;
 };
 
+
 export type QueryCvsSv2sAggregateArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
+
 
 export type QueryCvsSv2sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11419,14 +10950,17 @@ export type QueryCvsSv2sConnectionArgs = {
   where?: InputMaybe<CvsSv2Where>;
 };
 
+
 export type QueryCvsSv30sArgs = {
   options?: InputMaybe<CvsSv30Options>;
   where?: InputMaybe<CvsSv30Where>;
 };
 
+
 export type QueryCvsSv30sAggregateArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
+
 
 export type QueryCvsSv30sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11435,14 +10969,17 @@ export type QueryCvsSv30sConnectionArgs = {
   where?: InputMaybe<CvsSv30Where>;
 };
 
+
 export type QueryCvsSv31sArgs = {
   options?: InputMaybe<CvsSv31Options>;
   where?: InputMaybe<CvsSv31Where>;
 };
 
+
 export type QueryCvsSv31sAggregateArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
+
 
 export type QueryCvsSv31sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11451,14 +10988,17 @@ export type QueryCvsSv31sConnectionArgs = {
   where?: InputMaybe<CvsSv31Where>;
 };
 
+
 export type QueryCvsSv40sArgs = {
   options?: InputMaybe<CvsSv40Options>;
   where?: InputMaybe<CvsSv40Where>;
 };
 
+
 export type QueryCvsSv40sAggregateArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
+
 
 export type QueryCvsSv40sConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11467,14 +11007,17 @@ export type QueryCvsSv40sConnectionArgs = {
   where?: InputMaybe<CvsSv40Where>;
 };
 
+
 export type QueryDevicesArgs = {
   options?: InputMaybe<DeviceOptions>;
   where?: InputMaybe<DeviceWhere>;
 };
 
+
 export type QueryDevicesAggregateArgs = {
   where?: InputMaybe<DeviceWhere>;
 };
+
 
 export type QueryDevicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11483,14 +11026,17 @@ export type QueryDevicesConnectionArgs = {
   where?: InputMaybe<DeviceWhere>;
 };
 
+
 export type QueryDomainNamesArgs = {
   options?: InputMaybe<DomainNameOptions>;
   where?: InputMaybe<DomainNameWhere>;
 };
 
+
 export type QueryDomainNamesAggregateArgs = {
   where?: InputMaybe<DomainNameWhere>;
 };
+
 
 export type QueryDomainNamesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11499,14 +11045,17 @@ export type QueryDomainNamesConnectionArgs = {
   where?: InputMaybe<DomainNameWhere>;
 };
 
+
 export type QueryHardwareVersionsArgs = {
   options?: InputMaybe<HardwareVersionOptions>;
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
+
 export type QueryHardwareVersionsAggregateArgs = {
   where?: InputMaybe<HardwareVersionWhere>;
 };
+
 
 export type QueryHardwareVersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11515,14 +11064,17 @@ export type QueryHardwareVersionsConnectionArgs = {
   where?: InputMaybe<HardwareVersionWhere>;
 };
 
+
 export type QueryHostsArgs = {
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type QueryHostsAggregateArgs = {
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type QueryHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11531,14 +11083,17 @@ export type QueryHostsConnectionArgs = {
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type QueryIpsArgs = {
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type QueryIpsAggregateArgs = {
   where?: InputMaybe<IpWhere>;
 };
+
 
 export type QueryIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11547,14 +11102,17 @@ export type QueryIpsConnectionArgs = {
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type QueryMissionDependenciesArgs = {
   options?: InputMaybe<MissionDependencyOptions>;
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
+
 export type QueryMissionDependenciesAggregateArgs = {
   where?: InputMaybe<MissionDependencyWhere>;
 };
+
 
 export type QueryMissionDependenciesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11563,14 +11121,17 @@ export type QueryMissionDependenciesConnectionArgs = {
   where?: InputMaybe<MissionDependencyWhere>;
 };
 
+
 export type QueryMissionsArgs = {
   options?: InputMaybe<MissionOptions>;
   where?: InputMaybe<MissionWhere>;
 };
 
+
 export type QueryMissionsAggregateArgs = {
   where?: InputMaybe<MissionWhere>;
 };
+
 
 export type QueryMissionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11579,14 +11140,17 @@ export type QueryMissionsConnectionArgs = {
   where?: InputMaybe<MissionWhere>;
 };
 
+
 export type QueryNetworkServicesArgs = {
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
+
 export type QueryNetworkServicesAggregateArgs = {
   where?: InputMaybe<NetworkServiceWhere>;
 };
+
 
 export type QueryNetworkServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11595,14 +11159,17 @@ export type QueryNetworkServicesConnectionArgs = {
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
+
 export type QueryNodeObjectsArgs = {
   options?: InputMaybe<NodeObjectOptions>;
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type QueryNodeObjectsAggregateArgs = {
   where?: InputMaybe<NodeObjectWhere>;
 };
+
 
 export type QueryNodeObjectsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11611,14 +11178,17 @@ export type QueryNodeObjectsConnectionArgs = {
   where?: InputMaybe<NodeObjectWhere>;
 };
 
+
 export type QueryOrganizationUnitsArgs = {
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
+
 export type QueryOrganizationUnitsAggregateArgs = {
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type QueryOrganizationUnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11627,14 +11197,17 @@ export type QueryOrganizationUnitsConnectionArgs = {
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
+
 export type QueryPhysicalEnvironmentsArgs = {
   options?: InputMaybe<PhysicalEnvironmentOptions>;
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
+
 export type QueryPhysicalEnvironmentsAggregateArgs = {
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
+
 
 export type QueryPhysicalEnvironmentsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11643,14 +11216,17 @@ export type QueryPhysicalEnvironmentsConnectionArgs = {
   where?: InputMaybe<PhysicalEnvironmentWhere>;
 };
 
+
 export type QuerySoftwareVersionsArgs = {
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
+
 export type QuerySoftwareVersionsAggregateArgs = {
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type QuerySoftwareVersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11659,14 +11235,17 @@ export type QuerySoftwareVersionsConnectionArgs = {
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
+
 export type QuerySubnetsArgs = {
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type QuerySubnetsAggregateArgs = {
   where?: InputMaybe<SubnetWhere>;
 };
+
 
 export type QuerySubnetsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11675,14 +11254,17 @@ export type QuerySubnetsConnectionArgs = {
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type QueryUrisArgs = {
   options?: InputMaybe<UriOptions>;
   where?: InputMaybe<UriWhere>;
 };
 
+
 export type QueryUrisAggregateArgs = {
   where?: InputMaybe<UriWhere>;
 };
+
 
 export type QueryUrisConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11691,14 +11273,17 @@ export type QueryUrisConnectionArgs = {
   where?: InputMaybe<UriWhere>;
 };
 
+
 export type QueryVulnerabilitiesArgs = {
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
+
 export type QueryVulnerabilitiesAggregateArgs = {
   where?: InputMaybe<VulnerabilityWhere>;
 };
+
 
 export type QueryVulnerabilitiesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11876,16 +11461,19 @@ export type SoftwareVersion = {
   vulnerabilitiesConnection: SoftwareVersionVulnerabilitiesConnection;
 };
 
+
 export type SoftwareVersionHostsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<HostOptions>;
   where?: InputMaybe<HostWhere>;
 };
 
+
 export type SoftwareVersionHostsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<HostWhere>;
 };
+
 
 export type SoftwareVersionHostsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11895,16 +11483,19 @@ export type SoftwareVersionHostsConnectionArgs = {
   where?: InputMaybe<SoftwareVersionHostsConnectionWhere>;
 };
 
+
 export type SoftwareVersionNetwork_ServicesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<NetworkServiceOptions>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
 
+
 export type SoftwareVersionNetwork_ServicesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<NetworkServiceWhere>;
 };
+
 
 export type SoftwareVersionNetwork_ServicesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11914,16 +11505,19 @@ export type SoftwareVersionNetwork_ServicesConnectionArgs = {
   where?: InputMaybe<SoftwareVersionNetwork_ServicesConnectionWhere>;
 };
 
+
 export type SoftwareVersionVulnerabilitiesArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<VulnerabilityOptions>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
 
+
 export type SoftwareVersionVulnerabilitiesAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<VulnerabilityWhere>;
 };
+
 
 export type SoftwareVersionVulnerabilitiesConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -11941,12 +11535,8 @@ export type SoftwareVersionAggregateSelection = {
 
 export type SoftwareVersionConnectInput = {
   hosts?: InputMaybe<Array<SoftwareVersionHostsConnectFieldInput>>;
-  network_services?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesConnectFieldInput>
-  >;
-  vulnerabilities?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesConnectFieldInput>
-  >;
+  network_services?: InputMaybe<Array<SoftwareVersionNetwork_ServicesConnectFieldInput>>;
+  vulnerabilities?: InputMaybe<Array<SoftwareVersionVulnerabilitiesConnectFieldInput>>;
 };
 
 export type SoftwareVersionConnectWhere = {
@@ -11962,22 +11552,14 @@ export type SoftwareVersionCreateInput = {
 
 export type SoftwareVersionDeleteInput = {
   hosts?: InputMaybe<Array<SoftwareVersionHostsDeleteFieldInput>>;
-  network_services?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesDeleteFieldInput>
-  >;
-  vulnerabilities?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesDeleteFieldInput>
-  >;
+  network_services?: InputMaybe<Array<SoftwareVersionNetwork_ServicesDeleteFieldInput>>;
+  vulnerabilities?: InputMaybe<Array<SoftwareVersionVulnerabilitiesDeleteFieldInput>>;
 };
 
 export type SoftwareVersionDisconnectInput = {
   hosts?: InputMaybe<Array<SoftwareVersionHostsDisconnectFieldInput>>;
-  network_services?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesDisconnectFieldInput>
-  >;
-  vulnerabilities?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesDisconnectFieldInput>
-  >;
+  network_services?: InputMaybe<Array<SoftwareVersionNetwork_ServicesDisconnectFieldInput>>;
+  vulnerabilities?: InputMaybe<Array<SoftwareVersionVulnerabilitiesDisconnectFieldInput>>;
 };
 
 export type SoftwareVersionEdge = {
@@ -12107,20 +11689,18 @@ export type SoftwareVersionHostsUpdateFieldInput = {
   where?: InputMaybe<SoftwareVersionHostsConnectionWhere>;
 };
 
-export type SoftwareVersionNetworkServiceNetwork_ServicesAggregationSelection =
-  {
-    __typename?: 'SoftwareVersionNetworkServiceNetwork_servicesAggregationSelection';
-    count: Scalars['Int']['output'];
-    node?: Maybe<SoftwareVersionNetworkServiceNetwork_ServicesNodeAggregateSelection>;
-  };
+export type SoftwareVersionNetworkServiceNetwork_ServicesAggregationSelection = {
+  __typename?: 'SoftwareVersionNetworkServiceNetwork_servicesAggregationSelection';
+  count: Scalars['Int']['output'];
+  node?: Maybe<SoftwareVersionNetworkServiceNetwork_ServicesNodeAggregateSelection>;
+};
 
-export type SoftwareVersionNetworkServiceNetwork_ServicesNodeAggregateSelection =
-  {
-    __typename?: 'SoftwareVersionNetworkServiceNetwork_servicesNodeAggregateSelection';
-    port: IntAggregateSelection;
-    protocol: StringAggregateSelection;
-    service: StringAggregateSelection;
-  };
+export type SoftwareVersionNetworkServiceNetwork_ServicesNodeAggregateSelection = {
+  __typename?: 'SoftwareVersionNetworkServiceNetwork_servicesNodeAggregateSelection';
+  port: IntAggregateSelection;
+  protocol: StringAggregateSelection;
+  service: StringAggregateSelection;
+};
 
 export type SoftwareVersionNetwork_ServicesAggregateInput = {
   AND?: InputMaybe<Array<SoftwareVersionNetwork_ServicesAggregateInput>>;
@@ -12179,13 +11759,9 @@ export type SoftwareVersionNetwork_ServicesFieldInput = {
 };
 
 export type SoftwareVersionNetwork_ServicesNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<SoftwareVersionNetwork_ServicesNodeAggregationWhereInput>>;
   NOT?: InputMaybe<SoftwareVersionNetwork_ServicesNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<SoftwareVersionNetwork_ServicesNodeAggregationWhereInput>>;
   port_AVERAGE_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   port_AVERAGE_GT?: InputMaybe<Scalars['Float']['input']>;
   port_AVERAGE_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -12252,9 +11828,7 @@ export type SoftwareVersionNetwork_ServicesUpdateFieldInput = {
   connect?: InputMaybe<Array<SoftwareVersionNetwork_ServicesConnectFieldInput>>;
   create?: InputMaybe<Array<SoftwareVersionNetwork_ServicesCreateFieldInput>>;
   delete?: InputMaybe<Array<SoftwareVersionNetwork_ServicesDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<SoftwareVersionNetwork_ServicesDisconnectFieldInput>>;
   update?: InputMaybe<SoftwareVersionNetwork_ServicesUpdateConnectionInput>;
   where?: InputMaybe<SoftwareVersionNetwork_ServicesConnectionWhere>;
 };
@@ -12271,12 +11845,8 @@ export type SoftwareVersionOptions = {
 
 export type SoftwareVersionRelationInput = {
   hosts?: InputMaybe<Array<SoftwareVersionHostsCreateFieldInput>>;
-  network_services?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesCreateFieldInput>
-  >;
-  vulnerabilities?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesCreateFieldInput>
-  >;
+  network_services?: InputMaybe<Array<SoftwareVersionNetwork_ServicesCreateFieldInput>>;
+  vulnerabilities?: InputMaybe<Array<SoftwareVersionVulnerabilitiesCreateFieldInput>>;
 };
 
 /**
@@ -12290,13 +11860,9 @@ export type SoftwareVersionSort = {
 
 export type SoftwareVersionUpdateInput = {
   hosts?: InputMaybe<Array<SoftwareVersionHostsUpdateFieldInput>>;
-  network_services?: InputMaybe<
-    Array<SoftwareVersionNetwork_ServicesUpdateFieldInput>
-  >;
+  network_services?: InputMaybe<Array<SoftwareVersionNetwork_ServicesUpdateFieldInput>>;
   version?: InputMaybe<Scalars['String']['input']>;
-  vulnerabilities?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesUpdateFieldInput>
-  >;
+  vulnerabilities?: InputMaybe<Array<SoftwareVersionVulnerabilitiesUpdateFieldInput>>;
 };
 
 export type SoftwareVersionVulnerabilitiesAggregateInput = {
@@ -12356,13 +11922,9 @@ export type SoftwareVersionVulnerabilitiesFieldInput = {
 };
 
 export type SoftwareVersionVulnerabilitiesNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<SoftwareVersionVulnerabilitiesNodeAggregationWhereInput>>;
   NOT?: InputMaybe<SoftwareVersionVulnerabilitiesNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<SoftwareVersionVulnerabilitiesNodeAggregationWhereInput>>;
   description_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   description_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   description_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -12394,9 +11956,7 @@ export type SoftwareVersionVulnerabilitiesUpdateFieldInput = {
   connect?: InputMaybe<Array<SoftwareVersionVulnerabilitiesConnectFieldInput>>;
   create?: InputMaybe<Array<SoftwareVersionVulnerabilitiesCreateFieldInput>>;
   delete?: InputMaybe<Array<SoftwareVersionVulnerabilitiesDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<SoftwareVersionVulnerabilitiesDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<SoftwareVersionVulnerabilitiesDisconnectFieldInput>>;
   update?: InputMaybe<SoftwareVersionVulnerabilitiesUpdateConnectionInput>;
   where?: InputMaybe<SoftwareVersionVulnerabilitiesConnectionWhere>;
 };
@@ -12407,11 +11967,10 @@ export type SoftwareVersionVulnerabilityVulnerabilitiesAggregationSelection = {
   node?: Maybe<SoftwareVersionVulnerabilityVulnerabilitiesNodeAggregateSelection>;
 };
 
-export type SoftwareVersionVulnerabilityVulnerabilitiesNodeAggregateSelection =
-  {
-    __typename?: 'SoftwareVersionVulnerabilityVulnerabilitiesNodeAggregateSelection';
-    description: StringAggregateSelection;
-  };
+export type SoftwareVersionVulnerabilityVulnerabilitiesNodeAggregateSelection = {
+  __typename?: 'SoftwareVersionVulnerabilityVulnerabilitiesNodeAggregateSelection';
+  description: StringAggregateSelection;
+};
 
 export type SoftwareVersionWhere = {
   AND?: InputMaybe<Array<SoftwareVersionWhere>>;
@@ -12492,7 +12051,7 @@ export enum SortDirection {
   /** Sort by field values in ascending order. */
   Asc = 'ASC',
   /** Sort by field values in descending order. */
-  Desc = 'DESC',
+  Desc = 'DESC'
 }
 
 export type StringAggregateSelection = {
@@ -12517,16 +12076,19 @@ export type Subnet = {
   range: Scalars['String']['output'];
 };
 
+
 export type SubnetContactsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<ContactOptions>;
   where?: InputMaybe<ContactWhere>;
 };
 
+
 export type SubnetContactsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<ContactWhere>;
 };
+
 
 export type SubnetContactsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12536,16 +12098,19 @@ export type SubnetContactsConnectionArgs = {
   where?: InputMaybe<SubnetContactsConnectionWhere>;
 };
 
+
 export type SubnetOrg_UnitsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<OrganizationUnitOptions>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
 
+
 export type SubnetOrg_UnitsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<OrganizationUnitWhere>;
 };
+
 
 export type SubnetOrg_UnitsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -12555,16 +12120,19 @@ export type SubnetOrg_UnitsConnectionArgs = {
   where?: InputMaybe<SubnetOrg_UnitsConnectionWhere>;
 };
 
+
 export type SubnetParent_SubnetArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SubnetOptions>;
   where?: InputMaybe<SubnetWhere>;
 };
 
+
 export type SubnetParent_SubnetAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SubnetWhere>;
 };
+
 
 export type SubnetParent_SubnetConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13076,16 +12644,19 @@ export type Uri = {
   ipsConnection: UriIpsConnection;
 };
 
+
 export type UriIpsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<IpOptions>;
   where?: InputMaybe<IpWhere>;
 };
 
+
 export type UriIpsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<IpWhere>;
 };
+
 
 export type UriIpsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13509,16 +13080,19 @@ export type Vulnerability = {
   status?: Maybe<Array<Scalars['String']['output']>>;
 };
 
+
 export type VulnerabilityCveArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<CveOptions>;
   where?: InputMaybe<CveWhere>;
 };
 
+
 export type VulnerabilityCveAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<CveWhere>;
 };
+
 
 export type VulnerabilityCveConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13528,16 +13102,19 @@ export type VulnerabilityCveConnectionArgs = {
   where?: InputMaybe<VulnerabilityCveConnectionWhere>;
 };
 
+
 export type VulnerabilitySoftware_VersionsArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   options?: InputMaybe<SoftwareVersionOptions>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
 
+
 export type VulnerabilitySoftware_VersionsAggregateArgs = {
   directed?: InputMaybe<Scalars['Boolean']['input']>;
   where?: InputMaybe<SoftwareVersionWhere>;
 };
+
 
 export type VulnerabilitySoftware_VersionsConnectionArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
@@ -13569,9 +13146,7 @@ export type VulnerabilityCveCveNodeAggregateSelection = {
 
 export type VulnerabilityConnectInput = {
   cve?: InputMaybe<VulnerabilityCveConnectFieldInput>;
-  software_versions?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsConnectFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<VulnerabilitySoftware_VersionsConnectFieldInput>>;
 };
 
 export type VulnerabilityConnectWhere = {
@@ -13728,16 +13303,12 @@ export type VulnerabilityCveUpdateFieldInput = {
 
 export type VulnerabilityDeleteInput = {
   cve?: InputMaybe<VulnerabilityCveDeleteFieldInput>;
-  software_versions?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsDeleteFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<VulnerabilitySoftware_VersionsDeleteFieldInput>>;
 };
 
 export type VulnerabilityDisconnectInput = {
   cve?: InputMaybe<VulnerabilityCveDisconnectFieldInput>;
-  software_versions?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsDisconnectFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<VulnerabilitySoftware_VersionsDisconnectFieldInput>>;
 };
 
 export type VulnerabilityEdge = {
@@ -13758,23 +13329,19 @@ export type VulnerabilityOptions = {
 
 export type VulnerabilityRelationInput = {
   cve?: InputMaybe<VulnerabilityCveCreateFieldInput>;
-  software_versions?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsCreateFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<VulnerabilitySoftware_VersionsCreateFieldInput>>;
 };
 
-export type VulnerabilitySoftwareVersionSoftware_VersionsAggregationSelection =
-  {
-    __typename?: 'VulnerabilitySoftwareVersionSoftware_versionsAggregationSelection';
-    count: Scalars['Int']['output'];
-    node?: Maybe<VulnerabilitySoftwareVersionSoftware_VersionsNodeAggregateSelection>;
-  };
+export type VulnerabilitySoftwareVersionSoftware_VersionsAggregationSelection = {
+  __typename?: 'VulnerabilitySoftwareVersionSoftware_versionsAggregationSelection';
+  count: Scalars['Int']['output'];
+  node?: Maybe<VulnerabilitySoftwareVersionSoftware_VersionsNodeAggregateSelection>;
+};
 
-export type VulnerabilitySoftwareVersionSoftware_VersionsNodeAggregateSelection =
-  {
-    __typename?: 'VulnerabilitySoftwareVersionSoftware_versionsNodeAggregateSelection';
-    version: StringAggregateSelection;
-  };
+export type VulnerabilitySoftwareVersionSoftware_VersionsNodeAggregateSelection = {
+  __typename?: 'VulnerabilitySoftwareVersionSoftware_versionsNodeAggregateSelection';
+  version: StringAggregateSelection;
+};
 
 export type VulnerabilitySoftware_VersionsAggregateInput = {
   AND?: InputMaybe<Array<VulnerabilitySoftware_VersionsAggregateInput>>;
@@ -13833,13 +13400,9 @@ export type VulnerabilitySoftware_VersionsFieldInput = {
 };
 
 export type VulnerabilitySoftware_VersionsNodeAggregationWhereInput = {
-  AND?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsNodeAggregationWhereInput>
-  >;
+  AND?: InputMaybe<Array<VulnerabilitySoftware_VersionsNodeAggregationWhereInput>>;
   NOT?: InputMaybe<VulnerabilitySoftware_VersionsNodeAggregationWhereInput>;
-  OR?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsNodeAggregationWhereInput>
-  >;
+  OR?: InputMaybe<Array<VulnerabilitySoftware_VersionsNodeAggregationWhereInput>>;
   version_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars['Float']['input']>;
   version_AVERAGE_LENGTH_GT?: InputMaybe<Scalars['Float']['input']>;
   version_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars['Float']['input']>;
@@ -13871,9 +13434,7 @@ export type VulnerabilitySoftware_VersionsUpdateFieldInput = {
   connect?: InputMaybe<Array<VulnerabilitySoftware_VersionsConnectFieldInput>>;
   create?: InputMaybe<Array<VulnerabilitySoftware_VersionsCreateFieldInput>>;
   delete?: InputMaybe<Array<VulnerabilitySoftware_VersionsDeleteFieldInput>>;
-  disconnect?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsDisconnectFieldInput>
-  >;
+  disconnect?: InputMaybe<Array<VulnerabilitySoftware_VersionsDisconnectFieldInput>>;
   update?: InputMaybe<VulnerabilitySoftware_VersionsUpdateConnectionInput>;
   where?: InputMaybe<VulnerabilitySoftware_VersionsConnectionWhere>;
 };
@@ -13890,9 +13451,7 @@ export type VulnerabilitySort = {
 export type VulnerabilityUpdateInput = {
   cve?: InputMaybe<VulnerabilityCveUpdateFieldInput>;
   description?: InputMaybe<Scalars['String']['input']>;
-  software_versions?: InputMaybe<
-    Array<VulnerabilitySoftware_VersionsUpdateFieldInput>
-  >;
+  software_versions?: InputMaybe<Array<VulnerabilitySoftware_VersionsUpdateFieldInput>>;
   status?: InputMaybe<Array<Scalars['String']['input']>>;
   status_POP?: InputMaybe<Scalars['Int']['input']>;
   status_PUSH?: InputMaybe<Array<Scalars['String']['input']>>;

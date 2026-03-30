@@ -1,5 +1,7 @@
 export const namedOperations = {
   Query: {
+    GetAllOrgUnits: 'GetAllOrgUnits',
+    GetAllSubnets: 'GetAllSubnets',
     GetVulnerableMachines: 'GetVulnerableMachines',
     AssetPageGetIPs: 'AssetPageGetIPs',
     AssetPageGetNetworkServices: 'AssetPageGetNetworkServices',
@@ -18,18 +20,18 @@ export const namedOperations = {
     MissionEditorGetComponents: 'MissionEditorGetComponents',
     MissionPageGetNames: 'MissionPageGetNames',
     MissionPageGetMission: 'MissionPageGetMission',
-    OrgUnitsPageGetAll: 'OrgUnitsPageGetAll',
     OrgUnitsPageGetOne: 'OrgUnitsPageGetOne',
-    SubnetPageGetSubnets: 'SubnetPageGetSubnets',
     SubnetPageGetSubnet: 'SubnetPageGetSubnet',
     SubnetPageGetChildIPs: 'SubnetPageGetChildIPs',
     SubnetPageGetChildSubnets: 'SubnetPageGetChildSubnets',
-    VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails',
+    VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails'
   },
   Mutation: {
-    IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
+    IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus'
   },
   Fragment: {
+    OrgUnit: 'OrgUnit',
+    Subnet: 'Subnet',
     VulnerableMachines: 'VulnerableMachines',
     AssetPageIP: 'AssetPageIP',
     AssetPageNetworkService: 'AssetPageNetworkService',
@@ -44,9 +46,7 @@ export const namedOperations = {
     HomePageHost: 'HomePageHost',
     IssuePageVulnerability: 'IssuePageVulnerability',
     MissionPageMission: 'MissionPageMission',
-    OrgUnitsPageOrgUnit: 'OrgUnitsPageOrgUnit',
-    SubnetPageSubnet: 'SubnetPageSubnet',
     SubnetPageChildIP: 'SubnetPageChildIP',
-    VulnerabilityPageCVEDetails: 'VulnerabilityPageCVEDetails',
-  },
-};
+    VulnerabilityPageCVEDetails: 'VulnerabilityPageCVEDetails'
+  }
+}

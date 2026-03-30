@@ -11,12 +11,8 @@ import {
 import { tap } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import {
-  Mission,
-  MissionStructure,
-} from '../../models/mission-structure.model';
 import { DataService } from '../../services/data.service';
-import { getLabelOfGraphNode } from '../../utils/graph-utils/graph-label.utils';
+import { converToGraph, getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -80,7 +76,7 @@ export class OrgGraphPageComponent implements OnInit {
     this.getOrgUnits().subscribe({
       next: (orgUnits) => {
         this.orgUnits.set(orgUnits);
-        console.log(this.dataService.converToGraph(this.orgUnits()));
+        console.log(converToGraph(this.orgUnits()));
         this.orgUnits().sort((a, b) => {
           return a.name.localeCompare(b.name);
         });

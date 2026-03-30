@@ -7,11 +7,11 @@ import {
 import { Router } from '@angular/router';
 import { SUBNETS_PATH } from '../../paths';
 import {
-  OrgUnitsPageGetAllQueryService,
-  OrgUnitsPageGetAllQuery,
-} from '../org-units-page/graphql/org-units-page.operation.generated';
+  GetAllOrgUnitsQuery,
+  GetAllOrgUnitsQueryService,
+} from '../../graphql/org-units/org-units.operation.generated';
 
-type OrgUnit = OrgUnitsPageGetAllQuery['organizationUnits'][0];
+type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
 
 @Component({
   templateUrl: './treemap.component.html',
@@ -42,7 +42,7 @@ export class TreemapComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  constructor(private getOrgUnits: OrgUnitsPageGetAllQueryService) {}
+  constructor(private getOrgUnits: GetAllOrgUnitsQueryService) {}
 
   ngOnInit(): void {
     this.getOrgUnits
