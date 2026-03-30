@@ -4,20 +4,10 @@ import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Observable, throwError } from 'rxjs';
 import gql from 'graphql-tag';
-import { Node, Edge } from '@swimlane/ngx-graph';
 import _ from 'lodash';
-import { map, take, tap } from 'rxjs/operators';
-import { GraphInput } from '../../../models/graph.model';
-import { entities, EntityStructure } from '../utils/graph-utils/entities.config';
-import { Attributes, AttributeStructure } from '../config/attributes';
-import { Mission } from '../../../models/mission.model';
-import { MissionStructure } from '../../../models/mission-structure.model';
-import { CVE, CVEResponse } from '../../../models/vulnerability.model';
-import { VulnerabilityData } from '../../vulnerability-page/vulnerability.component';
+import { map, take } from 'rxjs/operators';
 import { SubnetExtendedData } from '../../../models/subnet.model';
-import { OrgUnitData } from '../models/org-unit.model';
 import { ChildIP } from '../models/subnet.model';
-import { CSANode } from '../pages/csa-page/csa-page.component';
 
 @Injectable({
   providedIn: 'root',

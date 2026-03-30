@@ -153,8 +153,8 @@
                 <strong>Contacts:</strong>
                 @if (selectedNode()?.data.contacts && selectedNode()?.data.contacts.length > 0) {
                   @for (contact of selectedNode()?.data.contacts || []; track contact; let index = $index) {
-                    <a href="mailto:{{ contact }}" class="badge attribute contact-link">
-                      {{ contact }}
+                    <a href="mailto:{{ contact.name }}" class="badge attribute contact-link">
+                      {{ contact.name }}
                     </a>
                   }
                 } @else {

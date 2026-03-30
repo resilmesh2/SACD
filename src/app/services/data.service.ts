@@ -903,7 +903,7 @@ export class DataService {
 
     // First create the org unit and if successful, link it to parent org unit and contacts
     this.createOrgUnit(orgUnit.name).subscribe({
-      next: (response) => {
+      next: (_response) => {
         if (orgUnit.parentOrgUnit) {
           this.linkOrgUnitToParent(orgUnit.name, orgUnit.parentOrgUnit);
         }
