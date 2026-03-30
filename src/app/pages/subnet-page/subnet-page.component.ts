@@ -1,28 +1,11 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ElementRef,
-  ChangeDetectorRef,
-  inject,
-  ChangeDetectionStrategy,
-  Signal,
-  computed,
-  signal,
-  WritableSignal,
-  output,
-  input,
-  model,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SubnetExtendedData } from '../../models/subnet.model';
 import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
-import { DataService } from '../../services/data.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
