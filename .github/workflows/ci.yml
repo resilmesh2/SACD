@@ -20,3 +20,16 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
       - run: npm run fmt:check
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint:github

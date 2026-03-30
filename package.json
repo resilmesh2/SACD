@@ -12,6 +12,7 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "lint:github": "oxlint --format=github",
     "codegen": "graphql-codegen --config graphql/codegen.ts"
   },
   "dependencies": {

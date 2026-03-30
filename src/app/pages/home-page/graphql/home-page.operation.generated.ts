@@ -62,10 +62,7 @@ export type HomePageGetHostsQueryVariables = SchemaTypes.Exact<{ [key: string]: 
 
 export type HomePageGetHostsQuery = {
   __typename?: 'Query';
-  hosts: Array<{
-    __typename?: 'Host';
-    software_versions: Array<{ __typename?: 'SoftwareVersion'; version: string }>;
-  }>;
+  hosts: Array<{ __typename?: 'Host'; software_versions: Array<{ __typename?: 'SoftwareVersion'; version: string }> }>;
 };
 
 export const HomePageGetSubnetsDocument = gql`

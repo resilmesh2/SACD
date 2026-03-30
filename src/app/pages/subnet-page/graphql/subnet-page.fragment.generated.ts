@@ -13,10 +13,7 @@ export type SubnetPageChildIpFragment = {
       software_versions: Array<{
         __typename?: 'SoftwareVersion';
         version: string;
-        vulnerabilities: Array<{
-          __typename?: 'Vulnerability';
-          cve?: { __typename?: 'CVE'; cve_id: string } | null;
-        }>;
+        vulnerabilities: Array<{ __typename?: 'Vulnerability'; cve?: { __typename?: 'CVE'; cve_id: string } | null }>;
       }>;
     } | null;
   }>;
