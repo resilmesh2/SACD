@@ -1,17 +1,26 @@
-import { ChangeDetectorRef, Component, inject, signal, ViewChild, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { DataService } from '../../services/data.service';
-import { ChildIP } from '../../models/subnet.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
-import { OrgUnitData } from '../../models/org-unit.model';
 import { customOccupancyColors } from '../../config/customPieChartColors';
-import { SubnetService } from '../../services/subnet.service';
+import { GetOrgUnitQuery, GetOrgUnitQueryService } from '../../graphql/org-units/org-units.operation.generated';
+import { GetChildIPsQueryService } from '../../graphql/subnets/subnets.operation.generated';
+
+type OrgUnit = GetOrgUnitQuery['organizationUnits'][0];
+
+interface ChildIP {
+  address: string;
+  version?: number | null;
+  subnet: string;
+  affectedBy: string[];
+  softwareVersion: string[];
+}
 
 @Component({
   selector: 'org-unit-detail',
@@ -26,7 +35,7 @@ import { SubnetService } from '../../services/subnet.service';
     NgxChartsModule,
   ],
 })
-export class OrgUnitDetailComponent {
+export class OrgUnitDetailComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<ChildIP>();
   displayedColumns: string[] = ['ip', 'subnet', 'softwareVersion', 'affectedBy'];
   paginator: MatPaginator | null = null;
@@ -40,11 +49,12 @@ export class OrgUnitDetailComponent {
     this.dataSource.paginator = this.paginator;
   }
 
-  orgUnitDetail: WritableSignal<OrgUnitData | null> = signal(null);
+  orgUnitDetail: WritableSignal<OrgUnit | null> = signal(null);
   orgName: string = '';
   pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
   customColors = customOccupancyColors;
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
   dataLoading = false;
@@ -54,16 +64,17 @@ export class OrgUnitDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private subnetService: SubnetService,
-    private data: DataService,
-    private changeDetectorRefs: ChangeDetectorRef,
+    private getOrgUnit: GetOrgUnitQueryService,
+    private getChildIPs: GetChildIPsQueryService,
   ) {
     this.dataSource = new MatTableDataSource<ChildIP>([]);
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
-    this.getRouteParameters();
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.orgName = params.get('orgName') || '';
+    });
     this.getOrgUnitDetail();
   }
 
@@ -74,31 +85,50 @@ export class OrgUnitDetailComponent {
   }
 
   getOrgUnitDetail(): void {
-    this.data.getOrgUnit(this.orgName).subscribe({
-      next: (orgUnitDetail: OrgUnitData) => {
-        this.orgUnitDetail.set(orgUnitDetail);
-        this.dataLoading = false;
-        this.dataLoaded = true;
-        this.getChildIPs();
-      },
-      error: (error) => {
-        console.error('Error fetching subnet details:', error);
-        this.dataLoading = false;
-      },
-    });
-  }
-
-  getChildIPs(): void {
-    this.orgUnitDetail()?.subnets.map((subnet) => {
-      this.subnetService.getChildIPs(subnet.range).subscribe({
-        next: (childIPs: ChildIP[]) => {
-          this.dataSource.data = this.dataSource.data.concat(childIPs);
-          this.pieChartData.set(this.calculateOccupancyData());
+    this.getOrgUnit
+      .fetch({ name: this.orgName }, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const orgUnit = result.data.organizationUnits[0] ?? null;
+          this.orgUnitDetail.set(orgUnit);
+          this.dataLoading = false;
+          this.dataLoaded = true;
+          this.fetchChildIPs();
         },
         error: (error) => {
-          console.error('Error fetching child IPs:', error);
+          console.error('Error fetching org unit details:', error);
+          this.dataLoading = false;
         },
       });
+  }
+
+  fetchChildIPs(): void {
+    this.orgUnitDetail()?.subnets.forEach((subnet) => {
+      this.getChildIPs
+        .fetch({ range: subnet.range }, { fetchPolicy: 'network-only' })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (result) => {
+            const childIPs: ChildIP[] = result.data.ips.map((ip) => ({
+              address: ip.address,
+              version: ip.version,
+              subnet: ip.subnets[0]?.range ?? '',
+              affectedBy: ip.nodes.flatMap(
+                (node) =>
+                  node.host?.software_versions.flatMap((sv) =>
+                    sv.vulnerabilities.map((v) => v.cve?.cve_id).filter((id): id is string => id != null),
+                  ) ?? [],
+              ),
+              softwareVersion: ip.nodes.flatMap((node) => node.host?.software_versions.map((sv) => sv.version) ?? []),
+            }));
+            this.dataSource.data = this.dataSource.data.concat(childIPs);
+            this.pieChartData.set(this.calculateOccupancyData());
+          },
+          error: (error) => {
+            console.error('Error fetching child IPs:', error);
+          },
+        });
     });
   }
 
@@ -131,25 +161,22 @@ export class OrgUnitDetailComponent {
     ];
   }
 
+  getContactNames(): string {
+    const contacts = this.orgUnitDetail()?.contacts;
+    if (!contacts || contacts.length === 0) return 'N/A';
+    return contacts.map((c) => c.name).join(', ');
+  }
+
   goBack(): void {
     this.router.navigate([ORGANIZATION_PATH]);
   }
 
-  getRouteParameters(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.orgName = params.get('orgName') || '';
-    });
-  }
-
   navigateToOrgUnitDetail(orgName: string): void {
     this.router.navigate([ORGANIZATION_PATH, orgName]).then(() => {
-      // Reset the org unit detail and data source when navigating to a new org unit
       this.orgUnitDetail.set(null);
       this.dataSource.data = [];
-      this.dataLoading = true; // Reset loading state
-      this.getOrgUnitDetail(); // Fetch new org unit details & child IPs
-
-      this.changeDetectorRefs.detectChanges(); // Ensure the view updates
+      this.dataLoading = true;
+      this.getOrgUnitDetail();
     });
   }
 

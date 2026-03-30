@@ -15,6 +15,7 @@ import { CVE, CVEResponse } from '../../../models/vulnerability.model';
 import { VulnerabilityData } from '../../vulnerability-page/vulnerability.component';
 import { OrgUnitData } from '../models/org-unit.model';
 import { CSANode } from '../pages/csa-page/csa-page.component';
+import { converToGraph } from '../utils/graph-utils/ngx-graph.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +40,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(data.data.ips);
+          const { nodes, edges } = converToGraph(data.data.ips);
           return { nodes, edges };
         }),
       );
@@ -63,7 +64,7 @@ export class DataService {
       })
       .pipe(
         map((data) => {
-          const { nodes, edges } = this.converToGraph(data.data[node.data.type]);
+          const { nodes, edges } = converToGraph(data.data[node.data.type]);
           return { nodes, edges };
         }),
       );

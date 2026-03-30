@@ -64,7 +64,7 @@ export function converToGraph(data: any[], parent?: string, edgeName?: string): 
     if (nodes.findIndex((n) => n.id === item._id) === -1) {
       nodes.push({
         id: item._id,
-        label: getLabelOfGraphNode({ id: item._id, label: '', data: item }),
+        label: getLabelOfGraphNode({ id: item._id, label: '', data: { ...item, type: item.__typename } }),
         data: {
           customColor: getColor(item),
           textColor: getTextColor(item),

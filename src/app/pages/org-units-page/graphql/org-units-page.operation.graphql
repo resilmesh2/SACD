@@ -1,5 +1,0 @@
-query OrgUnitsPageGetOne($name: String!) {
-  organizationUnits(where: { name: $name }) {
-    ...OrgUnit
-  }
-}

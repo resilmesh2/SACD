@@ -13,23 +13,22 @@
     <strong>Subnets: </strong>
     @for (subnet of orgUnitDetail()?.subnets || []; track subnet; let index = $index) {
       <a (click)="navigateToSubnetDetail(subnet.range)" class="org-unit-detail-link">
-        {{ subnet }}
+        {{ subnet.range }}
       </a>
     }
   </div>
   <div class="org-unit-line">
     <strong>Contacts: </strong>
-    <span>{{
-      orgUnitDetail()?.contacts && (orgUnitDetail()?.contacts?.length ?? 0) > 0
-        ? orgUnitDetail()?.contacts?.join(', ')
-        : 'N/A'
-    }}</span>
+    <span>{{ getContactNames() }}</span>
   </div>
   <div class="org-unit-line">
     <strong>Part of: </strong>
-    @if (orgUnitDetail()?.parentOrgUnit) {
-      <a (click)="navigateToOrgUnitDetail(orgUnitDetail()?.parentOrgUnit ?? '')" class="org-unit-detail-link">
-        {{ orgUnitDetail()?.parentOrgUnit || 'N/A' }}
+    @if (orgUnitDetail()?.parent_org_unit?.at(0)?.name) {
+      <a
+        (click)="navigateToOrgUnitDetail(orgUnitDetail()?.parent_org_unit?.at(0)?.name ?? '')"
+        class="org-unit-detail-link"
+      >
+        {{ orgUnitDetail()?.parent_org_unit?.at(0)?.name || 'N/A' }}
       </a>
     } @else {
       <span>N/A</span>

@@ -14,3 +14,23 @@ fragment Subnet on Subnet {
     range
   }
 }
+
+fragment ChildIP on IP {
+  address
+  version
+  subnets {
+    range
+  }
+  nodes {
+    host {
+      software_versions {
+        version
+        vulnerabilities {
+          cve {
+            cve_id
+          }
+        }
+      }
+    }
+  }
+}

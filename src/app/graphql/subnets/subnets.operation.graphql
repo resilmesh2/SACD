@@ -3,3 +3,9 @@ query GetAllSubnets {
     ...Subnet
   }
 }
+
+query GetChildIPs($range: String!) {
+  ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
+    ...ChildIP
+  }
+}

@@ -4,12 +4,6 @@ query SubnetPageGetSubnet($range: String!) {
   }
 }
 
-query SubnetPageGetChildIPs($range: String!) {
-  ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
-    ...SubnetPageChildIP
-  }
-}
-
 query SubnetPageGetChildSubnets($range: String!) {
   subnets(where: { parent_subnet_SOME: { range: $range } }) {
     range

@@ -2,7 +2,6 @@ import * as SchemaTypes from '../../../../generated/base-types';
 
 import { gql } from 'apollo-angular';
 import { SubnetFragmentDoc } from '../../../graphql/subnets/subnets.fragment.generated';
-import { SubnetPageChildIpFragmentDoc } from './subnet-page.fragment.generated';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type SubnetPageGetSubnetQueryVariables = SchemaTypes.Exact<{
@@ -19,31 +18,6 @@ export type SubnetPageGetSubnetQuery = {
     org_units: Array<{ __typename?: 'OrganizationUnit'; name: string }>;
     contacts: Array<{ __typename?: 'Contact'; name: string }>;
     parent_subnet: Array<{ __typename?: 'Subnet'; _id: string; note?: string | null; range: string }>;
-  }>;
-};
-
-export type SubnetPageGetChildIPsQueryVariables = SchemaTypes.Exact<{
-  range: SchemaTypes.Scalars['String']['input'];
-}>;
-
-export type SubnetPageGetChildIPsQuery = {
-  __typename?: 'Query';
-  ips: Array<{
-    __typename?: 'IP';
-    address: string;
-    version?: number | null;
-    subnets: Array<{ __typename?: 'Subnet'; range: string }>;
-    nodes: Array<{
-      __typename?: 'NodeObject';
-      host?: {
-        __typename?: 'Host';
-        software_versions: Array<{
-          __typename?: 'SoftwareVersion';
-          version: string;
-          vulnerabilities: Array<{ __typename?: 'Vulnerability'; cve?: { __typename?: 'CVE'; cve_id: string } | null }>;
-        }>;
-      } | null;
-    }>;
   }>;
 };
 
@@ -73,28 +47,6 @@ export class SubnetPageGetSubnetQueryService extends Apollo.Query<
   SubnetPageGetSubnetQueryVariables
 > {
   document = SubnetPageGetSubnetDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const SubnetPageGetChildIPsDocument = gql`
-  query SubnetPageGetChildIPs($range: String!) {
-    ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
-      ...SubnetPageChildIP
-    }
-  }
-  ${SubnetPageChildIpFragmentDoc}
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class SubnetPageGetChildIPsQueryService extends Apollo.Query<
-  SubnetPageGetChildIPsQuery,
-  SubnetPageGetChildIPsQueryVariables
-> {
-  document = SubnetPageGetChildIPsDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
