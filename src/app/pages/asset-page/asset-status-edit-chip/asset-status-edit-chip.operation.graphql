@@ -1,0 +1,19 @@
+mutation AssetStatusEditChipUpdateIPStatus($address: String!, $status: String!) {
+  updateIPStatus(address: $address, status: $status) {
+    _id
+    address
+    status
+  }
+}
+
+mutation AssetStatusEditChipUpdateNetworkServiceStatus(
+  $address: String!
+  $protocol: String!
+  $port: Int!
+  $service: String!
+  $status: String!
+) {
+  updateNetworkServiceStatus(address: $address, protocol: $protocol, port: $port, service: $service, status: $status) {
+    status
+  }
+}

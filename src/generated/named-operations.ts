@@ -27,6 +27,8 @@ export const namedOperations = {
     VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails',
   },
   Mutation: {
+    AssetStatusEditChipUpdateIPStatus: 'AssetStatusEditChipUpdateIPStatus',
+    AssetStatusEditChipUpdateNetworkServiceStatus: 'AssetStatusEditChipUpdateNetworkServiceStatus',
     IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
   },
   Fragment: {
