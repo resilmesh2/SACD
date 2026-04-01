@@ -1,0 +1,5 @@
+mutation OrgUnitsPageDeleteOrgUnit($name: String!) {
+  deleteOrganizationUnits(where: { name: $name }) {
+    nodesDeleted
+  }
+}
