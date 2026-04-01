@@ -29,6 +29,7 @@ export const namedOperations = {
   Mutation: {
     AssetStatusEditChipUpdateIPStatus: 'AssetStatusEditChipUpdateIPStatus',
     AssetStatusEditChipUpdateNetworkServiceStatus: 'AssetStatusEditChipUpdateNetworkServiceStatus',
+    AssetPageUpdateIPTag: 'AssetPageUpdateIPTag',
     IssuePageUpdateVulnerabilityStatus: 'IssuePageUpdateVulnerabilityStatus',
     OrgUnitsPageDeleteOrgUnit: 'OrgUnitsPageDeleteOrgUnit',
     CreateOrgUnit: 'CreateOrgUnit',
