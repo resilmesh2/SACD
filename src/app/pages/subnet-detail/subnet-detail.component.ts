@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';

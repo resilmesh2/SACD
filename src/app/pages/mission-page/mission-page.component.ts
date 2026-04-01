@@ -104,6 +104,10 @@ export class MissionPageComponent implements OnInit {
     return getLabelOfGraphNode(node);
   }
 
+  /**
+   * Gets structure parameter from each mission and merges them into one structure
+   * @param missions list of missions
+   */
   private makeMissionsStructure(missions: MissionEntry[]): MissionStructure {
     return missions.reduce(
       (acc: MissionStructure, mission) => {
