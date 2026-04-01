@@ -67,6 +67,16 @@ export type AssetPageGetDomainNamesQuery = {
   }>;
 };
 
+export type AssetPageUpdateIpTagMutationVariables = SchemaTypes.Exact<{
+  address: SchemaTypes.Scalars['String']['input'];
+  tag: Array<SchemaTypes.Scalars['String']['input']> | SchemaTypes.Scalars['String']['input'];
+}>;
+
+export type AssetPageUpdateIpTagMutation = {
+  __typename?: 'Mutation';
+  updateIPTag?: { __typename?: 'IP'; _id: string; address: string; tag?: Array<string | null> | null } | null;
+};
+
 export const AssetPageGetIPsDocument = gql`
   query AssetPageGetIPs {
     ips {
@@ -125,6 +135,29 @@ export class AssetPageGetDomainNamesQueryService extends Apollo.Query<
   AssetPageGetDomainNamesQueryVariables
 > {
   document = AssetPageGetDomainNamesDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const AssetPageUpdateIpTagDocument = gql`
+  mutation AssetPageUpdateIPTag($address: String!, $tag: [String!]!) {
+    updateIPTag(address: $address, tag: $tag) {
+      _id
+      address
+      tag
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssetPageUpdateIpTagMutationService extends Apollo.Mutation<
+  AssetPageUpdateIpTagMutation,
+  AssetPageUpdateIpTagMutationVariables
+> {
+  document = AssetPageUpdateIpTagDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

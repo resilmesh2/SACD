@@ -43,6 +43,7 @@ import {
   AssetPageGetIPsQueryService,
   AssetPageGetNetworkServicesQueryService,
   AssetPageGetDomainNamesQueryService,
+  AssetPageUpdateIpTagMutationService,
 } from './graphql/asset-page.operation.generated';
 import {
   AssetPageIpFragment,
@@ -164,6 +165,7 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     private getIPsService: AssetPageGetIPsQueryService,
     private getNetworkServicesService: AssetPageGetNetworkServicesQueryService,
     private getDomainNamesService: AssetPageGetDomainNamesQueryService,
+    private updateIPTagService: AssetPageUpdateIpTagMutationService,
     private changeDetector: ChangeDetectorRef,
   ) {
     this.dataSource = new MatTableDataSource<Asset>([]);
@@ -339,8 +341,13 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  saveData(_address: string, _tags: string[]): void {
-    // TODO: implement via mutation service when tag mutation is added to asset-page.operation.graphql
+  saveData(address: string, tags: string[]): void {
+    this.updateIPTagService.mutate({ address, tag: tags }).subscribe({
+      next: () => {
+        this.assets.update((assets) => assets.map((a) => (a.ip === address ? { ...a, tag: tags } : a)));
+      },
+      error: (e) => console.error('Error updating IP tags:', e),
+    });
   }
 
   private detectChanges(): void {

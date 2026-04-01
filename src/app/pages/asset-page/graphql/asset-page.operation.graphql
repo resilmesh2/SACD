@@ -15,3 +15,11 @@ query AssetPageGetDomainNames {
     ...AssetPageDomainName
   }
 }
+
+mutation AssetPageUpdateIPTag($address: String!, $tag: [String!]!) {
+  updateIPTag(address: $address, tag: $tag) {
+    _id
+    address
+    tag
+  }
+}
