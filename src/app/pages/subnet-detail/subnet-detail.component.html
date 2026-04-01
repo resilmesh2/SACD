@@ -15,9 +15,9 @@
   </div>
   <div class="subnet-line">
     <strong>Organization unit: </strong>
-    @if (subnetDetail()?.organizationUnit) {
-      <a (click)="navigateToOrgUnitDetail(subnetDetail()?.organizationUnit ?? '')" class="subnet-detail-link">
-        {{ subnetDetail()?.organizationUnit || 'N/A' }}
+    @if (subnetDetail()?.org_units?.at(0)?.name) {
+      <a (click)="navigateToOrgUnitDetail(subnetDetail()?.org_units?.at(0)?.name ?? '')" class="subnet-detail-link">
+        {{ subnetDetail()?.org_units?.at(0)?.name || 'N/A' }}
       </a>
     } @else {
       <span>N/A</span>
@@ -25,17 +25,13 @@
   </div>
   <div class="subnet-line">
     <strong>Contacts: </strong>
-    <span>{{
-      subnetDetail()?.contacts && (subnetDetail()?.contacts?.length ?? 0) > 0
-        ? subnetDetail()?.contacts?.join(', ')
-        : 'N/A'
-    }}</span>
+    <span>{{ getContactNames() }}</span>
   </div>
   <div class="subnet-line">
     <strong>Part of: </strong>
-    @if (subnetDetail()?.parentSubnet) {
-      <a (click)="navigateToSubnetDetail(subnetDetail()?.parentSubnet ?? '')" class="subnet-detail-link">
-        {{ subnetDetail()?.parentSubnet || 'N/A' }}
+    @if (subnetDetail()?.parent_subnet?.at(0)?.range) {
+      <a (click)="navigateToSubnetDetail(subnetDetail()?.parent_subnet?.at(0)?.range ?? '')" class="subnet-detail-link">
+        {{ subnetDetail()?.parent_subnet?.at(0)?.range || 'N/A' }}
       </a>
     } @else {
       <span>N/A</span>
