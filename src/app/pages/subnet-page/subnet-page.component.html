@@ -55,13 +55,12 @@
         <ng-container matColumnDef="org_units">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Organizational Unit</th>
           <td mat-cell *matCellDef="let row">
-            @if (row.organizationUnit === '' || row.organizationUnit === '---') {
-              <span class="no-parent">---</span>
-            } @else {
-              <!-- If there is a parent subnet, display it as a link -->
-              <a (click)="navigateToOrgUnitDetail(row.organizationUnit)" class="subnet-detail-link">
-                {{ row.organizationUnit }}
+            @if (row.org_units.at(0)?.name) {
+              <a (click)="navigateToOrgUnitDetail(row.org_units.at(0)!.name)" class="subnet-detail-link">
+                {{ row.org_units.at(0)!.name }}
               </a>
+            } @else {
+              <span class="no-parent">---</span>
             }
           </td>
         </ng-container>
@@ -70,7 +69,7 @@
         <ng-container matColumnDef="contacts">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Contacts</th>
           <td mat-cell *matCellDef="let row">
-            <span class="subnet-contacts">{{ row.contacts.length > 0 ? row.contacts.join(', ') : '---' }}</span>
+            <span class="subnet-contacts">{{ getContactNames(row) }}</span>
           </td>
         </ng-container>
 
@@ -78,13 +77,12 @@
         <ng-container matColumnDef="parent_subnet">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Part of</th>
           <td mat-cell *matCellDef="let row">
-            @if (row.parentSubnet === '') {
-              <span class="no-parent">---</span>
-            } @else {
-              <!-- If there is a parent subnet, display it as a link -->
-              <a (click)="navigateToSubnetDetail(row.parentSubnet)" class="subnet-detail-link">
-                {{ row.parentSubnet }}
+            @if (row.parent_subnet.at(0)?.range) {
+              <a (click)="navigateToSubnetDetail(row.parent_subnet.at(0)!.range)" class="subnet-detail-link">
+                {{ row.parent_subnet.at(0)!.range }}
               </a>
+            } @else {
+              <span class="no-parent">---</span>
             }
           </td>
         </ng-container>

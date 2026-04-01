@@ -9,3 +9,9 @@ query SubnetPageGetChildSubnets($range: String!) {
     range
   }
 }
+
+mutation SubnetPageDeleteSubnet($range: String!) {
+  deleteSubnets(where: { range: $range }) {
+    nodesDeleted
+  }
+}

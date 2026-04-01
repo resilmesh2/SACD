@@ -30,6 +30,15 @@ export type SubnetPageGetChildSubnetsQuery = {
   subnets: Array<{ __typename?: 'Subnet'; range: string }>;
 };
 
+export type SubnetPageDeleteSubnetMutationVariables = SchemaTypes.Exact<{
+  range: SchemaTypes.Scalars['String']['input'];
+}>;
+
+export type SubnetPageDeleteSubnetMutation = {
+  __typename?: 'Mutation';
+  deleteSubnets: { __typename?: 'DeleteInfo'; nodesDeleted: number };
+};
+
 export const SubnetPageGetSubnetDocument = gql`
   query SubnetPageGetSubnet($range: String!) {
     subnets(where: { range: $range }) {
@@ -68,6 +77,27 @@ export class SubnetPageGetChildSubnetsQueryService extends Apollo.Query<
   SubnetPageGetChildSubnetsQueryVariables
 > {
   document = SubnetPageGetChildSubnetsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const SubnetPageDeleteSubnetDocument = gql`
+  mutation SubnetPageDeleteSubnet($range: String!) {
+    deleteSubnets(where: { range: $range }) {
+      nodesDeleted
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SubnetPageDeleteSubnetMutationService extends Apollo.Mutation<
+  SubnetPageDeleteSubnetMutation,
+  SubnetPageDeleteSubnetMutationVariables
+> {
+  document = SubnetPageDeleteSubnetDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
