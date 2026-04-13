@@ -1,21 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
-  SimpleChanges,
-  WritableSignal,
-} from '@angular/core';
-
-import { tap } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import {
-  Mission,
-  MissionStructure,
-} from '../../models/mission-structure.model';
-import { DataService } from '../../services/data.service';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,16 +11,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
-import { SubnetExtendedData } from '../../models/subnet.model';
 import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { SubnetService } from '../../services/subnet.service';
+import { GetAllSubnetsQuery, GetAllSubnetsQueryService } from '../../graphql/subnets/subnets.operation.generated';
+
+type Subnet = GetAllSubnetsQuery['subnets'][0];
 
 @Component({
   selector: 'subnet-graph-page',
@@ -58,7 +45,7 @@ import { SubnetService } from '../../services/subnet.service';
 export class SubnetGraphPageComponent implements OnInit {
   errorMessage = '';
   selectedNode: WritableSignal<Node | null> = signal(null);
-  subnets: WritableSignal<SubnetExtendedData[]> = signal([]);
+  subnets: WritableSignal<Subnet[]> = signal([]);
 
   customLayout: Layout = new CustomLayout(Orientation.BOTTOM_TO_TOP);
   center$ = new Subject<any>();
@@ -72,12 +59,10 @@ export class SubnetGraphPageComponent implements OnInit {
 
   ipVersion = signal<'v4' | 'v6'>('v4');
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  constructor(
-    private dataService: DataService,
-    private subnetService: SubnetService,
-  ) {}
+  constructor(private getAllSubnets: GetAllSubnetsQueryService) {}
 
   ngOnInit(): void {
     this.getGraphData();
@@ -85,38 +70,37 @@ export class SubnetGraphPageComponent implements OnInit {
 
   public getGraphData(): void {
     this.graphLoading = true;
-    this.getSubnets().subscribe({
-      next: (subnets) => {
-        this.subnets.set(subnets);
-        this.subnets().sort((a, b) => {
-          let cidrA = ~~a.range.split('/')[1];
-          let cidrB = ~~b.range.split('/')[1];
-          return cidrA - cidrB || a.range.localeCompare(b.range);
-        });
-
-        this.setEdgesAndNodes();
-        this.graphLoading = false;
-        this.errorMessage = '';
-      },
-      error: (error) => {
-        this.subnets.set([]);
-        this.graphLoading = false;
-        this.errorMessage = error.message;
-      },
-    });
     this.selectedNode.set(null);
+
+    this.getAllSubnets
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const subnets = [...result.data.subnets].sort((a, b) => {
+            const cidrA = ~~a.range.split('/')[1];
+            const cidrB = ~~b.range.split('/')[1];
+            return cidrA - cidrB || a.range.localeCompare(b.range);
+          });
+          this.subnets.set(subnets);
+          this.setEdgesAndNodes();
+          this.graphLoading = false;
+          this.errorMessage = '';
+        },
+        error: (error) => {
+          this.subnets.set([]);
+          this.graphLoading = false;
+          this.errorMessage = error.message;
+        },
+      });
   }
 
   isNotParent(subnetRange: string) {
-    return this.subnets().some((subnet) => subnet.parentSubnet === subnetRange);
+    return this.subnets().some((subnet) => subnet.parent_subnet.some((ps) => ps.range === subnetRange));
   }
 
-  hasNoParent(subnet: SubnetExtendedData) {
-    return (
-      subnet.parentSubnet == undefined ||
-      subnet.parentSubnet == null ||
-      subnet.parentSubnet == ''
-    );
+  hasNoParent(subnet: Subnet) {
+    return subnet.parent_subnet.length === 0;
   }
 
   isRoot(subnetRange: string) {
@@ -126,34 +110,22 @@ export class SubnetGraphPageComponent implements OnInit {
 
   isPartOfConstituency() {
     // TODO: TO BE IMPLEMENTED (IN ISIM)
-    return Math.random() < 0.5;
+    return true; //Math.random() < 0.5;
   }
 
   setEdgesAndNodes(): void {
     this.nodes.set(
       this.subnets().flatMap((subnet) => {
-        if (
-          !this.isNotParent(subnet.range) &&
-          this.hasNoParent(subnet) &&
-          !this.isRoot(subnet.range)
-        ) {
+        if (!this.isNotParent(subnet.range) && this.hasNoParent(subnet) && !this.isRoot(subnet.range)) {
           return [];
         }
-        let isInternal = this.isPartOfConstituency();
+        const isInternal = this.isPartOfConstituency();
         return {
-          id: `${subnet.range}`,
+          id: subnet.range,
           label: subnet.range,
           data: {
-            type: this.isRoot(subnet.range)
-              ? 'root'
-              : isInternal
-                ? 'subnet'
-                : 'external subnet',
-            customColor: this.isRoot(subnet.range)
-              ? '#212951'
-              : isInternal
-                ? '#3a4d81'
-                : '#307351',
+            type: this.isRoot(subnet.range) ? 'root' : isInternal ? 'subnet' : 'external subnet',
+            customColor: this.isRoot(subnet.range) ? '#e4295f' : isInternal ? '#343f5d' : '#307351',
             textColor: '#fff',
             ...subnet,
           },
@@ -163,54 +135,34 @@ export class SubnetGraphPageComponent implements OnInit {
 
     this.edges.set(
       this.subnets().flatMap((subnet, index) => {
-        if (
-          subnet.parentSubnet === undefined ||
-          subnet.parentSubnet === null ||
-          subnet.parentSubnet === ''
-        ) {
-          return [];
-        }
+        const parentRange = subnet.parent_subnet.at(0)?.range;
+        if (!parentRange) return [];
 
         return {
           id: `edge-${index}`,
           source: subnet.range,
-          target: subnet.parentSubnet,
+          target: parentRange,
           label: 'is part of',
         };
       }),
     );
-
-    console.log('Nodes and edges set', this.nodes(), this.edges());
   }
 
   onIpVersionChange() {
     // TODO: when IP versions are implemented/added in the schema
   }
 
-  private getSubnets(): Observable<SubnetExtendedData[]> {
-    return this.subnetService.getSubnets().pipe(
-      tap((subnets: SubnetExtendedData[]) => {
-        this.subnets.set(subnets);
-      }),
-    );
-  }
-
   public getLabel(node: Node) {
-    console.log('Getting label for node', node);
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-    if (!subnetRange || subnetRange == '---') {
-      return;
-    }
+    if (!subnetRange || subnetRange == '---') return;
     this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
 
   navigateToOrgUnitDetail(orgName: string): void {
-    if (!orgName || orgName == '---') {
-      return;
-    }
+    if (!orgName || orgName == '---') return;
     this.router.navigate([ORGANIZATION_PATH, orgName]);
   }
 

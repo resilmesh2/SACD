@@ -18,14 +18,7 @@ import {
 import { EXTERNAL_AGENDAS } from './external';
 
 export const agendaContainers = [
-  new AgendaContainer(
-    'Lists',
-    [
-      new Agenda('Assets', ASSETS_PATH),
-      new Agenda('Vulnerabilities', ISSUE_PATH),
-    ],
-    'list',
-  ),
+  new AgendaContainer('Lists', [new Agenda('Assets', ASSETS_PATH), new Agenda('Vulnerabilities', ISSUE_PATH)], 'list'),
   new AgendaContainer(
     'Edit',
     [
@@ -48,9 +41,5 @@ export const agendaContainers = [
     ],
     'analytics',
   ),
-  new AgendaContainer(
-    'External',
-    [new Agenda('CSA', CSA_PATH), ...EXTERNAL_AGENDAS],
-    'api',
-  ),
+  new AgendaContainer('External', [new Agenda('CSA', CSA_PATH), ...EXTERNAL_AGENDAS], 'api'),
 ];

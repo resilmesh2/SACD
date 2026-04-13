@@ -1,0 +1,25 @@
+query AssetPageGetIPs {
+  ips {
+    ...AssetPageIP
+  }
+}
+
+query AssetPageGetNetworkServices {
+  networkServices {
+    ...AssetPageNetworkService
+  }
+}
+
+query AssetPageGetDomainNames {
+  domainNames {
+    ...AssetPageDomainName
+  }
+}
+
+mutation AssetPageUpdateIPTag($address: String!, $tag: [String!]!) {
+  updateIPTag(address: $address, tag: $tag) {
+    _id
+    address
+    tag
+  }
+}

@@ -1,7 +1,4 @@
-export const colorLookupTable: Record<
-  string,
-  Record<string, Record<string, string>>
-> = {
+export const colorLookupTable: Record<string, Record<string, Record<string, string>>> = {
   default: {
     attack_vector: {
       network: 'high',

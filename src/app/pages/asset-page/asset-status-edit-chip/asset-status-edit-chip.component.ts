@@ -1,12 +1,9 @@
 import { OverlayModule } from '@angular/cdk/overlay';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  model,
-} from '@angular/core';
-import { DataService } from '../../../services/data.service';
+  AssetStatusEditChipUpdateIpStatusMutationService,
+  AssetStatusEditChipUpdateNetworkServiceStatusMutationService,
+} from './asset-status-edit-chip.operation.generated';
 
 @Component({
   selector: 'asset-status-edit-chip',
@@ -21,13 +18,12 @@ export class AssetStatusEditChipComponent {
   type = input<string | undefined>(undefined);
 
   address = input<string | undefined>(undefined);
-  serviceData = input<
-    { service: string; port: number; protocol: string } | undefined
-  >(undefined);
+  serviceData = input<{ service: string; port: number; protocol: string } | undefined>(undefined);
 
   isEditOpen = model<boolean>(false);
 
-  constructor(private data: DataService) {}
+  private updateIPStatusService = inject(AssetStatusEditChipUpdateIpStatusMutationService);
+  private updateNetworkServiceStatusService = inject(AssetStatusEditChipUpdateNetworkServiceStatusMutationService);
 
   color = computed(() => {
     return this.labelColorConverter(this.label() || 'unknown');
@@ -59,35 +55,35 @@ export class AssetStatusEditChipComponent {
         this.updateNetworkServiceStatus(status);
         break;
       default:
-        console.error(
-          `Unsupported asset type: ${this.type()}. Cannot update status.`,
-        );
+        console.error(`Unsupported asset type: ${this.type()}. Cannot update status.`);
     }
   }
 
   updateNetworkServiceStatus(status: string): void {
     if (this.address() && this.serviceData()) {
       this.label.set(status);
-      this.data.changeNetworkServiceStatus(
-        this.address() || '',
-        this.serviceData()?.protocol || '',
-        this.serviceData()?.port || 0,
-        this.serviceData()?.service || '',
-        status,
-      );
+      this.updateNetworkServiceStatusService
+        .mutate({
+          address: this.address()!,
+          protocol: this.serviceData()!.protocol,
+          port: this.serviceData()!.port,
+          service: this.serviceData()!.service,
+          status,
+        })
+        .subscribe({ error: (e) => console.error('Error updating network service status:', e) });
       this.isEditOpen.set(false);
       return;
     }
 
-    console.error(
-      'Address, protocol, or port is undefined. Cannot update status.',
-    );
+    console.error('Address, protocol, or port is undefined. Cannot update status.');
   }
 
   updateIPStatus(status: string): void {
     if (this.address()) {
       this.label.set(status);
-      this.data.changeIPStatus(this.address() || '', status);
+      this.updateIPStatusService
+        .mutate({ address: this.address()!, status })
+        .subscribe({ error: (e) => console.error('Error updating IP status:', e) });
       this.isEditOpen.set(false);
       return;
     }

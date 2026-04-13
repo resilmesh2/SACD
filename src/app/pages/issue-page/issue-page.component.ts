@@ -5,19 +5,24 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   computed,
+  DestroyRef,
   effect,
   WritableSignal,
   signal,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Issue } from '../../models/issue.model';
-import { CVE } from '../../models/vulnerability.model';
-import { DataService } from '../../services/data.service';
+import {
+  IssuePageGetVulnerabilitiesQueryService,
+  IssuePageGetVulnerabilitiesQuery,
+  IssuePageUpdateVulnerabilityStatusMutationService,
+} from './graphql/issue-page.operation.generated';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -75,13 +80,7 @@ interface Filter {
 export class IssuePageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Issue>();
 
-  displayedColumns: string[] = [
-    'name',
-    'status',
-    'description',
-    'severity',
-    'last_seen',
-  ];
+  displayedColumns: string[] = ['name', 'status', 'description', 'severity', 'last_seen'];
 
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
@@ -102,8 +101,8 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
-  vulnerabilties: CVE[] = [];
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
@@ -121,23 +120,18 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   selectedSeverity: WritableSignal<string> = signal(this.defaultValue);
   selectedStatus: WritableSignal<string> = signal(this.defaultValue);
 
-  severityOptions = computed(() =>
-    Array.from(new Set(this.issues().map((issue) => issue.severity))),
-  );
-  statusOptions = computed(() =>
-    Array.from(new Set(this.issues().flatMap((issue) => issue.status))),
-  );
+  severityOptions = computed(() => Array.from(new Set(this.issues().map((issue) => issue.severity))));
+  statusOptions = computed(() => Array.from(new Set(this.issues().flatMap((issue) => issue.status))));
 
   startDate: WritableSignal<Date | null> = signal(null);
   endDate: WritableSignal<Date | null> = signal(null);
-  isDateRangeValid = computed(
-    () => this.startDate() !== null && this.endDate() !== null,
-  );
+  isDateRangeValid = computed(() => this.startDate() !== null && this.endDate() !== null);
 
   controls: SentinelControlItem[] = [];
 
   constructor(
-    private data: DataService,
+    private getVulnerabilitiesService: IssuePageGetVulnerabilitiesQueryService,
+    private updateStatusService: IssuePageUpdateVulnerabilityStatusMutationService,
     private route: ActivatedRoute,
     private changeDetector: ChangeDetectorRef,
   ) {
@@ -152,14 +146,11 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['severity']) {
         if (params['severity'] !== 'All') {
           this.selectedSeverity.set(params['severity'].toLowerCase());
-          this.filterDictionary.set(
-            'severity',
-            params['severity'].toLowerCase(),
-          );
+          this.filterDictionary.set('severity', params['severity'].toLowerCase());
         }
       }
     });
@@ -168,30 +159,25 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.dataLoading = true;
 
-    this.data.getVulnerabilities().subscribe({
-      next: (vulnerabilties) => {
-        this.vulnerabilties = vulnerabilties;
-
-        console.log('Fetched Vulnerabilities:', this.vulnerabilties);
-
-        this.processIssues();
-
-        if (this.vulnerabilties.length > 0) {
-          this.dataLoaded = true;
-        } else {
-          this.emptyResponse = true;
-        }
-        this.dataLoading = false;
-
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.errorResponse = error;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
-    });
+    this.getVulnerabilitiesService
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const vulnerabilities = result.data.vulnerabilities;
+          this.processIssues(vulnerabilities);
+          this.dataLoaded = vulnerabilities.length > 0;
+          this.emptyResponse = vulnerabilities.length === 0;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.errorResponse = error;
+          this.dataLoading = false;
+          this.changeDetector.detectChanges();
+        },
+      });
 
     this.filters.push({
       name: 'severity',
@@ -244,10 +230,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       for (let [key, value] of map) {
         // Name filter (CVE ID)
         if (key === 'name') {
-          isMatch =
-            value === 'All' ||
-            value == '' ||
-            record.name.toLowerCase().includes(value.trim().toLowerCase());
+          isMatch = value === 'All' || value == '' || record.name.toLowerCase().includes(value.trim().toLowerCase());
           if (!isMatch) return false;
         } else if (key === 'dateRange') {
           if (!value || value === '') {
@@ -258,18 +241,12 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
           const dateRange = JSON.parse(value);
           const startDate = new Date(dateRange.start);
           const endDate = new Date(dateRange.end);
-          const lastSeenDate = record.last_seen
-            ? new Date(record.last_seen)
-            : null;
-          isMatch =
-            !lastSeenDate ||
-            (lastSeenDate >= startDate && lastSeenDate <= endDate);
+          const lastSeenDate = record.last_seen ? new Date(record.last_seen) : null;
+          isMatch = !lastSeenDate || (lastSeenDate >= startDate && lastSeenDate <= endDate);
 
           if (!isMatch) return false;
         } else if (key === 'status') {
-          isMatch =
-            value == 'All' ||
-            (record[key as keyof Issue] as string[]).includes(value);
+          isMatch = value == 'All' || (record[key as keyof Issue] as string[]).includes(value);
           if (!isMatch) return false;
         } else {
           isMatch = value == 'All' || record[key as keyof Issue] == value;
@@ -288,9 +265,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   applySelectFilter(event: MatSelectChange, filter: Filter) {
     this.filterDictionary.set(filter.name, event.value);
 
-    var jsonString = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    var jsonString = JSON.stringify(Array.from(this.filterDictionary.entries()));
 
     this.dataSource.filter = jsonString;
 
@@ -298,12 +273,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
 
-    console.log(
-      'Applied Filter:',
-      event.value,
-      filter.name,
-      this.dataSource.filter,
-    );
+    console.log('Applied Filter:', event.value, filter.name, this.dataSource.filter);
   }
 
   /**
@@ -311,9 +281,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
    */
   applyNameFilter(): void {
     this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -333,9 +301,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
           end: this.endDate()?.toISOString(),
         }),
       );
-      this.dataSource.filter = JSON.stringify(
-        Array.from(this.filterDictionary.entries()),
-      );
+      this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     }
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -346,9 +312,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   useSeverityFilter(severity: string): void {
     this.selectedSeverity.set(severity);
     this.filterDictionary.set('severity', severity);
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -358,9 +322,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   useStatusFilter(status: string): void {
     this.selectedStatus.set(status);
     this.filterDictionary.set('status', status);
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -368,9 +330,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
 
   clearDateFilter(): void {
     this.filterDictionary.set('dateRange', '');
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+    this.dataSource.filter = JSON.stringify(Array.from(this.filterDictionary.entries()));
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -420,25 +380,21 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     return (indexA < indexB ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
-  private processIssues(): void {
-    console.log('Processing Vulnerabilities:', this.vulnerabilties);
+  private processIssues(vulnerabilities: IssuePageGetVulnerabilitiesQuery['vulnerabilities']): void {
     this.issues.set(
-      this.vulnerabilties.map((vuln, index) => ({
-        ...this.vulnerabilties[index], // Spread CVE properties
-        name: vuln.cve_id ?? `unknown`, // Fallback if cve_id is null, should not happen
-        severity: vuln.cvss_v31?.base_severity.toLowerCase() ?? 'unknown', // Fallback if base_severity is null
-        status: vuln.status ?? ['estimated'], //index % 3 === 0 ? ["confirmed", "reassessed"] : index % 7 === 0 ? ["resolved"] : index % 10 === 0 ? ["closed"] :
-        description: vuln.description,
-        last_seen: vuln.published ? new Date(vuln.published) : null,
-        impact: vuln.result_impacts
-          ? vuln.result_impacts.join(', ')
-          : 'No impact data available',
-      })),
+      vulnerabilities
+        .filter((vuln) => vuln.cve != null)
+        .map((vuln) => ({
+          name: vuln.cve!.cve_id,
+          severity: vuln.cve!.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown',
+          status: vuln.status ?? ['estimated'],
+          description: vuln.cve!.description,
+          last_seen: vuln.cve!.published ? new Date(vuln.cve!.published) : null,
+          impact: vuln.cve!.result_impacts?.filter(Boolean).join(', ') ?? 'No impact data available',
+        })),
     );
 
     this.dataSource.data = this.issues();
-
-    console.log('Processed Issues:', this.issues(), this.dataSource.data);
 
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
@@ -449,9 +405,7 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
   }
 
   updateVulnerabilityStatus(issue: Issue, newStatus: string[]): void {
-    const vulnIndex = this.issues().findIndex(
-      (vuln) => vuln.name === issue.name,
-    );
+    const vulnIndex = this.issues().findIndex((vuln) => vuln.name === issue.name);
     if (vulnIndex !== -1) {
       const updatedIssues = [...this.issues()];
       updatedIssues[vulnIndex] = {
@@ -466,6 +420,11 @@ export class IssuePageComponent implements OnInit, AfterViewInit {
     }
 
     // Change status in the DB as well
-    this.data.updateVulnerabilityStatus(issue.name, newStatus);
+    this.updateStatusService
+      .mutate({ cve: issue.name, status: newStatus })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        error: (error) => console.error('Error running mutation', error),
+      });
   }
 }

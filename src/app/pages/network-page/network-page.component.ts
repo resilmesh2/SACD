@@ -3,7 +3,8 @@ import { Node, Edge, NgxGraphModule } from '@swimlane/ngx-graph';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import _ from 'lodash';
-import { DataService } from '../../services/data.service';
+import { NetworkPageService } from './network-page.service';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +19,7 @@ import { SentinelControlItem } from '@sentinel/components/controls';
   selector: 'network-page',
   templateUrl: './network-page.component.html',
   styleUrls: ['./network-page.component.scss'],
+  providers: [NetworkPageService],
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -42,7 +44,7 @@ export class NetworkPageComponent implements OnInit {
   controls: SentinelControlItem[] = [];
 
   constructor(
-    private dataService: DataService,
+    private networkPageService: NetworkPageService,
     private route: ActivatedRoute,
   ) {
     this.route.queryParams.subscribe((params) => {
@@ -70,7 +72,7 @@ export class NetworkPageComponent implements OnInit {
     this.errorMessage = '';
     this.selectedNode = { id: '', label: '' };
 
-    this.dataService.getIPNode(this.ipSearch).subscribe({
+    this.networkPageService.getIPNode(this.ipSearch).subscribe({
       next: (res) => {
         console.log('Graph data loaded', res);
         this.edges = res.edges;
@@ -114,21 +116,17 @@ export class NetworkPageComponent implements OnInit {
     delete attr.textColor;
     delete attr.type;
     delete attr.labelName;
-    return Object.entries(attr).filter(
-      (a) => typeof a[1] === 'string' || typeof a[1] === 'number',
-    );
+    return Object.entries(attr).filter((a) => typeof a[1] === 'string' || typeof a[1] === 'number');
   }
 
   public getLabel(node: Node) {
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
   }
 
   public expandNode(node: Node) {
-    this.dataService.getNodeNeighbours(node).subscribe({
+    this.networkPageService.getNodeNeighbours(node).subscribe({
       next: (res) => {
-        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) =>
-          [e.source, e.target, e.label].join(),
-        );
+        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) => [e.source, e.target, e.label].join());
         this.nodes = _.unionBy(this.nodes, res.nodes, (n: Node) => n.id);
 
         if (this.nodes.length === 0 && this.edges.length === 0) {

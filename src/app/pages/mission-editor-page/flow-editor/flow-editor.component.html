@@ -6,41 +6,21 @@
     >
         Print Nodes
     </sentinel-button-with-icon> -->
-  <sentinel-button-with-icon
-    color="primary"
-    icon="park"
-    (click)="addNewMissionRoot()"
-  >
+  <sentinel-button-with-icon color="primary" icon="park" (click)="addNewMissionRoot()">
     Add New Mission Root
   </sentinel-button-with-icon>
-  <sentinel-button-with-icon
-    color="primary"
-    icon="call_split"
-    (click)="addComponentGroup()"
-  >
+  <sentinel-button-with-icon color="primary" icon="call_split" (click)="addComponentGroup()">
     Add Service 'OR Group'
   </sentinel-button-with-icon>
-  <sentinel-button-with-icon
-    color="primary"
-    icon="shapes"
-    (click)="addComponentNode()"
-  >
+  <sentinel-button-with-icon color="primary" icon="shapes" (click)="addComponentNode()">
     Add Service Node
   </sentinel-button-with-icon>
 
-  <sentinel-button-with-icon
-    color="primary"
-    icon="device_hub"
-    (click)="addHostGroup()"
-  >
+  <sentinel-button-with-icon color="primary" icon="device_hub" (click)="addHostGroup()">
     Add Host 'OR' Group
   </sentinel-button-with-icon>
 
-  <sentinel-button-with-icon
-    color="primary"
-    icon="host"
-    (click)="addHostNode()"
-  >
+  <sentinel-button-with-icon color="primary" icon="host" (click)="addHostNode()">
     Add Host Node
   </sentinel-button-with-icon>
 
@@ -76,57 +56,25 @@
         [fInputId]="connection.to"
         fBehavior="floating"
       >
-        <svg
-          viewBox="0 0 700 700"
-          fMarker
-          [type]="eMarkerType.END"
-          [height]="5"
-          [width]="5"
-          [refX]="4"
-          [refY]="2.5"
-        >
+        <svg viewBox="0 0 700 700" fMarker [type]="eMarkerType.END" [height]="5" [width]="5" [refX]="4" [refY]="2.5">
           <path fill="#343F5D" d="M0,0L700,350L0,700L150,350z" />
         </svg>
       </f-connection>
     }
     <ng-container ngProjectAs="[fNodes]">
       @for (node of nodes(); track node.id) {
-        @if (node.type === "root") {
-          <div
-            fNode
-            fDragHandle
-            [fNodePosition]="node.position"
-            class="node--root"
-            [fNodeId]="node.id"
-          >
-            <div
-              fNodeOutput
-              fOutputId="{{ node.id }}-output"
-              class="bottom"
-              [fOutputMultiple]="false"
-            ></div>
+        @if (node.type === 'root') {
+          <div fNode fDragHandle [fNodePosition]="node.position" class="node--root" [fNodeId]="node.id">
+            <div fNodeOutput fOutputId="{{ node.id }}-output" class="bottom" [fOutputMultiple]="false"></div>
             <div class="content">
               {{
-                missionsMap()[node.id] && missionsMap()[node.id].name != ""
-                  ? missionsMap()[node.id].name
-                  : "MISSION"
+                missionsMap()[node.id] && missionsMap()[node.id].name != '' ? missionsMap()[node.id].name : 'MISSION'
               }}
             </div>
           </div>
-        } @else if (node.type === "and") {
-          <div
-            fNode
-            fDragHandle
-            [fNodePosition]="node.position"
-            class="node--and"
-            [fNodeId]="node.id"
-          >
-            <div
-              fNodeInput
-              fInputId="{{ node.id }}-input"
-              class="top"
-              [fInputMultiple]="false"
-            ></div>
+        } @else if (node.type === 'and') {
+          <div fNode fDragHandle [fNodePosition]="node.position" class="node--and" [fNodeId]="node.id">
+            <div fNodeInput fInputId="{{ node.id }}-input" class="top" [fInputMultiple]="false"></div>
             <div
               fNodeOutput
               fOutputId="{{ node.id }}-output"
@@ -138,21 +86,12 @@
             <div class="mark--{{ node.layer }}"></div>
             @if (node.validation.error) {
               <ng-container
-                *ngTemplateOutlet="
-                  validationErrorTemplate;
-                  context: { reason: node.validation.reason }
-                "
+                *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"
               ></ng-container>
             }
           </div>
-        } @else if (node.type === "or") {
-          <div
-            fNode
-            fDragHandle
-            [fNodePosition]="node.position"
-            class="node--or"
-            [fNodeId]="node.id"
-          >
+        } @else if (node.type === 'or') {
+          <div fNode fDragHandle [fNodePosition]="node.position" class="node--or" [fNodeId]="node.id">
             <div
               fNodeInput
               fInputId="{{ node.id }}-input"
@@ -171,21 +110,12 @@
             <div class="mark--{{ node.layer }}"></div>
             @if (node.validation.error) {
               <ng-container
-                *ngTemplateOutlet="
-                  validationErrorTemplate;
-                  context: { reason: node.validation.reason }
-                "
+                *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"
               ></ng-container>
             }
           </div>
-        } @else if (node.type === "component") {
-          <div
-            fNode
-            fDragHandle
-            [fNodePosition]="node.position"
-            class="node--component"
-            [fNodeId]="node.id"
-          >
+        } @else if (node.type === 'component') {
+          <div fNode fDragHandle [fNodePosition]="node.position" class="node--component" [fNodeId]="node.id">
             <div
               fNodeInput
               fInputId="{{ node.id }}-input"
@@ -194,9 +124,7 @@
               fInputCategory="{{ node.layer }}"
             ></div>
             <div class="content">
-              <div class="title">
-                {{ node.data.name || "SERVICE" }} (ID: {{ node.id }})
-              </div>
+              <div class="title">{{ node.data.name || 'SERVICE' }} (ID: {{ node.id }})</div>
               <button
                 class="action component-edit"
                 matIconButton
@@ -204,23 +132,13 @@
                 cdkOverlayOrigin
                 #trigger="cdkOverlayOrigin"
               >
-                <mat-icon fontSet="material-icons" aria-label="Edit component"
-                  >edit</mat-icon
-                >
+                <mat-icon fontSet="material-icons" aria-label="Edit component">edit</mat-icon>
               </button>
             </div>
-            <div
-              fNodeOutput
-              fOutputId="{{ node.id }}-output"
-              class="bottom"
-              [fOutputMultiple]="false"
-            ></div>
+            <div fNodeOutput fOutputId="{{ node.id }}-output" class="bottom" [fOutputMultiple]="false"></div>
             @if (node.validation.error) {
               <ng-container
-                *ngTemplateOutlet="
-                  validationErrorTemplate;
-                  context: { reason: node.validation.reason }
-                "
+                *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"
               ></ng-container>
             }
             <ng-template
@@ -244,32 +162,20 @@
                   />
                   <mat-autocomplete #auto="matAutocomplete">
                     @for (component of existingComponents(); track component) {
-                      <mat-option [value]="component">{{
-                        component
-                      }}</mat-option>
+                      <mat-option [value]="component">{{ component }}</mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
                 <div class="node-editor-action">
-                  <sentinel-button-with-icon
-                    color="primary"
-                    icon="close"
-                    (click)="node.isEditing = false"
-                  >
+                  <sentinel-button-with-icon color="primary" icon="close" (click)="node.isEditing = false">
                     Close
                   </sentinel-button-with-icon>
                 </div>
               </div>
             </ng-template>
           </div>
-        } @else if (node.type === "host") {
-          <div
-            fNode
-            fDragHandle
-            [fNodePosition]="node.position"
-            class="node--host"
-            [fNodeId]="node.id"
-          >
+        } @else if (node.type === 'host') {
+          <div fNode fDragHandle [fNodePosition]="node.position" class="node--host" [fNodeId]="node.id">
             <div
               fNodeInput
               fInputId="{{ node.id }}-input"
@@ -279,7 +185,7 @@
             ></div>
 
             <div class="content">
-              <div>{{ node.data.hostname || "HOST" }} (ID: {{ node.id }})</div>
+              <div>{{ node.data.hostname || 'HOST' }} (ID: {{ node.id }})</div>
               <button
                 class="action host-edit"
                 matIconButton
@@ -287,18 +193,13 @@
                 cdkOverlayOrigin
                 #trigger="cdkOverlayOrigin"
               >
-                <mat-icon fontSet="material-icons" aria-label="Edit host"
-                  >edit</mat-icon
-                >
+                <mat-icon fontSet="material-icons" aria-label="Edit host">edit</mat-icon>
               </button>
             </div>
 
             @if (node.validation.error) {
               <ng-container
-                *ngTemplateOutlet="
-                  validationErrorTemplate;
-                  context: { reason: node.validation.reason }
-                "
+                *ngTemplateOutlet="validationErrorTemplate; context: { reason: node.validation.reason }"
               ></ng-container>
             }
 
@@ -340,18 +241,12 @@
                   />
                   <mat-autocomplete #ipAutocomplete="matAutocomplete">
                     @for (ip of existingIPs(); track ip) {
-                      <mat-option [value]="ip.address">{{
-                        ip.address
-                      }}</mat-option>
+                      <mat-option [value]="ip.address">{{ ip.address }}</mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
                 <div class="node-editor-action">
-                  <sentinel-button-with-icon
-                    color="primary"
-                    icon="close"
-                    (click)="node.isEditing = false"
-                  >
+                  <sentinel-button-with-icon color="primary" icon="close" (click)="node.isEditing = false">
                     Close
                   </sentinel-button-with-icon>
                 </div>

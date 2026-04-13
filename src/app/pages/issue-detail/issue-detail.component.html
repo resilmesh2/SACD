@@ -1,10 +1,5 @@
 <div class="top-bar">
-  <sentinel-button-with-icon
-    color="primary"
-    icon="arrow_back"
-    tooltip="Back to Vulnerabilities"
-    (click)="goBack()"
-  >
+  <sentinel-button-with-icon color="primary" icon="arrow_back" tooltip="Back to Vulnerabilities" (click)="goBack()">
     Vulnerabilities
   </sentinel-button-with-icon>
 
@@ -49,11 +44,7 @@
 @if (dataLoaded && !emptyResponse && !errorResponse && !dataLoading) {
   <div>
     <!-- You can add more elements here if needed within this condition -->
-    <table
-      mat-table
-      [dataSource]="dataSource"
-      class="mat-table full-width-table"
-    >
+    <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
       <!-- Affected Asset Column -->
       <ng-container matColumnDef="affectedAsset">
         <th mat-header-cell *matHeaderCellDef>Affected Asset</th>
@@ -90,11 +81,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    <mat-paginator
-      [pageSize]="25"
-      [pageSizeOptions]="[25, 50, 100]"
-      showFirstLastButtons
-    ></mat-paginator>
+    <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>
 } @else if (errorResponse) {
   <div class="error-message">

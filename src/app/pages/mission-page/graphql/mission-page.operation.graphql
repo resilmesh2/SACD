@@ -1,0 +1,11 @@
+query MissionPageGetNames {
+  missions {
+    name
+  }
+}
+
+query MissionPageGetMission($name: String!) {
+  missions(where: { name: $name }) {
+    ...MissionPageMission
+  }
+}

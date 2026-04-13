@@ -1,10 +1,5 @@
 <div class="top-bar">
-  <sentinel-button-with-icon
-    color="primary"
-    icon="arrow_back"
-    tooltip="Back to organization units"
-    (click)="goBack()"
-  >
+  <sentinel-button-with-icon color="primary" icon="arrow_back" tooltip="Back to organization units" (click)="goBack()">
     Back to organization units
   </sentinel-button-with-icon>
 </div>
@@ -16,35 +11,24 @@
 <div class="org-unit-details">
   <div class="org-unit-line">
     <strong>Subnets: </strong>
-    @for (
-      subnet of orgUnitDetail()?.subnets || [];
-      track subnet;
-      let index = $index
-    ) {
-      <a
-        (click)="navigateToSubnetDetail(subnet.range)"
-        class="org-unit-detail-link"
-      >
+    @for (subnet of orgUnitDetail()?.subnets || []; track subnet; let index = $index) {
+      <a (click)="navigateToSubnetDetail(subnet.range)" class="org-unit-detail-link">
         {{ subnet.range }}
       </a>
     }
   </div>
   <div class="org-unit-line">
     <strong>Contacts: </strong>
-    <span>{{
-      orgUnitDetail()?.contacts && (orgUnitDetail()?.contacts?.length ?? 0) > 0
-        ? orgUnitDetail()?.contacts?.join(", ")
-        : "N/A"
-    }}</span>
+    <span>{{ getContactNames() }}</span>
   </div>
   <div class="org-unit-line">
     <strong>Part of: </strong>
-    @if (orgUnitDetail()?.parentOrgUnit) {
+    @if (orgUnitDetail()?.parent_org_unit?.at(0)?.name) {
       <a
-        (click)="navigateToOrgUnitDetail(orgUnitDetail()?.parentOrgUnit ?? '')"
+        (click)="navigateToOrgUnitDetail(orgUnitDetail()?.parent_org_unit?.at(0)?.name ?? '')"
         class="org-unit-detail-link"
       >
-        {{ orgUnitDetail()?.parentOrgUnit || "N/A" }}
+        {{ orgUnitDetail()?.parent_org_unit?.at(0)?.name || 'N/A' }}
       </a>
     } @else {
       <span>N/A</span>
@@ -70,11 +54,7 @@
 @if (dataLoaded && !emptyResponse && !errorResponse && !dataLoading) {
   <div>
     <!-- You can add more elements here if needed within this condition -->
-    <table
-      mat-table
-      [dataSource]="dataSource"
-      class="mat-table full-width-table"
-    >
+    <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
       <!-- IP Column -->
       <ng-container matColumnDef="ip">
         <th mat-header-cell *matHeaderCellDef>IP Address</th>
@@ -85,7 +65,7 @@
       <ng-container matColumnDef="subnet">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Subnet</th>
         <td mat-cell *matCellDef="let childIP">
-          {{ childIP.subnet || "N/A" }}
+          {{ childIP.subnet || 'N/A' }}
           <!-- <a (click)="navigateToSubnetDetail(childIP.subnet)" class="subnet-detail-link">
                     {{ childIP.subnet || 'N/A' }}
                 </a> -->
@@ -96,7 +76,7 @@
       <ng-container matColumnDef="softwareVersion">
         <th mat-header-cell *matHeaderCellDef>Software Version</th>
         <td mat-cell *matCellDef="let childIP">
-          {{ childIP.softwareVersion?.join(", ") ?? "N/A" }}
+          {{ childIP.softwareVersion?.join(', ') ?? 'N/A' }}
         </td>
       </ng-container>
 
@@ -112,11 +92,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    <mat-paginator
-      [pageSize]="25"
-      [pageSizeOptions]="[25, 50, 100]"
-      showFirstLastButtons
-    ></mat-paginator>
+    <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>
 } @else if (errorResponse) {
   <div class="error-message">

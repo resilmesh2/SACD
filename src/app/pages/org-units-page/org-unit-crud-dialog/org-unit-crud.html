@@ -9,7 +9,7 @@
     <mat-select [(value)]="parentOrgUnit">
       <mat-option value="null">---</mat-option>
       @for (orgUnit of allOrgUnits(); track orgUnit) {
-        <mat-option [value]="orgUnit.name">{{ orgUnit.name }}</mat-option>
+      <mat-option [value]="orgUnit.name">{{ orgUnit.name }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -18,27 +18,27 @@
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Cancel</button>
   @if (data.mode === "edit") {
-    <sentinel-button-with-icon
-      color="primary"
-      icon="save"
-      tooltip=""
-      (click)="editOrgUnit()"
-      mat-dialog-close
-      cdkFocusInitial
-    >
-      Save
-    </sentinel-button-with-icon>
+  <sentinel-button-with-icon
+    color="primary"
+    icon="save"
+    tooltip=""
+    (click)="editOrgUnit()"
+    mat-dialog-close
+    cdkFocusInitial
+  >
+    Save
+  </sentinel-button-with-icon>
   } @else if (data.mode === "insert") {
-    <sentinel-button-with-icon
-      color="primary"
-      icon="add"
-      tooltip=""
-      (click)="insertOrgUnit()"
-      cdkFocusInitial
-      [disabled]="!name()"
-    >
-      Insert
-    </sentinel-button-with-icon>
+  <sentinel-button-with-icon
+    color="primary"
+    icon="add"
+    tooltip=""
+    (click)="insertOrgUnit()"
+    cdkFocusInitial
+    [disabled]="!name()"
+  >
+    Insert
+  </sentinel-button-with-icon>
   }
 </mat-dialog-actions>
 

@@ -156,9 +156,7 @@ export class MissionGraphComponent implements OnInit, OnChanges {
       for (let i = 0; i < 4; i++) {
         structureJSON.relationships.one_way.forEach((r) => {
           if (this.disabledNodes.includes(r.to)) {
-            const index = nodes.findIndex(
-              (node) => node.id === r.from.toString(),
-            );
+            const index = nodes.findIndex((node) => node.id === r.from.toString());
             if (nodes[index].label !== 'OR') {
               nodes[index].data.disabled = true;
               this.disabledNodes.push(r.from);
@@ -187,10 +185,7 @@ export class MissionGraphComponent implements OnInit, OnChanges {
   }
 
   selectNode(node: Node) {
-    if (
-      this.setSelectedNode &&
-      (node.data.type === 'mission' || node.data.type === 'host')
-    ) {
+    if (this.setSelectedNode && (node.data.type === 'mission' || node.data.type === 'host')) {
       this.setSelectedNode(node);
     }
   }

@@ -1,12 +1,10 @@
-import { Component } from '@angular/core';
-import {
-  HighchartsChartDirective,
-  providePartialHighcharts,
-} from 'highcharts-angular';
-import { DataService } from '../../services/data.service';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { Router } from '@angular/router';
 import { SUBNETS_PATH } from '../../paths';
+import { GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.operation.generated';
 
 @Component({
   templateUrl: './topology.component.html',
@@ -15,16 +13,13 @@ import { SUBNETS_PATH } from '../../paths';
   providers: [
     providePartialHighcharts({
       modules: () => {
-        return [
-          import('highcharts/esm/highcharts-more'),
-          import('highcharts/modules/boost'),
-        ];
+        return [import('highcharts/esm/highcharts-more'), import('highcharts/modules/boost')];
       },
       timeout: 900,
     }),
   ],
 })
-export class TopologyComponent {
+export class TopologyComponent implements OnInit {
   chartOptions: Highcharts.Options = this.buildChartOptions([]);
   drilledInto: string | null = null;
   private chartRef: Highcharts.Chart | null = null;
@@ -33,20 +28,27 @@ export class TopologyComponent {
     data: { name: string; value: number }[];
   }[] = [];
 
-  constructor(
-    private data: DataService,
-    private router: Router,
-  ) {
-    this.data.getOrgUnits().subscribe((units) => {
-      this.allSeries = units.map((unit) => ({
-        name: unit.name,
-        data: unit.subnets.map((subnet: { range: string }) => ({
-          name: subnet.range,
-          value: 32 - parseInt(subnet.range.split('/')[1]) || 1,
-        })),
-      }));
-      this.chartOptions = this.buildChartOptions(this.allSeries);
-    });
+  private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
+
+  constructor(private getAllOrgUnits: GetAllOrgUnitsQueryService) {}
+
+  ngOnInit(): void {
+    this.getAllOrgUnits
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.allSeries = result.data.organizationUnits.map((unit) => ({
+            name: unit.name,
+            data: unit.subnets.map((subnet) => ({
+              name: subnet.range,
+              value: 32 - parseInt(subnet.range.split('/')[1]) || 1,
+            })),
+          }));
+          this.chartOptions = this.buildChartOptions(this.allSeries);
+        },
+      });
   }
 
   onChartInstance(chart: Highcharts.Chart): void {
@@ -77,9 +79,7 @@ export class TopologyComponent {
     this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
 
-  private buildChartOptions(
-    series: { name: string; data: { name: string; value: number }[] }[],
-  ): Highcharts.Options {
+  private buildChartOptions(series: { name: string; data: { name: string; value: number }[] }[]): Highcharts.Options {
     return {
       chart: {
         type: 'packedbubble',
@@ -123,9 +123,7 @@ export class TopologyComponent {
                 }
                 if (e.point.value > 1) {
                   this.navigateToSubnetDetail(e.point.name);
-                  console.log(
-                    `Clicked on ${e.point.name} with value ${e.point.value}`,
-                  );
+                  console.log(`Clicked on ${e.point.name} with value ${e.point.value}`);
                 }
               },
             },

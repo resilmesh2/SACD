@@ -1,0 +1,11 @@
+query IssuePageGetVulnerabilities {
+  vulnerabilities {
+    ...IssuePageVulnerability
+  }
+}
+
+mutation IssuePageUpdateVulnerabilityStatus($cve: String!, $status: [String]!) {
+  updateVulnerabilityStatus(cve: $cve, status: $status) {
+    status
+  }
+}

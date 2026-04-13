@@ -1,12 +1,7 @@
 <h1>Subnets</h1>
 <!-- Top button bar -->
 <div class="top-bar">
-  <sentinel-button-with-icon
-    color="primary"
-    icon="add"
-    tooltip=""
-    (click)="openDialog('0ms', '0ms', {}, 'insert')"
-  >
+  <sentinel-button-with-icon color="primary" icon="add" tooltip="" (click)="openDialog('0ms', '0ms', {}, 'insert')">
     Insert new subnet
   </sentinel-button-with-icon>
   <sentinel-button-with-icon
@@ -25,9 +20,7 @@
 } @else if (errorResponse) {
   <ng-container>
     <p class="error">
-      <strong>Error fetching data from GraphQL API.</strong><br /><span
-        >Error message: {{ errorResponse }}</span
-      >
+      <strong>Error fetching data from GraphQL API.</strong><br /><span>Error message: {{ errorResponse }}</span>
     </p>
   </ng-container>
 } @else if (emptyResponse) {
@@ -52,10 +45,7 @@
         <ng-container matColumnDef="range">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Range</th>
           <td mat-cell *matCellDef="let row">
-            <a
-              (click)="navigateToSubnetDetail(row.range)"
-              class="subnet-detail-link"
-            >
+            <a (click)="navigateToSubnetDetail(row.range)" class="subnet-detail-link">
               {{ row.range }}
             </a>
           </td>
@@ -63,22 +53,14 @@
 
         <!-- Subnet orgUnits column -->
         <ng-container matColumnDef="org_units">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Organizational Unit
-          </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Organizational Unit</th>
           <td mat-cell *matCellDef="let row">
-            @if (
-              row.organizationUnit === "" || row.organizationUnit === "---"
-            ) {
-              <span class="no-parent">---</span>
-            } @else {
-              <!-- If there is a parent subnet, display it as a link -->
-              <a
-                (click)="navigateToOrgUnitDetail(row.organizationUnit)"
-                class="subnet-detail-link"
-              >
-                {{ row.organizationUnit }}
+            @if (row.org_units.at(0)?.name) {
+              <a (click)="navigateToOrgUnitDetail(row.org_units.at(0)!.name)" class="subnet-detail-link">
+                {{ row.org_units.at(0)!.name }}
               </a>
+            } @else {
+              <span class="no-parent">---</span>
             }
           </td>
         </ng-container>
@@ -87,9 +69,7 @@
         <ng-container matColumnDef="contacts">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Contacts</th>
           <td mat-cell *matCellDef="let row">
-            <span class="subnet-contacts">{{
-              row.contacts.length > 0 ? row.contacts.join(", ") : "---"
-            }}</span>
+            <span class="subnet-contacts">{{ getContactNames(row) }}</span>
           </td>
         </ng-container>
 
@@ -97,16 +77,12 @@
         <ng-container matColumnDef="parent_subnet">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Part of</th>
           <td mat-cell *matCellDef="let row">
-            @if (row.parentSubnet === "") {
-              <span class="no-parent">---</span>
-            } @else {
-              <!-- If there is a parent subnet, display it as a link -->
-              <a
-                (click)="navigateToSubnetDetail(row.parentSubnet)"
-                class="subnet-detail-link"
-              >
-                {{ row.parentSubnet }}
+            @if (row.parent_subnet.at(0)?.range) {
+              <a (click)="navigateToSubnetDetail(row.parent_subnet.at(0)!.range)" class="subnet-detail-link">
+                {{ row.parent_subnet.at(0)!.range }}
               </a>
+            } @else {
+              <span class="no-parent">---</span>
             }
           </td>
         </ng-container>
@@ -123,23 +99,11 @@
 
           <td mat-cell *matCellDef="let row">
             <div class="actions">
-              <button
-                class="action"
-                matIconButton
-                (click)="openDialog('0ms', '0ms', row, 'edit')"
-              >
-                <mat-icon fontSet="material-icons" aria-label="Edit subnet"
-                  >edit</mat-icon
-                >
+              <button class="action" matIconButton (click)="openDialog('0ms', '0ms', row, 'edit')">
+                <mat-icon fontSet="material-icons" aria-label="Edit subnet">edit</mat-icon>
               </button>
-              <button
-                class="action destructive"
-                matIconButton
-                (click)="deleteSubnet(row)"
-              >
-                <mat-icon fontSet="material-icons" aria-label="Delete subnet"
-                  >delete</mat-icon
-                >
+              <button class="action destructive" matIconButton (click)="deleteSubnet(row)">
+                <mat-icon fontSet="material-icons" aria-label="Delete subnet">delete</mat-icon>
               </button>
             </div>
           </td>
@@ -153,11 +117,7 @@
           <td class="mat-cell" colspan="4">No data</td>
         </tr>
       </table>
-      <mat-paginator
-        [pageSize]="25"
-        [pageSizeOptions]="[25, 50, 200, 500]"
-        showFirstLastButtons
-      ></mat-paginator>
+      <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 200, 500]" showFirstLastButtons></mat-paginator>
     </div>
   </ng-container>
 }

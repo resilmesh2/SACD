@@ -12,10 +12,7 @@ export class MissionValidator {
     });
   }
 
-  validateMission(
-    nodes: WritableSignal<MissionNode[]>,
-    connections: WritableSignal<Connection[]>,
-  ): boolean {
+  validateMission(nodes: WritableSignal<MissionNode[]>, connections: WritableSignal<Connection[]>): boolean {
     let isValid = true;
     this.resetValidationStates(nodes);
 
@@ -37,11 +34,7 @@ export class MissionValidator {
             isValid = false;
           }
         } else if (node.type === 'component') {
-          const serviceValid = this.validateServiceNode(
-            node,
-            nodes,
-            connections(),
-          );
+          const serviceValid = this.validateServiceNode(node, nodes, connections());
           if (!serviceValid) {
             isValid = false;
           }
@@ -54,20 +47,12 @@ export class MissionValidator {
     return isValid;
   }
 
-  private checkIfNodeHasParent(
-    node: MissionNode,
-    nodes: MissionNode[],
-    connections: Connection[],
-  ): boolean {
+  private checkIfNodeHasParent(node: MissionNode, nodes: MissionNode[], connections: Connection[]): boolean {
     for (const conn of nodes) {
       if (conn.type === 'or' || conn.type === 'and') {
         const hasConnection = nodes.some(
           (n) =>
-            n.id === conn.id &&
-            connections.some(
-              (c) =>
-                c.from === `${conn.id}-output` && c.to === `${node.id}-input`,
-            ),
+            n.id === conn.id && connections.some((c) => c.from === `${conn.id}-output` && c.to === `${node.id}-input`),
         );
         if (hasConnection) {
           return true;
@@ -79,12 +64,8 @@ export class MissionValidator {
 
   /**
    * Service node must have OR/AND node as a parent and a name
-   *  */ 
-  private validateServiceNode(
-    node: MissionNode,
-    nodes: MissionNode[],
-    connections: Connection[],
-  ): boolean {
+   *  */
+  private validateServiceNode(node: MissionNode, nodes: MissionNode[], connections: Connection[]): boolean {
     if (!this.checkIfNodeHasParent(node, nodes, connections)) {
       node.validation.error = true;
       node.validation.reason = 'Service must have a parent OR/AND node.';
@@ -102,12 +83,8 @@ export class MissionValidator {
 
   /**
    * Host node must have OR/AND node as a parent and must have hostname and IP address
-   * */ 
-  private validateHostNode(
-    node: MissionNode,
-    nodes: MissionNode[],
-    connections: Connection[],
-  ): boolean {
+   * */
+  private validateHostNode(node: MissionNode, nodes: MissionNode[], connections: Connection[]): boolean {
     if (!this.checkIfNodeHasParent(node, nodes, connections)) {
       node.validation.error = true;
       node.validation.reason = 'Host node must have a parent OR/AND node.';
@@ -131,18 +108,10 @@ export class MissionValidator {
 
   /**
    * OR node must have AND node as a parent and at least one child
-   *  */ 
-  private validateORNode(
-    node: MissionNode,
-    nodes: MissionNode[],
-    connections: Connection[],
-  ): boolean {
+   *  */
+  private validateORNode(node: MissionNode, nodes: MissionNode[], connections: Connection[]): boolean {
     const hasANDParent = nodes.some(
-      (n) =>
-        n.type === 'and' &&
-        connections.some(
-          (c) => c.from === `${n.id}-output` && c.to === `${node.id}-input`,
-        ),
+      (n) => n.type === 'and' && connections.some((c) => c.from === `${n.id}-output` && c.to === `${node.id}-input`),
     );
 
     if (!hasANDParent) {
@@ -152,9 +121,7 @@ export class MissionValidator {
     }
 
     const hasChild = nodes.some((n) =>
-      connections.some(
-        (c) => c.from === `${node.id}-output` && c.to === `${n.id}-input`,
-      ),
+      connections.some((c) => c.from === `${node.id}-output` && c.to === `${n.id}-input`),
     );
 
     if (!hasChild) {
@@ -168,24 +135,16 @@ export class MissionValidator {
 
   /**
    * AND node must have at least one child
-   *  */ 
-  private validateANDNode(
-    node: MissionNode,
-    nodes: MissionNode[],
-    connections: Connection[],
-  ): boolean {
+   *  */
+  private validateANDNode(node: MissionNode, nodes: MissionNode[], connections: Connection[]): boolean {
     const hasChild = nodes.some((n) =>
-      connections.some(
-        (c) => c.from === `${node.id}-output` && c.to === `${n.id}-input`,
-      ),
+      connections.some((c) => c.from === `${node.id}-output` && c.to === `${n.id}-input`),
     );
 
     if (!hasChild) {
       node.validation.error = true;
       node.validation.reason =
-        node.id === '1'
-          ? 'Mission needs at least one service'
-          : 'Service needs at least one host';
+        node.id === '1' ? 'Mission needs at least one service' : 'Service needs at least one host';
       return false;
     }
 

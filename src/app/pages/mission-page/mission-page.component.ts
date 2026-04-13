@@ -1,13 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import {
-  Mission,
-  MissionStructure,
-} from '../../models/mission-structure.model';
-import { DataService } from '../../services/data.service';
+import { MissionStructure } from '../../models/mission-structure.model';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,6 +15,13 @@ import { MissionGraphComponent } from './mission-graph/mission-graph.component';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelControlItem } from '@sentinel/components/controls';
+import {
+  MissionPageGetNamesQueryService,
+  MissionPageGetMissionQueryService,
+  MissionPageGetMissionQuery,
+} from './graphql/mission-page.operation.generated';
+
+type MissionEntry = MissionPageGetMissionQuery['missions'][0];
 
 @Component({
   selector: 'mission-page',
@@ -42,6 +44,8 @@ import { SentinelControlItem } from '@sentinel/components/controls';
   ],
 })
 export class MissionPageComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
+
   errorMessage = '';
   missionNames: string[] = [''];
   selectedMissionName = '';
@@ -49,62 +53,97 @@ export class MissionPageComponent implements OnInit {
   setSelectedNode = (node: Node) => {
     this.selectedNode = node;
   };
-  missions: Mission[] = [];
   missionsStructure: MissionStructure | null = null;
   graphLoading: boolean = false;
 
   controls: SentinelControlItem[] = [];
 
-  constructor(private dataService: DataService) {}
+  constructor(
+    private getNamesService: MissionPageGetNamesQueryService,
+    private getMissionService: MissionPageGetMissionQueryService,
+  ) {}
 
   ngOnInit(): void {
-    this.dataService.getMissionNames().subscribe({
-      next: (missionNames: string[]) => {
-        this.missionNames = missionNames;
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Error fetching mission names'; // Handle errors
-      },
-    });
+    this.getNamesService
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.missionNames = result.data.missions.map((m) => m.name);
+        },
+        error: (error) => {
+          this.errorMessage = error.message || 'Error fetching mission names';
+        },
+      });
+
     this.getGraphData();
   }
 
   public getGraphData(): void {
     this.graphLoading = true;
-    this.getMissions().subscribe({
-      next: (missions) => {
-        this.missions = missions;
-        this.missionsStructure =
-          this.dataService.makeMissionsStructure(missions);
-        this.graphLoading = false;
-        this.errorMessage = '';
-      },
-      error: (error) => {
-        this.missions = [];
-        this.missionsStructure = null;
-        this.graphLoading = false;
-        this.errorMessage = error.message;
-      },
-    });
     this.selectedNode = null;
-  }
 
-  /**
-   * Returns an observable of missions
-   */
-  private getMissions(): Observable<Mission[]> {
-    return this.dataService.getMission(this.selectedMissionName).pipe(
-      tap((missions: Mission[]) => {
-        if (!this.missionsStructure) {
-          this.missionsStructure =
-            this.dataService.makeMissionsStructure(missions);
-        }
-      }),
-    );
+    this.getMissionService
+      .fetch({ name: this.selectedMissionName }, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.missionsStructure = this.makeMissionsStructure(result.data.missions);
+          this.graphLoading = false;
+          this.errorMessage = '';
+        },
+        error: (error) => {
+          this.missionsStructure = null;
+          this.graphLoading = false;
+          this.errorMessage = error.message;
+        },
+      });
   }
 
   public getLabel(node: Node) {
-    console.log('Getting label for node', node);
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
+  }
+
+  /**
+   * Gets structure parameter from each mission and merges them into one structure
+   * @param missions list of missions
+   */
+  private makeMissionsStructure(missions: MissionEntry[]): MissionStructure {
+    return missions.reduce(
+      (acc: MissionStructure, mission) => {
+        const structure: MissionStructure = JSON.parse(mission.structure);
+        return {
+          nodes: {
+            missions: [...acc.nodes.missions, ...structure.nodes.missions],
+            hosts: [...acc.nodes.hosts, ...structure.nodes.hosts],
+            services: [...acc.nodes.services, ...structure.nodes.services],
+            aggregations: {
+              or: [...acc.nodes.aggregations.or, ...structure.nodes.aggregations.or],
+              and: [...acc.nodes.aggregations.and, ...structure.nodes.aggregations.and],
+            },
+          },
+          relationships: {
+            two_way: [...acc.relationships.two_way, ...structure.relationships.two_way],
+            one_way: [...acc.relationships.one_way, ...structure.relationships.one_way],
+            supports: [...acc.relationships.supports, ...structure.relationships.supports],
+            has_identity: [...acc.relationships.has_identity, ...structure.relationships.has_identity],
+          },
+        };
+      },
+      {
+        nodes: {
+          missions: [],
+          hosts: [],
+          services: [],
+          aggregations: { or: [], and: [] },
+        },
+        relationships: {
+          two_way: [],
+          one_way: [],
+          supports: [],
+          has_identity: [],
+        },
+      },
+    );
   }
 }

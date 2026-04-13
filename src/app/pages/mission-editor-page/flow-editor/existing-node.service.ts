@@ -1,89 +1,62 @@
 import { Injectable } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
 import { map, Observable } from 'rxjs';
-import { IP } from '../../asset-page/asset-page.component';
+import { IP } from './flow-editor.component';
+import {
+  MissionEditorGetHostsQueryService,
+  MissionEditorGetIPsQueryService,
+  MissionEditorGetComponentsQueryService,
+} from '../graphql/mission-editor-page.operation.generated';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExistingNodeService {
-  constructor(private apollo: Apollo) {}
+  constructor(
+    private getHostsService: MissionEditorGetHostsQueryService,
+    private getIPsService: MissionEditorGetIPsQueryService,
+    private getComponentsService: MissionEditorGetComponentsQueryService,
+  ) {}
 
   public getHosts(): Observable<string[]> {
-    return this.apollo
-      .query<any>({
-        query: gql`
-          {
-            hosts {
-              hostname
-            }
-          }
-        `,
-      })
-      .pipe(
-        map((response) => {
-          if (response.data && response.data.hosts) {
-            return response.data.hosts
-              .map((host: any) => host.hostname)
-              .filter((hostname: string) => hostname && hostname.length > 0)
-              .sort((a: string, b: string) => a.localeCompare(b));
-          }
-          return [];
-        }),
-      );
+    return this.getHostsService.fetch({}, { fetchPolicy: 'network-only' }).pipe(
+      map((result) =>
+        result.data.hosts
+          .map((host) => host.hostname ?? '')
+          .filter((hostname) => hostname.length > 0)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    );
   }
 
   public getIPs(): Observable<IP[]> {
-    return this.apollo
-      .query<any>({
-        query: gql`
-          {
-            ips {
-              address
-            }
-          }
-        `,
-      })
-      .pipe(
-        map((response) => {
-          return response.data.ips
-            .filter((ip: IP) => ip.address && ip.address.length > 0)
+    return this.getIPsService.fetch({}, { fetchPolicy: 'network-only' }).pipe(
+      map(
+        (result) =>
+          result.data.ips
+            .filter((ip) => ip.address && ip.address.length > 0)
             .sort(
-              (a: IP, b: IP) =>
+              (a, b) =>
                 a.address
                   .split('.')
-                  .map((num) => parseInt(num, 10))
-                  .reduce((acc, num) => acc * 256 + num, 0) -
+                  .map((n) => parseInt(n, 10))
+                  .reduce((acc, n) => acc * 256 + n, 0) -
                 b.address
                   .split('.')
-                  .map((num) => parseInt(num, 10))
-                  .reduce((acc, num) => acc * 256 + num, 0),
-            );
-        }),
-      );
+                  .map((n) => parseInt(n, 10))
+                  .reduce((acc, n) => acc * 256 + n, 0),
+            ) as unknown as IP[],
+      ),
+    );
   }
 
   public getMissionComponents(): Observable<string[]> {
-    return this.apollo
-      .query<any>({
-        query: gql`
-          {
-            components(where: { missionsAggregate: { count_GT: 0 } }) {
-              name
-            }
-          }
-        `,
-      })
-      .pipe(
-        map((response) => {
-          if (response.data && response.data.components) {
-            return response.data.components
-              .map((component: any) => component.name)
-              .filter((name: string) => name && name.length > 0)
-              .sort((a: string, b: string) => a.localeCompare(b));
-          }
-          return [];
-        }),
-      );
+    return this.getComponentsService.fetch({}, { fetchPolicy: 'network-only' }).pipe(
+      map((result) =>
+        result.data.components
+          .map((component) => component.name)
+          .filter((name) => name && name.length > 0)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    );
   }
 }

@@ -1,21 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
-  SimpleChanges,
-  WritableSignal,
-} from '@angular/core';
-
-import { tap } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
-import {
-  Mission,
-  MissionStructure,
-} from '../../models/mission-structure.model';
-import { DataService } from '../../services/data.service';
+import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +17,9 @@ import { CustomLayout, Orientation } from '../../utils/custom-graph-layout';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
-import { OrgUnitData } from '../../models/org-unit.model';
+import { GetAllOrgUnitsQuery, GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.operation.generated';
+
+type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
 
 @Component({
   selector: 'org-graph-page',
@@ -54,7 +43,7 @@ import { OrgUnitData } from '../../models/org-unit.model';
 export class OrgGraphPageComponent implements OnInit {
   errorMessage = '';
   selectedNode: WritableSignal<Node | null> = signal(null);
-  orgUnits: WritableSignal<OrgUnitData[]> = signal([]);
+  orgUnits: WritableSignal<OrgUnit[]> = signal([]);
 
   customLayout: Layout = new CustomLayout(Orientation.BOTTOM_TO_TOP);
   center$ = new Subject<any>();
@@ -66,9 +55,10 @@ export class OrgGraphPageComponent implements OnInit {
   nodes: WritableSignal<Node[]> = signal([]);
   edges: WritableSignal<Edge[]> = signal([]);
 
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  constructor(private dataService: DataService) {}
+  constructor(private getAllOrgUnits: GetAllOrgUnitsQueryService) {}
 
   ngOnInit(): void {
     this.getGraphData();
@@ -76,65 +66,54 @@ export class OrgGraphPageComponent implements OnInit {
 
   public getGraphData(): void {
     this.graphLoading = true;
-    this.getOrgUnits().subscribe({
-      next: (orgUnits) => {
-        this.orgUnits.set(orgUnits);
-        console.log(this.dataService.converToGraph(this.orgUnits()));
-        this.orgUnits().sort((a, b) => {
-          return a.name.localeCompare(b.name);
-        });
-
-        this.setEdgesAndNodes();
-        this.graphLoading = false;
-        this.errorMessage = '';
-      },
-      error: (error) => {
-        this.orgUnits.set([]);
-        this.graphLoading = false;
-        this.errorMessage = error.message;
-      },
-    });
     this.selectedNode.set(null);
+
+    this.getAllOrgUnits
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          const orgUnits = [...result.data.organizationUnits].sort((a, b) => a.name.localeCompare(b.name));
+          this.orgUnits.set(orgUnits);
+          this.setEdgesAndNodes();
+          this.graphLoading = false;
+          this.errorMessage = '';
+        },
+        error: (error) => {
+          this.orgUnits.set([]);
+          this.graphLoading = false;
+          this.errorMessage = error.message;
+        },
+      });
   }
 
   setEdgesAndNodes(): void {
     this.nodes.set(
-      this.orgUnits().map((orgUnit) => {
-        return {
-          id: `${orgUnit.name}`,
-          label: orgUnit.name,
-          data: {
-            type: 'org unit',
-            customColor: '#C1292E',
-            textColor: '#fff',
-            ...orgUnit,
-          },
-        };
-      }),
+      this.orgUnits().map((orgUnit) => ({
+        id: orgUnit.name,
+        label: orgUnit.name,
+        data: {
+          type: 'org unit',
+          customColor: '#C1292E',
+          textColor: '#fff',
+          ...orgUnit,
+        },
+      })),
     );
 
     this.edges.set(
       this.orgUnits().flatMap((orgUnit, index) => {
-        if (
-          orgUnit.parentOrgUnit === undefined ||
-          orgUnit.parentOrgUnit === null ||
-          orgUnit.parentOrgUnit === '' ||
-          orgUnit.parentOrgUnit === '---'
-        ) {
-          return [];
-        }
+        const parentName = orgUnit.parent_org_unit[0]?.name;
+        if (!parentName) return [];
 
         return {
           id: `edge-${index}`,
           source: orgUnit.name,
-          target: orgUnit.parentOrgUnit,
+          target: parentName,
           label: 'is part of',
         };
       }),
     );
-
-    console.log('Nodes and edges set', this.nodes(), this.edges());
-    //this.addSubnetsNodes();
   }
 
   // addSubnetsNodes() {
@@ -160,30 +139,17 @@ export class OrgGraphPageComponent implements OnInit {
   //     }))]);
   // }
 
-  private getOrgUnits(): Observable<OrgUnitData[]> {
-    return this.dataService.getOrgUnits().pipe(
-      tap((orgUnits: OrgUnitData[]) => {
-        this.orgUnits.set(orgUnits);
-      }),
-    );
-  }
-
   public getLabel(node: Node) {
-    console.log('Getting label for node', node);
-    return this.dataService.getLabelOfGraphNode(node);
+    return getLabelOfGraphNode(node);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-    if (!subnetRange || subnetRange == '---') {
-      return;
-    }
+    if (!subnetRange || subnetRange == '---') return;
     this.router.navigate([SUBNETS_PATH, subnetRange]);
   }
 
   navigateToOrgUnitDetail(orgName: string): void {
-    if (!orgName || orgName == '---') {
-      return;
-    }
+    if (!orgName || orgName == '---') return;
     this.router.navigate([ORGANIZATION_PATH, orgName]);
   }
 

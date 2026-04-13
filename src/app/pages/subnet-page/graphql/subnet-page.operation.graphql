@@ -1,0 +1,17 @@
+query SubnetPageGetSubnet($range: String!) {
+  subnets(where: { range: $range }) {
+    ...Subnet
+  }
+}
+
+query SubnetPageGetChildSubnets($range: String!) {
+  subnets(where: { parent_subnet_SOME: { range: $range } }) {
+    range
+  }
+}
+
+mutation SubnetPageDeleteSubnet($range: String!) {
+  deleteSubnets(where: { range: $range }) {
+    nodesDeleted
+  }
+}

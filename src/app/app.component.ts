@@ -1,23 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterOutlet,
-} from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { AgendaContainer, SentinelUser } from '@sentinel/layout';
-import {
-  SentinelBreadcrumb,
-  SentinelBreadcrumbBuilder,
-} from '@sentinel/layout/breadcrumbs';
-import {
-  CustomNavDirective,
-  SentinelLayout1Component,
-} from '@sentinel/layout/layout1';
-import {
-  SentinelNotificationService,
-  SentinelNotificationTypeEnum,
-} from '@sentinel/layout/notification';
+import { SentinelBreadcrumb, SentinelBreadcrumbBuilder } from '@sentinel/layout/breadcrumbs';
+import { CustomNavDirective, SentinelLayout1Component } from '@sentinel/layout/layout1';
+import { SentinelNotificationService, SentinelNotificationTypeEnum } from '@sentinel/layout/notification';
 import { filter, map, Observable } from 'rxjs';
 
 /**
@@ -67,12 +53,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const navigationEndEvent$ = this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-    );
-    this.breadcrumbs$ = navigationEndEvent$.pipe(
-      map(() => SentinelBreadcrumbBuilder.build(this.activeRoute.snapshot)),
-    );
+    const navigationEndEvent$ = this.router.events.pipe(filter((event) => event instanceof NavigationEnd));
+    this.breadcrumbs$ = navigationEndEvent$.pipe(map(() => SentinelBreadcrumbBuilder.build(this.activeRoute.snapshot)));
   }
 
   addNotification(): void {

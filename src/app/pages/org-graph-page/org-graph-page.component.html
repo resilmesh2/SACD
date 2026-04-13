@@ -39,13 +39,7 @@
         <ng-container>
           <p class="error-message">{{ errorMessage }}</p>
         </ng-container>
-      } @else if (
-        orgUnits().length > 0 &&
-        !graphLoading &&
-        !errorMessage &&
-        nodes() &&
-        edges()
-      ) {
+      } @else if (orgUnits().length > 0 && !graphLoading && !errorMessage && nodes() && edges()) {
         <ngx-graph
           [autoCenter]="true"
           [autoZoom]="true"
@@ -72,11 +66,7 @@
           </ng-template>
 
           <ng-template #clusterTemplate let-cluster>
-            <svg:g
-              class="node cluster"
-              matTooltip="{{ cluster.label }}"
-              matTooltipPosition="above"
-            >
+            <svg:g class="node cluster" matTooltip="{{ cluster.label }}" matTooltipPosition="above">
               >
               <svg:rect
                 rx="5"
@@ -93,23 +83,13 @@
               <svg:rect
                 [attr.width]="node.dimension.width"
                 [attr.height]="node.dimension.height"
-                [attr.fill]="
-                  node.id == selectedNode()?.id
-                    ? node.data.textColor
-                    : node.data.customColor
-                "
-                [attr.stroke]="
-                  node.id == selectedNode()?.id
-                    ? node.data.customColor
-                    : 'transparent'
-                "
+                [attr.fill]="node.id == selectedNode()?.id ? node.data.textColor : node.data.customColor"
+                [attr.stroke]="node.id == selectedNode()?.id ? node.data.customColor : 'transparent'"
                 [attr.rx]="4"
                 [attr.ry]="4"
               />
               <svg:text
-                [attr.fill]="
-                  node.id == selectedNode()?.id ? '#000' : node.data.textColor
-                "
+                [attr.fill]="node.id == selectedNode()?.id ? '#000' : node.data.textColor"
                 dominant-baseline="middle"
                 text-anchor="middle"
                 [attr.x]="node.dimension.width / 2"
@@ -122,11 +102,7 @@
 
           <ng-template #linkTemplate let-link>
             <svg:g class="edge">
-              <svg:path
-                class="line"
-                stroke-width="2"
-                marker-end="url(#arrow)"
-              ></svg:path>
+              <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
               <svg:text class="edge-label" text-anchor="middle">
                 <textPath
                   class="text-path"
@@ -147,7 +123,7 @@
     <div class="node-wrapper">
       <ng-container>
         <div class="node-detail">
-          @if (selectedNode() && selectedNode()?.id !== "") {
+          @if (selectedNode() && selectedNode()?.id !== '') {
             <div
               class="badge"
               [style.background-color]="selectedNode()?.data.customColor"
@@ -163,22 +139,11 @@
                 <strong>Parent org unit:</strong>
                 @if (
                   selectedNode()?.data.parentOrgUnit &&
-                  selectedNode()?.data.parentOrgUnit !== "" &&
-                  selectedNode()?.data.parentOrgUnit !== "---"
+                  selectedNode()?.data.parentOrgUnit !== '' &&
+                  selectedNode()?.data.parentOrgUnit !== '---'
                 ) {
-                  <a
-                    class="badge attribute"
-                    (click)="
-                      navigateToOrgUnitDetail(
-                        selectedNode()?.data.parentOrgUnit
-                      )
-                    "
-                  >
-                    {{
-                      selectedNode()?.data?.parentOrgUnit != ""
-                        ? selectedNode()?.data.parentOrgUnit
-                        : "---"
-                    }}
+                  <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.parentOrgUnit)">
+                    {{ selectedNode()?.data?.parentOrgUnit != '' ? selectedNode()?.data.parentOrgUnit : '---' }}
                   </a>
                 } @else {
                   <span> --- </span>
@@ -186,20 +151,10 @@
               </li>
               <li>
                 <strong>Contacts:</strong>
-                @if (
-                  selectedNode()?.data.contacts &&
-                  selectedNode()?.data.contacts.length > 0
-                ) {
-                  @for (
-                    contact of selectedNode()?.data.contacts || [];
-                    track contact;
-                    let index = $index
-                  ) {
-                    <a
-                      href="mailto:{{ contact }}"
-                      class="badge attribute contact-link"
-                    >
-                      {{ contact }}
+                @if (selectedNode()?.data.contacts && selectedNode()?.data.contacts.length > 0) {
+                  @for (contact of selectedNode()?.data.contacts || []; track contact; let index = $index) {
+                    <a href="mailto:{{ contact.name }}" class="badge attribute contact-link">
+                      {{ contact.name }}
                     </a>
                   }
                 } @else {
@@ -208,19 +163,9 @@
               </li>
               <li class="subnets-attribute">
                 <strong>Subnets: </strong>
-                @if (
-                  selectedNode()?.data.subnets &&
-                  selectedNode()?.data.subnets.length > 0
-                ) {
-                  @for (
-                    subnet of selectedNode()?.data.subnets || [];
-                    track subnet;
-                    let index = $index
-                  ) {
-                    <a
-                      (click)="navigateToSubnetDetail(subnet)"
-                      class="badge attribute"
-                    >
+                @if (selectedNode()?.data.subnets && selectedNode()?.data.subnets.length > 0) {
+                  @for (subnet of selectedNode()?.data.subnets || []; track subnet; let index = $index) {
+                    <a (click)="navigateToSubnetDetail(subnet)" class="badge attribute">
                       {{ subnet.range }}
                     </a>
                   }

@@ -1,26 +1,20 @@
 {
   "name": "sacd",
   "version": "2.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "prettier --check .",
-    "format": "prettier --write ."
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "lint:github": "oxlint --format=github",
+    "codegen": "graphql-codegen --config graphql/codegen.ts"
   },
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^20.1.6",
     "@angular/cdk": "^20.1.5",
@@ -61,6 +55,12 @@
     "@angular/build": "^20.1.4",
     "@angular/cli": "^20.1.4",
     "@angular/compiler-cli": "^20.1.0",
+    "@graphql-codegen/cli": "6.2.1",
+    "@graphql-codegen/fragment-matcher": "6.0.0",
+    "@graphql-codegen/introspection": "5.0.1",
+    "@graphql-codegen/named-operations-object": "^4.0.0",
+    "@graphql-codegen/near-operation-file-preset": "^5.0.0",
+    "@graphql-codegen/typescript-apollo-angular": "5.0.0",
     "@types/dagre": "^0.7.53",
     "@types/jasmine": "~5.1.0",
     "@types/lodash": "^4.17.20",
@@ -70,7 +70,19 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
     "prettier": "3.8.1",
     "typescript": "~5.8.2"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
   }
 }

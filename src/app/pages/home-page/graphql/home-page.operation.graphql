@@ -1,0 +1,41 @@
+query HomePageGetSubnets {
+  subnets {
+    ...HomePageSubnet
+  }
+}
+
+query HomePageGetOrgUnits {
+  organizationUnits {
+    ...HomePageOrgUnit
+  }
+}
+
+query HomePageGetIPs {
+  ips {
+    ...HomePageIP
+  }
+}
+
+query HomePageGetNodeObjects {
+  nodeObjects {
+    ...HomePageNodeObject
+  }
+}
+
+query HomePageGetMissions {
+  missions {
+    ...HomePageMission
+  }
+}
+
+query HomePageGetVulnerabilities {
+  cves {
+    ...HomePageCVE
+  }
+}
+
+query HomePageGetHosts {
+  hosts {
+    ...HomePageHost
+  }
+}

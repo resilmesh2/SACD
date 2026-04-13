@@ -1,11 +1,4 @@
-import {
-  Component,
-  input,
-  InputSignal,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, input, InputSignal, OnInit, signal, WritableSignal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 

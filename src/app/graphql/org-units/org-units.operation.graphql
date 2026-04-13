@@ -1,0 +1,11 @@
+query GetAllOrgUnits {
+  organizationUnits {
+    ...OrgUnit
+  }
+}
+
+query GetOrgUnit($name: String!) {
+  organizationUnits(where: { name: $name }) {
+    ...OrgUnit
+  }
+}

@@ -4,24 +4,24 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 
-@use "@angular/material" as mat;
-@use "@sentinel/layout/theming" as sentinel;
-@use "@sentinel/layout/sentinel-layout-theme" as layout;
-@use "@sentinel/layout/notification-card-mixin" as notification-card;
-@use "@sentinel/layout/sidebar-mixin" as sidebar;
-@use "material-symbols";
+@use '@angular/material' as mat;
+@use '@sentinel/layout/theming' as sentinel;
+@use '@sentinel/layout/sentinel-layout-theme' as layout;
+@use '@sentinel/layout/notification-card-mixin' as notification-card;
+@use '@sentinel/layout/sidebar-mixin' as sidebar;
+@use 'material-symbols';
 
 $resilmesh-palette: (
-  50: "#e8ebee",
-  100: "#c5ccd8",
-  200: "#a1abbd",
-  300: "#7f8aa1",
-  400: "#64718e",
-  500: "#4a5a7e",
-  600: "#435276",
-  700: "#3b486a",
-  800: "#343f5d",
-  900: "#2a2f43",
+  50: '#e8ebee',
+  100: '#c5ccd8',
+  200: '#a1abbd',
+  300: '#7f8aa1',
+  400: '#64718e',
+  500: '#4a5a7e',
+  600: '#435276',
+  700: '#3b486a',
+  800: '#343f5d',
+  900: '#2a2f43',
   contrast: (
     50: rgba(black, 0.87),
     100: rgba(black, 0.87),
@@ -37,16 +37,16 @@ $resilmesh-palette: (
 );
 
 $resilmesh-palette-accent: (
-  50: "#e0f4fc",
-  100: "#b0e3f7",
-  200: "#7bd1f1",
-  300: "#44bfec",
-  400: "#01b2ea",
-  500: "#00a5e8",
-  600: "#0097da",
-  700: "#0084c7",
-  800: "#0073b3",
-  900: "#005493",
+  50: '#e0f4fc',
+  100: '#b0e3f7',
+  200: '#7bd1f1',
+  300: '#44bfec',
+  400: '#01b2ea',
+  500: '#00a5e8',
+  600: '#0097da',
+  700: '#0084c7',
+  800: '#0073b3',
+  900: '#005493',
   contrast: (
     100: rgba(black, 0.87),
     200: rgba(black, 0.87),
@@ -55,16 +55,16 @@ $resilmesh-palette-accent: (
 );
 
 $resilmesh-palette-accent-test: (
-  50: "#dcf0fb",
-  100: "#bad7e1",
-  200: "#98bac7",
-  300: "#749dad",
-  400: "#5a8899",
-  500: "#3d7387",
-  600: "#326576",
-  700: "#245261",
-  800: "#173f4c",
-  900: "#052a35",
+  50: '#dcf0fb',
+  100: '#bad7e1',
+  200: '#98bac7',
+  300: '#749dad',
+  400: '#5a8899',
+  500: '#3d7387',
+  600: '#326576',
+  700: '#245261',
+  800: '#173f4c',
+  900: '#052a35',
   contrast: (
     50: rgba(black, 0.87),
     100: rgba(black, 0.87),
@@ -80,24 +80,19 @@ $resilmesh-palette-accent-test: (
 );
 
 $resilmesh-palette-warn: (
-  50: "#fae5e9",
-  100: "#f5bfc8",
-  200: "#ed97a4",
-  300: "#e57282",
-  400: "#dd5b6a",
-  500: "#d54d55",
-  600: "#c54752",
-  700: "#b0414e",
-  800: "#9c3b4b",
-  900: "#763243",
+  50: '#fae5e9',
+  100: '#f5bfc8',
+  200: '#ed97a4',
+  300: '#e57282',
+  400: '#dd5b6a',
+  500: '#d54d55',
+  600: '#c54752',
+  700: '#b0414e',
+  800: '#9c3b4b',
+  900: '#763243',
 );
 
-$resilmesh-primary-palette: mat.m2-define-palette(
-  $resilmesh-palette,
-  700,
-  600,
-  500
-); // mat.$m2-indigo-palette,
+$resilmesh-primary-palette: mat.m2-define-palette($resilmesh-palette, 700, 600, 500); // mat.$m2-indigo-palette,
 $resilmesh-accent-palette: mat.m2-define-palette(
   $resilmesh-palette-accent,
   200,
@@ -186,7 +181,7 @@ mat-drawer .mat-drawer-inner-container {
 }
 
 .mat-icon {
-  font-variation-settings: "FILL" 1 !important;
+  font-variation-settings: 'FILL' 1 !important;
 }
 
 .mat-mdc-snack-bar-container {
