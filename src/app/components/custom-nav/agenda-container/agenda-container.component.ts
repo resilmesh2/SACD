@@ -7,11 +7,9 @@ import {
   InputSignal,
   output,
   signal,
-  Signal,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
-import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { Router } from '@angular/router';
 import { Agenda, AgendaContainer } from '@sentinel/layout';
 
 @Component({

@@ -1,5 +1,9 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["*.generated.ts"],
+  "options": {
+    "maxWarnings": 0
+  },
   "plugins": null,
   "categories": {},
   "rules": {},
@@ -35,6 +39,5 @@
   "env": {
     "builtin": true
   },
-  "globals": {},
-  "ignorePatterns": []
+  "globals": {}
 }

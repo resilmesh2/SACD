@@ -145,7 +145,7 @@ export class NetworkPageComponent implements OnInit {
     });
   }
 
-  navigateToAssetDetail(assetId: string) {
+  navigateToAssetDetail(_assetId: string) {
     // Implement navigation logic to asset detail page
   }
 

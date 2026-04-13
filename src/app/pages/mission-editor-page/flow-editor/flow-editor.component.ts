@@ -31,7 +31,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ExistingNodeService } from './existing-node.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MissionMetadata } from '../mission-editor.component';
-import { Ip } from '../../../../generated/base-types';
 import { Subnet } from '../../../models/vulnerability.model';
 
 export type Connection = {
@@ -222,7 +221,7 @@ export class FlowEditorComponent implements OnInit {
   }
 
   protected onSelectionChange(event: FSelectionChangeEvent): void {
-    this.selected.update((x) => {
+    this.selected.update((_x) => {
       return [...event.fNodeIds, ...event.fConnectionIds];
     });
   }
@@ -329,6 +328,7 @@ export class FlowEditorComponent implements OnInit {
     this.componentGroupCount.set(this.componentGroupCount() + 1);
   }
 
+  // oxlint-disable-next-line no-unused-vars
   getChildOffsets({ base, step, direction }: { base: number; step: number; direction: number }): {
     left: number;
     right: number;
