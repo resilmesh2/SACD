@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Node, Edge, NgxGraphModule } from '@swimlane/ngx-graph';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -36,6 +37,7 @@ export class NetworkPageComponent implements OnInit {
   nodes: Node[] = [];
   edges: Edge[] = [];
   error: any;
+  private destroyRef = inject(DestroyRef);
   selectedNode: Node = { id: '', label: '' };
   ipSearch = '4.122.55.26';
   errorMessage = '';
@@ -47,7 +49,7 @@ export class NetworkPageComponent implements OnInit {
     private networkPageService: NetworkPageService,
     private route: ActivatedRoute,
   ) {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['ip']) {
         this.ipSearch = params['ip'];
         this.loadGraphData();
@@ -72,25 +74,28 @@ export class NetworkPageComponent implements OnInit {
     this.errorMessage = '';
     this.selectedNode = { id: '', label: '' };
 
-    this.networkPageService.getIPNode(this.ipSearch).subscribe({
-      next: (res) => {
-        console.log('Graph data loaded', res);
-        this.edges = res.edges;
-        this.nodes = res.nodes;
-        if (this.nodes.length === 0 && this.edges.length === 0) {
-          this.errorMessage = 'Empty result.';
-        }
+    this.networkPageService
+      .getIPNode(this.ipSearch)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          console.log('Graph data loaded', res);
+          this.edges = res.edges;
+          this.nodes = res.nodes;
+          if (this.nodes.length === 0 && this.edges.length === 0) {
+            this.errorMessage = 'Empty result.';
+          }
 
-        this.updateChart();
-        this.graphLoading = false;
-      },
-      error: (error) => {
-        this.edges = [];
-        this.nodes = [];
-        this.errorMessage = error;
-        this.graphLoading = false;
-      },
-    });
+          this.updateChart();
+          this.graphLoading = false;
+        },
+        error: (error) => {
+          this.edges = [];
+          this.nodes = [];
+          this.errorMessage = error;
+          this.graphLoading = false;
+        },
+      });
   }
 
   onNodeSelect(node: Node) {
@@ -124,25 +129,28 @@ export class NetworkPageComponent implements OnInit {
   }
 
   public expandNode(node: Node) {
-    this.networkPageService.getNodeNeighbours(node).subscribe({
-      next: (res) => {
-        this.edges = _.unionBy(this.edges, res.edges, (e: Edge) => [e.source, e.target, e.label].join());
-        this.nodes = _.unionBy(this.nodes, res.nodes, (n: Node) => n.id);
+    this.networkPageService
+      .getNodeNeighbours(node)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.edges = _.unionBy(this.edges, res.edges, (e: Edge) => [e.source, e.target, e.label].join());
+          this.nodes = _.unionBy(this.nodes, res.nodes, (n: Node) => n.id);
 
-        if (this.nodes.length === 0 && this.edges.length === 0) {
-          this.errorMessage = 'Empty result.';
-        }
+          if (this.nodes.length === 0 && this.edges.length === 0) {
+            this.errorMessage = 'Empty result.';
+          }
 
-        this.graphLoading = false;
-      },
-      error: (error) => {
-        this.edges = [];
-        this.nodes = [];
-        this.errorMessage = error;
-        this.updateChart();
-        this.graphLoading = false;
-      },
-    });
+          this.graphLoading = false;
+        },
+        error: (error) => {
+          this.edges = [];
+          this.nodes = [];
+          this.errorMessage = error;
+          this.updateChart();
+          this.graphLoading = false;
+        },
+      });
   }
 
   navigateToAssetDetail(_assetId: string) {
