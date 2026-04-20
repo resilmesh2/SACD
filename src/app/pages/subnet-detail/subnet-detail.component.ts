@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, DestroyRef, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin, switchMap } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -108,43 +109,38 @@ export class SubnetDetailComponent implements OnInit, AfterViewInit {
   }
 
   fetchChildIPs(): void {
+    this.dataSource.data = [];
     this.getChildSubnets
       .fetch({ range: this.range }, { fetchPolicy: 'network-only' })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
+      .pipe(
+        switchMap((result) => {
           const ranges = [{ range: this.range }, ...result.data.subnets];
-          ranges.forEach((subnet) => {
-            this.getChildIPs
-              .fetch({ range: subnet.range }, { fetchPolicy: 'network-only' })
-              .pipe(takeUntilDestroyed(this.destroyRef))
-              .subscribe({
-                next: (ipResult) => {
-                  const childIPs: ChildIP[] = ipResult.data.ips.map((ip) => ({
-                    address: ip.address,
-                    version: ip.version,
-                    subnet: ip.subnets.at(0)?.range ?? '',
-                    affectedBy: ip.nodes.flatMap(
-                      (node) =>
-                        node.host?.software_versions.flatMap((sv) =>
-                          sv.vulnerabilities.map((v) => v.cve?.cve_id).filter((id): id is string => id != null),
-                        ) ?? [],
-                    ),
-                    softwareVersion: ip.nodes.flatMap(
-                      (node) => node.host?.software_versions.map((sv) => sv.version) ?? [],
-                    ),
-                  }));
-                  this.dataSource.data = this.dataSource.data.concat(childIPs);
-                  this.pieChartData.set(this.calculateOccupancyData());
-                },
-                error: (error) => {
-                  console.error('Error fetching child IPs:', error);
-                },
-              });
-          });
+          return forkJoin(
+            ranges.map((subnet) => this.getChildIPs.fetch({ range: subnet.range }, { fetchPolicy: 'network-only' })),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (results) => {
+          this.dataSource.data = results.flatMap((ipResult) =>
+            ipResult.data.ips.map((ip) => ({
+              address: ip.address,
+              version: ip.version,
+              subnet: ip.subnets.at(0)?.range ?? '',
+              affectedBy: ip.nodes.flatMap(
+                (node) =>
+                  node.host?.software_versions.flatMap((sv) =>
+                    sv.vulnerabilities.map((v) => v.cve?.cve_id).filter((id): id is string => id != null),
+                  ) ?? [],
+              ),
+              softwareVersion: ip.nodes.flatMap((node) => node.host?.software_versions.map((sv) => sv.version) ?? []),
+            })),
+          );
+          this.pieChartData.set(this.calculateOccupancyData());
         },
         error: (error) => {
-          console.error('Error fetching child subnets:', error);
+          console.error('Error fetching child IPs:', error);
         },
       });
   }

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, DestroyRef, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -87,30 +88,26 @@ export class OrgUnitDetailComponent implements OnInit, AfterViewInit {
   getOrgUnitDetail(): void {
     this.getOrgUnit
       .fetch({ name: this.orgName }, { fetchPolicy: 'network-only' })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
+      .pipe(
+        switchMap((result) => {
           const orgUnit = result.data.organizationUnits[0] ?? null;
           this.orgUnitDetail.set(orgUnit);
           this.dataLoading = false;
           this.dataLoaded = true;
-          this.fetchChildIPs();
-        },
-        error: (error) => {
-          console.error('Error fetching org unit details:', error);
-          this.dataLoading = false;
-        },
-      });
-  }
-
-  fetchChildIPs(): void {
-    this.orgUnitDetail()?.subnets.forEach((subnet) => {
-      this.getChildIPs
-        .fetch({ range: subnet.range }, { fetchPolicy: 'network-only' })
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (result) => {
-            const childIPs: ChildIP[] = result.data.ips.map((ip) => ({
+          const subnets = orgUnit?.subnets ?? [];
+          if (subnets.length === 0) {
+            return of([]);
+          }
+          return forkJoin(
+            subnets.map((subnet) => this.getChildIPs.fetch({ range: subnet.range }, { fetchPolicy: 'network-only' })),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (results) => {
+          this.dataSource.data = results.flatMap((result) =>
+            result.data.ips.map((ip) => ({
               address: ip.address,
               version: ip.version,
               subnet: ip.subnets[0]?.range ?? '',
@@ -121,15 +118,15 @@ export class OrgUnitDetailComponent implements OnInit, AfterViewInit {
                   ) ?? [],
               ),
               softwareVersion: ip.nodes.flatMap((node) => node.host?.software_versions.map((sv) => sv.version) ?? []),
-            }));
-            this.dataSource.data = this.dataSource.data.concat(childIPs);
-            this.pieChartData.set(this.calculateOccupancyData());
-          },
-          error: (error) => {
-            console.error('Error fetching child IPs:', error);
-          },
-        });
-    });
+            })),
+          );
+          this.pieChartData.set(this.calculateOccupancyData());
+        },
+        error: (error) => {
+          console.error('Error fetching org unit details:', error);
+          this.dataLoading = false;
+        },
+      });
   }
 
   getSaneAffectedBy(affectedBy: string[]): string {
