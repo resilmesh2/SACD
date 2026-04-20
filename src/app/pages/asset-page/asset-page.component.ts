@@ -342,12 +342,15 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
   }
 
   saveData(address: string, tags: string[]): void {
-    this.updateIPTagService.mutate({ address, tag: tags }).subscribe({
-      next: () => {
-        this.assets.update((assets) => assets.map((a) => (a.ip === address ? { ...a, tag: tags } : a)));
-      },
-      error: (e) => console.error('Error updating IP tags:', e),
-    });
+    this.updateIPTagService
+      .mutate({ address, tag: tags })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.assets.update((assets) => assets.map((a) => (a.ip === address ? { ...a, tag: tags } : a)));
+        },
+        error: (e) => console.error('Error updating IP tags:', e),
+      });
   }
 
   private detectChanges(): void {

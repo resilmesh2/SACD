@@ -1,5 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, model } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AssetStatusEditChipUpdateIpStatusMutationService,
   AssetStatusEditChipUpdateNetworkServiceStatusMutationService,
@@ -22,6 +23,7 @@ export class AssetStatusEditChipComponent {
 
   isEditOpen = model<boolean>(false);
 
+  private destroyRef = inject(DestroyRef);
   private updateIPStatusService = inject(AssetStatusEditChipUpdateIpStatusMutationService);
   private updateNetworkServiceStatusService = inject(AssetStatusEditChipUpdateNetworkServiceStatusMutationService);
 
@@ -70,6 +72,7 @@ export class AssetStatusEditChipComponent {
           service: this.serviceData()!.service,
           status,
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({ error: (e) => console.error('Error updating network service status:', e) });
       this.isEditOpen.set(false);
       return;
@@ -83,6 +86,7 @@ export class AssetStatusEditChipComponent {
       this.label.set(status);
       this.updateIPStatusService
         .mutate({ address: this.address()!, status })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({ error: (e) => console.error('Error updating IP status:', e) });
       this.isEditOpen.set(false);
       return;
