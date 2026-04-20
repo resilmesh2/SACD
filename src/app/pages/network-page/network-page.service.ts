@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import gql from 'graphql-tag';
 import { Node } from '@swimlane/ngx-graph';
@@ -16,12 +16,13 @@ export class NetworkPageService {
     return this.apollo
       .query<any>({
         query: gql`
-          {
-            ips(where: { address: "${ip}" }) {
+          query GetIPNode($address: String!) {
+            ips(where: { address: $address }) {
               ${this.getAttributesOfType('IP')}
             }
           }
         `,
+        variables: { address: ip },
         fetchPolicy: 'network-only',
       })
       .pipe(map((data) => converToGraph(data.data.ips)));
@@ -29,15 +30,21 @@ export class NetworkPageService {
 
   getNodeNeighbours(node: Node): Observable<GraphInput> {
     const type = node.data.type as keyof AttributeStructure;
+    const allowedTypes = Object.keys(Attributes) as (keyof AttributeStructure)[];
+    if (!allowedTypes.includes(type)) {
+      return throwError(() => new Error(`Unknown node type: ${type}`));
+    }
+
     return this.apollo
       .query<any>({
         query: gql`
-          {
-            ${type}(where: { _id: "${node.id}" }) {
+          query GetNodeNeighbours($id: ID!) {
+            ${type}(where: { _id: $id }) {
               ${this.getAttributesOfType(type)}
             }
           }
         `,
+        variables: { id: node.id },
         fetchPolicy: 'network-only',
       })
       .pipe(map((data) => converToGraph(data.data[type])));
