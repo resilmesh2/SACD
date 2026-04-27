@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgxGraphModule, Node } from '@swimlane/ngx-graph';
 import { MissionStructure } from '../../models/mission-structure.model';
 import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,7 +28,6 @@ type MissionEntry = MissionPageGetMissionQuery['missions'][0];
   templateUrl: './mission-page.component.html',
   styleUrls: ['./mission-page.component.scss'],
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,

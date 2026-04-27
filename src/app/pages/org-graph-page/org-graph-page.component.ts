@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
 import { getLabelOfGraphNode } from '../../utils/graph-utils/ngx-graph.utils';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -26,7 +26,6 @@ type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
   templateUrl: './org-graph-page.component.html',
   styleUrls: ['./org-graph-page.component.scss'],
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
