@@ -49,9 +49,9 @@ export const agendaContainers = [
     'analytics',
   ),
   new AgendaContainer(
-    'AI Stuff',
+    'Vuln AI',
     [new Agenda('Vuln AI', '/vuln-ai')],
-    'robot', // smart_toy
+    'smart_toy',
   ),
   new AgendaContainer(
     'External',

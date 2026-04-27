@@ -14,12 +14,19 @@
             placeholder="Ask away"
             [(ngModel)]="question"
             name="question"
+            [disabled]="isLoading()"
           />
-          <mat-hint align="start"
-            ><strong>E.g. what hosts have communicated with 10.0.0.2?</strong>
+          <mat-hint align="start">
+            <strong>E.g. what hosts have communicated with 10.0.0.2?</strong>
           </mat-hint>
         </mat-form-field>
       </form>
+      @if (isLoading()) {
+        <div class="spinner-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Thinking...</span>
+        </div>
+      }
     </div>
   </sentinel-card>
 

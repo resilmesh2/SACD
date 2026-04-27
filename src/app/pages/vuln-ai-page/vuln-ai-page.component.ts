@@ -2,13 +2,13 @@ import {
   Component,
   computed,
   OnInit,
-  Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { VulnAIPageService } from './vuln-ai-page.service';
@@ -36,6 +36,7 @@ type VulnAIResponse = {
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     SentinelCardComponent,
     ForceDirectedGraphComponent,
     A11yModule,
@@ -48,6 +49,7 @@ export class VulnAIPageComponent implements OnInit {
   humanMarkdownResult = signal('');
   graphData = signal<{ nodes: any[]; edges: any[] } | null>(null);
   selectedNode = signal<any | undefined>(undefined);
+  isLoading = signal(false);
 
   nodeProperties = computed(() => {
     const node = this.selectedNode();
@@ -68,13 +70,20 @@ export class VulnAIPageComponent implements OnInit {
 
   askQuestion() {
     console.log(this.question());
+    this.isLoading.set(true);
     this.vulnAIService
       .sendQuestion(this.question())
-      .subscribe(async (response) => {
-        console.log('AI Response:', response);
-        this.response.set(response as VulnAIResponse);
-
-        this.executeQuery(this.response()?.visualization_query ?? '');
+      .subscribe({
+        next: async (response) => {
+          console.log('AI Response:', response);
+          this.response.set(response as VulnAIResponse);
+          this.executeQuery(this.response()?.visualization_query ?? '');
+        },
+        error: (err) => {
+          console.error('Error getting AI response:', err);
+          this.isLoading.set(false)
+        },
+        complete: () => this.isLoading.set(false),
       });
   }
 
