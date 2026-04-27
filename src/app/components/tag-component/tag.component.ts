@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ENTER } from '@angular/cdk/keycodes';
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,15 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: 'tag-component.html',
   styleUrl: 'tag-component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatChipsModule,
-    MatIconModule,
-    MatAutocompleteModule,
-    FormsModule,
-    MatTooltipModule,
-  ],
+  imports: [MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, FormsModule, MatTooltipModule],
 })
 export class TagComponent {
   readonly separatorKeysCodes: number[] = [ENTER];
