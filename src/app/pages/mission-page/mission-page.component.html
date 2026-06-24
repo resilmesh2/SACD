@@ -24,6 +24,14 @@
   >
     Search
   </sentinel-button-with-icon>
+  <sentinel-button-with-icon
+    color="accent"
+    icon="content_copy"
+    [disabled]="!selectedMissionName"
+    (click)="copyMissionCycloneDX()"
+  >
+    Copy CycloneDX JSON to Clipboard
+  </sentinel-button-with-icon>
 </div>
 
 <sentinel-card class="graph-card" [controls]="controls">

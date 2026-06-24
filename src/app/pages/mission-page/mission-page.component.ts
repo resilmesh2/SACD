@@ -20,6 +20,8 @@ import {
   MissionPageGetMissionQueryService,
   MissionPageGetMissionQuery,
 } from './graphql/mission-page.operation.generated';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { CycloneDxService } from './cyclone-dx.service';
 
 type MissionEntry = MissionPageGetMissionQuery['missions'][0];
 
@@ -43,6 +45,7 @@ type MissionEntry = MissionPageGetMissionQuery['missions'][0];
   ],
 })
 export class MissionPageComponent implements OnInit {
+  private _snackBar = inject(MatSnackBar);
   private destroyRef = inject(DestroyRef);
 
   errorMessage = '';
@@ -57,9 +60,16 @@ export class MissionPageComponent implements OnInit {
 
   controls: SentinelControlItem[] = [];
 
+  openSnackBar(message: string, action: string, { error = false } = {}) {
+    this._snackBar.open(message, action, {
+      panelClass: error ? ['snackbar-error'] : undefined,
+    });
+  }
+
   constructor(
     private getNamesService: MissionPageGetNamesQueryService,
     private getMissionService: MissionPageGetMissionQueryService,
+    private cycloneDxService: CycloneDxService,
   ) {}
 
   ngOnInit(): void {
@@ -144,5 +154,20 @@ export class MissionPageComponent implements OnInit {
         },
       },
     );
+  }
+
+  async copyMissionCycloneDX() {
+    const cycloneDXJSON = await this.cycloneDxService.getMissionCycloneDXJSON(this.selectedMissionName);
+    navigator.clipboard
+      .writeText(JSON.stringify(cycloneDXJSON, null, 2))
+      .then(() => {
+        this.openSnackBar('CycloneDX JSON copied to clipboard.', 'Close');
+      })
+      .catch((err) => {
+        console.error('Failed to copy CycloneDX JSON: ', err);
+        this.openSnackBar('Failed to copy CycloneDX JSON.', 'Close', {
+          error: true,
+        });
+      });
   }
 }
