@@ -3,6 +3,7 @@ export const namedOperations = {
     GetAllOrgUnits: 'GetAllOrgUnits',
     GetOrgUnit: 'GetOrgUnit',
     GetAllSubnets: 'GetAllSubnets',
+    GetSubnetsPaginated: 'GetSubnetsPaginated',
     GetChildIPs: 'GetChildIPs',
     GetVulnerableMachines: 'GetVulnerableMachines',
     AssetPageGetIPs: 'AssetPageGetIPs',

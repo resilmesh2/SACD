@@ -30,9 +30,6 @@
 } @else if (dataLoaded && !dataLoading && !emptyResponse) {
   <ng-container>
     <div class="section">
-      <!-- <h3>List of subnets</h3> -->
-      <!-- Table with results -->
-
       <table mat-table [dataSource]="dataSource" matSort>
         <!-- Subnet note column -->
         <ng-container matColumnDef="note">
@@ -41,6 +38,7 @@
             <span class="subnet-note">{{ row.note }}</span>
           </td>
         </ng-container>
+
         <!-- Subnet range column -->
         <ng-container matColumnDef="range">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Range</th>
@@ -53,7 +51,7 @@
 
         <!-- Subnet orgUnits column -->
         <ng-container matColumnDef="org_units">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Organizational Unit</th>
+          <th mat-header-cell *matHeaderCellDef>Organizational Unit</th>
           <td mat-cell *matCellDef="let row">
             @if (row.org_units.at(0)?.name) {
               <a (click)="navigateToOrgUnitDetail(row.org_units.at(0)!.name)" class="subnet-detail-link">
@@ -67,7 +65,7 @@
 
         <!-- Subnet contacts column -->
         <ng-container matColumnDef="contacts">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Contacts</th>
+          <th mat-header-cell *matHeaderCellDef>Contacts</th>
           <td mat-cell *matCellDef="let row">
             <span class="subnet-contacts">{{ getContactNames(row) }}</span>
           </td>
@@ -75,7 +73,7 @@
 
         <!-- Parent subnet column -->
         <ng-container matColumnDef="parent_subnet">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Part of</th>
+          <th mat-header-cell *matHeaderCellDef>Part of</th>
           <td mat-cell *matCellDef="let row">
             @if (row.parent_subnet.at(0)?.range) {
               <a (click)="navigateToSubnetDetail(row.parent_subnet.at(0)!.range)" class="subnet-detail-link">
@@ -87,16 +85,9 @@
           </td>
         </ng-container>
 
-        <!-- Domain name Column -->
-        <!-- <ng-container matColumnDef="domainName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Domain name</th>
-        <td mat-cell *matCellDef="let row">{{ row.domainName }}</td>
-      </ng-container> -->
-
         <!-- Action column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
-
           <td mat-cell *matCellDef="let row">
             <div class="actions">
               <button class="action" matIconButton (click)="openDialog('0ms', '0ms', row, 'edit')">
@@ -117,7 +108,12 @@
           <td class="mat-cell" colspan="4">No data</td>
         </tr>
       </table>
-      <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 200, 500]" showFirstLastButtons></mat-paginator>
+      <mat-paginator
+        [length]="totalCount"
+        [pageSize]="25"
+        [pageSizeOptions]="[25, 50, 200, 500]"
+        showFirstLastButtons
+      ></mat-paginator>
     </div>
   </ng-container>
 }

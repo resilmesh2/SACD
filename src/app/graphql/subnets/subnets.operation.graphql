@@ -4,6 +4,15 @@ query GetAllSubnets {
   }
 }
 
+query GetSubnetsPaginated($options: SubnetOptions, $where: SubnetWhere) {
+  subnets(options: $options, where: $where) {
+    ...Subnet
+  }
+  subnetsAggregate(where: $where) {
+    count
+  }
+}
+
 query GetChildIPs($range: String!) {
   ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
     ...ChildIP
