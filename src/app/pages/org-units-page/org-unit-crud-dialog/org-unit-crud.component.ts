@@ -1,16 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  model,
-  OnInit,
-  output,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal, Signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { switchMap } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, switchMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { ChipsContacts } from '../../../components/chips-contacts/chips-contacts.component';
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
@@ -19,7 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { GetAllOrgUnitsQuery } from '../../../graphql/org-units/org-units.operation.generated';
+import {
+  GetAllOrgUnitsQuery,
+  GetAllOrgUnitsQueryService,
+} from '../../../graphql/org-units/org-units.operation.generated';
 import {
   CreateOrgUnitMutationService,
   UpdateOrgUnitMutationService,
@@ -49,18 +43,17 @@ type OrgUnitRow = GetAllOrgUnitsQuery['organizationUnits'][0];
     SentinelButtonWithIconComponent,
   ],
 })
-export class OrgUnitCrudDialog implements OnInit {
+export class OrgUnitCrudDialog {
   readonly dialogRef = inject(MatDialogRef<OrgUnitCrudDialog>);
 
   data = inject(MAT_DIALOG_DATA) as {
-    allOrgUnits: OrgUnitRow[];
     orgUnit: Partial<OrgUnitRow>;
     mode: 'insert' | 'edit';
   };
 
   title = computed(() => (this.data.mode === 'insert' ? 'Create Organization Unit' : 'Edit Organization Unit'));
 
-  allOrgUnits: WritableSignal<OrgUnitRow[]> = model(this.data.allOrgUnits || []);
+  allOrgUnits: Signal<OrgUnitRow[]>;
 
   updateOrgUnitDataSource = output<{ oldName: string; orgUnit: OrgUnitRow }>();
 
@@ -68,6 +61,7 @@ export class OrgUnitCrudDialog implements OnInit {
   parentOrgUnit = signal<string | null>(this.data.orgUnit.parent_org_unit?.at(0)?.name ?? null);
   contacts = signal<string[]>(this.data.orgUnit.contacts?.map((c) => c.name) ?? []);
 
+  private getAllOrgUnits = inject(GetAllOrgUnitsQueryService);
   private createOrgUnit = inject(CreateOrgUnitMutationService);
   private updateOrgUnit = inject(UpdateOrgUnitMutationService);
   private linkToParent = inject(LinkOrgUnitToParentMutationService);
@@ -75,7 +69,12 @@ export class OrgUnitCrudDialog implements OnInit {
   private mergeWithContacts = inject(MergeOrgUnitWithContactsMutationService);
   private unlinkFromContacts = inject(UnlinkOrgUnitFromContactsMutationService);
 
-  ngOnInit(): void {}
+  constructor() {
+    this.allOrgUnits = toSignal(
+      this.getAllOrgUnits.fetch({}, { fetchPolicy: 'network-only' }).pipe(map((r) => r.data.organizationUnits)),
+      { initialValue: [] },
+    );
+  }
 
   updatedOrgUnit = computed<OrgUnitRow>(() => ({
     name: this.name(),
@@ -101,10 +100,13 @@ export class OrgUnitCrudDialog implements OnInit {
           return ops.length > 0 ? forkJoin(ops) : of(null);
         }),
       )
-      .subscribe({ error: (e) => console.error('Error inserting org unit:', e) });
-
-    this.updateOrgUnitDataSource.emit({ oldName: '', orgUnit: this.updatedOrgUnit() });
-    this.dialogRef.close();
+      .subscribe({
+        next: () => {
+          this.updateOrgUnitDataSource.emit({ oldName: '', orgUnit: this.updatedOrgUnit() });
+          this.dialogRef.close();
+        },
+        error: (e) => console.error('Error inserting org unit:', e),
+      });
   }
 
   editOrgUnit(): void {
@@ -130,8 +132,12 @@ export class OrgUnitCrudDialog implements OnInit {
           return ops.length > 0 ? forkJoin(ops) : of(null);
         }),
       )
-      .subscribe({ error: (e) => console.error('Error editing org unit:', e) });
-
-    this.updateOrgUnitDataSource.emit({ oldName, orgUnit: this.updatedOrgUnit() });
+      .subscribe({
+        next: () => {
+          this.updateOrgUnitDataSource.emit({ oldName, orgUnit: this.updatedOrgUnit() });
+          this.dialogRef.close();
+        },
+        error: (e) => console.error('Error editing org unit:', e),
+      });
   }
 }

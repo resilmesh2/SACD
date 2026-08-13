@@ -1,6 +1,7 @@
 export const namedOperations = {
   Query: {
     GetAllOrgUnits: 'GetAllOrgUnits',
+    GetOrgUnitsPaginated: 'GetOrgUnitsPaginated',
     GetOrgUnit: 'GetOrgUnit',
     GetAllSubnets: 'GetAllSubnets',
     GetSubnetsPaginated: 'GetSubnetsPaginated',
