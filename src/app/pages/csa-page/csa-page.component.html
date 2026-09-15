@@ -36,7 +36,7 @@
           Reset Filters
         </sentinel-button-with-icon>
 
-        <div class="total-assets">Total Number of Nodes: {{ totalSortedServices() }}</div>
+        <div class="total-assets">Total Number of Nodes: {{ totalCount }}</div>
       </div>
 
       <table
@@ -146,7 +146,12 @@
       </table>
 
       <!-- Paginator -->
-      <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 200, 500]" showFirstLastButtons></mat-paginator>
+      <mat-paginator
+        [length]="totalCount"
+        [pageSize]="25"
+        [pageSizeOptions]="[25, 50, 200, 500]"
+        showFirstLastButtons
+      ></mat-paginator>
     </ng-container>
   }
 </sentinel-card>

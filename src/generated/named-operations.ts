@@ -10,7 +10,7 @@ export const namedOperations = {
     AssetPageGetIPs: 'AssetPageGetIPs',
     AssetPageGetNetworkServices: 'AssetPageGetNetworkServices',
     AssetPageGetDomainNames: 'AssetPageGetDomainNames',
-    CsaPageGetNodeObjects: 'CsaPageGetNodeObjects',
+    CsaPageGetNodeObjectsPaginated: 'CsaPageGetNodeObjectsPaginated',
     HomePageGetSubnets: 'HomePageGetSubnets',
     HomePageGetOrgUnits: 'HomePageGetOrgUnits',
     HomePageGetIPs: 'HomePageGetIPs',
