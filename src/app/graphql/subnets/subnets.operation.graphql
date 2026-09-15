@@ -18,3 +18,15 @@ query GetChildIPs($range: String!) {
     ...ChildIP
   }
 }
+
+query GetIPsPaginated($where: IPWhere, $options: IPOptions, $affectedWhere: IPWhere) {
+  ips(where: $where, options: $options) {
+    ...ChildIP
+  }
+  ipsAggregate(where: $where) {
+    count
+  }
+  affectedIpsAggregate: ipsAggregate(where: $affectedWhere) {
+    count
+  }
+}

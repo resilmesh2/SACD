@@ -63,6 +63,35 @@ export type GetChildIPsQuery = {
   }>;
 };
 
+export type GetIPsPaginatedQueryVariables = SchemaTypes.Exact<{
+  where?: SchemaTypes.InputMaybe<SchemaTypes.IpWhere>;
+  options?: SchemaTypes.InputMaybe<SchemaTypes.IpOptions>;
+  affectedWhere?: SchemaTypes.InputMaybe<SchemaTypes.IpWhere>;
+}>;
+
+export type GetIPsPaginatedQuery = {
+  __typename?: 'Query';
+  ips: Array<{
+    __typename?: 'IP';
+    address: string;
+    version?: number | null;
+    subnets: Array<{ __typename?: 'Subnet'; range: string }>;
+    nodes: Array<{
+      __typename?: 'NodeObject';
+      host?: {
+        __typename?: 'Host';
+        software_versions: Array<{
+          __typename?: 'SoftwareVersion';
+          version: string;
+          vulnerabilities: Array<{ __typename?: 'Vulnerability'; cve?: { __typename?: 'CVE'; cve_id: string } | null }>;
+        }>;
+      } | null;
+    }>;
+  }>;
+  ipsAggregate: { __typename?: 'IPAggregateSelection'; count: number };
+  affectedIpsAggregate: { __typename?: 'IPAggregateSelection'; count: number };
+};
+
 export const GetAllSubnetsDocument = gql`
   query GetAllSubnets {
     subnets {
@@ -121,6 +150,31 @@ export const GetChildIPsDocument = gql`
 })
 export class GetChildIPsQueryService extends Apollo.Query<GetChildIPsQuery, GetChildIPsQueryVariables> {
   document = GetChildIPsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GetIPsPaginatedDocument = gql`
+  query GetIPsPaginated($where: IPWhere, $options: IPOptions, $affectedWhere: IPWhere) {
+    ips(where: $where, options: $options) {
+      ...ChildIP
+    }
+    ipsAggregate(where: $where) {
+      count
+    }
+    affectedIpsAggregate: ipsAggregate(where: $affectedWhere) {
+      count
+    }
+  }
+  ${ChildIpFragmentDoc}
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetIPsPaginatedQueryService extends Apollo.Query<GetIPsPaginatedQuery, GetIPsPaginatedQueryVariables> {
+  document = GetIPsPaginatedDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

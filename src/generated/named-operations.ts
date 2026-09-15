@@ -6,6 +6,7 @@ export const namedOperations = {
     GetAllSubnets: 'GetAllSubnets',
     GetSubnetsPaginated: 'GetSubnetsPaginated',
     GetChildIPs: 'GetChildIPs',
+    GetIPsPaginated: 'GetIPsPaginated',
     GetVulnerableMachines: 'GetVulnerableMachines',
     AssetPageGetIPs: 'AssetPageGetIPs',
     AssetPageGetNetworkServices: 'AssetPageGetNetworkServices',
@@ -25,7 +26,6 @@ export const namedOperations = {
     MissionPageGetNames: 'MissionPageGetNames',
     MissionPageGetMission: 'MissionPageGetMission',
     SubnetPageGetSubnet: 'SubnetPageGetSubnet',
-    SubnetPageGetChildSubnets: 'SubnetPageGetChildSubnets',
     VulnerabilityPageGetCVEDetails: 'VulnerabilityPageGetCVEDetails',
   },
   Mutation: {
