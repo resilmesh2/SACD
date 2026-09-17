@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  contentChild,
-  input,
-  TrackByFunction,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChild, input, TrackByFunction } from '@angular/core';
 import { NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { trackByIndex } from '@sentinel/common/utils';
@@ -36,9 +29,7 @@ export class InlineElementsPreviewComponent<T> {
   readonly trackByFn = input<TrackByFunction<T>>(trackByIndex);
   readonly elementViewDirective = contentChild(InlineElementDirective);
   readonly isTableCell = input<boolean>(false);
-  readonly tooltipTransformFn = input<((element: T) => string) | undefined>(
-    undefined,
-  );
+  readonly tooltipTransformFn = input<((element: T) => string) | undefined>(undefined);
 
   // maxDisplayedElements = 0 means nothing is shown inline; the trigger becomes a plain element count
   readonly defaultAndMoreText = computed(() =>
@@ -47,9 +38,7 @@ export class InlineElementsPreviewComponent<T> {
       : `and ${this.elementsTotalCount() - this.maxDisplayedElements()} more...`,
   );
 
-  readonly extraItemsCount = computed(
-    () => this.elementsTotalCount() - (this.elements()?.length ?? 0),
-  );
+  readonly extraItemsCount = computed(() => this.elementsTotalCount() - (this.elements()?.length ?? 0));
 
   readonly remainingElements = computed(() => {
     const elements = this.elements();
@@ -59,33 +48,23 @@ export class InlineElementsPreviewComponent<T> {
       return [];
     }
 
-    return elements
-      .slice(this.maxDisplayedElements())
-      .map((element) => transformFn(element));
+    return elements.slice(this.maxDisplayedElements()).map((element) => transformFn(element));
   });
 
   // Whether the default 'and n more...' text is shorter than the combined length of the undisplayed elements
   readonly isAndMoreTextShorter = computed(() => {
-    if (
-      this.maxDisplayedElements() === 0 ||
-      this.remainingElements().length === 0
-    ) {
+    if (this.maxDisplayedElements() === 0 || this.remainingElements().length === 0) {
       return true;
     }
 
     const defaultCharCount = this.defaultAndMoreText().length;
-    const undisplayedCharCount = this.remainingElements().reduce(
-      (acc, element) => acc + element.length,
-      0,
-    );
+    const undisplayedCharCount = this.remainingElements().reduce((acc, element) => acc + element.length, 0);
 
     return undisplayedCharCount > defaultCharCount;
   });
 
   // Either 'and n more...' or the remaining element(s) joined, whichever is shorter
   readonly andMore = computed(() =>
-    this.isAndMoreTextShorter()
-      ? this.defaultAndMoreText()
-      : this.remainingElements().join(', '),
+    this.isAndMoreTextShorter() ? this.defaultAndMoreText() : this.remainingElements().join(', '),
   );
 }

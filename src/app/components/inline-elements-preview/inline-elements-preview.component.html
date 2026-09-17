@@ -7,10 +7,7 @@
         let isLast = $last
       ) {
         @if (elementViewDirective()?.template; as template) {
-          <ng-container
-            [ngTemplateOutlet]="template"
-            [ngTemplateOutletContext]="{ $implicit: element }"
-          />
+          <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: element }" />
         } @else if (tooltipTransformFn(); as transformFn) {
           {{ transformFn(element) }}
         } @else {
@@ -26,25 +23,16 @@
             <span>,&nbsp;</span>
           }
           @if (tooltipTransformFn() && isAndMoreTextShorter()) {
-            <button
-              type="button"
-              class="more-elements-trigger"
-              [matMenuTriggerFor]="menu"
-            >
+            <button type="button" class="more-elements-trigger" [matMenuTriggerFor]="menu">
               {{ andMore() }}
             </button>
-            <mat-menu
-              class="inline-elements-preview-menu-panel"
-              #menu="matMenu"
-            >
+            <mat-menu class="inline-elements-preview-menu-panel" #menu="matMenu">
               <div class="more-elements-menu">
                 @for (element of remainingElements(); track $index) {
                   <div class="more-elements-menu-item">{{ element }}</div>
                 }
                 @if (extraItemsCount() > 0) {
-                  <div class="more-elements-menu-item">
-                    and {{ extraItemsCount() }} more...
-                  </div>
+                  <div class="more-elements-menu-item">and {{ extraItemsCount() }} more...</div>
                 }
               </div>
             </mat-menu>
