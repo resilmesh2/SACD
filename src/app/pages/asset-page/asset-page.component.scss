@@ -13,6 +13,12 @@
   gap: 1em;
 }
 
+.asset-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
 .total-assets {
   font-weight: bold;
 }

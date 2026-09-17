@@ -1,0 +1,166 @@
+<div class="top-bar">
+  <sentinel-button-with-icon color="primary" icon="arrow_back" tooltip="Back to assets" (click)="goBack()">
+    Assets
+  </sentinel-button-with-icon>
+
+  <sentinel-button-with-icon
+    color="accent"
+    icon="analytics"
+    tooltip="View network node visualization"
+    (click)="navigateToNetworkNodeView()"
+  >
+    Visualization
+  </sentinel-button-with-icon>
+</div>
+
+<div class="asset-header">
+  <h1>{{ address }}</h1>
+</div>
+
+@if (dataLoading) {
+  <div class="loading-message">
+    <mat-spinner></mat-spinner>
+    <span>Loading asset...</span>
+  </div>
+} @else if (errorResponse) {
+  <div class="error-message">
+    <span>{{ errorResponse }}</span>
+  </div>
+} @else if (notFound) {
+  <div class="empty-message">
+    <span>No asset found for this address.</span>
+  </div>
+} @else {
+  <div class="asset-details">
+    <div class="asset-line">
+      <strong>Status: </strong>
+      <asset-status-edit-chip [address]="address" type="IP" [(label)]="status"></asset-status-edit-chip>
+    </div>
+    <div class="asset-line">
+      <strong>Version: </strong>
+      <span>{{ version ? 'IPv' + version : 'N/A' }}</span>
+    </div>
+    <div class="asset-line">
+      <strong>Subnets: </strong>
+      @for (subnet of subnets; track subnet) {
+        <a (click)="navigateToSubnetDetail(subnet)" class="link-pill">{{ subnet }}</a>
+      } @empty {
+        <span>N/A</span>
+      }
+    </div>
+    <div class="asset-line">
+      <strong>Domain names: </strong>
+      <inline-elements-preview
+        elementTypeName="domain names"
+        [elements]="domainNames"
+        [elementsTotalCount]="domainNames.length"
+        [maxDisplayedElements]="3"
+        [tooltipTransformFn]="identity"
+      />
+    </div>
+    <div class="asset-line">
+      <strong>Hostnames: </strong>
+      <inline-elements-preview
+        elementTypeName="hostnames"
+        [elements]="hostnames"
+        [elementsTotalCount]="hostnames.length"
+        [maxDisplayedElements]="3"
+        [tooltipTransformFn]="identity"
+      />
+    </div>
+    <div class="asset-line">
+      <strong>Criticality: </strong>
+      <criticality-chip [value]="criticality" scale="final" />
+    </div>
+    <div class="asset-line">
+      <strong>Vulnerabilities: </strong>
+      <span>{{ vulnerabilityCount }}</span>
+    </div>
+    <div class="asset-line">
+      <strong>Tags: </strong>
+      <tag-component [id]="address" [inputTags]="tags" [onSubmit]="saveTags.bind(this)" [allTags]="allTags()" />
+    </div>
+  </div>
+
+  <h3>Network services</h3>
+  <table mat-table [dataSource]="servicesDataSource" class="mat-table full-width-table">
+    <ng-container matColumnDef="service">
+      <th mat-header-cell *matHeaderCellDef>Service</th>
+      <td mat-cell *matCellDef="let row">{{ row.service || '---' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="port">
+      <th mat-header-cell *matHeaderCellDef>Port</th>
+      <td mat-cell *matCellDef="let row">{{ row.port ?? '---' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="protocol">
+      <th mat-header-cell *matHeaderCellDef>Protocol</th>
+      <td mat-cell *matCellDef="let row">{{ row.protocol || '---' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let row">
+        <asset-status-edit-chip
+          [address]="address"
+          type="NetworkService"
+          [serviceData]="serviceData(row)"
+          [(label)]="row.status"
+          [(isEditOpen)]="row.isEditOpen"
+        ></asset-status-edit-chip>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="servicesColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: servicesColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="servicesColumns.length">No network services on this asset.</td>
+    </tr>
+  </table>
+  <mat-paginator
+    #servicesPaginator
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50]"
+    showFirstLastButtons
+  ></mat-paginator>
+
+  <h3>Software and vulnerabilities</h3>
+  <table mat-table [dataSource]="softwareDataSource" class="mat-table full-width-table">
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef>Software Version</th>
+      <td mat-cell *matCellDef="let row">{{ row.version }}</td>
+    </ng-container>
+    <ng-container matColumnDef="vulnerabilities">
+      <th mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
+      <td mat-cell *matCellDef="let row">
+        <inline-elements-preview
+          elementTypeName="vulnerabilities"
+          [elements]="row.vulnerabilities"
+          [elementsTotalCount]="row.vulnerabilities.length"
+          [maxDisplayedElements]="2"
+          [tooltipTransformFn]="identity"
+          [isTableCell]="true"
+        >
+          <ng-container *inlineElement="cveTemplate" />
+          <ng-template #cveTemplate let-cveId>
+            <a (click)="navigateToVulnDetail(cveId)" class="inline-link">{{ cveId }}</a>
+          </ng-template>
+        </inline-elements-preview>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="vulnerabilityCount">
+      <th mat-header-cell *matHeaderCellDef>Vulnerability Count</th>
+      <td mat-cell *matCellDef="let row">{{ row.vulnerabilities.length }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="softwareColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: softwareColumns"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="softwareColumns.length">No software recorded for this asset.</td>
+    </tr>
+  </table>
+  <mat-paginator
+    #softwarePaginator
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50]"
+    showFirstLastButtons
+  ></mat-paginator>
+}

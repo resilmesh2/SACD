@@ -55,7 +55,7 @@
       <ng-container matColumnDef="affectedAsset">
         <th mat-header-cell *matHeaderCellDef>Affected Asset</th>
         <td mat-cell *matCellDef="let issueDetail">
-          <a (click)="navigateToNetworkNodeView(issueDetail.affectedAsset)" class="link-pill">
+          <a (click)="navigateToAssetDetail(issueDetail.affectedAsset)" class="link-pill">
             {{ issueDetail.affectedAsset }}
           </a>
         </td>

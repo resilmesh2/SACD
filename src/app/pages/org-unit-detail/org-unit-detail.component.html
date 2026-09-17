@@ -65,7 +65,7 @@
       <ng-container matColumnDef="ip">
         <th mat-header-cell *matHeaderCellDef>IP Address</th>
         <td mat-cell *matCellDef="let childIP">
-          <a (click)="navigateToNetworkNodeView(childIP.address)" class="link-pill">{{ childIP.address }}</a>
+          <a (click)="navigateToAssetDetail(childIP.address)" class="link-pill">{{ childIP.address }}</a>
         </td>
       </ng-container>
 

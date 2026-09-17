@@ -208,6 +208,11 @@ mat-drawer .mat-drawer-inner-container {
   &:hover {
     background-color: #dcdcdc;
   }
+
+  // Square variant holding just a mat-icon
+  &.icon-only {
+    padding: 0.2em;
+  }
 }
 
 // Plain-text clickable reference, for use inside inline-elements-preview items and detail lines.

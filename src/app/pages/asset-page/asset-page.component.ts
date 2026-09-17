@@ -17,7 +17,7 @@ import { SentinelControlItem } from '@sentinel/components/controls';
 import { TagComponent } from '../../components/tag-component/tag.component';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatIcon } from '@angular/material/icon';
-import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
+import { ASSETS_PATH, NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
 import { AssetStatusEditChipComponent } from './asset-status-edit-chip/asset-status-edit-chip.component';
 import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import {
@@ -25,6 +25,7 @@ import {
   AssetPageGetNetworkServicesPaginatedQueryService,
   AssetPageGetDomainNamesPaginatedQueryService,
   AssetPageGetTypeCountsQueryService,
+  AssetPageGetServiceOptionsQueryService,
   AssetPageGetIpTagsQueryService,
   AssetPageUpdateIpTagMutationService,
 } from './graphql/asset-page.operation.generated';
@@ -146,11 +147,17 @@ export class AssetPageComponent implements OnInit {
   readonly statusOptions = ['unknown', 'known', 'rediscovered'];
   tags = signal<string[]>([]);
   subnets = signal<string[]>([]);
+  serviceOptions = signal<string[]>([]);
+  portOptions = signal<number[]>([]);
+  protocolOptions = signal<string[]>([]);
 
   searchTerm: WritableSignal<string> = signal('');
   selectedStatus: WritableSignal<string> = signal(ALL);
   selectedSubnet: WritableSignal<string> = signal(ALL);
   selectedTag: WritableSignal<string> = signal(ALL);
+  selectedService: WritableSignal<string> = signal(ALL);
+  selectedPort: WritableSignal<number | typeof ALL> = signal(ALL);
+  selectedProtocol: WritableSignal<string> = signal(ALL);
 
   controls: SentinelControlItem[] = [];
 
@@ -164,6 +171,7 @@ export class AssetPageComponent implements OnInit {
     private getNetworkServices: AssetPageGetNetworkServicesPaginatedQueryService,
     private getDomainNames: AssetPageGetDomainNamesPaginatedQueryService,
     private getTypeCounts: AssetPageGetTypeCountsQueryService,
+    private getServiceOptions: AssetPageGetServiceOptionsQueryService,
     private getIpTags: AssetPageGetIpTagsQueryService,
     private getAllSubnets: GetAllSubnetsQueryService,
     private updateIpTag: AssetPageUpdateIpTagMutationService,
@@ -173,6 +181,7 @@ export class AssetPageComponent implements OnInit {
     this.dataLoading = true;
     this.loadTags();
     this.loadSubnets();
+    this.loadServiceOptions();
 
     this.search$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
@@ -312,7 +321,10 @@ export class AssetPageComponent implements OnInit {
       this.searchTerm().trim() !== '' ||
       this.selectedStatus() !== ALL ||
       this.selectedSubnet() !== ALL ||
-      this.selectedTag() !== ALL
+      this.selectedTag() !== ALL ||
+      this.selectedService() !== ALL ||
+      this.selectedPort() !== ALL ||
+      this.selectedProtocol() !== ALL
     );
   }
 
@@ -345,8 +357,18 @@ export class AssetPageComponent implements OnInit {
   }
 
   private buildNetworkServiceWhere(): NetworkServiceWhere | undefined {
+    const parts: NetworkServiceWhere[] = [];
     const hostWhere = this.buildHostWhere();
-    return hostWhere ? { hostsConnection_SOME: hostWhere } : undefined;
+    if (hostWhere) parts.push({ hostsConnection_SOME: hostWhere });
+
+    const service = this.selectedService();
+    if (service !== ALL) parts.push({ service });
+    const port = this.selectedPort();
+    if (port !== ALL) parts.push({ port });
+    const protocol = this.selectedProtocol();
+    if (protocol !== ALL) parts.push({ protocol });
+
+    return parts.length > 0 ? { AND: parts } : undefined;
   }
 
   private buildDomainNameWhere(): DomainNameWhere | undefined {
@@ -386,6 +408,21 @@ export class AssetPageComponent implements OnInit {
       });
   }
 
+  // Service nodes are deduplicated (service, port, protocol) definitions, so this scan is small.
+  private loadServiceOptions(): void {
+    this.getServiceOptions
+      .fetch({}, NETWORK_ONLY)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ data }) => {
+        const distinct = <T>(values: (T | null | undefined)[]): T[] => [
+          ...new Set(values.filter((v): v is T => v != null)),
+        ];
+        this.serviceOptions.set(distinct(data.networkServices.map((svc) => svc.service)).sort());
+        this.portOptions.set(distinct(data.networkServices.map((svc) => svc.port)).sort((a, b) => a - b));
+        this.protocolOptions.set(distinct(data.networkServices.map((svc) => svc.protocol)).sort());
+      });
+  }
+
   private loadSubnets(): void {
     this.getAllSubnets
       .fetch({}, NETWORK_ONLY)
@@ -405,6 +442,9 @@ export class AssetPageComponent implements OnInit {
     this.selectedStatus.set(ALL);
     this.selectedSubnet.set(ALL);
     this.selectedTag.set(ALL);
+    this.selectedService.set(ALL);
+    this.selectedPort.set(ALL);
+    this.selectedProtocol.set(ALL);
     this.dataSource.data = [];
     this.dataLoading = true;
     if (this.paginator) this.paginator.pageIndex = 0;
@@ -425,6 +465,9 @@ export class AssetPageComponent implements OnInit {
     this.selectedStatus.set(ALL);
     this.selectedSubnet.set(ALL);
     this.selectedTag.set(ALL);
+    this.selectedService.set(ALL);
+    this.selectedPort.set(ALL);
+    this.selectedProtocol.set(ALL);
     this.applyFilters();
   }
 
@@ -444,6 +487,10 @@ export class AssetPageComponent implements OnInit {
 
   // Tooltip transform for inline-elements-preview
   readonly identity = (value: string): string => value;
+
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
+  }
 
   navigateToNetworkNodeView(ip: string): void {
     this.router.navigate([NETWORK_NODES_PATH], { queryParams: { ip } });

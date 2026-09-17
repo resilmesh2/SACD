@@ -50,6 +50,35 @@
             </mat-select>
           </mat-form-field>
         }
+        @if (activeType() === 'NetworkService') {
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Service</mat-label>
+            <mat-select [(value)]="selectedService" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (service of serviceOptions(); track service) {
+                <mat-option [value]="service">{{ service }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Port</mat-label>
+            <mat-select [(value)]="selectedPort" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (port of portOptions(); track port) {
+                <mat-option [value]="port">{{ port }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Protocol</mat-label>
+            <mat-select [(value)]="selectedProtocol" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (protocol of protocolOptions(); track protocol) {
+                <mat-option [value]="protocol">{{ protocol }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
         <sentinel-button-with-icon
           color="primary"
           icon="filter_list_off"
@@ -73,11 +102,16 @@
         <ng-container matColumnDef="ip">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>IP</th>
           <td mat-cell *matCellDef="let asset" style="width: 14rem">
-            @if (asset.ip !== 'N/A') {
-              <a (click)="navigateToNetworkNodeView(asset.ip)" class="link-pill">{{ asset.ip }}</a>
-            } @else {
-              {{ asset.ip }}
-            }
+            <div class="asset-nav">
+              <a
+                (click)="navigateToNetworkNodeView(asset.ip)"
+                class="link-pill icon-only"
+                title="Network node visualization"
+              >
+                <mat-icon>analytics</mat-icon>
+              </a>
+              <a (click)="navigateToAssetDetail(asset.ip)" class="link-pill">{{ asset.ip }}</a>
+            </div>
           </td>
         </ng-container>
 
@@ -186,7 +220,7 @@
             >
               <ng-container *inlineElement="ipTemplate" />
               <ng-template #ipTemplate let-ip>
-                <a (click)="navigateToNetworkNodeView(ip)" class="inline-link">{{ ip }}</a>
+                <a (click)="navigateToAssetDetail(ip)" class="inline-link">{{ ip }}</a>
               </ng-template>
             </inline-elements-preview>
           </td>

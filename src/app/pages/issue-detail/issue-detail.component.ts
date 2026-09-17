@@ -12,7 +12,7 @@ import { StatusChipComponent } from '../../components/status-color-chip/status-c
 import { InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { scoreToClassCVSS } from '../../utils/utils';
 import { GetVulnerableMachinesQueryService } from '../../graphql/vulnerable-machines/vulnerable-machines.operation.generated';
-import { NETWORK_NODES_PATH } from '../../paths';
+import { ASSETS_PATH } from '../../paths';
 
 export interface IssueDetail {
   affectedAsset: string;
@@ -154,8 +154,8 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
   // Tooltip transform for inline-elements-preview
   readonly identity = (value: string): string => value;
 
-  navigateToNetworkNodeView(ip: string): void {
-    this.router.navigate([NETWORK_NODES_PATH], { queryParams: { ip } });
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
   }
 
   navigateToVulnDetail(issueName: string): void {

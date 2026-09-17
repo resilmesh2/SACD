@@ -94,6 +94,18 @@ export type AssetPageGetTypeCountsQuery = {
   domainNamesAggregate: { __typename?: 'DomainNameAggregateSelection'; count: number };
 };
 
+export type AssetPageGetServiceOptionsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+
+export type AssetPageGetServiceOptionsQuery = {
+  __typename?: 'Query';
+  networkServices: Array<{
+    __typename?: 'NetworkService';
+    service?: string | null;
+    port?: number | null;
+    protocol?: string | null;
+  }>;
+};
+
 export type AssetPageGetIpTagsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
 export type AssetPageGetIpTagsQuery = {
@@ -212,6 +224,29 @@ export class AssetPageGetTypeCountsQueryService extends Apollo.Query<
   AssetPageGetTypeCountsQueryVariables
 > {
   document = AssetPageGetTypeCountsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const AssetPageGetServiceOptionsDocument = gql`
+  query AssetPageGetServiceOptions {
+    networkServices {
+      service
+      port
+      protocol
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssetPageGetServiceOptionsQueryService extends Apollo.Query<
+  AssetPageGetServiceOptionsQuery,
+  AssetPageGetServiceOptionsQueryVariables
+> {
+  document = AssetPageGetServiceOptionsDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

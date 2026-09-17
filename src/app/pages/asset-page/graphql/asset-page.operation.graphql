@@ -41,6 +41,14 @@ query AssetPageGetTypeCounts($ipWhere: IPWhere, $serviceWhere: NetworkServiceWhe
   }
 }
 
+query AssetPageGetServiceOptions {
+  networkServices {
+    service
+    port
+    protocol
+  }
+}
+
 query AssetPageGetIPTags {
   ips {
     tag

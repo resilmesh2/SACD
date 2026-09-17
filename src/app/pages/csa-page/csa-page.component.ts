@@ -16,8 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { SentinelCardComponent } from '@sentinel/components/card';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
+import { CriticalityChipComponent } from '../../components/criticality-chip/criticality-chip.component';
 import { MatIcon } from '@angular/material/icon';
-import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
+import { ASSETS_PATH, SUBNETS_PATH } from '../../paths';
 import { CsaPageGetNodeObjectsPaginatedQueryService } from './graphql/csa-page.operation.generated';
 import { NodeObjectOptions, NodeObjectSort, NodeObjectWhere, SortDirection } from '../../../generated/base-types';
 
@@ -48,6 +49,7 @@ export interface CSANode {
     SentinelCardComponent,
     SentinelButtonWithIconComponent,
     MatIcon,
+    CriticalityChipComponent,
   ],
   standalone: true,
 })
@@ -108,25 +110,6 @@ export class CSAPageComponent implements OnInit {
   private router = inject(Router);
 
   constructor(private getNodeObjects: CsaPageGetNodeObjectsPaginatedQueryService) {}
-
-  COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
-  getCriticalityColor = (value: number, isFinalCriticality: boolean = false) => {
-    if (value === null || value === undefined) {
-      return { bg: '#cacaca', color: '#000000' };
-    } else if (value >= this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)) {
-      return { bg: '#1C1D21', color: '#FFFFFF' };
-    } else if (value >= this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)) {
-      return { bg: '#9F85FF', color: '#000000' };
-    } else if (value >= this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)) {
-      return { bg: '#ed625e', color: '#000000' };
-    } else if (value >= this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)) {
-      return { bg: '#ed913b', color: '#000000' };
-    } else if (value > this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)) {
-      return { bg: '#f6d55c', color: '#000000' };
-    } else {
-      return { bg: '#86B46A', color: '#000000' };
-    }
-  };
 
   ngOnInit(): void {
     this.dataLoading = true;
@@ -224,10 +207,8 @@ export class CSAPageComponent implements OnInit {
     event.option.deselect();
   }
 
-  navigateToNetworkNodeView(ip: string): void {
-    this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: ip },
-    });
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {

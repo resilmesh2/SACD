@@ -50,9 +50,11 @@
   </div>
 </div>
 } @else {
-<mat-chip-set class="chip-container" (dblclick)="changeEditStatus()" aria-label="Fish selection">
+<mat-chip-set class="chip-container" (dblclick)="changeEditStatus()" aria-label="Tags">
   @for (tag of tags(); track $index) {
   <mat-chip>{{ tag }}</mat-chip>
+  } @empty {
+  <span class="no-tags">No tags</span>
   }
 </mat-chip-set>
 }
