@@ -38,31 +38,6 @@ export type GetSubnetsPaginatedQuery = {
   subnetsAggregate: { __typename?: 'SubnetAggregateSelection'; count: number };
 };
 
-export type GetChildIPsQueryVariables = SchemaTypes.Exact<{
-  range: SchemaTypes.Scalars['String']['input'];
-}>;
-
-export type GetChildIPsQuery = {
-  __typename?: 'Query';
-  ips: Array<{
-    __typename?: 'IP';
-    address: string;
-    version?: number | null;
-    subnets: Array<{ __typename?: 'Subnet'; range: string }>;
-    nodes: Array<{
-      __typename?: 'NodeObject';
-      host?: {
-        __typename?: 'Host';
-        software_versions: Array<{
-          __typename?: 'SoftwareVersion';
-          version: string;
-          vulnerabilities: Array<{ __typename?: 'Vulnerability'; cve?: { __typename?: 'CVE'; cve_id: string } | null }>;
-        }>;
-      } | null;
-    }>;
-  }>;
-};
-
 export type GetIPsPaginatedQueryVariables = SchemaTypes.Exact<{
   where?: SchemaTypes.InputMaybe<SchemaTypes.IpWhere>;
   options?: SchemaTypes.InputMaybe<SchemaTypes.IpOptions>;
@@ -131,25 +106,6 @@ export class GetSubnetsPaginatedQueryService extends Apollo.Query<
   GetSubnetsPaginatedQueryVariables
 > {
   document = GetSubnetsPaginatedDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const GetChildIPsDocument = gql`
-  query GetChildIPs($range: String!) {
-    ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
-      ...ChildIP
-    }
-  }
-  ${ChildIpFragmentDoc}
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class GetChildIPsQueryService extends Apollo.Query<GetChildIPsQuery, GetChildIPsQueryVariables> {
-  document = GetChildIPsDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

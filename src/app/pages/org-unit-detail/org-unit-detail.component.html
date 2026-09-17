@@ -36,7 +36,7 @@
   </div>
 </div>
 
-@if (this.dataSource.data && this.dataSource.data.length > 0) {
+@if (totalCount > 0) {
   <div class="occupancy-container" style="min-height: 24em">
     <h3>Subnet occupancy</h3>
     <ngx-charts-advanced-pie-chart
@@ -63,7 +63,7 @@
 
       <!-- Subnet range column -->
       <ng-container matColumnDef="subnet">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Subnet</th>
+        <th mat-header-cell *matHeaderCellDef>Subnet</th>
         <td mat-cell *matCellDef="let childIP">
           {{ childIP.subnet || 'N/A' }}
           <!-- <a (click)="navigateToSubnetDetail(childIP.subnet)" class="subnet-detail-link">
@@ -92,7 +92,12 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-    <mat-paginator [pageSize]="25" [pageSizeOptions]="[25, 50, 100]" showFirstLastButtons></mat-paginator>
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="25"
+      [pageSizeOptions]="[25, 50, 100]"
+      showFirstLastButtons
+    ></mat-paginator>
   </div>
 } @else if (errorResponse) {
   <div class="error-message">

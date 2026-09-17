@@ -13,12 +13,6 @@ query GetSubnetsPaginated($options: SubnetOptions, $where: SubnetWhere) {
   }
 }
 
-query GetChildIPs($range: String!) {
-  ips(where: { subnetsConnection_SINGLE: { node: { range: $range } } }) {
-    ...ChildIP
-  }
-}
-
 query GetIPsPaginated($where: IPWhere, $options: IPOptions, $affectedWhere: IPWhere) {
   ips(where: $where, options: $options) {
     ...ChildIP
