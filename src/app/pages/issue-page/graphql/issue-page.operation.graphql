@@ -1,6 +1,9 @@
-query IssuePageGetVulnerabilities {
-  vulnerabilities {
-    ...IssuePageVulnerability
+query IssuePageGetCvesPaginated($where: CVEWhere, $options: CVEOptions) {
+  cves(where: $where, options: $options) {
+    ...IssuePageCve
+  }
+  cvesAggregate(where: $where) {
+    count
   }
 }
 

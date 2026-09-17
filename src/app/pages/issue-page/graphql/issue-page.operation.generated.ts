@@ -1,25 +1,26 @@
 import * as SchemaTypes from '../../../../generated/base-types';
 
 import { gql } from 'apollo-angular';
-import { IssuePageVulnerabilityFragmentDoc } from './issue-page.fragment.generated';
+import { IssuePageCveFragmentDoc } from './issue-page.fragment.generated';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IssuePageGetVulnerabilitiesQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+export type IssuePageGetCvesPaginatedQueryVariables = SchemaTypes.Exact<{
+  where?: SchemaTypes.InputMaybe<SchemaTypes.CveWhere>;
+  options?: SchemaTypes.InputMaybe<SchemaTypes.CveOptions>;
+}>;
 
-export type IssuePageGetVulnerabilitiesQuery = {
+export type IssuePageGetCvesPaginatedQuery = {
   __typename?: 'Query';
-  vulnerabilities: Array<{
-    __typename?: 'Vulnerability';
-    status?: Array<string> | null;
-    cve?: {
-      __typename?: 'CVE';
-      cve_id: string;
-      description: string;
-      published: string;
-      result_impacts?: Array<string | null> | null;
-      cvss_v31?: { __typename?: 'CVSSv31'; base_severity?: string | null } | null;
-    } | null;
+  cves: Array<{
+    __typename?: 'CVE';
+    cve_id: string;
+    description: string;
+    published: string;
+    result_impacts?: Array<string | null> | null;
+    cvss_v31?: { __typename?: 'CVSSv31'; base_severity?: string | null } | null;
+    vulnerability: { __typename?: 'Vulnerability'; status?: Array<string> | null };
   }>;
+  cvesAggregate: { __typename?: 'CVEAggregateSelection'; count: number };
 };
 
 export type IssuePageUpdateVulnerabilityStatusMutationVariables = SchemaTypes.Exact<{
@@ -34,23 +35,26 @@ export type IssuePageUpdateVulnerabilityStatusMutation = {
   updateVulnerabilityStatus?: { __typename?: 'Vulnerability'; status?: Array<string> | null } | null;
 };
 
-export const IssuePageGetVulnerabilitiesDocument = gql`
-  query IssuePageGetVulnerabilities {
-    vulnerabilities {
-      ...IssuePageVulnerability
+export const IssuePageGetCvesPaginatedDocument = gql`
+  query IssuePageGetCvesPaginated($where: CVEWhere, $options: CVEOptions) {
+    cves(where: $where, options: $options) {
+      ...IssuePageCve
+    }
+    cvesAggregate(where: $where) {
+      count
     }
   }
-  ${IssuePageVulnerabilityFragmentDoc}
+  ${IssuePageCveFragmentDoc}
 `;
 
 @Injectable({
   providedIn: 'root',
 })
-export class IssuePageGetVulnerabilitiesQueryService extends Apollo.Query<
-  IssuePageGetVulnerabilitiesQuery,
-  IssuePageGetVulnerabilitiesQueryVariables
+export class IssuePageGetCvesPaginatedQueryService extends Apollo.Query<
+  IssuePageGetCvesPaginatedQuery,
+  IssuePageGetCvesPaginatedQueryVariables
 > {
-  document = IssuePageGetVulnerabilitiesDocument;
+  document = IssuePageGetCvesPaginatedDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

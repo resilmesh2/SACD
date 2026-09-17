@@ -9,7 +9,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ORGANIZATION_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from '../../paths';
+import { NETWORK_NODES_PATH, ORGANIZATION_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from '../../paths';
 import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { customOccupancyColors } from '../../config/customPieChartColors';
 import {
@@ -216,6 +216,10 @@ export class SubnetDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate([SUBNETS_PATH]);
+  }
+
+  navigateToNetworkNodeView(ip: string): void {
+    this.router.navigate([NETWORK_NODES_PATH], { queryParams: { ip } });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
