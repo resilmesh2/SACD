@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
-import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
+import { InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { GetAllSubnetsQuery, GetSubnetsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
 import { SubnetPageDeleteSubnetMutationService } from './graphql/subnet-page.operation.generated';
 import { SortDirection, SubnetOptions, SubnetSort } from '../../../generated/base-types';
