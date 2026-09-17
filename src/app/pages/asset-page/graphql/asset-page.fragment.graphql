@@ -8,8 +8,10 @@ fragment AssetPageIP on IP {
   }
   nodes {
     host {
-      network_servicesAggregate {
-        count
+      network_services {
+        service
+        port
+        protocol
       }
     }
   }
@@ -20,11 +22,8 @@ fragment AssetPageNetworkService on NetworkService {
   service
   protocol
   port
-  hostsConnection {
+  hostsConnection(where: $hostWhere) {
     edges {
-      properties {
-        status
-      }
       node {
         node {
           ips {

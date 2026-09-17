@@ -210,6 +210,16 @@ mat-drawer .mat-drawer-inner-container {
   }
 }
 
+// Plain-text clickable reference, for use inside inline-elements-preview items and detail lines.
+.inline-link {
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 // Panel of the "and N more..." menu in inline-elements-preview
 .mat-mdc-menu-panel.inline-elements-preview-menu-panel {
   max-width: min(480px, calc(100vw - 16px));

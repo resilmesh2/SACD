@@ -12,10 +12,12 @@ export type AssetPageIpFragment = {
     __typename?: 'NodeObject';
     host?: {
       __typename?: 'Host';
-      network_servicesAggregate?: {
-        __typename?: 'HostNetworkServiceNetwork_servicesAggregationSelection';
-        count: number;
-      } | null;
+      network_services: Array<{
+        __typename?: 'NetworkService';
+        service?: string | null;
+        port?: number | null;
+        protocol?: string | null;
+      }>;
     } | null;
   }>;
 };
@@ -30,7 +32,6 @@ export type AssetPageNetworkServiceFragment = {
     __typename?: 'NetworkServiceHostsConnection';
     edges: Array<{
       __typename?: 'NetworkServiceHostsRelationship';
-      properties: { __typename?: 'NetworkServiceOn'; status?: string | null };
       node: {
         __typename?: 'Host';
         node?: { __typename?: 'NodeObject'; ips: Array<{ __typename?: 'IP'; address: string }> } | null;
@@ -56,8 +57,10 @@ export const AssetPageIpFragmentDoc = gql`
     }
     nodes {
       host {
-        network_servicesAggregate {
-          count
+        network_services {
+          service
+          port
+          protocol
         }
       }
     }
@@ -69,11 +72,8 @@ export const AssetPageNetworkServiceFragmentDoc = gql`
     service
     protocol
     port
-    hostsConnection {
+    hostsConnection(where: $hostWhere) {
       edges {
-        properties {
-          status
-        }
         node {
           node {
             ips {

@@ -8,9 +8,12 @@ import {
 } from './asset-page.fragment.generated';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type AssetPageGetIPsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+export type AssetPageGetIPsPaginatedQueryVariables = SchemaTypes.Exact<{
+  where?: SchemaTypes.InputMaybe<SchemaTypes.IpWhere>;
+  options?: SchemaTypes.InputMaybe<SchemaTypes.IpOptions>;
+}>;
 
-export type AssetPageGetIPsQuery = {
+export type AssetPageGetIPsPaginatedQuery = {
   __typename?: 'Query';
   ips: Array<{
     __typename?: 'IP';
@@ -23,18 +26,25 @@ export type AssetPageGetIPsQuery = {
       __typename?: 'NodeObject';
       host?: {
         __typename?: 'Host';
-        network_servicesAggregate?: {
-          __typename?: 'HostNetworkServiceNetwork_servicesAggregationSelection';
-          count: number;
-        } | null;
+        network_services: Array<{
+          __typename?: 'NetworkService';
+          service?: string | null;
+          port?: number | null;
+          protocol?: string | null;
+        }>;
       } | null;
     }>;
   }>;
+  ipsAggregate: { __typename?: 'IPAggregateSelection'; count: number };
 };
 
-export type AssetPageGetNetworkServicesQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+export type AssetPageGetNetworkServicesPaginatedQueryVariables = SchemaTypes.Exact<{
+  where?: SchemaTypes.InputMaybe<SchemaTypes.NetworkServiceWhere>;
+  options?: SchemaTypes.InputMaybe<SchemaTypes.NetworkServiceOptions>;
+  hostWhere?: SchemaTypes.InputMaybe<SchemaTypes.NetworkServiceHostsConnectionWhere>;
+}>;
 
-export type AssetPageGetNetworkServicesQuery = {
+export type AssetPageGetNetworkServicesPaginatedQuery = {
   __typename?: 'Query';
   networkServices: Array<{
     __typename?: 'NetworkService';
@@ -46,7 +56,6 @@ export type AssetPageGetNetworkServicesQuery = {
       __typename?: 'NetworkServiceHostsConnection';
       edges: Array<{
         __typename?: 'NetworkServiceHostsRelationship';
-        properties: { __typename?: 'NetworkServiceOn'; status?: string | null };
         node: {
           __typename?: 'Host';
           node?: { __typename?: 'NodeObject'; ips: Array<{ __typename?: 'IP'; address: string }> } | null;
@@ -54,17 +63,42 @@ export type AssetPageGetNetworkServicesQuery = {
       }>;
     };
   }>;
+  networkServicesAggregate: { __typename?: 'NetworkServiceAggregateSelection'; count: number };
 };
 
-export type AssetPageGetDomainNamesQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+export type AssetPageGetDomainNamesPaginatedQueryVariables = SchemaTypes.Exact<{
+  where?: SchemaTypes.InputMaybe<SchemaTypes.DomainNameWhere>;
+  options?: SchemaTypes.InputMaybe<SchemaTypes.DomainNameOptions>;
+}>;
 
-export type AssetPageGetDomainNamesQuery = {
+export type AssetPageGetDomainNamesPaginatedQuery = {
   __typename?: 'Query';
   domainNames: Array<{
     __typename?: 'DomainName';
     domain_name: string;
     ips: Array<{ __typename?: 'IP'; address: string }>;
   }>;
+  domainNamesAggregate: { __typename?: 'DomainNameAggregateSelection'; count: number };
+};
+
+export type AssetPageGetTypeCountsQueryVariables = SchemaTypes.Exact<{
+  ipWhere?: SchemaTypes.InputMaybe<SchemaTypes.IpWhere>;
+  serviceWhere?: SchemaTypes.InputMaybe<SchemaTypes.NetworkServiceWhere>;
+  domainWhere?: SchemaTypes.InputMaybe<SchemaTypes.DomainNameWhere>;
+}>;
+
+export type AssetPageGetTypeCountsQuery = {
+  __typename?: 'Query';
+  ipsAggregate: { __typename?: 'IPAggregateSelection'; count: number };
+  networkServicesAggregate: { __typename?: 'NetworkServiceAggregateSelection'; count: number };
+  domainNamesAggregate: { __typename?: 'DomainNameAggregateSelection'; count: number };
+};
+
+export type AssetPageGetIpTagsQueryVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+
+export type AssetPageGetIpTagsQuery = {
+  __typename?: 'Query';
+  ips: Array<{ __typename?: 'IP'; tag?: Array<string | null> | null }>;
 };
 
 export type AssetPageUpdateIpTagMutationVariables = SchemaTypes.Exact<{
@@ -77,10 +111,13 @@ export type AssetPageUpdateIpTagMutation = {
   updateIPTag?: { __typename?: 'IP'; _id: string; address: string; tag?: Array<string | null> | null } | null;
 };
 
-export const AssetPageGetIPsDocument = gql`
-  query AssetPageGetIPs {
-    ips {
+export const AssetPageGetIPsPaginatedDocument = gql`
+  query AssetPageGetIPsPaginated($where: IPWhere, $options: IPOptions) {
+    ips(where: $where, options: $options) {
       ...AssetPageIP
+    }
+    ipsAggregate(where: $where) {
+      count
     }
   }
   ${AssetPageIpFragmentDoc}
@@ -89,17 +126,27 @@ export const AssetPageGetIPsDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class AssetPageGetIPsQueryService extends Apollo.Query<AssetPageGetIPsQuery, AssetPageGetIPsQueryVariables> {
-  document = AssetPageGetIPsDocument;
+export class AssetPageGetIPsPaginatedQueryService extends Apollo.Query<
+  AssetPageGetIPsPaginatedQuery,
+  AssetPageGetIPsPaginatedQueryVariables
+> {
+  document = AssetPageGetIPsPaginatedDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const AssetPageGetNetworkServicesDocument = gql`
-  query AssetPageGetNetworkServices {
-    networkServices {
+export const AssetPageGetNetworkServicesPaginatedDocument = gql`
+  query AssetPageGetNetworkServicesPaginated(
+    $where: NetworkServiceWhere
+    $options: NetworkServiceOptions
+    $hostWhere: NetworkServiceHostsConnectionWhere
+  ) {
+    networkServices(where: $where, options: $options) {
       ...AssetPageNetworkService
+    }
+    networkServicesAggregate(where: $where) {
+      count
     }
   }
   ${AssetPageNetworkServiceFragmentDoc}
@@ -108,20 +155,23 @@ export const AssetPageGetNetworkServicesDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class AssetPageGetNetworkServicesQueryService extends Apollo.Query<
-  AssetPageGetNetworkServicesQuery,
-  AssetPageGetNetworkServicesQueryVariables
+export class AssetPageGetNetworkServicesPaginatedQueryService extends Apollo.Query<
+  AssetPageGetNetworkServicesPaginatedQuery,
+  AssetPageGetNetworkServicesPaginatedQueryVariables
 > {
-  document = AssetPageGetNetworkServicesDocument;
+  document = AssetPageGetNetworkServicesPaginatedDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
   }
 }
-export const AssetPageGetDomainNamesDocument = gql`
-  query AssetPageGetDomainNames {
-    domainNames {
+export const AssetPageGetDomainNamesPaginatedDocument = gql`
+  query AssetPageGetDomainNamesPaginated($where: DomainNameWhere, $options: DomainNameOptions) {
+    domainNames(where: $where, options: $options) {
       ...AssetPageDomainName
+    }
+    domainNamesAggregate(where: $where) {
+      count
     }
   }
   ${AssetPageDomainNameFragmentDoc}
@@ -130,11 +180,59 @@ export const AssetPageGetDomainNamesDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class AssetPageGetDomainNamesQueryService extends Apollo.Query<
-  AssetPageGetDomainNamesQuery,
-  AssetPageGetDomainNamesQueryVariables
+export class AssetPageGetDomainNamesPaginatedQueryService extends Apollo.Query<
+  AssetPageGetDomainNamesPaginatedQuery,
+  AssetPageGetDomainNamesPaginatedQueryVariables
 > {
-  document = AssetPageGetDomainNamesDocument;
+  document = AssetPageGetDomainNamesPaginatedDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const AssetPageGetTypeCountsDocument = gql`
+  query AssetPageGetTypeCounts($ipWhere: IPWhere, $serviceWhere: NetworkServiceWhere, $domainWhere: DomainNameWhere) {
+    ipsAggregate(where: $ipWhere) {
+      count
+    }
+    networkServicesAggregate(where: $serviceWhere) {
+      count
+    }
+    domainNamesAggregate(where: $domainWhere) {
+      count
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssetPageGetTypeCountsQueryService extends Apollo.Query<
+  AssetPageGetTypeCountsQuery,
+  AssetPageGetTypeCountsQueryVariables
+> {
+  document = AssetPageGetTypeCountsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const AssetPageGetIpTagsDocument = gql`
+  query AssetPageGetIPTags {
+    ips {
+      tag
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AssetPageGetIpTagsQueryService extends Apollo.Query<
+  AssetPageGetIpTagsQuery,
+  AssetPageGetIpTagsQueryVariables
+> {
+  document = AssetPageGetIpTagsDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);
