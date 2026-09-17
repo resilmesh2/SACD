@@ -21,6 +21,27 @@ export type GetAllOrgUnitsQuery = {
   }>;
 };
 
+export type GetOrgUnitsPaginatedQueryVariables = SchemaTypes.Exact<{
+  options?: SchemaTypes.InputMaybe<SchemaTypes.OrganizationUnitOptions>;
+  where?: SchemaTypes.InputMaybe<SchemaTypes.OrganizationUnitWhere>;
+}>;
+
+export type GetOrgUnitsPaginatedQuery = {
+  __typename?: 'Query';
+  organizationUnits: Array<{
+    __typename?: 'OrganizationUnit';
+    name: string;
+    contacts: Array<{ __typename?: 'Contact'; name: string }>;
+    subnets: Array<{
+      __typename?: 'Subnet';
+      range: string;
+      parent_subnet: Array<{ __typename?: 'Subnet'; range: string }>;
+    }>;
+    parent_org_unit: Array<{ __typename?: 'OrganizationUnit'; name: string }>;
+  }>;
+  organizationUnitsAggregate: { __typename?: 'OrganizationUnitAggregateSelection'; count: number };
+};
+
 export type GetOrgUnitQueryVariables = SchemaTypes.Exact<{
   name: SchemaTypes.Scalars['String']['input'];
 }>;
@@ -54,6 +75,31 @@ export const GetAllOrgUnitsDocument = gql`
 })
 export class GetAllOrgUnitsQueryService extends Apollo.Query<GetAllOrgUnitsQuery, GetAllOrgUnitsQueryVariables> {
   document = GetAllOrgUnitsDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GetOrgUnitsPaginatedDocument = gql`
+  query GetOrgUnitsPaginated($options: OrganizationUnitOptions, $where: OrganizationUnitWhere) {
+    organizationUnits(options: $options, where: $where) {
+      ...OrgUnit
+    }
+    organizationUnitsAggregate(where: $where) {
+      count
+    }
+  }
+  ${OrgUnitFragmentDoc}
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetOrgUnitsPaginatedQueryService extends Apollo.Query<
+  GetOrgUnitsPaginatedQuery,
+  GetOrgUnitsPaginatedQueryVariables
+> {
+  document = GetOrgUnitsPaginatedDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

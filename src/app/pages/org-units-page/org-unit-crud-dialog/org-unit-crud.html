@@ -18,14 +18,7 @@
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Cancel</button>
   @if (data.mode === "edit") {
-  <sentinel-button-with-icon
-    color="primary"
-    icon="save"
-    tooltip=""
-    (click)="editOrgUnit()"
-    mat-dialog-close
-    cdkFocusInitial
-  >
+  <sentinel-button-with-icon color="primary" icon="save" tooltip="" (click)="editOrgUnit()" cdkFocusInitial>
     Save
   </sentinel-button-with-icon>
   } @else if (data.mode === "insert") {

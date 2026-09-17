@@ -1,0 +1,33 @@
+.elements {
+  display: inline;
+}
+
+.more-elements-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  // Resilmesh accent (same as toolbar / selected states in styles.scss)
+  color: #e4295f;
+  font-weight: 500;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+.more-elements-menu {
+  max-height: min(60vh, 480px);
+  overflow: auto;
+  padding: 8px 0;
+}
+
+.more-elements-menu-item {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  padding: 6px 12px;
+  white-space: normal;
+}

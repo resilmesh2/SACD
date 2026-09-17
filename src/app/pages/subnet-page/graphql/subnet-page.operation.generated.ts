@@ -21,15 +21,6 @@ export type SubnetPageGetSubnetQuery = {
   }>;
 };
 
-export type SubnetPageGetChildSubnetsQueryVariables = SchemaTypes.Exact<{
-  range: SchemaTypes.Scalars['String']['input'];
-}>;
-
-export type SubnetPageGetChildSubnetsQuery = {
-  __typename?: 'Query';
-  subnets: Array<{ __typename?: 'Subnet'; range: string }>;
-};
-
 export type SubnetPageDeleteSubnetMutationVariables = SchemaTypes.Exact<{
   range: SchemaTypes.Scalars['String']['input'];
 }>;
@@ -56,27 +47,6 @@ export class SubnetPageGetSubnetQueryService extends Apollo.Query<
   SubnetPageGetSubnetQueryVariables
 > {
   document = SubnetPageGetSubnetDocument;
-
-  constructor(apollo: Apollo.Apollo) {
-    super(apollo);
-  }
-}
-export const SubnetPageGetChildSubnetsDocument = gql`
-  query SubnetPageGetChildSubnets($range: String!) {
-    subnets(where: { parent_subnet_SOME: { range: $range } }) {
-      range
-    }
-  }
-`;
-
-@Injectable({
-  providedIn: 'root',
-})
-export class SubnetPageGetChildSubnetsQueryService extends Apollo.Query<
-  SubnetPageGetChildSubnetsQuery,
-  SubnetPageGetChildSubnetsQueryVariables
-> {
-  document = SubnetPageGetChildSubnetsDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

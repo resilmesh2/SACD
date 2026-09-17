@@ -1,0 +1,40 @@
+query AssetDetailGetIP($address: String!) {
+  ips(where: { address: $address }) {
+    address
+    version
+    status
+    tag
+    subnets {
+      range
+    }
+    domain_names {
+      domain_name
+    }
+    nodes {
+      final_criticality
+      host {
+        hostname
+        software_versions {
+          version
+          vulnerabilities {
+            cve {
+              cve_id
+            }
+          }
+        }
+      }
+    }
+  }
+  networkServices(where: { hostsConnection_SOME: { node: { node: { ips_SOME: { address: $address } } } } }) {
+    service
+    port
+    protocol
+    hostsConnection(where: { node: { node: { ips_SOME: { address: $address } } } }) {
+      edges {
+        properties {
+          status
+        }
+      }
+    }
+  }
+}

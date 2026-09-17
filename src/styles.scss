@@ -191,3 +191,46 @@ mat-drawer .mat-drawer-inner-container {
     --mdc-snackbar-supporting-text-color: #fff !important;
   }
 }
+
+// Clickable pill for an entity reference (IP, subnet, ...) inside a table cell or detail line.
+// Same look as the asset chips on the CSA page.
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+  font-weight: bold;
+  color: black;
+  background-color: #e3e3e3;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #dcdcdc;
+  }
+
+  // Square variant holding just a mat-icon
+  &.icon-only {
+    padding: 0.2em;
+  }
+}
+
+// Plain-text clickable reference, for use inside inline-elements-preview items and detail lines.
+.inline-link {
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Panel of the "and N more..." menu in inline-elements-preview
+.mat-mdc-menu-panel.inline-elements-preview-menu-panel {
+  max-width: min(480px, calc(100vw - 16px));
+  min-width: min(480px, calc(100vw - 16px));
+
+  .mat-mdc-menu-content {
+    padding: 0;
+  }
+}

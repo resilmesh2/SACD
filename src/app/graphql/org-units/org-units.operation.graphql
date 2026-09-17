@@ -4,6 +4,15 @@ query GetAllOrgUnits {
   }
 }
 
+query GetOrgUnitsPaginated($options: OrganizationUnitOptions, $where: OrganizationUnitWhere) {
+  organizationUnits(options: $options, where: $where) {
+    ...OrgUnit
+  }
+  organizationUnitsAggregate(where: $where) {
+    count
+  }
+}
+
 query GetOrgUnit($name: String!) {
   organizationUnits(where: { name: $name }) {
     ...OrgUnit

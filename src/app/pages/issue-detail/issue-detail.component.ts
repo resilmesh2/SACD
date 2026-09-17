@@ -8,13 +8,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
+import { StatusChipComponent } from '../../components/status-color-chip/status-color-chip.component';
+import { InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { scoreToClassCVSS } from '../../utils/utils';
 import { GetVulnerableMachinesQueryService } from '../../graphql/vulnerable-machines/vulnerable-machines.operation.generated';
+import { ASSETS_PATH } from '../../paths';
 
 export interface IssueDetail {
   affectedAsset: string;
-  description: string;
-  software: string;
+  software: string[];
   vulnerabilityCount: number;
 }
 
@@ -29,12 +31,14 @@ export interface IssueDetail {
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
     CvssChipComponent,
+    StatusChipComponent,
+    InlineElementsPreviewComponent,
   ],
 })
 export class IssueDetailComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<IssueDetail>();
 
-  displayedColumns: string[] = ['affectedAsset', 'description', 'software', 'vulnerabilityCount'];
+  displayedColumns: string[] = ['affectedAsset', 'software', 'vulnerabilityCount'];
 
   paginator: MatPaginator | null = null;
 
@@ -49,7 +53,7 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
   issueName = '';
   issueSeverity = '';
-  issueStatus = '';
+  issueStatus: string[] = [];
   issueImpact = '';
   issueDescription = '';
   totalOccurrences = 0;
@@ -90,7 +94,9 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       this.issueSeverity = params['severity'] || '';
-      this.issueStatus = params['status'] || '';
+      // A single-valued array query param arrives as a plain string, a multi-valued one as an array.
+      const status = params['status'];
+      this.issueStatus = Array.isArray(status) ? status : status ? [status] : [];
       this.issueDescription = params['description'] || '';
       this.issueImpact = params['impact'] || '';
     });
@@ -114,14 +120,20 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
 
           const valid = rows.filter((row) => row.ip && row.subnet && row.software);
 
-          if (valid.length > 0) {
-            this.issueDetails = valid.map((row) => ({
-              affectedAsset: row.ip,
-              description: this.issueDescription,
-              software: row.software,
-              vulnerabilityCount: 1,
+          // One row per affected asset; the same IP can be reached through several hosts, so
+          // the software versions are deduplicated per IP rather than listed once per path.
+          const byAsset = new Map<string, Set<string>>();
+          for (const row of valid) {
+            byAsset.set(row.ip, (byAsset.get(row.ip) ?? new Set()).add(row.software));
+          }
+
+          if (byAsset.size > 0) {
+            this.issueDetails = [...byAsset].map(([ip, versions]) => ({
+              affectedAsset: ip,
+              software: [...versions],
+              vulnerabilityCount: versions.size,
             }));
-            this.totalOccurrences = this.issueDetails.length;
+            this.totalOccurrences = this.issueDetails.reduce((sum, row) => sum + row.vulnerabilityCount, 0);
             this.setDataSource();
           } else {
             this.emptyResponse = true;
@@ -137,6 +149,13 @@ export class IssueDetailComponent implements OnInit, AfterViewInit {
           console.error(this.errorResponse);
         },
       });
+  }
+
+  // Tooltip transform for inline-elements-preview
+  readonly identity = (value: string): string => value;
+
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
   }
 
   navigateToVulnDetail(issueName: string): void {

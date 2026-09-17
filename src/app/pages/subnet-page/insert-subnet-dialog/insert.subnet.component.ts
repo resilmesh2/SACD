@@ -1,15 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  model,
-  OnInit,
-  output,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal, Signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, switchMap } from 'rxjs/operators';
@@ -21,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { GetAllSubnetsQuery } from '../../../graphql/subnets/subnets.operation.generated';
+import { GetAllSubnetsQuery, GetAllSubnetsQueryService } from '../../../graphql/subnets/subnets.operation.generated';
 import { GetAllOrgUnitsQueryService } from '../../../graphql/org-units/org-units.operation.generated';
 import {
   CreateSubnetMutationService,
@@ -54,18 +43,17 @@ type SubnetRow = GetAllSubnetsQuery['subnets'][0];
     SentinelButtonWithIconComponent,
   ],
 })
-export class InsertSubnetDialog implements OnInit {
+export class InsertSubnetDialog {
   readonly dialogRef = inject(MatDialogRef<InsertSubnetDialog>);
 
   data = inject(MAT_DIALOG_DATA) as {
-    allSubnets: SubnetRow[];
     subnet: Partial<SubnetRow>;
     mode: 'insert' | 'edit';
   };
 
   title = computed(() => (this.data.mode === 'insert' ? 'Insert Subnet' : 'Edit Subnet'));
 
-  allSubnets: WritableSignal<SubnetRow[]> = model(this.data.allSubnets || []);
+  allSubnets: Signal<SubnetRow[]>;
   allOrgUnits: Signal<{ name: string }[]>;
 
   updateSubnetDataSource = output<{ oldRange: string; subnet: SubnetRow }>();
@@ -76,6 +64,7 @@ export class InsertSubnetDialog implements OnInit {
   parentSubnet = signal<string | null>(this.data.subnet.parent_subnet?.at(0)?.range ?? null);
   orgUnit = signal<string | null>(this.data.subnet.org_units?.at(0)?.name ?? null);
 
+  private getAllSubnets = inject(GetAllSubnetsQueryService);
   private getAllOrgUnits = inject(GetAllOrgUnitsQueryService);
   private createSubnet = inject(CreateSubnetMutationService);
   private updateSubnet = inject(UpdateSubnetMutationService);
@@ -87,13 +76,15 @@ export class InsertSubnetDialog implements OnInit {
   private unlinkFromContacts = inject(UnlinkSubnetFromContactsMutationService);
 
   constructor() {
+    this.allSubnets = toSignal(
+      this.getAllSubnets.fetch({}, { fetchPolicy: 'network-only' }).pipe(map((r) => r.data.subnets)),
+      { initialValue: [] },
+    );
     this.allOrgUnits = toSignal(
       this.getAllOrgUnits.fetch({}, { fetchPolicy: 'network-only' }).pipe(map((r) => r.data.organizationUnits)),
       { initialValue: [] },
     );
   }
-
-  ngOnInit(): void {}
 
   updatedSubnet = computed<SubnetRow>(() => ({
     _id: this.data.subnet._id ?? '',
@@ -127,10 +118,13 @@ export class InsertSubnetDialog implements OnInit {
           return ops.length > 0 ? forkJoin(ops) : of(null);
         }),
       )
-      .subscribe({ error: (e) => console.error('Error inserting subnet:', e) });
-
-    this.updateSubnetDataSource.emit({ oldRange: '', subnet: this.updatedSubnet() });
-    this.dialogRef.close();
+      .subscribe({
+        next: () => {
+          this.updateSubnetDataSource.emit({ oldRange: '', subnet: this.updatedSubnet() });
+          this.dialogRef.close();
+        },
+        error: (e) => console.error('Error inserting subnet:', e),
+      });
   }
 
   editSubnet(): void {
@@ -169,8 +163,12 @@ export class InsertSubnetDialog implements OnInit {
           return ops.length > 0 ? forkJoin(ops) : of(null);
         }),
       )
-      .subscribe({ error: (e) => console.error('Error editing subnet:', e) });
-
-    this.updateSubnetDataSource.emit({ oldRange, subnet: this.updatedSubnet() });
+      .subscribe({
+        next: () => {
+          this.updateSubnetDataSource.emit({ oldRange, subnet: this.updatedSubnet() });
+          this.dialogRef.close();
+        },
+        error: (e) => console.error('Error editing subnet:', e),
+      });
   }
 }
