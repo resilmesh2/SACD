@@ -36,6 +36,7 @@ import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { DATE_FORMAT } from '../../config/dateFormat';
 import { MatIcon } from '@angular/material/icon';
 import { SUBNETS_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { AssetTypeChipComponent } from './asset-type-chip/asset-type-chip';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { AssetStatusEditChipComponent } from './asset-status-edit-chip/asset-status-edit-chip.component';
@@ -98,6 +99,8 @@ interface Filter {
     AssetTypeChipComponent,
     OverlayModule,
     AssetStatusEditChipComponent,
+    InlineElementsPreviewComponent,
+    InlineElementDirective,
   ],
   providers: [provideMomentDateAdapter(DATE_FORMAT)],
 })
@@ -446,6 +449,9 @@ export class AssetPageComponent implements OnInit, AfterViewInit {
     this.searchTerm.set(asset.ip);
     this.applyIPFilter();
   }
+
+  // Tooltip transform for the subnet inline-elements-preview
+  readonly identity = (value: string): string => value;
 
   navigateToSubnetDetail(subnetRange: string): void {
     this.router.navigate([SUBNETS_PATH, subnetRange]);

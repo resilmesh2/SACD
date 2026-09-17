@@ -191,3 +191,13 @@ mat-drawer .mat-drawer-inner-container {
     --mdc-snackbar-supporting-text-color: #fff !important;
   }
 }
+
+// Panel of the "and N more..." menu in inline-elements-preview
+.mat-mdc-menu-panel.inline-elements-preview-menu-panel {
+  max-width: min(480px, calc(100vw - 16px));
+  min-width: min(480px, calc(100vw - 16px));
+
+  .mat-mdc-menu-content {
+    padding: 0;
+  }
+}

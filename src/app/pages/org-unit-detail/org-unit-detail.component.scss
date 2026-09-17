@@ -78,3 +78,12 @@
   background-color: #e3e3e3;
   cursor: pointer;
 }
+
+.inline-link {
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

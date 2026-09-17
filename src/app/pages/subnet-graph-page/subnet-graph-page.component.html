@@ -138,7 +138,7 @@
               <li>
                 <strong>Parent subnet:</strong>
                 <a class="badge attribute" (click)="navigateToSubnetDetail(selectedNode()?.data.parentSubnet)">
-                  {{ selectedNode()?.data?.parentSubnet != '' ? selectedNode()?.data.parentSubnet : '---' }}
+                  {{ selectedNode()?.data.parentSubnet ?? '---' }}
                 </a>
               </li>
               <li>

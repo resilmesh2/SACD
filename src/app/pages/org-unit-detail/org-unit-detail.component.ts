@@ -9,7 +9,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ORGANIZATION_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { customOccupancyColors } from '../../config/customPieChartColors';
 import { GetOrgUnitQuery, GetOrgUnitQueryService } from '../../graphql/org-units/org-units.operation.generated';
 import { GetIPsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
@@ -36,6 +37,8 @@ interface ChildIP {
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
     NgxChartsModule,
+    InlineElementsPreviewComponent,
+    InlineElementDirective,
   ],
 })
 export class OrgUnitDetailComponent implements OnInit {
@@ -177,11 +180,12 @@ export class OrgUnitDetailComponent implements OnInit {
       });
   }
 
-  getSaneAffectedBy(affectedBy: string[]): string {
-    if (!affectedBy || affectedBy.length === 0) {
-      return 'No vulnerabilities';
-    }
-    return affectedBy.slice(0, 5).join(', ') + (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '');
+  // Tooltip transforms for inline-elements-preview
+  readonly identity = (value: string): string => value;
+  readonly contactName = (contact: { name: string }): string => contact.name;
+
+  navigateToVulnDetail(cveId: string): void {
+    this.router.navigate([VULNERABILITY_PATH], { queryParams: { cve: cveId } });
   }
 
   calcSubnetSize(range: string): number {
@@ -202,12 +206,6 @@ export class OrgUnitDetailComponent implements OnInit {
       { name: 'Occupied', value: this.totalCount - this.affectedCount },
       { name: 'Affected', value: this.affectedCount },
     ];
-  }
-
-  getContactNames(): string {
-    const contacts = this.orgUnitDetail()?.contacts;
-    if (!contacts || contacts.length === 0) return 'N/A';
-    return contacts.map((c) => c.name).join(', ');
   }
 
   goBack(): void {

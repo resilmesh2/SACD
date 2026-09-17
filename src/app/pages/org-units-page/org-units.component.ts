@@ -13,7 +13,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ORGANIZATION_PATH } from '../../paths';
+import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import {
   GetAllOrgUnitsQuery,
   GetOrgUnitsPaginatedQueryService,
@@ -36,6 +37,8 @@ type OrgUnitRow = GetAllOrgUnitsQuery['organizationUnits'][0];
     MatProgressSpinner,
     FormsModule,
     SentinelButtonWithIconComponent,
+    InlineElementsPreviewComponent,
+    InlineElementDirective,
   ],
 })
 export class OrgUnitsComponent implements OnInit {
@@ -146,10 +149,9 @@ export class OrgUnitsComponent implements OnInit {
     return [{ [this.sort.active]: dir }];
   }
 
-  getContactNames(row: OrgUnitRow): string {
-    const names = row.contacts.map((c) => c.name);
-    return names.length > 0 ? names.join(', ') : '---';
-  }
+  // Tooltip transforms for inline-elements-preview
+  readonly contactName = (contact: { name: string }): string => contact.name;
+  readonly subnetRange = (subnet: { range: string }): string => subnet.range;
 
   openDialog(
     enterAnimationDuration: string,
@@ -197,5 +199,9 @@ export class OrgUnitsComponent implements OnInit {
 
   navigateToOrgUnitDetail(orgUnit: OrgUnitRow): void {
     this.router.navigate([ORGANIZATION_PATH, orgUnit.name]);
+  }
+
+  navigateToSubnetDetail(range: string): void {
+    this.router.navigate([SUBNETS_PATH, range]);
   }
 }

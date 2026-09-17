@@ -142,15 +142,19 @@
         <ng-container matColumnDef="subnet">
           <th mat-header-cell *matHeaderCellDef>Subnet</th>
           <td mat-cell *matCellDef="let asset">
-            @if (asset.subnet && asset.subnet.length > 0) {
-              <!-- If subnet is available, navigate to subnet detail -->
-              <a (click)="navigateToSubnetDetail(asset.subnet[0] ?? '')" class="asset-link">
-                {{ asset.subnet }}
-              </a>
-            } @else {
-              <!-- If no subnet, display 'No Subnet' -->
-              <span class="no-subnet">---</span>
-            }
+            <inline-elements-preview
+              elementTypeName="subnets"
+              [elements]="asset.subnet"
+              [elementsTotalCount]="asset.subnet.length"
+              [maxDisplayedElements]="2"
+              [tooltipTransformFn]="identity"
+              [isTableCell]="true"
+            >
+              <ng-container *inlineElement="subnetTemplate" />
+              <ng-template #subnetTemplate let-subnet>
+                <a (click)="navigateToSubnetDetail(subnet)" class="asset-link">{{ subnet }}</a>
+              </ng-template>
+            </inline-elements-preview>
           </td>
         </ng-container>
 

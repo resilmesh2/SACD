@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { GetAllSubnetsQuery, GetSubnetsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
 import { SubnetPageDeleteSubnetMutationService } from './graphql/subnet-page.operation.generated';
 import { SortDirection, SubnetOptions, SubnetSort } from '../../../generated/base-types';
@@ -33,6 +34,7 @@ type SubnetRow = GetAllSubnetsQuery['subnets'][0];
     MatProgressSpinner,
     FormsModule,
     SentinelButtonWithIconComponent,
+    InlineElementsPreviewComponent,
   ],
 })
 export class SubnetPageComponent implements OnInit {
@@ -141,10 +143,8 @@ export class SubnetPageComponent implements OnInit {
     return [{ [this.sort.active]: dir }];
   }
 
-  getContactNames(row: SubnetRow): string {
-    const names = row.contacts.map((c) => c.name);
-    return names.length > 0 ? names.join(', ') : '---';
-  }
+  // Tooltip transform for the contacts inline-elements-preview
+  readonly contactName = (contact: { name: string }): string => contact.name;
 
   openDialog(
     enterAnimationDuration: string,

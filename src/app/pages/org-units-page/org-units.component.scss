@@ -77,9 +77,11 @@ button.action.destructive:hover {
   cursor: pointer;
 }
 
-.org-unit-subnets {
-  display: flex;
-  flex-direction: row;
-  gap: 0.25em;
-  flex-wrap: wrap;
+.inline-link {
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

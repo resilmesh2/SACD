@@ -9,7 +9,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ORGANIZATION_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { customOccupancyColors } from '../../config/customPieChartColors';
 import {
   SubnetPageGetSubnetQuery,
@@ -39,6 +40,8 @@ interface ChildIP {
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
     NgxChartsModule,
+    InlineElementsPreviewComponent,
+    InlineElementDirective,
   ],
 })
 export class SubnetDetailComponent implements OnInit {
@@ -184,17 +187,12 @@ export class SubnetDetailComponent implements OnInit {
       });
   }
 
-  getContactNames(): string {
-    const contacts = this.subnetDetail()?.contacts;
-    if (!contacts || contacts.length === 0) return 'N/A';
-    return contacts.map((c) => c.name).join(', ');
-  }
+  // Tooltip transforms for inline-elements-preview
+  readonly identity = (value: string): string => value;
+  readonly contactName = (contact: { name: string }): string => contact.name;
 
-  getSaneAffectedBy(affectedBy: string[]): string {
-    if (!affectedBy || affectedBy.length === 0) {
-      return 'No vulnerabilities';
-    }
-    return affectedBy.slice(0, 5).join(', ') + (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '');
+  navigateToVulnDetail(cveId: string): void {
+    this.router.navigate([VULNERABILITY_PATH], { queryParams: { cve: cveId } });
   }
 
   calcSubnetSize(): number {
