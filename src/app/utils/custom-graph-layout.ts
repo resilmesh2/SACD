@@ -1,5 +1,5 @@
 import * as dagre from 'dagre';
-import { Graph, Layout, Edge } from '@swimlane/ngx-graph';
+import { Graph, Layout, Edge, Node } from '@swimlane/ngx-graph';
 
 export enum Orientation {
   LEFT_TO_RIGHT = 'LR',
@@ -52,16 +52,40 @@ export class CustomLayout implements Layout {
     }
   }
 
+  // Rebuilt on every run() so it always matches the graph being laid out. Without it,
+  // the per-node lookups below are a linear scan inside a loop over every node, which
+  // makes laying out the graph quadratic in its size.
+  private nodeById = new Map<string, Node>();
+
+  private findNode(graph: Graph, id: string): Node | undefined {
+    const indexed = this.nodeById.get(id);
+    if (indexed) {
+      return indexed;
+    }
+    // updateEdge can be reached without run() having indexed this graph first; reindexing
+    // on a miss costs the same as the scan it replaces, so this is never worse.
+    this.indexNodes(graph);
+    return this.nodeById.get(id);
+  }
+
+  private indexNodes(graph: Graph): void {
+    this.nodeById.clear();
+    for (const node of graph.nodes) {
+      this.nodeById.set(node.id, node);
+    }
+  }
+
   run(graph: Graph): Graph {
     this.createDagreGraph(graph);
     dagre.layout(this.dagreGraph);
 
     graph.edgeLabels = this.dagreGraph._edgeLabels;
+    this.indexNodes(graph);
 
     for (const dagreNodeId in this.dagreGraph._nodes) {
       if (this.dagreGraph._nodes.hasOwnProperty(dagreNodeId)) {
         const dagreNode = this.dagreGraph._nodes[dagreNodeId];
-        const node = graph.nodes.find((n) => n.id === dagreNode.id);
+        const node = this.nodeById.get(dagreNode.id);
         if (node === undefined) {
           return graph;
         }
@@ -80,8 +104,8 @@ export class CustomLayout implements Layout {
   }
 
   updateEdge(graph: Graph, edge: Edge): Graph {
-    const sourceNode = graph.nodes.find((n) => n.id === edge.source);
-    const targetNode = graph.nodes.find((n) => n.id === edge.target);
+    const sourceNode = this.findNode(graph, edge.source);
+    const targetNode = this.findNode(graph, edge.target);
 
     if (
       sourceNode?.position === undefined ||
