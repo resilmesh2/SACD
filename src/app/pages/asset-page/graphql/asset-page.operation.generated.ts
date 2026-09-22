@@ -54,6 +54,7 @@ export type AssetPageGetNetworkServicesPaginatedQuery = {
     port?: number | null;
     hostsConnection: {
       __typename?: 'NetworkServiceHostsConnection';
+      totalCount: number;
       edges: Array<{
         __typename?: 'NetworkServiceHostsRelationship';
         node: {

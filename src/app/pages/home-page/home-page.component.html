@@ -1,15 +1,24 @@
 <h1>Welcome to the Resilmesh dashboard!</h1>
-<!-- <h1>Select a panel from the menu on the left to continue...</h1> -->
 <div class="home-page-container">
   <div class="dashboard-grid">
-    @if (this.data.ipCount() == 0) {
-      <div class="dashboard-card">
-        <ngx-skeleton-loader count="3" appearance="line" />
+    @if (!data.dashboardLoaded()) {
+      @for (placeholder of [1, 2, 3, 4, 5]; track placeholder) {
+        <div class="dashboard-card">
+          <ngx-skeleton-loader count="3" appearance="line" />
+        </div>
+      }
+    } @else if (data.dashboardError()) {
+      <div class="dashboard-card card-error">
+        <span class="card-header">
+          <h3>Could not load the dashboard</h3>
+          <mat-icon class="dashboard-icon">error_outline</mat-icon>
+        </span>
+        <p>{{ data.dashboardError() }}</p>
       </div>
     } @else {
       <div class="dashboard-card">
         <span class="card-header">
-          <h3>{{ this.data.ipCount() }} IPs</h3>
+          <h3>{{ data.ipCount() }} IPs</h3>
           <mat-icon class="dashboard-icon">dns</mat-icon>
         </span>
         <p>View your assets, manage tags, visualise connections.</p>
@@ -17,15 +26,9 @@
           Go to Assets
         </sentinel-button-with-icon>
       </div>
-    }
-    @if (this.data.csaNodesCount() == 0) {
-      <div class="dashboard-card">
-        <ngx-skeleton-loader count="3" appearance="line" />
-      </div>
-    } @else {
       <div class="dashboard-card">
         <span class="card-header">
-          <h3>{{ this.data.csaNodesCount() }} nodes</h3>
+          <h3>{{ data.csaNodesCount() }} nodes</h3>
           <mat-icon class="dashboard-icon">network_node</mat-icon>
         </span>
         <p>View nodes with topology degree, betweenness, and final criticality.</p>
@@ -38,16 +41,9 @@
           Go to Nodes
         </sentinel-button-with-icon>
       </div>
-    }
-
-    @if (this.data.subnets().length == 0) {
-      <div class="dashboard-card">
-        <ngx-skeleton-loader count="3" appearance="line" />
-      </div>
-    } @else {
       <div class="dashboard-card">
         <span class="card-header">
-          <h3>{{ this.data.subnets().length }} subnets</h3>
+          <h3>{{ data.subnetCount() }} subnets</h3>
           <mat-icon class="dashboard-icon">lan</mat-icon>
         </span>
         <p>View and manage your network subnets.</p>
@@ -60,15 +56,9 @@
           Go to Subnets
         </sentinel-button-with-icon>
       </div>
-    }
-    @if (this.data.orgUnits().length == 0) {
-      <div class="dashboard-card">
-        <ngx-skeleton-loader count="3" appearance="line" />
-      </div>
-    } @else {
       <div class="dashboard-card">
         <span class="card-header">
-          <h3>{{ this.data.orgUnits().length }} organization units</h3>
+          <h3>{{ data.orgUnitCount() }} organization units</h3>
           <mat-icon class="dashboard-icon">people_alt</mat-icon>
         </span>
         <p>View and manage your organization units.</p>
@@ -81,15 +71,9 @@
           Go to Organization Units
         </sentinel-button-with-icon>
       </div>
-    }
-    @if (this.data.missionsCount() == 0) {
-      <div class="dashboard-card">
-        <ngx-skeleton-loader count="3" appearance="line" />
-      </div>
-    } @else {
       <div class="dashboard-card">
         <span class="card-header">
-          <h3>{{ this.data.missionsCount() }} missions</h3>
+          <h3>{{ data.missionsCount() }} missions</h3>
           <mat-icon class="dashboard-icon">strategy</mat-icon>
         </span>
         <p>View your missions and visualise connections.</p>
@@ -110,36 +94,46 @@
         <h3>Vulnerabilities by Severity</h3>
         <mat-icon class="dashboard-icon">crisis_alert</mat-icon>
       </span>
-      <div class="pie-chart-container">
-        <ngx-charts-advanced-pie-chart
-          #pieChart
-          [results]="this.data.vulnerabilityChartData()"
-          [animations]="false"
-          [scheme]="'picnic'"
-          [customColors]="customColors"
-          [label]="'Vulnerabilities'"
-          (select)="onSelectSeverity($event)"
-        ></ngx-charts-advanced-pie-chart>
-      </div>
+      @if (!data.dashboardLoaded()) {
+        <ngx-skeleton-loader count="3" appearance="line" />
+      } @else if (data.dashboardError()) {
+        <p class="chart-message">{{ data.dashboardError() }}</p>
+      } @else if (data.vulnerabilityChartData().length === 0) {
+        <p class="chart-message">No vulnerabilities found.</p>
+      } @else {
+        <div class="pie-chart-container">
+          <ngx-charts-advanced-pie-chart
+            [results]="data.vulnerabilityChartData()"
+            [animations]="false"
+            [scheme]="'picnic'"
+            [customColors]="customColors"
+            [label]="'Vulnerabilities'"
+            (select)="onSelectSeverity($event)"
+          ></ngx-charts-advanced-pie-chart>
+        </div>
+      }
     </div>
     <div class="dashboard-card large">
       <span class="card-header">
         <h3>Operating Systems</h3>
         <mat-icon class="dashboard-icon">devices</mat-icon>
       </span>
-      <div class="pie-chart-container">
-        <ngx-charts-advanced-pie-chart
-          #pieChart
-          [results]="this.data.osChartData()"
-          [animations]="false"
-          [scheme]="'picnic'"
-          [label]="'Hosts with OS'"
-        ></ngx-charts-advanced-pie-chart>
-      </div>
+      @if (!data.osChartLoaded()) {
+        <ngx-skeleton-loader count="3" appearance="line" />
+      } @else if (data.osChartError()) {
+        <p class="chart-message">{{ data.osChartError() }}</p>
+      } @else if (data.osChartData().length === 0) {
+        <p class="chart-message">No operating system data found.</p>
+      } @else {
+        <div class="pie-chart-container">
+          <ngx-charts-advanced-pie-chart
+            [results]="data.osChartData()"
+            [animations]="false"
+            [scheme]="'picnic'"
+            [label]="'Hosts with OS'"
+          ></ngx-charts-advanced-pie-chart>
+        </div>
+      }
     </div>
   </div>
-  <!-- <div class="dashboard-grid-lower">
-        <div class="dashboard-card large"></div>
-        <div class="dashboard-card large"></div>
-    </div> -->
 </div>

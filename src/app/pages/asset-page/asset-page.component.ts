@@ -50,6 +50,9 @@ export interface Asset {
   subnet: string[];
   tag: string[];
   ips: string[];
+  // May exceed ips.length: the services tab fetches only the first few hosts per service,
+  // and inline-elements-preview renders the difference as an "and N more..." row.
+  ipsTotal: number;
   services: string[];
   service: string | null;
   port?: number | null;
@@ -240,6 +243,7 @@ export class AssetPageComponent implements OnInit {
                 subnet: ip.subnets.map((s) => s.range),
                 tag: (ip.tag ?? []).filter((t): t is string => t !== null),
                 ips: [],
+                ipsTotal: 0,
                 services: ip.nodes.flatMap(
                   (node) =>
                     node.host?.network_services.map(
@@ -260,17 +264,16 @@ export class AssetPageComponent implements OnInit {
             map(({ data }) => ({
               total: data.networkServicesAggregate.count,
               rows: data.networkServices.map((svc): Asset => {
-                // A NetworkService node is shared by every host running it; the nested
-                // connection is filtered with the same host criteria as the top-level query,
-                // so these are exactly the hosts that made the service match.
                 const hosts = svc.hostsConnection.edges;
+                const ips = hosts.flatMap((edge) => edge.node.node?.ips.map((ip) => ip.address) ?? []);
                 return {
                   type: 'NetworkService',
-                  ip: hosts[0]?.node.node?.ips[0]?.address ?? 'N/A',
+                  ip: ips[0] ?? 'N/A',
                   status: 'unknown',
                   subnet: [],
                   tag: [],
-                  ips: hosts.flatMap((edge) => edge.node.node?.ips.map((ip) => ip.address) ?? []),
+                  ips,
+                  ipsTotal: ips.length + (svc.hostsConnection.totalCount - hosts.length),
                   services: [],
                   service: svc.service ?? null,
                   port: svc.port,
@@ -291,6 +294,7 @@ export class AssetPageComponent implements OnInit {
                 domainName: domain.domain_name,
                 ip: domain.ips[0]?.address ?? 'N/A',
                 ips: domain.ips.map((ip) => ip.address),
+                ipsTotal: domain.ips.length,
                 status: 'known',
                 subnet: [],
                 tag: [],

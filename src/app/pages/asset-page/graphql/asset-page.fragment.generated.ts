@@ -30,6 +30,7 @@ export type AssetPageNetworkServiceFragment = {
   port?: number | null;
   hostsConnection: {
     __typename?: 'NetworkServiceHostsConnection';
+    totalCount: number;
     edges: Array<{
       __typename?: 'NetworkServiceHostsRelationship';
       node: {
@@ -72,7 +73,8 @@ export const AssetPageNetworkServiceFragmentDoc = gql`
     service
     protocol
     port
-    hostsConnection(where: $hostWhere) {
+    hostsConnection(where: $hostWhere, first: 25) {
+      totalCount
       edges {
         node {
           node {

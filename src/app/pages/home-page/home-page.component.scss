@@ -72,3 +72,16 @@ h3 {
   padding: 1em;
   gap: 0.5em;
 }
+
+// Failure of the dashboard query, in place of the five count cards
+.dashboard-card.card-error {
+  grid-column: 1 / -1;
+  height: auto;
+}
+
+// Stands in for a chart that is unavailable or has nothing to show
+.chart-message {
+  align-self: center;
+  margin: auto 0;
+  color: #666;
+}
