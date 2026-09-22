@@ -13,7 +13,7 @@ import { GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.op
   providers: [
     providePartialHighcharts({
       modules: () => {
-        return [import('highcharts/esm/highcharts-more'), import('highcharts/modules/boost')];
+        return [import('highcharts/esm/highcharts-more')];
       },
       timeout: 900,
     }),
@@ -86,11 +86,6 @@ export class TopologyComponent implements OnInit {
         height: '900px',
         animation: true,
       },
-      boost: {
-        useGPUTranslations: true,
-        // Chart-level boost when there are more than 5 series in the chart
-        seriesThreshold: 5,
-      },
       title: {
         text: 'Network Topology',
         align: 'center',
@@ -123,7 +118,6 @@ export class TopologyComponent implements OnInit {
                 }
                 if (e.point.value > 1) {
                   this.navigateToSubnetDetail(e.point.name);
-                  console.log(`Clicked on ${e.point.name} with value ${e.point.value}`);
                 }
               },
             },

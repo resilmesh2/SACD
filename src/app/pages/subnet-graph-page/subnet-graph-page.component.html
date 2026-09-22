@@ -137,14 +137,17 @@
               </li>
               <li>
                 <strong>Parent subnet:</strong>
-                <a class="badge attribute" (click)="navigateToSubnetDetail(selectedNode()?.data.parentSubnet)">
-                  {{ selectedNode()?.data.parentSubnet ?? '---' }}
+                <a
+                  class="badge attribute"
+                  (click)="navigateToSubnetDetail(selectedNode()?.data.parent_subnet?.[0]?.range)"
+                >
+                  {{ selectedNode()?.data.parent_subnet?.[0]?.range ?? '---' }}
                 </a>
               </li>
               <li>
                 <strong>Organization unit:</strong>
-                <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.organizationUnit)">
-                  {{ selectedNode()?.data?.organizationUnit ?? '---' }}
+                <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.org_units?.[0]?.name)">
+                  {{ selectedNode()?.data.org_units?.[0]?.name ?? '---' }}
                 </a>
               </li>
               <li>

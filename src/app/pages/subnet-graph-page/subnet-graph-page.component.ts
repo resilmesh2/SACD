@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { Edge, Layout, NgxGraphModule, Node } from '@swimlane/ngx-graph';
@@ -93,8 +93,12 @@ export class SubnetGraphPageComponent implements OnInit {
       });
   }
 
+  private readonly parentRanges = computed(
+    () => new Set(this.subnets().flatMap((subnet) => subnet.parent_subnet.map((ps) => ps.range))),
+  );
+
   isNotParent(subnetRange: string) {
-    return this.subnets().some((subnet) => subnet.parent_subnet.some((ps) => ps.range === subnetRange));
+    return this.parentRanges().has(subnetRange);
   }
 
   hasNoParent(subnet: Subnet) {

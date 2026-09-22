@@ -54,7 +54,6 @@ export class TreemapComponent implements OnInit {
       value?: number;
       parent?: string;
     }[] = [];
-    console.log(orgUnits);
 
     for (const unit of orgUnits) {
       const parentOrgUnit = unit.parent_org_unit[0]?.name;
@@ -100,8 +99,6 @@ export class TreemapComponent implements OnInit {
         data.push(node);
       }
     }
-
-    console.log(data);
 
     return data;
   }
@@ -203,13 +200,12 @@ export class TreemapComponent implements OnInit {
       //         'Source: <a href="https://snl.no/Norge" target="_blank">SNL</a>',
       //     align: 'left'
       // },
+      // Tile labels are truncated to fit, so the tooltip is the only way to read a
+      // full org unit / subnet name. The point value is address-space size, not asset
+      // count, so it is deliberately not shown - it would read as an occupancy figure.
       tooltip: {
-        enabled: false,
+        pointFormat: '<b>{point.name}</b>',
       },
-      // tooltip: {
-      //     pointFormat: 'Size of <b>{point.name}</b> is \
-      //         <b>{point.value}</b>'
-      // }
     };
   }
 }

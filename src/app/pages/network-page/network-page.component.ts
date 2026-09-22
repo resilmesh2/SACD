@@ -79,7 +79,6 @@ export class NetworkPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          console.log('Graph data loaded', res);
           this.edges = res.edges;
           this.nodes = res.nodes;
           if (this.nodes.length === 0 && this.edges.length === 0) {

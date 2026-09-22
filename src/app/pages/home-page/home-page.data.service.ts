@@ -12,6 +12,8 @@ import {
   HomePageGetHostsQueryService,
 } from './graphql/home-page.operation.generated';
 
+const MAX_OS_SLICES = 8;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -55,7 +57,9 @@ export class HomePageDataService {
 
           const severityCountMap: Record<string, number> = {};
           vulnsResult.data.cves.forEach((cve) => {
-            const severity = cve.cvss_v31?.base_severity ?? 'unknown';
+            // The API stores severities uppercase ('CRITICAL'); the chart's customColors
+            // are keyed lowercase, so they only apply once the name is normalised.
+            const severity = cve.cvss_v31?.base_severity?.toLowerCase() ?? 'unknown';
             severityCountMap[severity] = (severityCountMap[severity] ?? 0) + 1;
           });
           this.vulnerabilityChartData.set(
@@ -73,13 +77,18 @@ export class HomePageDataService {
               }
             });
           });
+          // One slice per distinct OS CPE would put hundreds of rows in the legend on a
+          // large estate, so only the most common ones are charted individually.
+          const osEntries = Object.entries(osCountMap)
+            .map(([name, value]) => ({
+              name: name.split('cpe:2.3:o:')[1],
+              value,
+            }))
+            .sort((a, b) => b.value - a.value);
+
+          const otherCount = osEntries.slice(MAX_OS_SLICES).reduce((acc, os) => acc + os.value, 0);
           this.osChartData.set(
-            Object.entries(osCountMap)
-              .map(([name, value]) => ({
-                name: name.split('cpe:2.3:o:')[1],
-                value,
-              }))
-              .sort((a, b) => b.value - a.value),
+            otherCount > 0 ? [...osEntries.slice(0, MAX_OS_SLICES), { name: 'Other', value: otherCount }] : osEntries,
           );
         },
       });

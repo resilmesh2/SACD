@@ -137,13 +137,9 @@
             <ul class="node-attributes">
               <li>
                 <strong>Parent org unit:</strong>
-                @if (
-                  selectedNode()?.data.parentOrgUnit &&
-                  selectedNode()?.data.parentOrgUnit !== '' &&
-                  selectedNode()?.data.parentOrgUnit !== '---'
-                ) {
-                  <a class="badge attribute" (click)="navigateToOrgUnitDetail(selectedNode()?.data.parentOrgUnit)">
-                    {{ selectedNode()?.data?.parentOrgUnit != '' ? selectedNode()?.data.parentOrgUnit : '---' }}
+                @if (selectedNode()?.data.parent_org_unit?.[0]?.name; as parentOrgUnit) {
+                  <a class="badge attribute" (click)="navigateToOrgUnitDetail(parentOrgUnit)">
+                    {{ parentOrgUnit }}
                   </a>
                 } @else {
                   <span> --- </span>
@@ -165,7 +161,7 @@
                 <strong>Subnets: </strong>
                 @if (selectedNode()?.data.subnets && selectedNode()?.data.subnets.length > 0) {
                   @for (subnet of selectedNode()?.data.subnets || []; track subnet; let index = $index) {
-                    <a (click)="navigateToSubnetDetail(subnet)" class="badge attribute">
+                    <a (click)="navigateToSubnetDetail(subnet.range)" class="badge attribute">
                       {{ subnet.range }}
                     </a>
                   }

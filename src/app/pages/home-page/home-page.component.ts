@@ -33,6 +33,9 @@ export class HomePageComponent implements OnInit {
     { name: 'high', value: '#ed625e' },
     { name: 'medium', value: '#ed913b' },
     { name: 'low', value: '#f6d55c' },
+    // CVEs with no cvss_v31 fall into this bucket; without an entry here the scheme
+    // picks a colour for it that can collide with one of the real severities.
+    { name: 'unknown', value: '#9aa0a6' },
   ];
 
   onSelectSeverity(event: any) {
