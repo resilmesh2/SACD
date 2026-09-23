@@ -193,10 +193,6 @@ export class OrgUnitsComponent implements OnInit {
       });
   }
 
-  reorganiseDatabase(): void {
-    alert('TODO: Reorganize database when API is ready');
-  }
-
   navigateToOrgUnitDetail(orgUnit: OrgUnitRow): void {
     this.router.navigate([ORGANIZATION_PATH, orgUnit.name]);
   }
