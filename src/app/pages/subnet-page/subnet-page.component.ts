@@ -18,6 +18,7 @@ import { InlineElementsPreviewComponent } from '../../components/inline-elements
 import { GetAllSubnetsQuery, GetSubnetsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
 import { SubnetPageDeleteSubnetMutationService } from './graphql/subnet-page.operation.generated';
 import { SortDirection, SubnetOptions, SubnetSort } from '../../../generated/base-types';
+import { IpHierarchySyncService } from './ip-hierarchy-sync.service';
 
 type SubnetRow = GetAllSubnetsQuery['subnets'][0];
 
@@ -73,11 +74,13 @@ export class SubnetPageComponent implements OnInit {
   dataLoading = false;
   emptyResponse = false;
   errorResponse = '';
+  reorganising = false;
 
   private readonly fetch$ = new Subject<void>();
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private ipHierarchySync = inject(IpHierarchySyncService);
   readonly dialog = inject(MatDialog);
 
   constructor(
@@ -187,7 +190,21 @@ export class SubnetPageComponent implements OnInit {
   }
 
   reorganiseDatabase(): void {
-    alert('TODO: Reorganize database when API is ready');
+    this.reorganising = true;
+    this.ipHierarchySync
+      .sync()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.reorganising = false;
+          this.snackBar.open('Database reorganized successfully.', 'Close');
+          this.fetch$.next();
+        },
+        error: () => {
+          this.reorganising = false;
+          this.snackBar.open('Failed to reorganize database.', 'Close');
+        },
+      });
   }
 
   navigateToSubnetDetail(subnetRange: string): void {

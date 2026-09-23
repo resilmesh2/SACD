@@ -8,7 +8,8 @@
     color="accent"
     icon="loop"
     tooltip="Updates all [PART OF] relationships"
-    (click)="reorganiseDatabase()"
+    [disabled]="reorganising"
+    (buttonClicked)="reorganiseDatabase()"
   >
     Reorganize database
   </sentinel-button-with-icon>

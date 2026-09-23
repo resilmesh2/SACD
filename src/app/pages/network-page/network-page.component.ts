@@ -39,7 +39,7 @@ export class NetworkPageComponent implements OnInit {
   error: any;
   private destroyRef = inject(DestroyRef);
   selectedNode: Node = { id: '', label: '' };
-  ipSearch = '4.122.55.26';
+  ipSearch = '';
   errorMessage = '';
   graphLoading?: boolean;
   center$: Subject<any> = new Subject();

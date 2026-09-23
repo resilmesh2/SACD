@@ -4,14 +4,6 @@
   <sentinel-button-with-icon color="primary" icon="add" tooltip="" (click)="openDialog('0ms', '0ms', {}, 'insert')">
     Create new organization unit
   </sentinel-button-with-icon>
-  <sentinel-button-with-icon
-    color="accent"
-    icon="loop"
-    tooltip="Updates all [PART OF] relationships"
-    (click)="reorganiseDatabase()"
-  >
-    Reorganize database
-  </sentinel-button-with-icon>
 </div>
 @if (dataLoading) {
   <ng-container>
