@@ -1,0 +1,61 @@
+mutation CreateSubnet($range: String!, $note: String) {
+  createSubnets(input: [{ range: $range, note: $note }]) {
+    subnets {
+      _id
+      range
+      note
+    }
+  }
+}
+
+mutation UpdateSubnet($oldRange: String!, $newRange: String!, $note: String) {
+  updateSubnets(where: { range: $oldRange }, update: { range: $newRange, note: $note }) {
+    subnets {
+      _id
+      range
+      note
+    }
+  }
+}
+
+mutation LinkSubnetToParent($subnetRange: String!, $parentSubnetRange: String!) {
+  linkSubnetToParent(subnetRange: $subnetRange, parentSubnetRange: $parentSubnetRange) {
+    _id
+    range
+  }
+}
+
+mutation UnlinkSubnetFromParent($subnetRange: String!, $parentRange: String!) {
+  unlinkSubnetFromParent(subnetRange: $subnetRange, parentRange: $parentRange) {
+    _id
+    range
+  }
+}
+
+mutation LinkSubnetToOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+  linkSubnetToOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
+    _id
+    range
+  }
+}
+
+mutation UnlinkSubnetFromOrgUnit($subnetRange: String!, $orgUnitName: String!) {
+  unlinkSubnetFromOrgUnit(subnetRange: $subnetRange, orgUnitName: $orgUnitName) {
+    _id
+    range
+  }
+}
+
+mutation MergeSubnetWithContacts($subnetRange: String!, $contactNames: [String!]!) {
+  mergeSubnetWithContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
+    _id
+    range
+  }
+}
+
+mutation UnlinkSubnetFromContacts($subnetRange: String!, $contactNames: [String!]!) {
+  unlinkSubnetFromContacts(subnetRange: $subnetRange, contactNames: $contactNames) {
+    _id
+    range
+  }
+}

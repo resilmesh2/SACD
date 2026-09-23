@@ -1,0 +1,39 @@
+mutation CreateOrgUnit($name: String!) {
+  createOrganizationUnits(input: [{ name: $name }]) {
+    organizationUnits {
+      name
+    }
+  }
+}
+
+mutation UpdateOrgUnit($oldName: String!, $newName: String!) {
+  updateOrganizationUnits(where: { name: $oldName }, update: { name: $newName }) {
+    organizationUnits {
+      name
+    }
+  }
+}
+
+mutation LinkOrgUnitToParent($orgUnitName: String!, $parentOrgUnitName: String!) {
+  linkOrgUnitToParentOrg(orgUnitName: $orgUnitName, parentOrgUnitName: $parentOrgUnitName) {
+    name
+  }
+}
+
+mutation UnlinkOrgUnitFromParents($orgUnitName: String!) {
+  unlinkOrgUnitFromParents(orgUnitName: $orgUnitName) {
+    name
+  }
+}
+
+mutation MergeOrgUnitWithContacts($orgUnitName: String!, $contactNames: [String!]!) {
+  mergeOrgUnitWithContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
+    name
+  }
+}
+
+mutation UnlinkOrgUnitFromContacts($orgUnitName: String!, $contactNames: [String!]!) {
+  unlinkOrgUnitFromContacts(orgUnitName: $orgUnitName, contactNames: $contactNames) {
+    name
+  }
+}

@@ -1,14 +1,7 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ChangeDetectorRef,
-  signal,
-  computed,
-  WritableSignal,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, DestroyRef, signal, WritableSignal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs/operators';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -17,29 +10,17 @@ import { Router } from '@angular/router';
 
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { DataService } from '../../services/data.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
 import { SentinelCardComponent } from '@sentinel/components/card';
-import { SentinelControlItem } from '@sentinel/components/controls';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
-import { DATE_FORMAT } from '../../config/dateFormat';
+import { CriticalityChipComponent } from '../../components/criticality-chip/criticality-chip.component';
 import { MatIcon } from '@angular/material/icon';
-import { NETWORK_NODES_PATH, SUBNETS_PATH } from '../../paths';
-
-export interface Service {
-  name: string;
-  id: string;
-  tag: string[];
-  subnet: string[];
-  severity: string[];
-  last_seen: Date | null;
-}
+import { ASSETS_PATH, SUBNETS_PATH } from '../../paths';
+import { CsaPageGetNodeObjectsPaginatedQueryService } from './graphql/csa-page.operation.generated';
+import { NodeObjectOptions, NodeObjectSort, NodeObjectWhere, SortDirection } from '../../../generated/base-types';
 
 export interface CSANode {
   ips: string[];
@@ -59,8 +40,6 @@ export interface CSANode {
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatInputModule,
     FormsModule,
     ReactiveFormsModule,
@@ -70,12 +49,12 @@ export interface CSANode {
     SentinelCardComponent,
     SentinelButtonWithIconComponent,
     MatIcon,
+    CriticalityChipComponent,
   ],
-  providers: [provideMomentDateAdapter(DATE_FORMAT)],
   standalone: true,
 })
-export class CSAPageComponent implements OnInit, AfterViewInit {
-  dataSource = new MatTableDataSource<CSANode>();
+export class CSAPageComponent implements OnInit {
+  dataSource = new MatTableDataSource<CSANode>([]);
 
   displayedColumns: string[] = [
     'ips',
@@ -87,22 +66,32 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
 
   private paginator: MatPaginator | null = null;
   private sort: MatSort | null = null;
-
-  @ViewChild(MatSort) set matSort(ms: MatSort) {
-    this.sort = ms;
-    this.setDataSourceAttributes();
-  }
+  private paginatorSub: Subscription | null = null;
+  private sortSub: Subscription | null = null;
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.setDataSourceAttributes();
+    // Runs every time the paginator is (re)created, not just the first time -
+    // the element it's on gets torn down and rebuilt whenever emptyResponse/errorResponse
+    // flips, so the old subscription must be dropped and a fresh one attached each time.
+    this.paginatorSub?.unsubscribe();
+    this.paginator = mp ?? null;
+    this.paginatorSub = mp
+      ? mp.page.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.fetch$.next())
+      : null;
   }
 
-  setDataSourceAttributes() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sortSub?.unsubscribe();
+    this.sort = ms ?? null;
+    this.sortSub = ms
+      ? ms.sortChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+          if (this.paginator) this.paginator.pageIndex = 0;
+          this.fetch$.next();
+        })
+      : null;
   }
 
+  totalCount = 0;
   dataLoaded = false;
   dataLoading = false;
   emptyResponse = false;
@@ -111,146 +100,106 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
   editOn: boolean = false;
   separatorKeysCodes = [ENTER] as const;
 
-  nodes = signal<CSANode[]>([]);
-  totalSortedServices = computed(() => this.dataSource.filteredData.length);
-
   defaultValue = 'All';
-  filterDictionary = new Map<string, string>();
 
   searchTerm: WritableSignal<string> = signal('');
 
-  controls: SentinelControlItem[] = [];
-
-  constructor(
-    private data: DataService,
-    private changeDetector: ChangeDetectorRef,
-  ) {
-    this.dataSource = new MatTableDataSource<CSANode>([]);
-  }
-
+  private readonly fetch$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  COLOR_THRESHOLDS = [9, 7, 5, 3, 1];
-  getCriticalityColor = (
-    value: number,
-    isFinalCriticality: boolean = false,
-  ) => {
-    if (value === null || value === undefined) {
-      return { bg: '#cacaca', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[0] * (isFinalCriticality ? 10 : 1)
-    ) {
-      return { bg: '#1C1D21', color: '#FFFFFF' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[1] * (isFinalCriticality ? 10 : 1)
-    ) {
-      return { bg: '#9F85FF', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[2] * (isFinalCriticality ? 10 : 1)
-    ) {
-      return { bg: '#ed625e', color: '#000000' };
-    } else if (
-      value >=
-      this.COLOR_THRESHOLDS[3] * (isFinalCriticality ? 10 : 1)
-    ) {
-      return { bg: '#ed913b', color: '#000000' };
-    } else if (
-      value >
-      this.COLOR_THRESHOLDS[4] * (isFinalCriticality ? 10 : 1)
-    ) {
-      return { bg: '#f6d55c', color: '#000000' };
-    } else {
-      return { bg: '#86B46A', color: '#000000' };
-    }
-  };
+  constructor(private getNodeObjects: CsaPageGetNodeObjectsPaginatedQueryService) {}
 
   ngOnInit(): void {
     this.dataLoading = true;
 
-    this.data.getCSANodes().subscribe({
-      next: (nodes) => {
-        this.nodes.set(nodes);
-
-        this.dataSource.data = this.nodes();
-
-        if (this.paginator && this.sort) {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        }
-
-        if (this.nodes().length > 0) {
-          this.dataLoaded = true;
-        } else {
-          this.emptyResponse = true;
-        }
-        this.dataLoading = false;
-
-        this.changeDetector.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.errorResponse = error;
-        this.dataLoading = false;
-        this.changeDetector.detectChanges();
-      },
+    this.search$.pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.paginator) this.paginator.pageIndex = 0;
+      this.fetch$.next();
     });
+
+    this.fetch$
+      .pipe(
+        startWith(undefined as void),
+        switchMap(() => {
+          this.errorResponse = '';
+          return this.getNodeObjects
+            .fetch({ options: this.buildOptions(), where: this.buildWhere() }, { fetchPolicy: 'network-only' })
+            .pipe(
+              catchError((error) => {
+                this.errorResponse = error.message ?? error;
+                this.dataLoading = false;
+                return EMPTY;
+              }),
+            );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        this.totalCount = result.data.nodeObjectsAggregate.count;
+        this.dataLoaded = true;
+        // A collection-wide empty state, not "the search term has no matches" - the latter
+        // is handled inline by *matNoDataRow so the search box stays visible to clear it.
+        this.emptyResponse = this.totalCount === 0 && !this.searchTerm().trim();
+        this.dataLoading = false;
+
+        const nodes = result.data.nodeObjects.map((node) => ({
+          ips: node.ips.map((ip) => ip.address),
+          topology_degree_norm: node.topology_degree_norm ?? 0,
+          topology_betweenness_norm: node.topology_betweenness_norm ?? 0,
+          mission_criticality: node.mission_criticality ?? 0,
+          final_criticality: node.final_criticality ?? 0,
+        }));
+
+        const pageSize = this.paginator?.pageSize ?? 25;
+        const lastPageIndex = Math.max(0, Math.ceil(this.totalCount / pageSize) - 1);
+        if (nodes.length === 0 && this.totalCount > 0 && this.paginator && this.paginator.pageIndex > lastPageIndex) {
+          this.paginator.pageIndex = lastPageIndex;
+          this.fetch$.next();
+          return;
+        }
+
+        this.dataSource.data = nodes;
+      });
   }
 
-  ngAfterViewInit() {
-    if (this.dataLoaded && this.dataSource) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-
-    /**
-     * Custom filter predicate for the data source.
-     */
-    this.dataSource.filterPredicate = function (record, filter) {
-      var map: Map<string, any> = new Map(JSON.parse(filter));
-      let isMatch = false;
-      for (let [key, value] of map) {
-        // Name filter (CVE ID)
-        if (key === 'name') {
-          isMatch =
-            value === 'All' ||
-            value == '' ||
-            record.ips.some((ip) =>
-              ip.toLowerCase().includes(value.trim().toLowerCase()),
-            );
-          if (!isMatch) return false;
-        }
-      }
-
-      return isMatch;
+  private buildOptions(): NodeObjectOptions {
+    const sort = this.buildSort();
+    const pageSize = this.paginator?.pageSize ?? 25;
+    return {
+      limit: pageSize,
+      offset: (this.paginator?.pageIndex ?? 0) * pageSize,
+      sort,
     };
   }
 
-  applyNameFilter(): void {
-    this.filterDictionary.set('name', this.searchTerm().trim().toLowerCase());
-    this.dataSource.filter = JSON.stringify(
-      Array.from(this.filterDictionary.entries()),
-    );
+  private buildSort(): NodeObjectSort[] {
+    // Table opens pre-sorted (matSortActive="final_criticality" matSortDirection="desc" on
+    // the template) before Angular resolves the MatSort ViewChild, so the very first fetch
+    // must request that same order itself rather than waiting on user interaction.
+    if (!this.sort?.active || !this.sort.direction) return [{ final_criticality: SortDirection.Desc }];
+    const dir = this.sort.direction === 'asc' ? SortDirection.Asc : SortDirection.Desc;
+    return [{ [this.sort.active]: dir }];
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  private buildWhere(): NodeObjectWhere | undefined {
+    const term = this.searchTerm().trim();
+    return term ? { ips_SOME: { address_CONTAINS: term } } : undefined;
+  }
+
+  applyNameFilter(): void {
+    this.search$.next(this.searchTerm());
   }
 
   resetFilters(): void {
-    this.filterDictionary.clear();
-    this.dataSource.filter = '';
     this.searchTerm.set('');
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    if (this.paginator) this.paginator.pageIndex = 0;
+    this.fetch$.next();
   }
 
-  saveData(address: string, tags: string[]): void {
-    this.data.changeTag(address, tags);
+  saveData(_address: string, _tags: string[]): void {
+    // TODO: implement via mutation service when tag mutation is added to csa-page.operation.graphql
   }
 
   selected(event: MatAutocompleteSelectedEvent, tags: string[]): void {
@@ -258,10 +207,8 @@ export class CSAPageComponent implements OnInit, AfterViewInit {
     event.option.deselect();
   }
 
-  navigateToNetworkNodeView(ip: string): void {
-    this.router.navigate([NETWORK_NODES_PATH], {
-      queryParams: { ip: ip },
-    });
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {

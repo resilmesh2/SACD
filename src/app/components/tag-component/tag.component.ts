@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ENTER } from '@angular/cdk/keycodes';
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,10 +13,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,15 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: 'tag-component.html',
   styleUrl: 'tag-component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatChipsModule,
-    MatIconModule,
-    MatAutocompleteModule,
-    FormsModule,
-    MatTooltipModule,
-  ],
+  imports: [MatFormFieldModule, MatChipsModule, MatIconModule, MatAutocompleteModule, FormsModule, MatTooltipModule],
 })
 export class TagComponent {
   readonly separatorKeysCodes: number[] = [ENTER];
@@ -45,9 +34,7 @@ export class TagComponent {
   readonly editOn = signal<boolean>(false);
   readonly filteredTags = computed(() => {
     const currentTag = this.currentTag().toLowerCase();
-    return currentTag
-      ? this.allTags.filter((tag) => tag.toLowerCase().includes(currentTag))
-      : this.allTags.slice();
+    return currentTag ? this.allTags.filter((tag) => tag.toLowerCase().includes(currentTag)) : this.allTags.slice();
   });
 
   inputTags: InputSignal<string[]> = input<string[]>([]);
@@ -60,8 +47,8 @@ export class TagComponent {
   ngOnInit(): void {
     this.tags.set(this.inputTags());
     this.tagsCache.set([...this.inputTags()]);
-    console.log('Tags initialized:', this.tags());
-    console.log('ID:', this.id);
+    // console.log('Tags initialized:', this.tags());
+    // console.log('ID:', this.id);
   }
 
   add(event: MatChipInputEvent): void {

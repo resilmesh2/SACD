@@ -57,3 +57,12 @@
 .chip-container {
   min-height: 32px;
 }
+
+.no-tags {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: #777;
+  font-style: italic;
+  cursor: default;
+}

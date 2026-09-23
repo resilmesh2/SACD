@@ -1,0 +1,8 @@
+query CsaPageGetNodeObjectsPaginated($options: NodeObjectOptions, $where: NodeObjectWhere) {
+  nodeObjects(options: $options, where: $where) {
+    ...CsaPageNodeObject
+  }
+  nodeObjectsAggregate(where: $where) {
+    count
+  }
+}

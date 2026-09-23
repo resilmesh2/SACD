@@ -1,0 +1,48 @@
+fragment AssetPageIP on IP {
+  _id
+  address
+  status
+  tag
+  subnets {
+    range
+  }
+  nodes {
+    host {
+      network_services {
+        service
+        port
+        protocol
+      }
+    }
+  }
+}
+
+fragment AssetPageNetworkService on NetworkService {
+  _id
+  service
+  protocol
+  port
+  # Unbounded, this returns every host running the service - at scale a common service
+  # (https/443/tcp) is on a large share of the estate. The bound matches the default page
+  # size, so services below it are listed exactly; past it totalCount tells the column how
+  # many hosts were left behind.
+  hostsConnection(where: $hostWhere, first: 25) {
+    totalCount
+    edges {
+      node {
+        node {
+          ips {
+            address
+          }
+        }
+      }
+    }
+  }
+}
+
+fragment AssetPageDomainName on DomainName {
+  domain_name
+  ips {
+    address
+  }
+}

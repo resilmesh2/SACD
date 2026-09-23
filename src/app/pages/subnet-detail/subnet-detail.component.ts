@@ -1,26 +1,33 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, ViewChild, WritableSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, Subscription } from 'rxjs';
+import { catchError, startWith, switchMap } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
-import { DataService } from '../../services/data.service';
-import { Subnet } from '../../models/vulnerability.model';
-import { ChildIP, SubnetExtendedData } from '../../models/subnet.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import { CvssChipComponent } from '../../components/cvss-color-chip/cvss-chip.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
+import { ASSETS_PATH, ORGANIZATION_PATH, SUBNETS_PATH, VULNERABILITY_PATH } from '../../paths';
+import { InlineElementDirective, InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
 import { customOccupancyColors } from '../../config/customPieChartColors';
-import { SubnetService } from '../../services/subnet.service';
+import {
+  SubnetPageGetSubnetQuery,
+  SubnetPageGetSubnetQueryService,
+} from '../subnet-page/graphql/subnet-page.operation.generated';
+import { GetIPsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
+import { IpOptions, IpWhere } from '../../../generated/base-types';
+
+type SubnetDetail = SubnetPageGetSubnetQuery['subnets'][0];
+
+interface ChildIP {
+  address: string;
+  version?: number | null;
+  subnet: string;
+  affectedBy: string[];
+  softwareVersion: string[];
+}
 
 @Component({
   selector: 'subnet-detail',
@@ -33,32 +40,37 @@ import { SubnetService } from '../../services/subnet.service';
     MatProgressSpinner,
     SentinelButtonWithIconComponent,
     NgxChartsModule,
+    InlineElementsPreviewComponent,
+    InlineElementDirective,
   ],
 })
-export class SubnetDetailComponent {
+export class SubnetDetailComponent implements OnInit {
   dataSource = new MatTableDataSource<ChildIP>();
-  displayedColumns: string[] = [
-    'ip',
-    'subnet',
-    'softwareVersion',
-    'affectedBy',
-  ];
-  paginator: MatPaginator | null = null;
+  displayedColumns: string[] = ['ip', 'subnet', 'softwareVersion', 'affectedBy'];
+
+  private paginator: MatPaginator | null = null;
+  private paginatorSub: Subscription | null = null;
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.setDataSourceAttributes();
+    // Runs every time the paginator is (re)created, not just the first time -
+    // the element it's on gets torn down and rebuilt whenever emptyResponse/errorResponse
+    // flips, so the old subscription must be dropped and a fresh one attached each time.
+    this.paginatorSub?.unsubscribe();
+    this.paginator = mp ?? null;
+    this.paginatorSub = mp
+      ? mp.page.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.fetch$.next())
+      : null;
   }
 
-  setDataSourceAttributes() {
-    this.dataSource.paginator = this.paginator;
-  }
-
-  subnetDetail: WritableSignal<SubnetExtendedData | null> = signal(null);
+  subnetDetail: WritableSignal<SubnetDetail | null> = signal(null);
   range: string = '';
+  totalCount = 0;
+  affectedCount = 0;
   pieChartData: WritableSignal<{ name: string; value: number }[]> = signal([]);
   customColors = customOccupancyColors;
 
+  private readonly fetch$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
   dataLoading = false;
@@ -68,96 +80,137 @@ export class SubnetDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private data: SubnetService,
-    private changeDetectorRefs: ChangeDetectorRef,
+    private getSubnet: SubnetPageGetSubnetQueryService,
+    private getIPsPaginated: GetIPsPaginatedQueryService,
   ) {
     this.dataSource = new MatTableDataSource<ChildIP>([]);
   }
 
   ngOnInit(): void {
     this.dataLoading = true;
-    this.getRouteParameters();
-    this.getSubnetDetail();
-    this.getChildIPs();
-  }
-
-  ngAfterViewInit(): void {
-    if (this.dataSource && this.paginator && this.dataLoaded) {
-      this.dataSource.paginator = this.paginator;
-    }
-  }
-
-  getSubnetDetail(): void {
-    this.data.getSubnet(this.range).subscribe({
-      next: (subnetDetail: SubnetExtendedData) => {
-        this.subnetDetail.set(subnetDetail);
-        this.dataLoading = false;
-        this.dataLoaded = true;
-        console.log('Subnet detail fetched:', subnetDetail);
-      },
-      error: (error) => {
-        console.error('Error fetching subnet details:', error);
-        this.dataLoading = false;
-      },
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.range = params.get('range') || '';
     });
+    this.fetchSubnetDetail();
+
+    this.fetch$
+      .pipe(
+        startWith(undefined as void),
+        switchMap(() => {
+          this.errorResponse = '';
+          return this.getIPsPaginated
+            .fetch(
+              { where: this.buildWhere(), affectedWhere: this.buildAffectedWhere(), options: this.buildOptions() },
+              { fetchPolicy: 'network-only' },
+            )
+            .pipe(
+              catchError((error) => {
+                this.errorResponse = error.message ?? error;
+                this.dataLoading = false;
+                return EMPTY;
+              }),
+            );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        this.totalCount = result.data.ipsAggregate.count;
+        this.affectedCount = result.data.affectedIpsAggregate.count;
+        this.emptyResponse = this.totalCount === 0;
+        this.dataLoading = false;
+
+        const pageSize = this.paginator?.pageSize ?? 25;
+        const lastPageIndex = Math.max(0, Math.ceil(this.totalCount / pageSize) - 1);
+        if (
+          result.data.ips.length === 0 &&
+          this.totalCount > 0 &&
+          this.paginator &&
+          this.paginator.pageIndex > lastPageIndex
+        ) {
+          this.paginator.pageIndex = lastPageIndex;
+          this.fetch$.next();
+          return;
+        }
+
+        this.dataSource.data = result.data.ips.map((ip) => ({
+          address: ip.address,
+          version: ip.version,
+          subnet: ip.subnets.at(0)?.range ?? '',
+          affectedBy: ip.nodes.flatMap(
+            (node) =>
+              node.host?.software_versions.flatMap((sv) =>
+                sv.vulnerabilities.map((v) => v.cve?.cve_id).filter((id): id is string => id != null),
+              ) ?? [],
+          ),
+          softwareVersion: ip.nodes.flatMap((node) => node.host?.software_versions.map((sv) => sv.version) ?? []),
+        }));
+        this.pieChartData.set(this.calculateOccupancyData());
+      });
   }
 
-  getChildIPs(): ChildIP[] {
-    // First get all child subnets for the current subnet (1 layer deep)
-    this.data.getChildSubnets(this.range).subscribe({
-      next: (childSubnets: { range: string }[]) => {
-        // Fetch child IPs for parent subnet and each child subnet
-        [{ range: this.range }, ...childSubnets].map((subnet) => {
-          console.log('Fetching child IPs for subnet:', subnet.range);
-          this.data.getChildIPs(subnet.range).subscribe({
-            next: (childIPs: ChildIP[]) => {
-              this.dataSource.data = this.dataSource.data.concat(childIPs);
-              this.pieChartData.set(this.calculateOccupancyData());
-            },
-            error: (error) => {
-              console.error('Error fetching child IPs:', error);
-            },
-          });
-        });
+  private buildWhere(): IpWhere {
+    return {
+      subnets_SOME: {
+        OR: [{ range: this.range }, { parent_subnet_SOME: { range: this.range } }],
       },
-      error: (error) => {
-        console.error('Error fetching child subnets:', error);
-      },
-    });
-
-    return [];
+    };
   }
 
-  getSaneAffectedBy(affectedBy: string[]): string {
-    if (!affectedBy || affectedBy.length === 0) {
-      return 'No vulnerabilities';
-    }
-    return (
-      affectedBy.slice(0, 5).join(', ') +
-      (affectedBy.length > 5 ? `, ... (${affectedBy.length - 5} more)` : '')
-    );
+  private buildAffectedWhere(): IpWhere {
+    return {
+      AND: [this.buildWhere(), { nodes_SOME: { host: { software_versions_SOME: { vulnerabilities_SOME: {} } } } }],
+    };
+  }
+
+  private buildOptions(): IpOptions {
+    const pageSize = this.paginator?.pageSize ?? 25;
+    return {
+      limit: pageSize,
+      offset: (this.paginator?.pageIndex ?? 0) * pageSize,
+    };
+  }
+
+  fetchSubnetDetail(): void {
+    this.getSubnet
+      .fetch({ range: this.range }, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.subnetDetail.set(result.data.subnets.at(0) ?? null);
+          this.dataLoading = false;
+          this.dataLoaded = true;
+        },
+        error: (error) => {
+          console.error('Error fetching subnet details:', error);
+          this.dataLoading = false;
+        },
+      });
+  }
+
+  // Tooltip transforms for inline-elements-preview
+  readonly identity = (value: string): string => value;
+  readonly contactName = (contact: { name: string }): string => contact.name;
+
+  navigateToVulnDetail(cveId: string): void {
+    this.router.navigate([VULNERABILITY_PATH], { queryParams: { cve: cveId } });
   }
 
   calcSubnetSize(): number {
-    let cidr = this.range.split('/')[1];
+    const cidr = this.range.split('/')[1];
     if (!cidr || parseInt(cidr) < 0 || parseInt(cidr) > 32) {
       return 0;
     }
-    return cidr ? Math.pow(2, 32 - parseInt(cidr)) - 2 : 0;
+    return Math.pow(2, 32 - parseInt(cidr)) - 2;
   }
 
   calculateOccupancyData(): { name: string; value: number }[] {
     const total = this.calcSubnetSize();
-    const occupied = this.dataSource.data.length;
-    const unoccupied = total - occupied;
-    const affectedCount = this.dataSource.data.filter(
-      (ip) => ip.affectedBy && ip.affectedBy.length > 0,
-    ).length;
+    const unoccupied = total - this.totalCount;
 
     return [
       { name: 'Unoccupied', value: unoccupied },
-      { name: 'Occupied', value: occupied - affectedCount },
-      { name: 'Affected', value: affectedCount },
+      { name: 'Occupied', value: this.totalCount - this.affectedCount },
+      { name: 'Affected', value: this.affectedCount },
     ];
   }
 
@@ -165,30 +218,18 @@ export class SubnetDetailComponent {
     this.router.navigate([SUBNETS_PATH]);
   }
 
-  getRouteParameters(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.range = params.get('range') || '';
-    });
-
-    // this.route.queryParams.subscribe(params => {
-    //     this.issueSeverity = params['severity'] || '';
-    //     this.issueStatus = params['status'] || '';
-    //     this.issueDescription = params['description'] || '';
-    //     this.issueImpact = params['impact'] || '';
-    // });
+  navigateToAssetDetail(ip: string): void {
+    this.router.navigate([ASSETS_PATH, ip]);
   }
 
   navigateToSubnetDetail(subnetRange: string): void {
-    console.log('Navigating to subnet detail:', subnetRange);
     this.router.navigate([SUBNETS_PATH, subnetRange]).then(() => {
-      // Reset the subnet detail and data source when navigating to a new subnet
       this.subnetDetail.set(null);
       this.dataSource.data = [];
-      this.dataLoading = true; // Reset loading state
-      this.getSubnetDetail(); // Fetch new subnet details
-      this.getChildIPs(); // Fetch child IPs for the new subnet
-
-      this.changeDetectorRefs.detectChanges(); // Ensure the view updates
+      this.dataLoading = true;
+      if (this.paginator) this.paginator.pageIndex = 0;
+      this.fetchSubnetDetail();
+      this.fetch$.next();
     });
   }
 

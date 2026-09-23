@@ -11,25 +11,13 @@
     style="width: 100%; height: 100%"
   >
     <ng-template #defsTemplate>
-      <svg:marker
-        id="arrow"
-        viewBox="0 -5 10 10"
-        refX="8"
-        refY="0"
-        markerWidth="4"
-        markerHeight="4"
-        orient="auto"
-      >
+      <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
         <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
       </svg:marker>
     </ng-template>
 
     <ng-template #clusterTemplate let-cluster>
-      <svg:g
-        class="node cluster"
-        matTooltip="{{ cluster.label }}"
-        matTooltipPosition="above"
-      >
+      <svg:g class="node cluster" matTooltip="{{ cluster.label }}" matTooltipPosition="above">
         >
         <svg:rect
           rx="5"
@@ -47,11 +35,7 @@
         [matTooltipDisabled]="node.data.type !== 'host'"
         matTooltip="{{ node.data.ip }}"
         matTooltipPosition="above"
-        [style.cursor]="
-          node.data.type === 'mission' || node.data.type === 'host'
-            ? 'pointer'
-            : 'default'
-        "
+        [style.cursor]="node.data.type === 'mission' || node.data.type === 'host' ? 'pointer' : 'default'"
       >
         <svg:rect
           [attr.width]="node.dimension.width"
@@ -75,11 +59,7 @@
 
     <ng-template #linkTemplate let-link>
       <svg:g class="edge">
-        <svg:path
-          class="line"
-          stroke-width="2"
-          marker-end="url(#arrow)"
-        ></svg:path>
+        <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
         <svg:text class="edge-label" text-anchor="middle">
           <textPath
             class="text-path"

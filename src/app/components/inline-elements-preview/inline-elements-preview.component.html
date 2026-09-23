@@ -1,0 +1,70 @@
+@if (elements(); as elements) {
+  @if (elementsTotalCount() > 0) {
+    <div class="elements">
+      @for (
+        element of elements | slice: 0 : maxDisplayedElements();
+        track trackByFn()($index, element);
+        let isLast = $last
+      ) {
+        <ng-container [ngTemplateOutlet]="elementView" [ngTemplateOutletContext]="{ $implicit: element }" />
+        @if (!isLast) {
+          <span>,&nbsp;</span>
+        }
+      }
+      @if (elementsTotalCount() > maxDisplayedElements()) {
+        <span>
+          @if (maxDisplayedElements() > 0) {
+            <span>,&nbsp;</span>
+          }
+          @if (tooltipTransformFn() && isAndMoreTextShorter()) {
+            <button type="button" class="more-elements-trigger" [matMenuTriggerFor]="menu">
+              {{ andMore() }}
+            </button>
+            <mat-menu class="inline-elements-preview-menu-panel" #menu="matMenu">
+              <div class="more-elements-menu">
+                @for (element of elements | slice: maxDisplayedElements(); track trackByFn()($index, element)) {
+                  <div class="more-elements-menu-item">
+                    <ng-container [ngTemplateOutlet]="elementView" [ngTemplateOutletContext]="{ $implicit: element }" />
+                  </div>
+                }
+                @if (extraItemsCount() > 0) {
+                  <div class="more-elements-menu-item">and {{ extraItemsCount() }} more...</div>
+                }
+              </div>
+            </mat-menu>
+          } @else if (tooltipTransformFn()) {
+            <!-- The leftover names are shorter than "and n more...", so they are printed
+                 instead of it - through the same view as the inline ones, so they keep
+                 whatever links or markup the caller's *inlineElement template gives them. -->
+            @for (
+              element of elements | slice: maxDisplayedElements();
+              track trackByFn()($index, element);
+              let isLast = $last
+            ) {
+              <ng-container [ngTemplateOutlet]="elementView" [ngTemplateOutletContext]="{ $implicit: element }" />
+              @if (!isLast) {
+                <span>,&nbsp;</span>
+              }
+            }
+          } @else {
+            {{ andMore() }}
+          }
+        </span>
+      }
+    </div>
+  } @else if (isTableCell()) {
+    <span>---</span>
+  } @else {
+    No {{ elementTypeName() }}
+  }
+}
+
+<ng-template #elementView let-element>
+  @if (elementViewDirective()?.template; as template) {
+    <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: element }" />
+  } @else if (tooltipTransformFn(); as transformFn) {
+    {{ transformFn(element) }}
+  } @else {
+    {{ element }}
+  }
+</ng-template>

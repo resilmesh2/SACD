@@ -27,12 +27,7 @@
           </div>
         </ng-container>
       } @else if (!graphLoading && nodes && nodes.length > 0) {
-        <ngx-graph
-          class="chart-container"
-          [links]="edges"
-          [nodes]="nodes"
-          layout="dagre"
-        >
+        <ngx-graph class="chart-container" [links]="edges" [nodes]="nodes" layout="dagre">
           <ng-template #defsTemplate>
             <svg:marker
               id="arrow"
@@ -48,11 +43,7 @@
           </ng-template>
 
           <ng-template #clusterTemplate let-cluster>
-            <svg:g
-              class="node cluster"
-              matTooltip="{{ cluster.label }}"
-              matTooltipPosition="above"
-            >
+            <svg:g class="node cluster" matTooltip="{{ cluster.label }}" matTooltipPosition="above">
               <svg:rect
                 rx="5"
                 ry="5"
@@ -75,14 +66,8 @@
               <svg:rect
                 [attr.width]="node.dimension.width"
                 [attr.height]="node.dimension.height"
-                [attr.fill]="
-                  node.id === selectedNode.id ? '#fff' : node.data.customColor
-                "
-                [attr.stroke]="
-                  node.id === selectedNode.id
-                    ? node.data.customColor
-                    : 'transparent'
-                "
+                [attr.fill]="node.id === selectedNode.id ? '#fff' : node.data.customColor"
+                [attr.stroke]="node.id === selectedNode.id ? node.data.customColor : 'transparent'"
                 [attr.rx]="4"
                 [attr.ry]="4"
               />
@@ -99,16 +84,8 @@
 
           <ng-template #linkTemplate let-link>
             <svg:g class="edge">
-              <svg:path
-                class="line"
-                stroke-width="2"
-                marker-end="url(#arrow)"
-              ></svg:path>
-              <svg:text
-                class="edge-label"
-                [style.font-style]="'Inter'"
-                text-anchor="middle"
-              >
+              <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
+              <svg:text class="edge-label" [style.font-style]="'Inter'" text-anchor="middle">
                 <textPath
                   class="text-path"
                   [attr.href]="'#' + link.id"
@@ -130,7 +107,7 @@
     <div class="node-wrapper">
       <ng-container>
         <div class="node-detail">
-          @if (selectedNode.id !== "") {
+          @if (selectedNode.id !== '') {
             <div
               class="badge"
               [style.background-color]="selectedNode.data.customColor"

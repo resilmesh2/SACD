@@ -1,0 +1,9 @@
+fragment CsaPageNodeObject on NodeObject {
+  topology_degree_norm
+  topology_betweenness_norm
+  mission_criticality
+  final_criticality
+  ips {
+    address
+  }
+}

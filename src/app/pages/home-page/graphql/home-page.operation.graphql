@@ -1,0 +1,57 @@
+query HomePageGetCounts {
+  ipsAggregate {
+    count
+  }
+  nodeObjectsAggregate {
+    count
+  }
+  missionsAggregate {
+    count
+  }
+  subnetsAggregate {
+    count
+  }
+  organizationUnitsAggregate {
+    count
+  }
+}
+
+# One count per severity bucket, rather than downloading every CVE to tally them here.
+# The filters mirror IssuePageComponent.buildWhere() exactly - clicking a slice navigates
+# to that page filtered by the same severity, so the numbers have to agree.
+query HomePageGetSeverityCounts {
+  critical: cvesAggregate(
+    where: { AND: [{ vulnerabilityAggregate: { count_GT: 0 } }, { cvss_v31: { base_severity: "CRITICAL" } }] }
+  ) {
+    count
+  }
+  high: cvesAggregate(
+    where: { AND: [{ vulnerabilityAggregate: { count_GT: 0 } }, { cvss_v31: { base_severity: "HIGH" } }] }
+  ) {
+    count
+  }
+  medium: cvesAggregate(
+    where: { AND: [{ vulnerabilityAggregate: { count_GT: 0 } }, { cvss_v31: { base_severity: "MEDIUM" } }] }
+  ) {
+    count
+  }
+  low: cvesAggregate(
+    where: { AND: [{ vulnerabilityAggregate: { count_GT: 0 } }, { cvss_v31: { base_severity: "LOW" } }] }
+  ) {
+    count
+  }
+  unknown: cvesAggregate(
+    where: { AND: [{ vulnerabilityAggregate: { count_GT: 0 } }, { cvss_v31Aggregate: { count: 0 } }] }
+  ) {
+    count
+  }
+}
+
+# The only remaining full-collection read on this page: there is no grouped count for
+# software versions in the schema, so the OS breakdown has to be tallied client-side.
+# Kept out of the dashboard's main stream so it cannot delay the rest of the page.
+query HomePageGetHosts {
+  hosts {
+    ...HomePageHost
+  }
+}

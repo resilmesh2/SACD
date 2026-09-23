@@ -1,19 +1,13 @@
 <h1>Mission Editor</h1>
 <p>
   For guidance on mission decomposition, see
-  <a
-    href="https://github.com/resilmesh2/ISIM/blob/main/docs/mission_guidelines.md"
-    >mission guidelines</a
-  >.
+  <a href="https://github.com/resilmesh2/ISIM/blob/main/docs/mission_guidelines.md">mission guidelines</a>.
 </p>
 <div class="mission-editor">
   <div class="form-line">
     <mat-form-field subscriptSizing="dynamic">
       <mat-label>Edit Existing Mission</mat-label>
-      <mat-select
-        (selectionChange)="loadMission($event)"
-        [value]="selectedMission"
-      >
+      <mat-select (selectionChange)="loadMission($event)" [value]="selectedMission">
         @for (mission of existingMissionNames(); track mission) {
           <mat-option [value]="mission">{{ mission }}</mat-option>
         }
@@ -26,29 +20,17 @@
       <div class="missions-container">
         <div class="mission-control-bar">
           <div class="form-line">
-            <sentinel-button-with-icon
-              color="primary"
-              icon="save"
-              (click)="saveMission()"
-            >
+            <sentinel-button-with-icon color="primary" icon="save" (click)="saveMission()">
               Save Mission
             </sentinel-button-with-icon>
           </div>
           <div class="form-line">
-            <sentinel-button-with-icon
-              color="accent"
-              icon="content_copy"
-              (click)="copyMissionPayload()"
-            >
+            <sentinel-button-with-icon color="accent" icon="content_copy" (click)="copyMissionPayload()">
               Copy Mission JSON to Clipboard
             </sentinel-button-with-icon>
           </div>
           <div class="form-line">
-            <sentinel-button-with-icon
-              color="warn"
-              icon="restart_alt"
-              (click)="resetEditor()"
-            >
+            <sentinel-button-with-icon color="warn" icon="restart_alt" (click)="resetEditor()">
               Reset Mission Editor
             </sentinel-button-with-icon>
           </div>
@@ -64,9 +46,7 @@
                   required
                   placeholder=""
                   [ngModel]="missionsMap()[missionId].name"
-                  (ngModelChange)="
-                    updateMissionField(missionId, 'name', $event)
-                  "
+                  (ngModelChange)="updateMissionField(missionId, 'name', $event)"
                 />
               </mat-form-field>
             </div>
@@ -81,9 +61,7 @@
                   required
                   placeholder=""
                   [ngModel]="missionsMap()[missionId].criticality"
-                  (ngModelChange)="
-                    updateMissionField(missionId, 'criticality', $event)
-                  "
+                  (ngModelChange)="updateMissionField(missionId, 'criticality', $event)"
                 />
               </mat-form-field>
             </div>
@@ -98,9 +76,7 @@
                   cdkAutosizeMaxRows="5"
                   placeholder="Enter mission description"
                   [ngModel]="missionsMap()[missionId].description"
-                  (ngModelChange)="
-                    updateMissionField(missionId, 'description', $event)
-                  "
+                  (ngModelChange)="updateMissionField(missionId, 'description', $event)"
                 ></textarea>
               </mat-form-field>
             </div>
@@ -109,11 +85,7 @@
       </div>
     </div>
   </sentinel-card>
-  <sentinel-card
-    class="editor-card"
-    cardTitle="Structure Editor Controls"
-    titleIcon="keyboard"
-  >
+  <sentinel-card class="editor-card" cardTitle="Structure Editor Controls" titleIcon="keyboard">
     <div class="content-container key-help-grid">
       <ng-container
         [ngTemplateOutlet]="keyHelpTemplate"
@@ -152,8 +124,7 @@
         [ngTemplateOutletContext]="{
           title: 'Delete Selected',
           icon: 'delete',
-          description:
-            'Press Delete key to delete selected nodes & connections',
+          description: 'Press Delete key to delete selected nodes & connections',
         }"
       ></ng-container>
 
@@ -162,31 +133,17 @@
         [ngTemplateOutletContext]="{
           title: 'Create Connection',
           icon: 'call_merge',
-          description:
-            'Click and drag from one node\'s output to another node\'s input',
+          description: 'Click and drag from one node\'s output to another node\'s input',
         }"
       ></ng-container>
     </div>
   </sentinel-card>
-  <sentinel-card
-    class="editor-card"
-    cardTitle="Structure Editor"
-    titleIcon="flowchart"
-  >
-    <flow-editor
-      [(missionsMap)]="missionsMap"
-      [(nodes)]="nodes"
-      [(connections)]="connections"
-    ></flow-editor>
+  <sentinel-card class="editor-card" cardTitle="Structure Editor" titleIcon="flowchart">
+    <flow-editor [(missionsMap)]="missionsMap" [(nodes)]="nodes" [(connections)]="connections"></flow-editor>
   </sentinel-card>
 </div>
 
-<ng-template
-  #keyHelpTemplate
-  let-title="title"
-  let-icon="icon"
-  let-description="description"
->
+<ng-template #keyHelpTemplate let-title="title" let-icon="icon" let-description="description">
   <div class="key-help-container">
     <div class="title">
       {{ title }}

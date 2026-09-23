@@ -1,81 +1,84 @@
 <h1>Assets list</h1>
 <sentinel-card [controls]="controls">
-  <!-- Show spinner while loading data -->
-  @if (dataLoading) {
-    <ng-container>
-      <mat-spinner></mat-spinner>
-    </ng-container>
-  } @else if (errorResponse && !dataLoading) {
-    <!-- Show error message if there's an error -->
-    <ng-container>
-      <p class="error">
-        <strong>Error fetching data from GraphQL API.</strong><br />
-        <span>Error message: {{ errorResponse }}</span>
-      </p>
-    </ng-container>
-  } @else if (emptyResponse && !dataLoading && !errorResponse) {
-    <!-- Show no data message if the response is empty -->
-    <ng-container>
-      <p class="no-data">
-        <strong>No available data.</strong>
-      </p>
-    </ng-container>
-  } @else if (dataLoaded && !dataLoading && !emptyResponse) {
-    <ng-container class="full-width-table">
+  @if (errorResponse) {
+    <p class="error">
+      <strong>Error fetching data from GraphQL API.</strong><br />
+      <span>Error message: {{ errorResponse }}</span>
+    </p>
+  } @else {
+    <div class="header">
       <div class="header-line">
-        <mat-form-field subscriptSizing="dynamic">
-          <input
-            matInput
-            [(ngModel)]="searchTerm"
-            (keyup)="applyNameFilter()"
-            placeholder="Search by IP address"
-          />
-        </mat-form-field>
-
-        <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
-          <mat-label>Filter by Tags</mat-label>
-          <mat-select
-            [(value)]="selectedTag"
-            (selectionChange)="applySelectFilter($event, filters[0])"
+        <mat-button-toggle-group [value]="activeType()" (change)="setType($event.value)" hideSingleSelectionIndicator>
+          <mat-button-toggle value="IP">IPs{{ countLabel('IP') }}</mat-button-toggle>
+          <mat-button-toggle value="NetworkService"
+            >Network services{{ countLabel('NetworkService') }}</mat-button-toggle
           >
-            <mat-option value="All">All</mat-option>
-            @for (tag of tags(); track tag) {
-              <mat-option [value]="tag">{{ tag }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
-          <mat-label>Filter by Subnets</mat-label>
-          <mat-select
-            [(value)]="selectedSubnet"
-            (selectionChange)="applySelectFilter($event, filters[1])"
-          >
-            <mat-option value="All">All</mat-option>
-            @for (subnet of subnets(); track subnet) {
-              <mat-option [value]="subnet">{{ subnet }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
+          <mat-button-toggle value="DomainName">Domain names{{ countLabel('DomainName') }}</mat-button-toggle>
+        </mat-button-toggle-group>
         <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Enter a date range</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input
-              matStartDate
-              placeholder="Start date"
-              [(ngModel)]="startDate"
-            />
-            <input matEndDate placeholder="End date" [(ngModel)]="endDate" />
-          </mat-date-range-input>
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
+          <input matInput [(ngModel)]="searchTerm" (keyup)="applySearch()" [placeholder]="searchPlaceholder()" />
         </mat-form-field>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-
+        <div class="total-assets">Total Number of Assets: {{ totalCount }}</div>
+      </div>
+      <div class="header-line">
+        @if (activeType() === 'IP') {
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(value)]="selectedStatus" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (status of statusOptions; track status) {
+                <mat-option [value]="status">{{ status }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Subnets</mat-label>
+            <mat-select [(value)]="selectedSubnet" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (subnet of subnets(); track subnet) {
+                <mat-option [value]="subnet">{{ subnet }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Tags</mat-label>
+            <mat-select [(value)]="selectedTag" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (tag of tags(); track tag) {
+                <mat-option [value]="tag">{{ tag }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        @if (activeType() === 'NetworkService') {
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Service</mat-label>
+            <mat-select [(value)]="selectedService" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (service of serviceOptions(); track service) {
+                <mat-option [value]="service">{{ service }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Port</mat-label>
+            <mat-select [(value)]="selectedPort" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (port of portOptions(); track port) {
+                <mat-option [value]="port">{{ port }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="filter-dropdown" subscriptSizing="dynamic">
+            <mat-label>Filter by Protocol</mat-label>
+            <mat-select [(value)]="selectedProtocol" (selectionChange)="applyFilters()">
+              <mat-option value="All">All</mat-option>
+              @for (protocol of protocolOptions(); track protocol) {
+                <mat-option [value]="protocol">{{ protocol }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
         <sentinel-button-with-icon
           color="primary"
           icon="filter_list_off"
@@ -84,39 +87,103 @@
         >
           Reset Filters
         </sentinel-button-with-icon>
-
-        <div class="total-assets">
-          Total Number of Assets: {{ totalSortedServices() }}
-        </div>
       </div>
+    </div>
 
-      <table mat-table [dataSource]="dataSource" class="mat-table">
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
+    @if (dataLoading) {
+      <mat-spinner></mat-spinner>
+    } @else if (emptyResponse) {
+      <p class="no-data">
+        <strong>No available data.</strong>
+      </p>
+    } @else {
+      <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
+        <!-- IP Column -->
+        <ng-container matColumnDef="ip">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>IP</th>
           <td mat-cell *matCellDef="let asset" style="width: 14rem">
-            <a (click)="navigateToNetworkNodeView(asset)" class="asset-link">
-              {{ asset.name }}
-            </a>
+            <div class="asset-nav">
+              <a
+                (click)="navigateToNetworkNodeView(asset.ip)"
+                class="link-pill icon-only"
+                title="Network node visualization"
+              >
+                <mat-icon>analytics</mat-icon>
+              </a>
+              <a (click)="navigateToAssetDetail(asset.ip)" class="link-pill">{{ asset.ip }}</a>
+            </div>
           </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let asset">
+            <asset-status-edit-chip
+              [address]="asset.ip"
+              [type]="asset.type"
+              [(label)]="asset.status"
+              [(isEditOpen)]="asset.isEditOpen"
+              class="badge"
+            >
+            </asset-status-edit-chip>
+          </td>
+        </ng-container>
+
+        <!-- Service Column -->
+        <ng-container matColumnDef="service">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="activeType() !== 'NetworkService'">
+            Service
+          </th>
+          <td mat-cell *matCellDef="let asset" style="width: 14rem">
+            {{ asset.service ?? '---' }}
+          </td>
+        </ng-container>
+
+        <!-- Services Column (IPs) -->
+        <ng-container matColumnDef="services">
+          <th mat-header-cell *matHeaderCellDef>Services</th>
+          <td mat-cell *matCellDef="let asset">
+            <inline-elements-preview
+              elementTypeName="services"
+              [elements]="asset.services"
+              [elementsTotalCount]="asset.services.length"
+              [maxDisplayedElements]="2"
+              [tooltipTransformFn]="identity"
+              [isTableCell]="true"
+            />
+          </td>
+        </ng-container>
+
+        <!-- Port Column -->
+        <ng-container matColumnDef="port">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Port</th>
+          <td mat-cell *matCellDef="let asset">{{ asset.port ?? '---' }}</td>
+        </ng-container>
+
+        <!-- Protocol Column -->
+        <ng-container matColumnDef="protocol">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Protocol</th>
+          <td mat-cell *matCellDef="let asset">{{ asset.protocol ?? '---' }}</td>
         </ng-container>
 
         <!-- Subnet Column -->
         <ng-container matColumnDef="subnet">
           <th mat-header-cell *matHeaderCellDef>Subnet</th>
           <td mat-cell *matCellDef="let asset">
-            @if (asset.subnet && asset.subnet.length > 0) {
-              <!-- If subnet is available, navigate to subnet detail -->
-              <a
-                (click)="navigateToSubnetDetail(asset.subnet[0] ?? '')"
-                class="asset-link"
-              >
-                {{ asset.subnet }}
-              </a>
-            } @else {
-              <!-- If no subnet, display 'No Subnet' -->
-              <span class="no-subnet">No Subnet</span>
-            }
+            <inline-elements-preview
+              elementTypeName="subnets"
+              [elements]="asset.subnet"
+              [elementsTotalCount]="asset.subnet.length"
+              [maxDisplayedElements]="2"
+              [tooltipTransformFn]="identity"
+              [isTableCell]="true"
+            >
+              <ng-container *inlineElement="subnetTemplate" />
+              <ng-template #subnetTemplate let-subnet>
+                <a (click)="navigateToSubnetDetail(subnet)" class="link-pill">{{ subnet }}</a>
+              </ng-template>
+            </inline-elements-preview>
           </td>
         </ng-container>
 
@@ -125,7 +192,7 @@
           <th mat-header-cell *matHeaderCellDef>Tag</th>
           <td mat-cell *matCellDef="let asset">
             <tag-component
-              [id]="asset.name"
+              [id]="asset.ip"
               [inputTags]="asset.tag"
               [onSubmit]="saveData.bind(this)"
               [allTags]="tags()"
@@ -133,35 +200,51 @@
           </td>
         </ng-container>
 
-        <!-- Last Seen Date Column -->
-        <ng-container matColumnDef="last_seen">
-          <th mat-header-cell *matHeaderCellDef>Last Seen</th>
+        <!-- Domain Name Column -->
+        <ng-container matColumnDef="domainName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Domain name</th>
+          <td mat-cell *matCellDef="let asset">{{ asset.domainName }}</td>
+        </ng-container>
+
+        <!-- IPs Column (services: matching hosts; domain names: resolved addresses) -->
+        <ng-container matColumnDef="ips">
+          <th mat-header-cell *matHeaderCellDef>IP Addresses</th>
           <td mat-cell *matCellDef="let asset">
-            {{ asset.last_seen | date: "yyyy/MM/dd'T'HH:mm:ss" }}
+            <inline-elements-preview
+              elementTypeName="IP addresses"
+              [elements]="asset.ips"
+              [elementsTotalCount]="asset.ipsTotal"
+              [maxDisplayedElements]="2"
+              [tooltipTransformFn]="identity"
+              [isTableCell]="true"
+            >
+              <ng-container *inlineElement="ipTemplate" />
+              <ng-template #ipTemplate let-ip>
+                <a (click)="navigateToAssetDetail(ip)" class="inline-link">{{ ip }}</a>
+              </ng-template>
+            </inline-elements-preview>
           </td>
         </ng-container>
 
-        <!-- Table Header and Rows -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
 
         <!-- Row shown when there is no matching data. -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">
+          <td class="mat-cell" [attr.colspan]="displayedColumns().length">
             <div class="no-data">
               <mat-icon class="no-data-icon">info</mat-icon>
-              <div class="no-data-text">No data matching the search term</div>
+              <div class="no-data-text">No data matching the current filters</div>
             </div>
           </td>
         </tr>
       </table>
-
-      <!-- Paginator -->
       <mat-paginator
+        [length]="totalCount"
         [pageSize]="25"
         [pageSizeOptions]="[25, 50, 200, 500]"
         showFirstLastButtons
       ></mat-paginator>
-    </ng-container>
+    }
   }
 </sentinel-card>

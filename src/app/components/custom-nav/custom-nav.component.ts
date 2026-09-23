@@ -12,10 +12,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Agenda, AgendaContainer } from '@sentinel/layout';
-import {
-  SentinelLayoutI18nService,
-  SentinelNavI18n,
-} from '@sentinel/layout/i18n';
+import { SentinelLayoutI18nService, SentinelNavI18n } from '@sentinel/layout/i18n';
 import { MatDivider } from '@angular/material/divider';
 import { NgClass } from '@angular/common';
 import { AgendaContainerComponent } from './agenda-container/agenda-container.component';
@@ -37,8 +34,7 @@ export class CustomNavComponent {
 
   readonly version = input<string>('2.0.0');
   readonly logoSrc: InputSignal<string | undefined> = input();
-  readonly agendaContainers: InputSignal<AgendaContainer[] | undefined> =
-    input();
+  readonly agendaContainers: InputSignal<AgendaContainer[] | undefined> = input();
   readonly agendaSelected = output<Agenda>();
 
   i18n: Signal<SentinelNavI18n>;

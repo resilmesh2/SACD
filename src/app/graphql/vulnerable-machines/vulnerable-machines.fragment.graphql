@@ -1,0 +1,23 @@
+fragment VulnerableMachines on CVE {
+  vulnerability {
+    software_versions {
+      version
+      hosts {
+        _id
+        node {
+          _id
+          ips {
+            _id
+            address
+            domain_names {
+              domain_name
+            }
+            subnets {
+              range
+            }
+          }
+        }
+      }
+    }
+  }
+}

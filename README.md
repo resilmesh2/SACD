@@ -1,33 +1,49 @@
-# SACD
+# SACD — Situation and Network Awareness Consolidated Dashboard
 
-Situation and network awareness consolidated dashboard
+An Angular dashboard for visualising and managing network assets, subnets, organisation units, and vulnerabilities.
 
-## Running the dashboard
+## Running with Docker
 
-The dashboard can be built in Docker by running:
-
-```
+```bash
 docker compose up -d
 ```
 
-or can be run manually by first installing the required npm modules:
+The dashboard will be available at http://localhost:4200/
 
-```
-npm install
+## Running manually
+
+Install dependencies:
+
+```bash
+npm install --legacy-peer-deps
 ```
 
-If relevant, do not forget to edit URL of the GraphQL provided by ISIM. See the files resilmesh-dashboard/src/environments.ts and resilmesh-dashboard/src/environments.prod.ts and change the:
+Configure the ISIM GraphQL API endpoint in `src/environments/environment.ts` (and `environment.prod.ts` for production builds):
 
-```
+```typescript
 graphqlApi: 'http://127.0.0.1:4001/graphql/',
 ```
 
-to appropiate location of the GraphQL.
+If the GraphQL schema has changed, fetch the latest and regenerate types:
 
-and then running the dashboard by:
-
+```bash
+npx get-graphql-schema http://localhost:4001/graphql > graphql/schema.graphql
+npm run codegen
 ```
-ng serve
+
+Start the dev server:
+
+```bash
+npx ng serve
 ```
 
-The dashboard will then be available at http://localhost:4200/
+The dashboard will be available at http://localhost:4200/
+
+## Development
+
+| Command             | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `npm run codegen`   | Regenerate GraphQL types after schema or query changes |
+| `npm run fmt:check` | Check formatting with oxfmt                            |
+| `npm run fmt`       | Format code with oxfmt                                 |
+| `npm run lint`      | Run oxlint                                             |

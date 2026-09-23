@@ -1,13 +1,11 @@
-import { Component } from '@angular/core';
-import {
-  HighchartsChartDirective,
-  providePartialHighcharts,
-} from 'highcharts-angular';
-import { DataService } from '../../services/data.service';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HighchartsChartDirective, providePartialHighcharts } from 'highcharts-angular';
 import { Router } from '@angular/router';
 import { SUBNETS_PATH } from '../../paths';
-import { OrgUnitData } from '../../models/org-unit.model';
-import { uniqueId } from 'lodash';
+import { GetAllOrgUnitsQuery, GetAllOrgUnitsQueryService } from '../../graphql/org-units/org-units.operation.generated';
+
+type OrgUnit = GetAllOrgUnitsQuery['organizationUnits'][0];
 
 @Component({
   templateUrl: './treemap.component.html',
@@ -16,16 +14,13 @@ import { uniqueId } from 'lodash';
   providers: [
     providePartialHighcharts({
       modules: () => {
-        return [
-          import('highcharts/esm/modules/treemap'),
-          import('highcharts/esm/modules/stock'),
-        ];
+        return [import('highcharts/esm/modules/treemap'), import('highcharts/esm/modules/stock')];
       },
       timeout: 900,
     }),
   ],
 })
-export class TreemapComponent {
+export class TreemapComponent implements OnInit {
   chartOptions: Highcharts.Options = this.buildChartOptions([]);
   drilledInto: string | null = null;
   private orgData: {
@@ -35,39 +30,43 @@ export class TreemapComponent {
     parent?: string;
   }[] = [];
 
-  constructor(
-    private data: DataService,
-    private router: Router,
-  ) {
-    this.data.getOrgUnits().subscribe((units) => {
-      this.orgData = this.convertOrgUnitsToTreemapData(units);
-      this.chartOptions = this.buildChartOptions(this.orgData);
-    });
+  private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
+
+  constructor(private getOrgUnits: GetAllOrgUnitsQueryService) {}
+
+  ngOnInit(): void {
+    this.getOrgUnits
+      .fetch({}, { fetchPolicy: 'network-only' })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.orgData = this.convertOrgUnitsToTreemapData(result.data.organizationUnits);
+          this.chartOptions = this.buildChartOptions(this.orgData);
+        },
+      });
   }
 
-  convertOrgUnitsToTreemapData(orgUnits: OrgUnitData[]) {
+  convertOrgUnitsToTreemapData(orgUnits: OrgUnit[]) {
     const data: {
       id?: string;
       name: string;
       value?: number;
       parent?: string;
     }[] = [];
-    console.log(orgUnits);
 
     for (const unit of orgUnits) {
+      const parentOrgUnit = unit.parent_org_unit[0]?.name;
       data.push({
         id: unit.name,
         name: unit.name,
-        parent:
-          unit.parentOrgUnit == '---' || !unit.parentOrgUnit
-            ? undefined
-            : unit.parentOrgUnit,
+        parent: parentOrgUnit || undefined,
         value: 32,
       });
 
       // Find subnet ranges that are referenced as parents
       const parentRanges = new Set(
-        unit.subnets.filter((s) => s.parent).map((s) => s.parent),
+        unit.subnets.filter((s) => s.parent_subnet.length > 0).map((s) => s.parent_subnet[0].range),
       );
 
       // Add parent subnet nodes that aren't in the subnet list themselves
@@ -81,6 +80,7 @@ export class TreemapComponent {
       for (const subnet of unit.subnets) {
         const prefix = parseInt(subnet.range.split('/')[1]);
         const value = 32 - prefix || 1;
+        const parentRange = subnet.parent_subnet[0]?.range;
         const node: {
           id?: string;
           name: string;
@@ -89,10 +89,9 @@ export class TreemapComponent {
         } = {
           name: subnet.range,
           value,
-          parent: subnet.parent ? subnet.parent : unit.name,
+          parent: parentRange ?? unit.name,
         };
 
-        // If this subnet is a parent to others, give it an id so children can reference it
         if (parentRanges.has(subnet.range)) {
           node.id = subnet.range;
         }
@@ -100,8 +99,6 @@ export class TreemapComponent {
         data.push(node);
       }
     }
-
-    console.log(data);
 
     return data;
   }
@@ -203,13 +200,12 @@ export class TreemapComponent {
       //         'Source: <a href="https://snl.no/Norge" target="_blank">SNL</a>',
       //     align: 'left'
       // },
+      // Tile labels are truncated to fit, so the tooltip is the only way to read a
+      // full org unit / subnet name. The point value is address-space size, not asset
+      // count, so it is deliberately not shown - it would read as an occupancy figure.
       tooltip: {
-        enabled: false,
+        pointFormat: '<b>{point.name}</b>',
       },
-      // tooltip: {
-      //     pointFormat: 'Size of <b>{point.name}</b> is \
-      //         <b>{point.value}</b>'
-      // }
     };
   }
 }

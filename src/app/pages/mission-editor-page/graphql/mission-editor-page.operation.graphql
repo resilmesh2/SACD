@@ -1,0 +1,17 @@
+query MissionEditorGetHosts {
+  hosts {
+    hostname
+  }
+}
+
+query MissionEditorGetIPs {
+  ips {
+    address
+  }
+}
+
+query MissionEditorGetComponents {
+  components(where: { missionsAggregate: { count_GT: 0 } }) {
+    name
+  }
+}

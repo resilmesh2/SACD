@@ -1,0 +1,64 @@
+query AssetPageGetIPsPaginated($where: IPWhere, $options: IPOptions) {
+  ips(where: $where, options: $options) {
+    ...AssetPageIP
+  }
+  ipsAggregate(where: $where) {
+    count
+  }
+}
+
+query AssetPageGetNetworkServicesPaginated(
+  $where: NetworkServiceWhere
+  $options: NetworkServiceOptions
+  $hostWhere: NetworkServiceHostsConnectionWhere
+) {
+  networkServices(where: $where, options: $options) {
+    ...AssetPageNetworkService
+  }
+  networkServicesAggregate(where: $where) {
+    count
+  }
+}
+
+query AssetPageGetDomainNamesPaginated($where: DomainNameWhere, $options: DomainNameOptions) {
+  domainNames(where: $where, options: $options) {
+    ...AssetPageDomainName
+  }
+  domainNamesAggregate(where: $where) {
+    count
+  }
+}
+
+query AssetPageGetTypeCounts($ipWhere: IPWhere, $serviceWhere: NetworkServiceWhere, $domainWhere: DomainNameWhere) {
+  ipsAggregate(where: $ipWhere) {
+    count
+  }
+  networkServicesAggregate(where: $serviceWhere) {
+    count
+  }
+  domainNamesAggregate(where: $domainWhere) {
+    count
+  }
+}
+
+query AssetPageGetServiceOptions {
+  networkServices {
+    service
+    port
+    protocol
+  }
+}
+
+query AssetPageGetIPTags {
+  ips {
+    tag
+  }
+}
+
+mutation AssetPageUpdateIPTag($address: String!, $tag: [String!]!) {
+  updateIPTag(address: $address, tag: $tag) {
+    _id
+    address
+    tag
+  }
+}

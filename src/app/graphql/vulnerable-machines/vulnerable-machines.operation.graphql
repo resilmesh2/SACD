@@ -1,0 +1,5 @@
+query GetVulnerableMachines($cveId: String!) {
+  cves(where: { cve_id: $cveId }) {
+    ...VulnerableMachines
+  }
+}

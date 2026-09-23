@@ -1,0 +1,14 @@
+query IssuePageGetCvesPaginated($where: CVEWhere, $options: CVEOptions) {
+  cves(where: $where, options: $options) {
+    ...IssuePageCve
+  }
+  cvesAggregate(where: $where) {
+    count
+  }
+}
+
+mutation IssuePageUpdateVulnerabilityStatus($cve: String!, $status: [String]!) {
+  updateVulnerabilityStatus(cve: $cve, status: $status) {
+    status
+  }
+}

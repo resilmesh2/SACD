@@ -109,6 +109,8 @@ export const Attributes: AttributeStructure = {
   `,
 };
 */
+export type AttributeStructure = typeof Attributes;
+
 export const Attributes = {
   IP: `
     _id
@@ -135,7 +137,6 @@ export const Attributes = {
         }
         software_versions {
           _id
-          tag
           version
           vulnerabilities {
             description

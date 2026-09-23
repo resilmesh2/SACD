@@ -1,37 +1,25 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ElementRef,
-  ChangeDetectorRef,
-  inject,
-  ChangeDetectionStrategy,
-  Signal,
-  computed,
-  signal,
-  WritableSignal,
-  output,
-  input,
-  model,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, Subscription } from 'rxjs';
+import { catchError, startWith, switchMap } from 'rxjs/operators';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { SubnetExtendedData } from '../../models/subnet.model';
 import { InsertSubnetDialog } from './insert-subnet-dialog/insert.subnet.component';
-import { DataService } from '../../services/data.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SentinelButtonWithIconComponent } from '@sentinel/components/button-with-icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ORGANIZATION_PATH, SUBNETS_PATH } from '../../paths';
-import { SubnetService } from '../../services/subnet.service';
-//import { SentinelControlsComponent, SentinelControlItem, SentinelControlItemSignal } from '@sentinel/components/controls';
-//import { defer, Observable, of, take } from 'rxjs';
+import { InlineElementsPreviewComponent } from '../../components/inline-elements-preview';
+import { GetAllSubnetsQuery, GetSubnetsPaginatedQueryService } from '../../graphql/subnets/subnets.operation.generated';
+import { SubnetPageDeleteSubnetMutationService } from './graphql/subnet-page.operation.generated';
+import { SortDirection, SubnetOptions, SubnetSort } from '../../../generated/base-types';
+
+type SubnetRow = GetAllSubnetsQuery['subnets'][0];
 
 @Component({
   selector: 'subnet-page',
@@ -46,167 +34,156 @@ import { SubnetService } from '../../services/subnet.service';
     MatProgressSpinner,
     FormsModule,
     SentinelButtonWithIconComponent,
+    InlineElementsPreviewComponent,
   ],
 })
-export class SubnetPageComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [
-    'note',
-    'range',
-    'org_units',
-    'contacts',
-    'parent_subnet',
-    'actions',
-  ];
-  dataSource: MatTableDataSource<SubnetExtendedData>;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | null =
-    null;
-  @ViewChild(MatSort, { static: false }) sort: MatSort | null = null;
+export class SubnetPageComponent implements OnInit {
+  displayedColumns: string[] = ['note', 'range', 'org_units', 'contacts', 'parent_subnet', 'actions'];
+  dataSource: MatTableDataSource<SubnetRow> = new MatTableDataSource<SubnetRow>([]);
 
+  private paginator: MatPaginator | null = null;
+  private sort: MatSort | null = null;
+  private paginatorSub: Subscription | null = null;
+  private sortSub: Subscription | null = null;
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    // Runs every time the paginator is (re)created, not just the first time -
+    // the element it's on gets torn down and rebuilt whenever emptyResponse/errorResponse
+    // flips, so the old subscription must be dropped and a fresh one attached each time.
+    this.paginatorSub?.unsubscribe();
+    this.paginator = mp ?? null;
+    this.paginatorSub = mp
+      ? mp.page.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.fetch$.next())
+      : null;
+  }
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sortSub?.unsubscribe();
+    this.sort = ms ?? null;
+    this.sortSub = ms
+      ? ms.sortChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+          if (this.paginator) this.paginator.pageIndex = 0;
+          this.fetch$.next();
+        })
+      : null;
+  }
+
+  totalCount = 0;
   dataLoaded = false;
-  dataLoading = true;
+  dataLoading = false;
   emptyResponse = false;
   errorResponse = '';
 
-  // constructor(id: string, label: string | Signal<string>, isSortColumn: boolean, sortName?: string, headerStyle?: NgStyleArg)
-
-  // sentinelTableData = new SentinelTable([
-  //   // constructor(element: T, actions?: RowAction[] | RowActionSignal[], clickable?: boolean, rowStyles?: NgStyleArg, cellStyles?: Map<string, NgStyleArg>, selectionDisabled?: Signal<boolean>)
-  //   new Row("145"),
-  // ], ["test", "ip"].map(col => {
-  //   return { id: col, label: col.replace('_', ' ').toUpperCase(), isSortColumn: col === 'range',
-  //     labelSig: computed(() => col.replace('_', ' ').toUpperCase()),
-  //     sortName: col
-  //   }}
-  // ));
+  private readonly fetch$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+  readonly dialog = inject(MatDialog);
 
   constructor(
-    private data: SubnetService,
-    private changeDetector: ChangeDetectorRef,
-  ) {
-    this.dataSource = new MatTableDataSource<SubnetExtendedData>([]);
-    this.getAllSubnets();
-  }
+    private getSubnetsPaginated: GetSubnetsPaginatedQueryService,
+    private deleteSubnetService: SubnetPageDeleteSubnetMutationService,
+  ) {}
 
-  private _snackBar = inject(MatSnackBar);
-  private router = inject(Router);
-
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action);
-  }
-
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {}
-
-  getAllSubnets() {
-    this.emptyResponse = false;
-    this.errorResponse = '';
+  ngOnInit(): void {
     this.dataLoading = true;
-
-    this.data.getSubnets().subscribe({
-      next: (subnets: SubnetExtendedData[]) => {
-        this.dataSource = new MatTableDataSource<SubnetExtendedData>(
-          subnets.map((subnet) => ({
-            _id: subnet._id,
-            range: subnet.range, // Can't be null or undefined, so no need for a fallback
-            note: subnet.note ?? '---',
-            organizationUnit: subnet.organizationUnit ?? '---',
-            parentSubnet: subnet.parentSubnet ?? '---',
-            contacts: subnet.contacts.length == 0 ? [] : subnet.contacts,
-          })),
-        );
-
-        this.dataLoading = false;
+    this.fetch$
+      .pipe(
+        startWith(undefined as void),
+        switchMap(() => {
+          this.errorResponse = '';
+          return this.getSubnetsPaginated.fetch({ options: this.buildOptions() }, { fetchPolicy: 'network-only' }).pipe(
+            catchError((error) => {
+              this.errorResponse = error.message ?? error;
+              this.dataLoading = false;
+              return EMPTY;
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        this.totalCount = result.data.subnetsAggregate.count;
         this.dataLoaded = true;
-        this.changeDetector.detectChanges();
-
-        if (this.paginator) {
-          this.dataSource.paginator = this.paginator;
-        }
-        if (this.sort) {
-          this.dataSource.sort = this.sort;
-        }
-      },
-      error: (error) => {
-        this.errorResponse = error;
+        // A collection-wide empty state, not "this page happens to be empty" - a stale
+        // offset (e.g. after deleting the last row on a page) is handled below instead.
+        this.emptyResponse = this.totalCount === 0;
         this.dataLoading = false;
-      },
-    });
+
+        const pageSize = this.paginator?.pageSize ?? 25;
+        const lastPageIndex = Math.max(0, Math.ceil(this.totalCount / pageSize) - 1);
+        if (
+          result.data.subnets.length === 0 &&
+          this.totalCount > 0 &&
+          this.paginator &&
+          this.paginator.pageIndex > lastPageIndex
+        ) {
+          this.paginator.pageIndex = lastPageIndex;
+          this.fetch$.next();
+          return;
+        }
+
+        this.dataSource.data = result.data.subnets;
+      });
   }
 
-  readonly dialog = inject(MatDialog);
+  private buildOptions(): SubnetOptions {
+    const sort = this.buildSort();
+    const pageSize = this.paginator?.pageSize ?? 25;
+    return {
+      limit: pageSize,
+      offset: (this.paginator?.pageIndex ?? 0) * pageSize,
+      ...(sort && { sort }),
+    };
+  }
+
+  private buildSort(): SubnetSort[] | undefined {
+    if (!this.sort?.active || !this.sort.direction) return undefined;
+    const dir = this.sort.direction === 'asc' ? SortDirection.Asc : SortDirection.Desc;
+    return [{ [this.sort.active]: dir }];
+  }
+
+  // Tooltip transform for the contacts inline-elements-preview
+  readonly contactName = (contact: { name: string }): string => contact.name;
 
   openDialog(
     enterAnimationDuration: string,
     exitAnimationDuration: string,
-    subnet: Partial<SubnetExtendedData>,
+    subnet: Partial<SubnetRow>,
     mode: 'insert' | 'edit',
   ): void {
-    let dialogRef = this.dialog.open(InsertSubnetDialog, {
+    const dialogRef = this.dialog.open(InsertSubnetDialog, {
       width: '24em',
       enterAnimationDuration,
       exitAnimationDuration,
-      data: {
-        allSubnets: this.dataSource.data,
-        subnet: {
-          range: subnet.range,
-          note: subnet.note,
-          organizationUnit: subnet.organizationUnit,
-          parentSubnet: subnet.parentSubnet,
-          contacts: subnet.contacts,
-        },
-        mode: mode,
-      },
+      data: { subnet, mode },
     });
 
-    // Listen for subnet updates from the dialog (e.g., after insert or edit)
-    dialogRef.componentInstance.updateSubnetDataSource.subscribe(
-      ({ oldRange, subnet }) => {
-        // Refreshes the data source with the updated subnet
-        // Either updates the existing subnet or adds a new one if it doesn't exist
-        const index = this.dataSource.data.findIndex(
-          (item) => item.range === oldRange,
-        );
-        if (index !== -1) {
-          this.dataSource.data[index] = subnet;
-
-          // Update parent subnet references
-          this.dataSource.data.forEach((item) => {
-            if (item.parentSubnet === oldRange) {
-              item.parentSubnet = subnet.range;
-            }
-          });
-
-          this.dataSource._updateChangeSubscription(); // Refresh the data source
-          this.openSnackBar(
-            `Subnet ${subnet.range} updated successfully.`,
-            'Close',
-          );
-        } else {
-          this.dataSource.data = [subnet, ...this.dataSource.data]; // Add new subnet if it doesn't exist
-          this.openSnackBar(
-            `Subnet ${subnet.range} [${subnet.note}] added successfully.`,
-            'Close',
-          );
-        }
-      },
-    );
+    dialogRef.componentInstance.updateSubnetDataSource.subscribe(({ oldRange, subnet: updated }) => {
+      this.fetch$.next();
+      if (oldRange) {
+        this.snackBar.open(`Subnet ${updated.range} updated successfully.`, 'Close');
+      } else {
+        this.snackBar.open(`Subnet ${updated.range} [${updated.note}] added successfully.`, 'Close');
+      }
+    });
   }
 
-  deleteSubnet(subnet: SubnetExtendedData): void {
-    if (this.data.deleteSubnet(subnet.range)) {
-      // Handle successful deletion (e.g., show a message, refresh the list)
-      this.dataSource.data = this.dataSource.data.filter(
-        (item) => item.range !== subnet.range,
-      );
-      this.openSnackBar(
-        `Subnet ${subnet.range} deleted successfully.`,
-        'Close',
-      );
-    } else {
-      // Handle deletion failure (e.g., show an error message)
-      this.openSnackBar(`Failed to delete subnet ${subnet.range}.`, 'Close');
-    }
+  deleteSubnet(subnet: SubnetRow): void {
+    this.deleteSubnetService
+      .mutate({ range: subnet.range })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          if ((result.data?.deleteSubnets.nodesDeleted ?? 0) > 0) {
+            this.snackBar.open(`Subnet ${subnet.range} deleted successfully.`, 'Close');
+            this.fetch$.next();
+          } else {
+            this.snackBar.open(`Failed to delete subnet ${subnet.range}.`, 'Close');
+          }
+        },
+        error: () => this.snackBar.open(`Failed to delete subnet ${subnet.range}.`, 'Close'),
+      });
   }
 
   reorganiseDatabase(): void {

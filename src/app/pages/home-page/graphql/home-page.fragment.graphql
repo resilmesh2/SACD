@@ -1,0 +1,5 @@
+fragment HomePageHost on Host {
+  software_versions {
+    version
+  }
+}

@@ -1,0 +1,26 @@
+query GetAllSubnets {
+  subnets {
+    ...Subnet
+  }
+}
+
+query GetSubnetsPaginated($options: SubnetOptions, $where: SubnetWhere) {
+  subnets(options: $options, where: $where) {
+    ...Subnet
+  }
+  subnetsAggregate(where: $where) {
+    count
+  }
+}
+
+query GetIPsPaginated($where: IPWhere, $options: IPOptions, $affectedWhere: IPWhere) {
+  ips(where: $where, options: $options) {
+    ...ChildIP
+  }
+  ipsAggregate(where: $where) {
+    count
+  }
+  affectedIpsAggregate: ipsAggregate(where: $affectedWhere) {
+    count
+  }
+}
